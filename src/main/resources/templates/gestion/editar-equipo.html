@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/comun :: cabeza('Escudo')}"></head>
+<head th:replace="~{fragments/comun :: cabeza('Editar equipo')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
@@ -9,13 +9,19 @@
             <span th:replace="~{fragments/comun :: escudo(${equipo}, 'escudo-grande')}"></span>
             <h1 th:text="${equipo.nombre}">Real Madrid</h1>
         </div>
-        <p class="subtitulo">Pega la dirección de una imagen (PNG o SVG). Déjalo vacío para mostrar las iniciales.</p>
-        <form class="formulario" th:action="@{/gestion/equipos/{id}/escudo(id=${equipo.id})}" th:object="${escudo}" method="post">
+        <p class="subtitulo" th:text="${equipo.deporte.nombre}">Fútbol</p>
+        <form class="formulario" th:action="@{/gestion/equipos/{id}/editar(id=${equipo.id})}" th:object="${edicion}" method="post">
+            <label for="calidad">Calificación de calidad (0-10)</label>
+            <input id="calidad" type="number" step="0.1" min="0" max="10" th:field="*{calidad}" th:errorclass="con-error">
+            <span class="error-campo" th:if="${#fields.hasErrors('calidad')}"
+                  th:text="${#fields.errors('calidad')[0]}"></span>
+
             <label for="escudoUrl">Dirección del escudo</label>
             <input id="escudoUrl" type="url" th:field="*{escudoUrl}" th:errorclass="con-error"
                    placeholder="https://…/escudo.png">
             <span class="error-campo" th:if="${#fields.hasErrors('escudoUrl')}"
                   th:text="${#fields.errors('escudoUrl')[0]}"></span>
+            <span class="aviso">Imagen PNG o SVG. Déjalo vacío para mostrar las iniciales.</span>
             <div class="acciones-formulario">
                 <button class="boton" type="submit">Guardar</button>
                 <a class="boton boton-secundario" th:href="@{/gestion}">Cancelar</a>

@@ -72,7 +72,7 @@ Abrir http://localhost:8080.
 | `/eventos` | Catálogo público de eventos, agrupados por deporte y ordenados por fecha | HU-08, HU-19 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
-| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos, y cambio del escudo de cada equipo | HU-01 |
+| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos, y edición de la calificación y el escudo de cada equipo | HU-01 |
 | `/equipos` | Listado público de equipos y deportistas | — |
 
 - **Pruebas:** `./mvnw test`
