@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -24,34 +25,62 @@ public class ApuestaService {
     private final EventoRepository eventos;
     private final UsuarioRepository usuarios;
     private final CalculadoraCuotas calculadora;
+    private final LimitesProperties limites;
     private final Clock reloj;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
-                          CalculadoraCuotas calculadora, Clock reloj) {
+                          CalculadoraCuotas calculadora, LimitesProperties limites, Clock reloj) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
         this.calculadora = calculadora;
+        this.limites = limites;
         this.reloj = reloj;
     }
 
-    /**
-     * Registra una apuesta simple (HU-23): descuenta el importe del saldo y guarda la cuota vigente.
-     * La cuota se calcula en el servidor; nunca se acepta la que envía el navegador.
-     */
+    /** Apuesta simple (HU-23): una combinada de una sola selección, con la cuota vigente. */
     @Transactional
     public Apuesta apostar(String email, Long eventoId, Resultado resultado, BigDecimal importe) {
-        LocalDateTime ahora = LocalDateTime.now(reloj);
-        Evento evento = eventos.findById(eventoId)
-                .filter(e -> e.admiteApuestas(ahora))
-                .orElseThrow(() -> new EventoNoDisponibleException(eventoId));
-        BigDecimal cuota = calculadora.calcular(evento).de(resultado);
-        if (cuota == null) {
-            throw new ResultadoNoValidoException(resultado);
+        return apostar(email, List.of(new SeleccionPedida(eventoId, resultado, null)), importe);
+    }
+
+    /**
+     * Registra una apuesta simple o combinada (HU-23, HU-28, HU-29): comprueba que los eventos admiten
+     * apuestas, que no se repiten, el número máximo de selecciones y el saldo, y descuenta el importe.
+     * Las cuotas se calculan en el servidor. Si el usuario vio una cuota distinta de la actual, no se apuesta
+     * y se le pide que acepte las nuevas (HU-29).
+     */
+    @Transactional
+    public Apuesta apostar(String email, List<SeleccionPedida> pedidas, BigDecimal importe) {
+        if (pedidas.isEmpty()) {
+            throw new IllegalArgumentException("El boleto está vacío");
         }
+        if (pedidas.size() > limites.maxSelecciones()) {
+            throw new IllegalArgumentException("Una combinada admite como máximo " + limites.maxSelecciones()
+                    + " selecciones");
+        }
+        LocalDateTime ahora = LocalDateTime.now(reloj);
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        Apuesta apuesta = new Apuesta(usuario, importe, ahora);
+        List<Long> cambiadas = new ArrayList<>();
+        for (SeleccionPedida pedida : pedidas) {
+            Evento evento = eventos.findById(pedida.eventoId())
+                    .filter(e -> e.admiteApuestas(ahora))
+                    .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));
+            BigDecimal cuota = calculadora.calcular(evento).de(pedida.resultado());
+            if (cuota == null) {
+                throw new ResultadoNoValidoException(pedida.resultado());
+            }
+            if (pedida.cuotaVista() != null && pedida.cuotaVista().compareTo(cuota) != 0) {
+                cambiadas.add(evento.getId());
+            }
+            apuesta.anadir(evento, pedida.resultado(), cuota);
+        }
+        if (!cambiadas.isEmpty()) {
+            throw new CuotasCambiadasException(cambiadas);
+        }
         usuario.cargar(importe);
-        return apuestas.save(new Apuesta(usuario, evento, resultado, importe, cuota, ahora));
+        return apuestas.save(apuesta);
     }
 
     /**

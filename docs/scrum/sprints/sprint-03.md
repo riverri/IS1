@@ -1,4 +1,4 @@
-# Sprint 3 · 01/10 – 15/10
+# Sprint 3 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -26,12 +26,12 @@
 ## Dailies
 - **01/10**: resolución de apuestas, suspensión y anulación, historial, estadísticas y ranking completo.
 
-## Sprint Review (15/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (01/10)
+- **Historias completadas:** HU-04, HU-05, HU-06, HU-25, HU-34, HU-35, HU-36 (24 puntos).
+- **Historias no completadas:** ninguna.
+- **Feedback del PO:** siguiente prioridad, las apuestas combinadas (MVP) antes que las de largo plazo.
 
-## Retrospectiva (15/10)
+## Retrospectiva (01/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**
