@@ -1,0 +1,28 @@
+# SO / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Entornos y secretos
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+db.sqlite3
+
+# Java
+target/
+*.class
+.gradle/
