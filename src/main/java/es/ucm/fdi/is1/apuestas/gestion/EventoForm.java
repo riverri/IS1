@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class EventoForm {
 
@@ -22,6 +23,17 @@ public class EventoForm {
     @Future(message = "La fecha debe ser futura")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime fechaHora;
+
+    @Size(max = 80, message = "Máximo 80 caracteres")
+    private String fase;
+
+    public String getFase() {
+        return fase;
+    }
+
+    public void setFase(String fase) {
+        this.fase = fase;
+    }
 
     public Long getCompeticionId() {
         return competicionId;

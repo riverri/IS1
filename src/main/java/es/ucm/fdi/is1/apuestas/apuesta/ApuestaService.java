@@ -53,6 +53,19 @@ public class ApuestaService {
         return apuestas.save(new Apuesta(usuario, evento, resultado, importe, cuota, ahora));
     }
 
+    /**
+     * Cancela una apuesta activa del usuario antes de que empiece el evento y le devuelve el importe (HU-26).
+     * Si la apuesta no es suya se trata como inexistente.
+     */
+    @Transactional
+    public Apuesta cancelar(String email, Long apuestaId) {
+        Apuesta apuesta = apuestas.findById(apuestaId)
+                .filter(a -> a.getUsuario().getEmail().equals(email))
+                .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
+        apuesta.cancelar(LocalDateTime.now(reloj));
+        return apuesta;
+    }
+
     /** Apuestas activas del usuario, de la más reciente a la más antigua (HU-24). */
     @Transactional(readOnly = true)
     public List<Apuesta> activas(String email) {

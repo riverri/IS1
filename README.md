@@ -69,16 +69,17 @@ Abrir http://localhost:8080.
 
 | Página | Qué hace | Historias |
 |---|---|---|
-| `/eventos` | Catálogo público de eventos con sus cuotas 1/X/2, agrupados por competición | HU-08, HU-19, HU-20 |
+| `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador | HU-08, HU-19, HU-20, HU-22 |
 | `/eventos/{id}/apostar` | Apuesta simple: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
-| `/apuestas` | Mis apuestas activas, dinero en juego y ganancia si acierto | HU-24 |
+| `/apuestas` | Mis apuestas activas, dinero en juego y ganancia si acierto; cancelar antes de que empiece el evento | HU-24, HU-26 |
+| `/ranking` | Ranking de jugadores por saldo, con tu posición destacada | HU-36 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos, y edición de la calificación y el escudo de cada equipo | HU-01 |
 | `/equipos` | Listado público de equipos y deportistas | — |
 
 - **Pruebas:** `./mvnw test`
-- **Partidos:** vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
+- **Partidos:** vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
 - **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Para empezar de cero, para la aplicación y borra esa carpeta.
 - **Consola de la base de datos:** http://localhost:8080/h2-console (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
 - **IDE recomendado:** IntelliJ IDEA Community. Abrir la carpeta, que detecta el `pom.xml`. También valen Eclipse y VS Code con el "Extension Pack for Java".
