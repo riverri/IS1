@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Equipos · Apuestas IS1</title>
-    <link rel="stylesheet" th:href="@{/css/estilos.css}">
-</head>
+<head th:replace="~{fragments/comun :: cabeza('Equipos')}"></head>
 <body>
-<header>
-    <a class="marca" th:href="@{/}">Apuestas IS1</a>
-    <nav><a th:href="@{/equipos}">Equipos</a></nav>
-</header>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
 <main>
     <h1>Equipos y deportistas</h1>
-    <table>
-        <thead>
-        <tr><th>Nombre</th><th>Deporte</th><th>Calidad (0-10)</th></tr>
-        </thead>
-        <tbody>
-        <tr th:each="e : ${equipos}">
-            <td th:text="${e.nombre}">Real Madrid</td>
-            <td th:text="${e.deporte}">Fútbol</td>
-            <td th:text="${e.calidad}">9.5</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(equipos)}">
-            <td colspan="3">No hay equipos registrados.</td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="tabla">
+        <table>
+            <thead>
+            <tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad (0-10)</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${equipos}">
+                <td th:text="${e.nombre}">Real Madrid</td>
+                <td th:text="${e.deporte.nombre}">Fútbol</td>
+                <td>
+                    <span class="etiqueta" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span>
+                </td>
+                <td th:text="${e.calidad}">9.5</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(equipos)}">
+                <td colspan="4">No hay equipos registrados.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 </body>
 </html>

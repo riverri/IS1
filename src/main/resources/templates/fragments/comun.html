@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabeza(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' · Apuestas IS1'">Apuestas IS1</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<header th:fragment="cabecera">
+    <a class="marca" th:href="@{/}">Apuestas IS1</a>
+    <nav>
+        <a th:href="@{/eventos}">Eventos</a>
+        <a th:href="@{/equipos}">Equipos</a>
+        <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
+        <th:block th:if="${usuarioActual == null}">
+            <a th:href="@{/login}">Entrar</a>
+            <a class="boton boton-claro" th:href="@{/registro}">Registrarse</a>
+        </th:block>
+        <th:block th:if="${usuarioActual != null}">
+            <a class="saldo" th:href="@{/cuenta}" title="Mi cuenta"
+               th:text="${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</a>
+            <form th:action="@{/logout}" method="post" class="en-linea">
+                <button type="submit" class="enlace">Salir</button>
+            </form>
+        </th:block>
+    </nav>
+</header>
+</body>
+</html>

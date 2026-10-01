@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Nuevo equipo')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Nuevo equipo o deportista</h1>
+    <form class="formulario" th:action="@{/gestion/equipos/nuevo}" th:object="${equipo}" method="post">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" th:field="*{nombre}">
+        <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+
+        <label for="deporte">Deporte</label>
+        <select id="deporte" th:field="*{deporte}">
+            <option value="">— Elige —</option>
+            <option th:each="d : ${deportes}" th:value="${d}" th:text="${d.nombre}">Fútbol</option>
+        </select>
+        <span class="error-campo" th:if="${#fields.hasErrors('deporte')}" th:errors="*{deporte}"></span>
+
+        <label for="calidad">Calificación de calidad (0-10)</label>
+        <input id="calidad" type="number" step="0.1" th:field="*{calidad}">
+        <span class="error-campo" th:if="${#fields.hasErrors('calidad')}" th:errors="*{calidad}"></span>
+
+        <fieldset>
+            <legend>Competiciones</legend>
+            <label class="casilla" th:each="c : ${competiciones}">
+                <input type="checkbox" th:field="*{competicionIds}" th:value="${c.id}">
+                <span th:text="${c.nombre} + ' (' + ${c.deporte.nombre} + ')'">LaLiga (Fútbol)</span>
+            </label>
+        </fieldset>
+        <span class="error-campo" th:if="${#fields.hasErrors('competicionIds')}" th:errors="*{competicionIds}"></span>
+
+        <button class="boton" type="submit">Guardar</button>
+        <a th:href="@{/gestion}">Cancelar</a>
+    </form>
+</main>
+</body>
+</html>

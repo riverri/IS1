@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Error')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <th:block th:switch="${status}">
+        <h1 th:case="403">No tienes permiso para ver esta página</h1>
+        <h1 th:case="404">Página no encontrada</h1>
+        <h1 th:case="*">Algo ha ido mal</h1>
+    </th:block>
+    <p class="aviso" th:text="'Código ' + ${status}">Código 500</p>
+    <a class="boton" th:href="@{/eventos}">Ir al catálogo</a>
+</main>
+</body>
+</html>

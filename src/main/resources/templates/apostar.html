@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Apostar')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <h1 th:text="${evento.local.nombre} + ' – ' + ${evento.visitante.nombre}">Real Madrid – Getafe CF</h1>
+    <p>
+        <span th:text="${evento.competicion.nombre}">LaLiga</span> ·
+        <time th:text="${#temporals.format(evento.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</time>
+    </p>
+    <p class="aviso">Las apuestas estarán disponibles en cuanto se publiquen las cuotas de este evento.</p>
+    <a class="boton boton-secundario" th:href="@{/eventos}">Volver al catálogo</a>
+</main>
+</body>
+</html>
