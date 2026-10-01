@@ -67,6 +67,14 @@ public class Usuario {
         return true;
     }
 
+    /** Descuenta el importe de una apuesta (HU-23). */
+    public void cargar(BigDecimal importe) {
+        if (saldo.compareTo(importe) < 0) {
+            throw new SaldoInsuficienteException(saldo, importe);
+        }
+        saldo = saldo.subtract(importe);
+    }
+
     public LocalDateTime proximaRecarga(Duration periodo) {
         return ultimaRecarga.plus(periodo);
     }

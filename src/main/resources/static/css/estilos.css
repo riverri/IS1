@@ -277,7 +277,6 @@ main.estrecho { max-width: 480px; }
 .partido-cabecera strong { color: var(--texto); }
 
 .partido-pie { display: flex; gap: 8px; align-items: stretch; }
-.partido-pie .boton { flex: none; padding-inline: 20px; }
 
 .rivales { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
 .rivales li { display: flex; align-items: center; gap: 10px; font-weight: 600; min-width: 0; }
@@ -324,6 +323,9 @@ main.estrecho { max-width: 480px; }
 }
 .cuota small { font-size: .72rem; font-weight: 600; }
 .cuota b { color: var(--texto); }
+a.cuota { text-decoration: none; transition: background .15s, border-color .15s, transform .15s; }
+a.cuota:hover { background: var(--primario-suave); border-color: var(--primario); transform: translateY(-1px); }
+a.cuota:hover b { color: var(--primario-oscuro); }
 
 .competicion { scroll-margin-top: 80px; }
 .competicion h3 {
@@ -347,6 +349,63 @@ main.estrecho { max-width: 480px; }
 .marcador-equipo { display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }
 .marcador-vs { font-weight: 800; color: var(--texto-suave); }
 .marcador-fecha { color: var(--texto-suave); }
+
+/* ---------- Boleto ---------- */
+
+.boleto { text-align: left; margin-top: 16px; }
+.opciones { display: grid; gap: 8px; border: 0 !important; padding: 0 !important; margin: 0 !important; }
+.opciones legend { margin-bottom: 8px; }
+.opcion {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    margin: 0 !important;
+    padding: 12px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600 !important;
+    transition: border-color .15s, background .15s;
+}
+.opcion:hover { border-color: var(--primario); }
+.opcion input { position: absolute; opacity: 0; pointer-events: none; }
+.opcion:has(input:checked) { border-color: var(--primario); background: var(--primario-suave); box-shadow: 0 0 0 3px rgba(16, 163, 107, .15); }
+.opcion:has(input:focus-visible) { outline: 3px solid rgba(16, 163, 107, .35); outline-offset: 2px; }
+.opcion-nombre { flex: 1; }
+.opcion b { font-size: 1.1rem; }
+.opcion-simbolo {
+    display: inline-grid;
+    place-items: center;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--oscuro);
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 800;
+}
+
+.ganancia {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--oscuro);
+    color: #cbd5e1;
+}
+.ganancia strong { color: #ffd666; font-size: 1.2rem; }
+.enlace-volver { display: inline-block; margin-top: 16px; font-weight: 600; text-decoration: none; }
+
+/* ---------- Mis apuestas ---------- */
+
+.apuesta-partido { margin: 0; color: var(--texto-suave); font-weight: 500; }
+.apuesta-pronostico { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.apuesta-cifras { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+.apuesta-cifras div { padding: 10px 12px; border-radius: 10px; background: var(--fondo); }
+.apuesta-cifras dt { font-size: .78rem; color: var(--texto-suave); font-weight: 600; }
+.apuesta-cifras dd { margin: 0; font-size: 1.15rem; font-weight: 800; }
+.ganancia-valor { color: var(--primario-oscuro); }
 
 /* ---------- Formularios ---------- */
 

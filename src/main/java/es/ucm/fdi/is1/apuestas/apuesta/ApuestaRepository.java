@@ -1,0 +1,12 @@
+package es.ucm.fdi.is1.apuestas.apuesta;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
+
+public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
+
+    List<Apuesta> findByUsuarioAndEstadoOrderByFechaDesc(Usuario usuario, EstadoApuesta estado);
+}
