@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.ucm.fdi.is1.apuestas.api.ApiProperties;
+import es.ucm.fdi.is1.apuestas.api.ResumenSincronizacion;
+import es.ucm.fdi.is1.apuestas.api.SincronizacionService;
 import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
@@ -28,12 +31,32 @@ public class GestionController {
 
     private final GestionService gestion;
     private final ResolucionService resolucion;
+    private final SincronizacionService sincronizacion;
+    private final ApiProperties api;
     private final Clock reloj;
 
-    public GestionController(GestionService gestion, ResolucionService resolucion, Clock reloj) {
+    public GestionController(GestionService gestion, ResolucionService resolucion,
+                             SincronizacionService sincronizacion, ApiProperties api, Clock reloj) {
         this.gestion = gestion;
         this.resolucion = resolucion;
+        this.sincronizacion = sincronizacion;
+        this.api = api;
         this.reloj = reloj;
+    }
+
+    /** Descarga ahora mismo partidos y resultados de la API (HU-21). */
+    @PostMapping("/sincronizar")
+    public String sincronizar(RedirectAttributes redireccion) {
+        try {
+            ResumenSincronizacion resumen = sincronizacion.sincronizar();
+            redireccion.addFlashAttribute("mensaje", "Sincronizado con la API: " + resumen + ".");
+            if (!resumen.getErrores().isEmpty()) {
+                redireccion.addFlashAttribute("error", String.join(" · ", resumen.getErrores()));
+            }
+        } catch (IllegalStateException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/gestion";
     }
 
     @ModelAttribute("deportes")
@@ -47,6 +70,7 @@ public class GestionController {
         model.addAttribute("equipos", gestion.equipos());
         model.addAttribute("eventos", gestion.eventos());
         model.addAttribute("ahora", LocalDateTime.now(reloj));
+        model.addAttribute("apiConfigurada", api.configurada());
         return "gestion/panel";
     }
 

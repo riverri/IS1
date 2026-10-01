@@ -656,6 +656,10 @@ main.ancho-medio { max-width: 640px; }
 
 /* ---------- Tablas y gestión ---------- */
 
+.api-estado { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 16px; margin: 16px 0; }
+.api-estado p { margin: 2px 0 0; }
+.boton:disabled { opacity: .5; cursor: not-allowed; }
+
 .tabla { overflow-x: auto; margin-bottom: 24px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 12px 14px; border-bottom: 1px solid var(--borde); text-align: left; vertical-align: middle; }

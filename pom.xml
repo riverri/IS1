@@ -53,6 +53,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- Cliente HTTP para la API de datos deportivos -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
+        </dependency>
+
         <!-- Validación (@NotBlank, @DecimalMin…) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

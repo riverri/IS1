@@ -17,4 +17,10 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     boolean existsByLocalAndVisitanteAndFechaHora(Equipo local, Equipo visitante, LocalDateTime fechaHora);
 
     Optional<Evento> findByLocalAndVisitanteAndFechaHora(Equipo local, Equipo visitante, LocalDateTime fechaHora);
+
+    Optional<Evento> findByIdExterno(Long idExterno);
+
+    /** Para enlazar un partido de la API con uno creado a mano: mismos equipos y fecha parecida. */
+    List<Evento> findByLocalAndVisitanteAndFechaHoraBetween(Equipo local, Equipo visitante,
+                                                           LocalDateTime desde, LocalDateTime hasta);
 }
