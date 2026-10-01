@@ -1,4 +1,4 @@
-# Sprint 4 · 01/10 – 15/10
+# Sprint 4 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -26,12 +26,14 @@
 ## Dailies
 - **01/10**: modelo de selecciones, boleto, resolución de combinadas y pantallas.
 
-## Sprint Review (15/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (01/10)
+- **Historias completadas:** HU-28, HU-29, HU-30 y HU-07 (parcial). Con ellas el **MVP queda completo**.
+- **Historias no completadas:** ninguna.
+- **Feedback del PO:**
+  - Probar la web en clase con varias personas a la vez: se usará un enlace temporal (Cloudflare Tunnel) desde un portátil.
+  - Siguiente prioridad: la API de datos reales.
 
-## Retrospectiva (15/10)
+## Retrospectiva (01/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**

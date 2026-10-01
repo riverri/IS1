@@ -8,6 +8,18 @@
         <h1>Panel del creador de apuestas</h1>
     </div>
     <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <div class="tarjeta api-estado">
+        <div>
+            <strong>Datos reales (football-data.org)</strong>
+            <p class="aviso" th:if="${apiConfigurada}">Conectada: LaLiga y Champions se sincronizan solas cada 30 minutos.</p>
+            <p class="aviso" th:unless="${apiConfigurada}">Sin configurar: define la variable de entorno <code>FOOTBALL_DATA_TOKEN</code> (ver README).</p>
+        </div>
+        <form th:action="@{/gestion/sincronizar}" method="post">
+            <button class="boton" type="submit" th:disabled="${!apiConfigurada}">Sincronizar ahora</button>
+        </form>
+    </div>
 
     <div class="estadisticas">
         <div class="tarjeta estadistica"><span th:text="${eventos.size()}">34</span>eventos</div>

@@ -6,6 +6,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -44,6 +45,10 @@ public class Evento {
     /** Resultado final, una vez que el creador lo introduce (HU-04). */
     @Enumerated(EnumType.STRING)
     private Resultado resultado;
+
+    /** Identificador del partido en la API de datos deportivos. */
+    @Column(unique = true)
+    private Long idExterno;
 
     /** Jornada, ronda o gran premio ("Jornada 8", "Cuartos de final"…). Opcional. */
     private String fase;
@@ -133,6 +138,21 @@ public class Evento {
 
     public EstadoEvento getEstado() {
         return estado;
+    }
+
+    /** La fuente de datos ha cambiado la fecha del partido (solo si aún no se ha jugado). */
+    public void cambiarFecha(LocalDateTime nuevaFecha) {
+        if (estado == EstadoEvento.PROGRAMADO || estado == EstadoEvento.SUSPENDIDO) {
+            fechaHora = nuevaFecha;
+        }
+    }
+
+    public Long getIdExterno() {
+        return idExterno;
+    }
+
+    public void setIdExterno(Long idExterno) {
+        this.idExterno = idExterno;
     }
 
     public String getFase() {
