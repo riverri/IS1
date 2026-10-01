@@ -26,3 +26,6 @@ db.sqlite3
 target/
 *.class
 .gradle/
+
+# Base de datos local (H2)
+datos/
