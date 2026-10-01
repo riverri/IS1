@@ -39,13 +39,19 @@
     <h2>Equipos</h2>
     <div class="tarjeta tabla">
         <table>
-            <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th></tr></thead>
+            <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th><th></th></tr></thead>
             <tbody>
             <tr th:each="e : ${equipos}">
-                <td th:text="${e.nombre}">Real Madrid</td>
+                <td>
+                    <span class="equipo-celda">
+                        <span th:replace="~{fragments/comun :: escudo(${e}, 'escudo-pequeno')}"></span>
+                        <span th:text="${e.nombre}">Real Madrid</span>
+                    </span>
+                </td>
                 <td th:text="${e.deporte.nombre}">Fútbol</td>
                 <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
                 <td th:text="${e.calidad}">9.5</td>
+                <td><a th:href="@{/gestion/equipos/{id}/escudo(id=${e.id})}">Cambiar escudo</a></td>
             </tr>
             </tbody>
         </table>

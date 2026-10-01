@@ -1,6 +1,7 @@
 package es.ucm.fdi.is1.apuestas.config;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -40,6 +41,29 @@ public class DatosIniciales implements ApplicationRunner {
         this.usuarioRepository = usuarioRepository;
         this.usuarios = usuarios;
     }
+
+    /** Identificadores de los escudos en el servicio público de football-data.org. */
+    private static final Map<String, Integer> ESCUDOS = Map.ofEntries(
+            Map.entry("Real Madrid", 86), Map.entry("FC Barcelona", 81),
+            Map.entry("Atlético de Madrid", 78), Map.entry("Athletic Club", 77),
+            Map.entry("Real Sociedad", 92), Map.entry("Villarreal CF", 94),
+            Map.entry("Valencia CF", 95), Map.entry("Real Betis", 90),
+            Map.entry("Sevilla FC", 559), Map.entry("Celta de Vigo", 558),
+            Map.entry("CA Osasuna", 79), Map.entry("Getafe CF", 82),
+            Map.entry("Rayo Vallecano", 87), Map.entry("RCD Espanyol", 80),
+            Map.entry("Deportivo Alavés", 263), Map.entry("Elche CF", 285),
+            Map.entry("Levante UD", 88), Map.entry("Málaga CF", 84),
+            Map.entry("RC Deportivo", 560),
+            Map.entry("Bayern de Múnich", 5), Map.entry("Borussia Dortmund", 4),
+            Map.entry("RB Leipzig", 721), Map.entry("VfB Stuttgart", 10),
+            Map.entry("Arsenal", 57), Map.entry("Aston Villa", 58),
+            Map.entry("Liverpool", 64), Map.entry("Manchester City", 65),
+            Map.entry("Manchester United", 66), Map.entry("Paris Saint-Germain", 524),
+            Map.entry("LOSC Lille", 521), Map.entry("Inter de Milán", 108),
+            Map.entry("Napoli", 113), Map.entry("AS Roma", 100),
+            Map.entry("PSV Eindhoven", 674), Map.entry("Feyenoord", 675),
+            Map.entry("FC Porto", 503), Map.entry("Sporting CP", 498),
+            Map.entry("Club Brujas", 851), Map.entry("Galatasaray", 610));
 
     @Override
     @Transactional
@@ -130,6 +154,11 @@ public class DatosIniciales implements ApplicationRunner {
         partido(laLiga, "Real Betis", "FC Barcelona", 2026, 10, 17, 18, 30);
         partido(laLiga, "Valencia CF", "Athletic Club", 2026, 10, 17, 21, 0);
         partido(laLiga, "CA Osasuna", "Racing de Santander", 2026, 10, 18, 14, 0);
+
+        // Escudos: solo se rellenan si el equipo aún no tiene uno (no pisa los cambios hechos en Gestión)
+        ESCUDOS.forEach((nombre, id) -> equipos.findByNombre(nombre)
+                .filter(e -> e.getEscudoUrl() == null)
+                .ifPresent(e -> e.setEscudoUrl("https://crests.football-data.org/" + id + ".png")));
 
         // Champions League 2026/27, jornada 2
         partido(champions, "RC Lens", "Sporting CP", 2026, 10, 13, 18, 45);

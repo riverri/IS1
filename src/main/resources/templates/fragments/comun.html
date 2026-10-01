@@ -41,6 +41,14 @@
     </div>
 </header>
 
+<span th:fragment="escudo(eq, tam)" class="escudo"
+      th:classappend="${tam} + ${eq.escudoUrl != null ? ' con-imagen' : ''}"
+      th:style="'background:' + ${@formato.color(eq.nombre)}">
+    <span th:text="${@formato.iniciales(eq.nombre)}">RM</span>
+    <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy"
+         onerror="this.parentElement.classList.remove('con-imagen'); this.remove();">
+</span>
+
 <article class="partido" th:fragment="partido(ev)"
          th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
     <div class="partido-cabecera">
@@ -53,13 +61,11 @@
     <div class="partido-cuerpo">
         <ul class="rivales">
             <li>
-                <span class="escudo" th:style="'background:' + ${@formato.color(ev.local.nombre)}"
-                      th:text="${@formato.iniciales(ev.local.nombre)}">RM</span>
+                <span th:replace="~{fragments/comun :: escudo(${ev.local}, '')}"></span>
                 <span class="rival-nombre" th:text="${ev.local.nombre}">Real Madrid</span>
             </li>
             <li>
-                <span class="escudo" th:style="'background:' + ${@formato.color(ev.visitante.nombre)}"
-                      th:text="${@formato.iniciales(ev.visitante.nombre)}">G</span>
+                <span th:replace="~{fragments/comun :: escudo(${ev.visitante}, '')}"></span>
                 <span class="rival-nombre" th:text="${ev.visitante.nombre}">Getafe CF</span>
             </li>
         </ul>

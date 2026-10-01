@@ -54,4 +54,10 @@ class DatosInicialesTest {
         assertThat(eventos.count()).isEqualTo(antesEventos);
         assertThat(usuarios.count()).isEqualTo(antesUsuarios);
     }
+
+    @Test
+    void losEquiposConocidosTienenEscudo() {
+        assertThat(equipos.findByNombre("FC Barcelona").orElseThrow().getEscudoUrl())
+                .isEqualTo("https://crests.football-data.org/81.png");
+    }
 }
