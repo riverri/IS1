@@ -137,4 +137,41 @@ class GestionWebTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("El local y el visitante deben ser distintos")));
     }
+
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void cambiaElEscudoDeUnEquipo() throws Exception {
+        Equipo getafe = equipo("Getafe CF");
+        mvc.perform(post("/gestion/equipos/{id}/escudo", getafe.getId()).with(csrf())
+                        .param("escudoUrl", "https://example.org/getafe.png"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gestion"));
+
+        assertThat(equipo("Getafe CF").getEscudoUrl()).isEqualTo("https://example.org/getafe.png");
+        mvc.perform(get("/equipos"))
+                .andExpect(content().string(containsString("https://example.org/getafe.png")));
+    }
+
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void rechazaEscudoQueNoEsUnaDireccionWeb() throws Exception {
+        Equipo getafe = equipo("Getafe CF");
+        String antes = getafe.getEscudoUrl();
+        mvc.perform(post("/gestion/equipos/{id}/escudo", getafe.getId()).with(csrf())
+                        .param("escudoUrl", "javascript:alert(1)"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Debe ser una dirección")));
+
+        assertThat(equipo("Getafe CF").getEscudoUrl()).isEqualTo(antes);
+    }
+
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void vaciarElEscudoVuelveALasIniciales() throws Exception {
+        Equipo getafe = equipo("Getafe CF");
+        mvc.perform(post("/gestion/equipos/{id}/escudo", getafe.getId()).with(csrf()).param("escudoUrl", ""))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(equipo("Getafe CF").getEscudoUrl()).isNull();
+    }
 }

@@ -44,6 +44,17 @@ public class GestionService {
         return equipos.save(equipo);
     }
 
+    @Transactional(readOnly = true)
+    public Equipo equipo(Long id) {
+        return equipos.findById(id).orElseThrow(() -> new DatosInvalidosException("id", "El equipo no existe"));
+    }
+
+    @Transactional
+    public void cambiarEscudo(Long equipoId, String escudoUrl) {
+        Equipo equipo = equipo(equipoId);
+        equipo.setEscudoUrl(escudoUrl == null || escudoUrl.isBlank() ? null : escudoUrl.trim());
+    }
+
     @Transactional
     public Evento crearEvento(EventoForm form) {
         if (form.getLocalId().equals(form.getVisitanteId())) {

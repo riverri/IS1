@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.equipos;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,6 +42,10 @@ public class Equipo {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Competicion> competiciones = new HashSet<>();
 
+    /** Dirección de la imagen del escudo; si es null se muestran las iniciales. */
+    @Column(length = 500)
+    private String escudoUrl;
+
     protected Equipo() {
         // requerido por JPA
     }
@@ -77,5 +82,13 @@ public class Equipo {
 
     public Set<Competicion> getCompeticiones() {
         return competiciones;
+    }
+
+    public String getEscudoUrl() {
+        return escudoUrl;
+    }
+
+    public void setEscudoUrl(String escudoUrl) {
+        this.escudoUrl = escudoUrl;
     }
 }
