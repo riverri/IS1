@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -64,6 +65,20 @@ public class ApuestaService {
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         apuesta.cancelar(LocalDateTime.now(reloj));
         return apuesta;
+    }
+
+    /** Historial: apuestas ya resueltas, anuladas o canceladas, de la más reciente a la más antigua (HU-34). */
+    @Transactional(readOnly = true)
+    public List<Apuesta> historial(String email) {
+        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        return apuestas.findByUsuarioAndEstadoInOrderByFechaDesc(usuario, EnumSet.of(EstadoApuesta.GANADA,
+                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA));
+    }
+
+    /** Porcentaje de aciertos y rentabilidad del usuario (HU-35). */
+    @Transactional(readOnly = true)
+    public Estadisticas estadisticas(String email) {
+        return Estadisticas.de(historial(email));
     }
 
     /** Apuestas activas del usuario, de la más reciente a la más antigua (HU-24). */

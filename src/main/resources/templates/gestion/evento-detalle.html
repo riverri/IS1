@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Gestionar evento')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <a class="enlace-volver" th:href="@{/gestion}">← Volver al panel</a>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <div class="tarjeta marcador">
+        <div class="marcador-etiquetas">
+            <span class="chip" th:text="${evento.deporte.icono} + ' ' + ${evento.competicion.nombre}">⚽ LaLiga</span>
+            <span class="estado" th:classappend="${#strings.toLowerCase(evento.estado)}" th:text="${evento.estado}">PROGRAMADO</span>
+        </div>
+        <div class="marcador-rivales">
+            <div class="marcador-equipo">
+                <span th:replace="~{fragments/comun :: escudo(${evento.local}, 'escudo-grande')}"></span>
+                <span th:text="${evento.local.nombre}">Real Madrid</span>
+            </div>
+            <span class="marcador-vs">VS</span>
+            <div class="marcador-equipo">
+                <span th:replace="~{fragments/comun :: escudo(${evento.visitante}, 'escudo-grande')}"></span>
+                <span th:text="${evento.visitante.nombre}">Getafe CF</span>
+            </div>
+        </div>
+        <h1 class="solo-lectores" th:text="${evento.local.nombre} + ' – ' + ${evento.visitante.nombre}">Real Madrid – Getafe CF</h1>
+        <p class="marcador-fecha">
+            <span th:if="${evento.fase != null}" th:text="${evento.fase} + ' · '">Jornada 8 · </span>
+            <span th:text="${@formato.dia(evento.fechaHora)}">Sáb 10 oct</span> ·
+            <strong th:text="${@formato.hora(evento.fechaHora)}">21:00</strong>
+        </p>
+        <p class="resultado-final" th:if="${evento.resultado != null}">
+            Resultado: <strong th:text="${evento.resultado.simbolo} + ' · ' + (${evento.resultado.name() == 'LOCAL'} ? ${evento.local.nombre} : (${evento.resultado.name() == 'VISITANTE'} ? ${evento.visitante.nombre} : 'Empate'))">1 · Real Madrid</strong>
+        </p>
+    </div>
+
+    <h2>Dinero apostado</h2>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Resultado</th><th>Cuota actual</th><th>Apuestas</th><th>Importe</th></tr></thead>
+            <tbody>
+            <tr th:each="v : ${volumen}">
+                <td><span class="opcion-simbolo" th:text="${v.resultado.simbolo}">1</span>
+                    <span th:text="${v.resultado.descripcion}">Gana el local</span></td>
+                <td th:text="${@formato.cuota(@calculadoraCuotas.calcular(evento).de(v.resultado))}">1,85</td>
+                <td th:text="${v.apuestas}">3</td>
+                <td><strong th:text="${#numbers.formatDecimal(v.importe, 1, 'POINT', 2, 'COMMA')}">120,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <th:block th:if="${evento.estado.name() != 'ANULADO'}">
+        <h2 th:text="${evento.resultado == null} ? 'Introducir resultado' : 'Corregir resultado'">Introducir resultado</h2>
+        <form class="tarjeta tarjeta-formulario formulario" th:action="@{/gestion/eventos/{id}/resultado(id=${evento.id})}" method="post"
+              th:attr="onsubmit=${empezado} ? null : 'return confirm(\'El evento aún no ha empezado. ¿Guardar el resultado igualmente?\');'">
+            <p class="aviso" th:if="${evento.resultado != null}">Si cambias el resultado, las apuestas se vuelven a resolver y los saldos se ajustan.</p>
+            <fieldset class="opciones">
+                <legend>Resultado final</legend>
+                <label class="opcion">
+                    <input type="radio" name="resultado" value="LOCAL" required th:checked="${evento.resultado != null and evento.resultado.name() == 'LOCAL'}">
+                    <span class="opcion-simbolo">1</span>
+                    <span class="opcion-nombre" th:text="'Gana ' + ${evento.local.nombre}">Gana Real Madrid</span>
+                </label>
+                <label class="opcion" th:if="${evento.deporte.admiteEmpate}">
+                    <input type="radio" name="resultado" value="EMPATE" th:checked="${evento.resultado != null and evento.resultado.name() == 'EMPATE'}">
+                    <span class="opcion-simbolo">X</span>
+                    <span class="opcion-nombre">Empate</span>
+                </label>
+                <label class="opcion">
+                    <input type="radio" name="resultado" value="VISITANTE" th:checked="${evento.resultado != null and evento.resultado.name() == 'VISITANTE'}">
+                    <span class="opcion-simbolo">2</span>
+                    <span class="opcion-nombre" th:text="'Gana ' + ${evento.visitante.nombre}">Gana Getafe CF</span>
+                </label>
+            </fieldset>
+            <button class="boton boton-bloque" type="submit">Guardar resultado y resolver apuestas</button>
+        </form>
+    </th:block>
+
+    <h2>Otras acciones</h2>
+    <div class="acciones">
+        <form th:if="${evento.estado.name() == 'PROGRAMADO'}" th:action="@{/gestion/eventos/{id}/suspender(id=${evento.id})}" method="post">
+            <button class="boton boton-secundario" type="submit">Suspender</button>
+        </form>
+        <form th:if="${evento.estado.name() == 'SUSPENDIDO'}" th:action="@{/gestion/eventos/{id}/reactivar(id=${evento.id})}" method="post">
+            <button class="boton boton-secundario" type="submit">Reactivar</button>
+        </form>
+        <form th:if="${evento.estado.name() == 'PROGRAMADO' or evento.estado.name() == 'SUSPENDIDO'}"
+              th:action="@{/gestion/eventos/{id}/anular(id=${evento.id})}" method="post"
+              onsubmit="return confirm('¿Anular el evento? Se devolverá el importe de todas las apuestas.');">
+            <button class="boton boton-peligro" type="submit">Anular evento</button>
+        </form>
+        <p class="aviso" th:if="${evento.estado.name() == 'FINALIZADO' or evento.estado.name() == 'ANULADO'}">
+            Un evento finalizado o anulado no se puede suspender ni anular.</p>
+    </div>
+</main>
+</body>
+</html>

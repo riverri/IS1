@@ -576,12 +576,25 @@ tbody tr:hover { background: #f8fafc; }
 
 .estadisticas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
 .estadistica { padding: 16px; color: var(--texto-suave); font-weight: 500; }
-.estadistica span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--texto); }
+.estadistica > span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--texto); }
+.estadistica small { display: block; font-size: .85rem; }
 
 .estado { font-size: .78rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--fondo); }
 .estado.programado { background: var(--primario-suave); color: var(--primario-oscuro); }
 .estado.suspendido { background: #fffaeb; color: #b54708; }
 .estado.anulado { background: var(--error-suave); color: var(--error); }
+.estado.finalizado { background: #eef2ff; color: #3538cd; }
+.estado.pendiente { background: #fffaeb; color: #b54708; }
+.estado.activa { background: var(--primario-suave); color: var(--primario-oscuro); }
+.estado.ganada { background: var(--exito-suave); color: var(--exito); }
+.estado.perdida { background: var(--error-suave); color: var(--error); }
+.estado.cancelada { background: var(--fondo); color: var(--texto-suave); }
+.positivo { color: var(--exito) !important; font-weight: 700; }
+.negativo { color: var(--error) !important; font-weight: 700; }
+.boton-peligro { background: var(--error); }
+.boton-peligro:hover { background: #b42318; }
+.marcador-etiquetas { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.resultado-final { margin: 4px 0 0; font-size: 1.05rem; }
 
 /* ---------- Móvil ---------- */
 
