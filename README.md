@@ -69,7 +69,9 @@ Abrir http://localhost:8080.
 
 | Página | Qué hace | Historias |
 |---|---|---|
-| `/eventos` | Catálogo público de eventos, agrupados por deporte y ordenados por fecha | HU-08, HU-19 |
+| `/eventos` | Catálogo público de eventos con sus cuotas 1/X/2, agrupados por competición | HU-08, HU-19, HU-20 |
+| `/eventos/{id}/apostar` | Apuesta simple: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
+| `/apuestas` | Mis apuestas activas, dinero en juego y ganancia si acierto | HU-24 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos, y edición de la calificación y el escudo de cada equipo | HU-01 |
@@ -86,4 +88,4 @@ Abrir http://localhost:8080.
 1. Leer [CONTRIBUTING.md](CONTRIBUTING.md) (flujo Git, ramas y pull requests).
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).
 3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) y las [historias de usuario](docs/requisitos/historias-de-usuario.md).
-4. Arrancar la aplicación (ver arriba) y revisar el [Sprint 1](docs/scrum/sprints/sprint-01.md).
+4. Arrancar la aplicación (ver arriba) y revisar los sprints en [docs/scrum/sprints](docs/scrum/sprints).
