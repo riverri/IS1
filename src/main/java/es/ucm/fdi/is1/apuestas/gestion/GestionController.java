@@ -82,26 +82,27 @@ public class GestionController {
         return "gestion/equipo";
     }
 
-    @GetMapping("/equipos/{id}/escudo")
-    public String editarEscudo(@PathVariable Long id, Model model) {
+    @GetMapping("/equipos/{id}/editar")
+    public String editarEquipo(@PathVariable Long id, Model model) {
         Equipo equipo = gestion.equipo(id);
-        EscudoForm form = new EscudoForm();
+        EdicionEquipoForm form = new EdicionEquipoForm();
+        form.setCalidad(equipo.getCalidad());
         form.setEscudoUrl(equipo.getEscudoUrl());
         model.addAttribute("equipo", equipo);
-        model.addAttribute("escudo", form);
-        return "gestion/escudo";
+        model.addAttribute("edicion", form);
+        return "gestion/editar-equipo";
     }
 
-    @PostMapping("/equipos/{id}/escudo")
-    public String guardarEscudo(@PathVariable Long id, @Valid @ModelAttribute("escudo") EscudoForm form,
+    @PostMapping("/equipos/{id}/editar")
+    public String guardarEquipo(@PathVariable Long id, @Valid @ModelAttribute("edicion") EdicionEquipoForm form,
                                 BindingResult errores, Model model, RedirectAttributes redireccion) {
         Equipo equipo = gestion.equipo(id);
         if (errores.hasErrors()) {
             model.addAttribute("equipo", equipo);
-            return "gestion/escudo";
+            return "gestion/editar-equipo";
         }
-        gestion.cambiarEscudo(id, form.getEscudoUrl());
-        redireccion.addFlashAttribute("mensaje", "Escudo actualizado: " + equipo.getNombre());
+        gestion.editarEquipo(id, form);
+        redireccion.addFlashAttribute("mensaje", "Equipo actualizado: " + equipo.getNombre());
         return "redirect:/gestion";
     }
 

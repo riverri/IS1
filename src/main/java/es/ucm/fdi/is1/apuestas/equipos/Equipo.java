@@ -80,6 +80,10 @@ public class Equipo {
         return calidad;
     }
 
+    public void setCalidad(Double calidad) {
+        this.calidad = calidad;
+    }
+
     public Set<Competicion> getCompeticiones() {
         return competiciones;
     }

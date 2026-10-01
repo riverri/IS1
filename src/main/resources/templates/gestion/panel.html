@@ -51,7 +51,7 @@
                 <td th:text="${e.deporte.nombre}">Fútbol</td>
                 <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
                 <td th:text="${e.calidad}">9.5</td>
-                <td><a th:href="@{/gestion/equipos/{id}/escudo(id=${e.id})}">Cambiar escudo</a></td>
+                <td><a th:href="@{/gestion/equipos/{id}/editar(id=${e.id})}">Editar</a></td>
             </tr>
             </tbody>
         </table>

@@ -140,16 +140,33 @@ class GestionWebTest {
 
     @Test
     @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
-    void cambiaElEscudoDeUnEquipo() throws Exception {
+    void editaCalificacionYEscudoDeUnEquipo() throws Exception {
         Equipo getafe = equipo("Getafe CF");
-        mvc.perform(post("/gestion/equipos/{id}/escudo", getafe.getId()).with(csrf())
+        mvc.perform(post("/gestion/equipos/{id}/editar", getafe.getId()).with(csrf())
+                        .param("calidad", "7.3")
                         .param("escudoUrl", "https://example.org/getafe.png"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gestion"));
 
-        assertThat(equipo("Getafe CF").getEscudoUrl()).isEqualTo("https://example.org/getafe.png");
+        Equipo editado = equipo("Getafe CF");
+        assertThat(editado.getCalidad()).isEqualTo(7.3);
+        assertThat(editado.getEscudoUrl()).isEqualTo("https://example.org/getafe.png");
         mvc.perform(get("/equipos"))
                 .andExpect(content().string(containsString("https://example.org/getafe.png")));
+    }
+
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void edicionRechazaCalificacionFueraDeRango() throws Exception {
+        Equipo getafe = equipo("Getafe CF");
+        Double antes = getafe.getCalidad();
+        mvc.perform(post("/gestion/equipos/{id}/editar", getafe.getId()).with(csrf())
+                        .param("calidad", "12")
+                        .param("escudoUrl", ""))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("La calificación debe estar entre 0 y 10")));
+
+        assertThat(equipo("Getafe CF").getCalidad()).isEqualTo(antes);
     }
 
     @Test
@@ -157,7 +174,8 @@ class GestionWebTest {
     void rechazaEscudoQueNoEsUnaDireccionWeb() throws Exception {
         Equipo getafe = equipo("Getafe CF");
         String antes = getafe.getEscudoUrl();
-        mvc.perform(post("/gestion/equipos/{id}/escudo", getafe.getId()).with(csrf())
+        mvc.perform(post("/gestion/equipos/{id}/editar", getafe.getId()).with(csrf())
+                        .param("calidad", "6")
                         .param("escudoUrl", "javascript:alert(1)"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Debe ser una dirección")));
@@ -169,9 +187,20 @@ class GestionWebTest {
     @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
     void vaciarElEscudoVuelveALasIniciales() throws Exception {
         Equipo getafe = equipo("Getafe CF");
-        mvc.perform(post("/gestion/equipos/{id}/escudo", getafe.getId()).with(csrf()).param("escudoUrl", ""))
+        mvc.perform(post("/gestion/equipos/{id}/editar", getafe.getId()).with(csrf())
+                        .param("calidad", "6").param("escudoUrl", ""))
                 .andExpect(status().is3xxRedirection());
 
         assertThat(equipo("Getafe CF").getEscudoUrl()).isNull();
+    }
+
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void laPaginaDeEdicionMuestraLaCalificacionActual() throws Exception {
+        Equipo getafe = equipo("Getafe CF");
+        mvc.perform(get("/gestion/equipos/{id}/editar", getafe.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Calificación de calidad")))
+                .andExpect(content().string(containsString("value=\"" + getafe.getCalidad() + "\"")));
     }
 }
