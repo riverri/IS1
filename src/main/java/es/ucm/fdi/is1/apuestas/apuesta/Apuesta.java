@@ -65,6 +65,20 @@ public class Apuesta {
         return importe.multiply(cuota).setScale(2, RoundingMode.DOWN);
     }
 
+    /** Una apuesta activa se puede cancelar mientras el evento no haya empezado (HU-26). */
+    public boolean cancelable(LocalDateTime ahora) {
+        return estado == EstadoApuesta.ACTIVA && evento.getFechaHora().isAfter(ahora);
+    }
+
+    /** Cancela la apuesta y devuelve el importe al usuario. */
+    public void cancelar(LocalDateTime ahora) {
+        if (!cancelable(ahora)) {
+            throw new IllegalStateException("La apuesta ya no se puede cancelar");
+        }
+        estado = EstadoApuesta.CANCELADA;
+        usuario.abonar(importe);
+    }
+
     /** "Real Madrid", "Empate" o el nombre del visitante, según el pronóstico. */
     public String getDescripcionPronostico() {
         return switch (pronostico) {

@@ -75,6 +75,11 @@ public class Usuario {
         saldo = saldo.subtract(importe);
     }
 
+    /** Devuelve o abona un importe al saldo (cancelaciones y ganancias). */
+    public void abonar(BigDecimal importe) {
+        saldo = saldo.add(importe);
+    }
+
     public LocalDateTime proximaRecarga(Duration periodo) {
         return ultimaRecarga.plus(periodo);
     }
