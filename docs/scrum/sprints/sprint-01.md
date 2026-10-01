@@ -22,9 +22,10 @@ Estimaciones iniciales en puntos de historia (Fibonacci). Se revisarán en Plann
 - Saldo de bienvenida: **1000** moneditas. Recarga gratuita: **200** cada **7 días**, que se aplica al iniciar sesión o al consultar la cuenta. Se configura en `application.properties`.
 - Un evento enfrenta a dos equipos de la misma competición (local y visitante), pensado para apuestas G/E/P. Los deportes individuales (F1, MotoGP) necesitarán otro tipo de evento más adelante.
 - Las cuotas se muestran vacías hasta el Sprint 2 (algoritmo de cuotas, fila 3).
+- Los partidos son reales y los introduce a mano el creador de apuestas, como indica el MVP. La API de datos (fila 13) queda para más adelante. La base de datos se guarda en archivo para no perderlos al reiniciar.
 
 ## Dailies
-- **01/10**: arranque del sprint, modelo de datos y seguridad.
+- **01/10**: arranque del sprint, modelo de datos y seguridad. Se quitan los partidos de ejemplo inventados; la base de datos pasa a guardarse en archivo.
 
 ## Sprint Review (14/10)
 - Historias completadas:
