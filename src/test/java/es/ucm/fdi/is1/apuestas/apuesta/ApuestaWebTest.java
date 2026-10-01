@@ -91,7 +91,7 @@ class ApuestaWebTest {
         mvc.perform(get("/eventos"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(cuotaLocal)))
-                .andExpect(content().string(containsString("resultado=EMPATE")));
+                .andExpect(content().string(containsString("/boleto/anadir?evento=" + futbol.getId() + "&amp;resultado=EMPATE")));
     }
 
     @Test
@@ -108,9 +108,11 @@ class ApuestaWebTest {
 
         assertThat(saldo()).isEqualByComparingTo(antes.subtract(new BigDecimal("25")));
         Apuesta apuesta = apuestas.findAll().stream()
-                .filter(a -> a.getEvento().getId().equals(futbol.getId())).findFirst().orElseThrow();
+                .filter(a -> a.getSelecciones().get(0).getEvento().getId().equals(futbol.getId()))
+                .findFirst().orElseThrow();
         assertThat(apuesta.getEstado()).isEqualTo(EstadoApuesta.ACTIVA);
-        assertThat(apuesta.getPronostico()).isEqualTo(Resultado.VISITANTE);
+        assertThat(apuesta.isCombinada()).isFalse();
+        assertThat(apuesta.getSelecciones().get(0).getPronostico()).isEqualTo(Resultado.VISITANTE);
         assertThat(apuesta.getCuota()).isEqualByComparingTo(cuota);
     }
 
