@@ -70,7 +70,8 @@ Abrir http://localhost:8080.
 | Página | Qué hace | Historias |
 |---|---|---|
 | `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador | HU-08, HU-19, HU-20, HU-22 |
-| `/eventos/{id}/apostar` | Apuesta simple: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
+| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
+| `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/apuestas` | Mis apuestas activas (con opción de cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-34, HU-35 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |

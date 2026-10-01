@@ -90,8 +90,9 @@ class CancelacionWebTest {
     @WithMockUser(username = USUARIO)
     void noSePuedeCancelarSiElEventoYaHaEmpezado() throws Exception {
         Usuario usuario = usuarios.findByEmail(USUARIO).orElseThrow();
-        Apuesta apuesta = apuestas.save(new Apuesta(usuario, evento(LocalDateTime.now().minusMinutes(10)),
-                Resultado.LOCAL, new BigDecimal("10"), new BigDecimal("2.00"), LocalDateTime.now().minusDays(1)));
+        Apuesta apuesta = new Apuesta(usuario, new BigDecimal("10"), LocalDateTime.now().minusDays(1));
+        apuesta.anadir(evento(LocalDateTime.now().minusMinutes(10)), Resultado.LOCAL, new BigDecimal("2.00"));
+        apuestas.save(apuesta);
         BigDecimal antes = saldo(USUARIO);
 
         mvc.perform(post("/apuestas/{id}/cancelar", apuesta.getId()).with(csrf()))
