@@ -59,7 +59,7 @@ class CatalogoWebTest {
         eventos.save(new Evento(competicion("Liga ACB"),
                 equipo("Unicaja"), equipo("Barça Basket"), ahora.plusDays(2)));
         eventos.save(new Evento(competicion("LaLiga"),
-                equipo("FC Barcelona"), equipo("Getafe CF"), ahora.minusDays(3)));
+                equipo("Getafe CF"), equipo("Atlético de Madrid"), ahora.minusDays(3)));
     }
 
     @Test
@@ -75,7 +75,7 @@ class CatalogoWebTest {
     @Test
     void losEventosYaJugadosNoAparecen() throws Exception {
         mvc.perform(get("/eventos"))
-                .andExpect(content().string(not(containsString("FC Barcelona – Getafe CF"))));
+                .andExpect(content().string(not(containsString("Getafe CF – Atlético de Madrid"))));
     }
 
     @Test
