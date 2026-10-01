@@ -8,6 +8,7 @@
         <h1>Mis apuestas</h1>
     </div>
     <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Apuesta registrada</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">No se puede cancelar</p>
 
     <div class="estadisticas">
         <div class="tarjeta estadistica"><span th:text="${activas.size()}">2</span>apuestas activas</div>
@@ -43,6 +44,10 @@
                 <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
                 <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
             </dl>
+            <form th:if="${a.cancelable(ahora)}" th:action="@{/apuestas/{id}/cancelar(id=${a.id})}" method="post"
+                  onsubmit="return confirm('¿Cancelar la apuesta? Se te devolverá el importe.');">
+                <button class="boton boton-secundario boton-bloque" type="submit">Cancelar apuesta</button>
+            </form>
         </article>
     </div>
 </main>

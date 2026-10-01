@@ -40,6 +40,9 @@ public class Evento {
     @Enumerated(EnumType.STRING)
     private EstadoEvento estado = EstadoEvento.PROGRAMADO;
 
+    /** Jornada, ronda o gran premio ("Jornada 8", "Cuartos de final"…). Opcional. */
+    private String fase;
+
     protected Evento() {
         // requerido por JPA
     }
@@ -82,5 +85,13 @@ public class Evento {
 
     public EstadoEvento getEstado() {
         return estado;
+    }
+
+    public String getFase() {
+        return fase;
+    }
+
+    public void setFase(String fase) {
+        this.fase = fase;
     }
 }

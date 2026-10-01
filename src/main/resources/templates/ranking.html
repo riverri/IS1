@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Ranking')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Ranking</h1>
+    </div>
+    <p class="subtitulo" th:text="${total} + ' jugadores ordenados por saldo'">12 jugadores ordenados por saldo</p>
+
+    <div class="vacio" th:if="${#lists.isEmpty(primeros)}">
+        <p>Todavía no hay jugadores.</p>
+    </div>
+
+    <ol class="ranking tarjeta" th:unless="${#lists.isEmpty(primeros)}">
+        <li th:each="p : ${primeros}" th:classappend="${p.soyYo} ? 'soy-yo'">
+            <span class="ranking-posicion" th:classappend="${p.posicion <= 3} ? ('podio-' + ${p.posicion})"
+                  th:text="${p.posicion}">1</span>
+            <span class="ranking-nombre">
+                <span th:text="${p.nombre}">Ana</span>
+                <small th:if="${p.soyYo}">(tú)</small>
+            </span>
+            <span class="ranking-saldo" th:text="${#numbers.formatDecimal(p.saldo, 1, 'POINT', 2, 'COMMA')}">1.250,00</span>
+        </li>
+        <th:block th:if="${mio != null}">
+            <li class="ranking-separador" aria-hidden="true">…</li>
+            <li class="soy-yo">
+                <span class="ranking-posicion" th:text="${mio.posicion}">34</span>
+                <span class="ranking-nombre"><span th:text="${mio.nombre}">Yo</span> <small>(tú)</small></span>
+                <span class="ranking-saldo" th:text="${#numbers.formatDecimal(mio.saldo, 1, 'POINT', 2, 'COMMA')}">800,00</span>
+            </li>
+        </th:block>
+    </ol>
+</main>
+</body>
+</html>

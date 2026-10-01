@@ -39,6 +39,19 @@
         </div>
     </section>
 
+    <section th:unless="${#maps.isEmpty(recuento)}">
+        <div class="seccion-titulo">
+            <h2>Deportes</h2>
+        </div>
+        <div class="categorias">
+            <a class="categoria" th:each="r : ${recuento}" th:href="@{/eventos(deporte=${r.key})}">
+                <span class="categoria-icono" th:text="${r.key.icono}">⚽</span>
+                <strong th:text="${r.key.nombre}">Fútbol</strong>
+                <span th:text="${r.value} + ' eventos'">34 eventos</span>
+            </a>
+        </div>
+    </section>
+
     <section th:unless="${#lists.isEmpty(proximos)}">
         <div class="seccion-titulo">
             <h2>Próximos partidos</h2>

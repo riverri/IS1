@@ -76,6 +76,9 @@ public class DatosIniciales implements ApplicationRunner {
         Competicion acb = competicion("Liga ACB", Deporte.BALONCESTO);
         Competicion euroliga = competicion("Euroliga", Deporte.BALONCESTO);
         Competicion f1 = competicion("Fórmula 1", Deporte.AUTOMOVILISMO);
+        Competicion nba = competicion("NBA", Deporte.BALONCESTO);
+        Competicion atp = competicion("ATP Masters 1000", Deporte.TENIS);
+        Competicion motoGp = competicion("MotoGP", Deporte.MOTOCICLISMO);
 
         // Calificaciones orientativas (0-10): el creador de apuestas debe revisarlas
         equipo("Real Madrid", Deporte.FUTBOL, 6.7, laLiga, champions);
@@ -132,28 +135,68 @@ public class DatosIniciales implements ApplicationRunner {
         equipo("Real Madrid Baloncesto", Deporte.BALONCESTO, 9.0, acb, euroliga);
         equipo("Barça Basket", Deporte.BALONCESTO, 8.5, acb, euroliga);
         equipo("Unicaja", Deporte.BALONCESTO, 7.5, acb);
+        equipo("Valencia Basket", Deporte.BALONCESTO, 8.0, acb, euroliga);
+        equipo("Baskonia", Deporte.BALONCESTO, 7.6, acb, euroliga);
+        equipo("Gran Canaria", Deporte.BALONCESTO, 7.0, acb);
+        equipo("Joventut Badalona", Deporte.BALONCESTO, 6.8, acb);
+        equipo("UCAM Murcia", Deporte.BALONCESTO, 6.9, acb);
+        equipo("Olympiacos", Deporte.BALONCESTO, 8.8, euroliga);
+        equipo("Panathinaikos", Deporte.BALONCESTO, 8.9, euroliga);
+        equipo("Fenerbahçe Beko", Deporte.BALONCESTO, 8.9, euroliga);
+        equipo("Zalgiris Kaunas", Deporte.BALONCESTO, 7.4, euroliga);
+        equipo("Oklahoma City Thunder", Deporte.BALONCESTO, 9.6, nba);
+        equipo("Denver Nuggets", Deporte.BALONCESTO, 9.0, nba);
+        equipo("New York Knicks", Deporte.BALONCESTO, 8.8, nba);
+        equipo("Boston Celtics", Deporte.BALONCESTO, 8.6, nba);
+        equipo("Los Angeles Lakers", Deporte.BALONCESTO, 8.5, nba);
+        equipo("Golden State Warriors", Deporte.BALONCESTO, 8.3, nba);
+        equipo("San Antonio Spurs", Deporte.BALONCESTO, 8.0, nba);
+        equipo("Dallas Mavericks", Deporte.BALONCESTO, 7.8, nba);
+        equipo("Carlos Alcaraz", Deporte.TENIS, 9.8, atp);
+        equipo("Jannik Sinner", Deporte.TENIS, 9.7, atp);
+        equipo("Novak Djokovic", Deporte.TENIS, 8.9, atp);
+        equipo("Alexander Zverev", Deporte.TENIS, 8.6, atp);
+        equipo("Taylor Fritz", Deporte.TENIS, 8.2, atp);
+        equipo("Jack Draper", Deporte.TENIS, 8.0, atp);
+        equipo("Holger Rune", Deporte.TENIS, 7.6, atp);
+        equipo("Alejandro Davidovich", Deporte.TENIS, 7.4, atp);
         equipo("Max Verstappen", Deporte.AUTOMOVILISMO, 9.5, f1);
         equipo("Lance Stroll", Deporte.AUTOMOVILISMO, 2.0, f1);
+        equipo("Lando Norris", Deporte.AUTOMOVILISMO, 9.3, f1);
+        equipo("Oscar Piastri", Deporte.AUTOMOVILISMO, 9.1, f1);
+        equipo("George Russell", Deporte.AUTOMOVILISMO, 8.8, f1);
+        equipo("Charles Leclerc", Deporte.AUTOMOVILISMO, 8.7, f1);
+        equipo("Lewis Hamilton", Deporte.AUTOMOVILISMO, 8.2, f1);
+        equipo("Fernando Alonso", Deporte.AUTOMOVILISMO, 7.6, f1);
+        equipo("Carlos Sainz", Deporte.AUTOMOVILISMO, 7.5, f1);
+        equipo("Marc Márquez", Deporte.MOTOCICLISMO, 9.8, motoGp);
+        equipo("Álex Márquez", Deporte.MOTOCICLISMO, 8.6, motoGp);
+        equipo("Francesco Bagnaia", Deporte.MOTOCICLISMO, 8.5, motoGp);
+        equipo("Pedro Acosta", Deporte.MOTOCICLISMO, 8.2, motoGp);
+        equipo("Marco Bezzecchi", Deporte.MOTOCICLISMO, 8.1, motoGp);
+        equipo("Jorge Martín", Deporte.MOTOCICLISMO, 7.9, motoGp);
 
         // LaLiga 2026/27, jornada 8
-        partido(laLiga, "Málaga CF", "RCD Espanyol", 2026, 10, 9, 21, 0);
-        partido(laLiga, "Rayo Vallecano", "Athletic Club", 2026, 10, 10, 14, 0);
-        partido(laLiga, "Deportivo Alavés", "Atlético de Madrid", 2026, 10, 10, 16, 15);
-        partido(laLiga, "FC Barcelona", "Getafe CF", 2026, 10, 10, 18, 30);
-        partido(laLiga, "Real Madrid", "Villarreal CF", 2026, 10, 10, 21, 0);
-        partido(laLiga, "Elche CF", "Celta de Vigo", 2026, 10, 11, 14, 0);
-        partido(laLiga, "Real Sociedad", "RC Deportivo", 2026, 10, 11, 16, 15);
-        partido(laLiga, "Real Betis", "CA Osasuna", 2026, 10, 11, 18, 30);
-        partido(laLiga, "Racing de Santander", "Valencia CF", 2026, 10, 11, 21, 0);
-        partido(laLiga, "Levante UD", "Sevilla FC", 2026, 10, 12, 21, 0);
+        partido(laLiga, "Jornada 8", "Málaga CF", "RCD Espanyol", 2026, 10, 9, 21, 0);
+        partido(laLiga, "Jornada 8", "Rayo Vallecano", "Athletic Club", 2026, 10, 10, 14, 0);
+        partido(laLiga, "Jornada 8", "Deportivo Alavés", "Atlético de Madrid", 2026, 10, 10, 16, 15);
+        partido(laLiga, "Jornada 8", "FC Barcelona", "Getafe CF", 2026, 10, 10, 18, 30);
+        partido(laLiga, "Jornada 8", "Real Madrid", "Villarreal CF", 2026, 10, 10, 21, 0);
+        partido(laLiga, "Jornada 8", "Elche CF", "Celta de Vigo", 2026, 10, 11, 14, 0);
+        partido(laLiga, "Jornada 8", "Real Sociedad", "RC Deportivo", 2026, 10, 11, 16, 15);
+        partido(laLiga, "Jornada 8", "Real Betis", "CA Osasuna", 2026, 10, 11, 18, 30);
+        partido(laLiga, "Jornada 8", "Racing de Santander", "Valencia CF", 2026, 10, 11, 21, 0);
+        partido(laLiga, "Jornada 8", "Levante UD", "Sevilla FC", 2026, 10, 12, 21, 0);
 
         // LaLiga 2026/27, jornada 9 (partidos publicados hasta ahora)
-        partido(laLiga, "RC Deportivo", "Levante UD", 2026, 10, 16, 21, 0);
-        partido(laLiga, "RCD Espanyol", "Atlético de Madrid", 2026, 10, 17, 14, 0);
-        partido(laLiga, "Villarreal CF", "Elche CF", 2026, 10, 17, 16, 15);
-        partido(laLiga, "Real Betis", "FC Barcelona", 2026, 10, 17, 18, 30);
-        partido(laLiga, "Valencia CF", "Athletic Club", 2026, 10, 17, 21, 0);
-        partido(laLiga, "CA Osasuna", "Racing de Santander", 2026, 10, 18, 14, 0);
+        partido(laLiga, "Jornada 9", "RC Deportivo", "Levante UD", 2026, 10, 16, 21, 0);
+        partido(laLiga, "Jornada 9", "RCD Espanyol", "Atlético de Madrid", 2026, 10, 17, 14, 0);
+        partido(laLiga, "Jornada 9", "Villarreal CF", "Elche CF", 2026, 10, 17, 16, 15);
+        partido(laLiga, "Jornada 9", "Real Betis", "FC Barcelona", 2026, 10, 17, 18, 30);
+        partido(laLiga, "Jornada 9", "Valencia CF", "Athletic Club", 2026, 10, 17, 21, 0);
+        partido(laLiga, "Jornada 9", "CA Osasuna", "Racing de Santander", 2026, 10, 18, 14, 0);
+
+        eventosDeEjemplo(acb, euroliga, nba, atp, f1, motoGp);
 
         // Escudos: solo se rellenan si el equipo aún no tiene uno (no pisa los cambios hechos en Gestión)
         ESCUDOS.forEach((nombre, id) -> equipos.findByNombre(nombre)
@@ -161,24 +204,55 @@ public class DatosIniciales implements ApplicationRunner {
                 .ifPresent(e -> e.setEscudoUrl("https://crests.football-data.org/" + id + ".png")));
 
         // Champions League 2026/27, jornada 2
-        partido(champions, "RC Lens", "Sporting CP", 2026, 10, 13, 18, 45);
-        partido(champions, "Sabah FK", "Slavia Praga", 2026, 10, 13, 18, 45);
-        partido(champions, "Galatasaray", "FC Barcelona", 2026, 10, 13, 21, 0);
-        partido(champions, "RB Leipzig", "PSV Eindhoven", 2026, 10, 13, 21, 0);
-        partido(champions, "Arsenal", "LOSC Lille", 2026, 10, 13, 21, 0);
-        partido(champions, "Atlético de Madrid", "Manchester United", 2026, 10, 13, 21, 0);
-        partido(champions, "Villarreal CF", "Napoli", 2026, 10, 13, 21, 0);
-        partido(champions, "Viking FK", "Bayern de Múnich", 2026, 10, 13, 21, 0);
-        partido(champions, "Inter de Milán", "Club Brujas", 2026, 10, 13, 21, 0);
-        partido(champions, "LASK", "Liverpool", 2026, 10, 14, 18, 45);
-        partido(champions, "Feyenoord", "Como", 2026, 10, 14, 18, 45);
-        partido(champions, "Shakhtar Donetsk", "AEK Atenas", 2026, 10, 14, 21, 0);
-        partido(champions, "Real Betis", "FC Porto", 2026, 10, 14, 21, 0);
-        partido(champions, "AS Roma", "Real Madrid", 2026, 10, 14, 21, 0);
-        partido(champions, "Slovan Bratislava", "VfB Stuttgart", 2026, 10, 14, 21, 0);
-        partido(champions, "Aston Villa", "Fenerbahçe", 2026, 10, 14, 21, 0);
-        partido(champions, "Manchester City", "Paris Saint-Germain", 2026, 10, 14, 21, 0);
-        partido(champions, "Bodø/Glimt", "Borussia Dortmund", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "RC Lens", "Sporting CP", 2026, 10, 13, 18, 45);
+        partido(champions, "Fase de liga · Jornada 2", "Sabah FK", "Slavia Praga", 2026, 10, 13, 18, 45);
+        partido(champions, "Fase de liga · Jornada 2", "Galatasaray", "FC Barcelona", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "RB Leipzig", "PSV Eindhoven", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Arsenal", "LOSC Lille", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Atlético de Madrid", "Manchester United", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Villarreal CF", "Napoli", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Viking FK", "Bayern de Múnich", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Inter de Milán", "Club Brujas", 2026, 10, 13, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "LASK", "Liverpool", 2026, 10, 14, 18, 45);
+        partido(champions, "Fase de liga · Jornada 2", "Feyenoord", "Como", 2026, 10, 14, 18, 45);
+        partido(champions, "Fase de liga · Jornada 2", "Shakhtar Donetsk", "AEK Atenas", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Real Betis", "FC Porto", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "AS Roma", "Real Madrid", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Slovan Bratislava", "VfB Stuttgart", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Aston Villa", "Fenerbahçe", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Manchester City", "Paris Saint-Germain", 2026, 10, 14, 21, 0);
+        partido(champions, "Fase de liga · Jornada 2", "Bodø/Glimt", "Borussia Dortmund", 2026, 10, 14, 21, 0);
+    }
+
+    /**
+     * Eventos de ejemplo de otros deportes, para tener el catálogo completo por categorías.
+     * No son el calendario real: el creador de apuestas debe sustituirlos por los reales.
+     */
+    private void eventosDeEjemplo(Competicion acb, Competicion euroliga, Competicion nba,
+                                  Competicion atp, Competicion f1, Competicion motoGp) {
+        partido(acb, "Jornada 4", "Real Madrid Baloncesto", "Valencia Basket", 2026, 10, 4, 18, 0);
+        partido(acb, "Jornada 4", "Barça Basket", "Baskonia", 2026, 10, 4, 20, 30);
+        partido(acb, "Jornada 4", "Unicaja", "Gran Canaria", 2026, 10, 5, 12, 30);
+        partido(acb, "Jornada 4", "Joventut Badalona", "UCAM Murcia", 2026, 10, 5, 17, 0);
+        partido(euroliga, "Jornada 3", "Olympiacos", "Real Madrid Baloncesto", 2026, 10, 8, 19, 15);
+        partido(euroliga, "Jornada 3", "Barça Basket", "Panathinaikos", 2026, 10, 8, 20, 30);
+        partido(euroliga, "Jornada 3", "Fenerbahçe Beko", "Valencia Basket", 2026, 10, 9, 18, 45);
+        partido(euroliga, "Jornada 3", "Baskonia", "Zalgiris Kaunas", 2026, 10, 9, 20, 30);
+        partido(nba, "Temporada regular", "Los Angeles Lakers", "Golden State Warriors", 2026, 10, 21, 4, 0);
+        partido(nba, "Temporada regular", "Boston Celtics", "New York Knicks", 2026, 10, 22, 1, 30);
+        partido(nba, "Temporada regular", "Oklahoma City Thunder", "Denver Nuggets", 2026, 10, 22, 2, 0);
+        partido(nba, "Temporada regular", "San Antonio Spurs", "Dallas Mavericks", 2026, 10, 22, 2, 30);
+        partido(atp, "Shanghái · Cuartos de final", "Carlos Alcaraz", "Jack Draper", 2026, 10, 9, 9, 30);
+        partido(atp, "Shanghái · Cuartos de final", "Jannik Sinner", "Holger Rune", 2026, 10, 9, 12, 0);
+        partido(atp, "Shanghái · Cuartos de final", "Novak Djokovic", "Taylor Fritz", 2026, 10, 9, 14, 30);
+        partido(atp, "Shanghái · Cuartos de final", "Alexander Zverev", "Alejandro Davidovich", 2026, 10, 9, 7, 0);
+        partido(f1, "GP de Singapur · Duelos", "Fernando Alonso", "Carlos Sainz", 2026, 10, 11, 14, 0);
+        partido(f1, "GP de Singapur · Duelos", "Charles Leclerc", "Lewis Hamilton", 2026, 10, 11, 14, 0);
+        partido(f1, "GP de Singapur · Duelos", "Lando Norris", "Oscar Piastri", 2026, 10, 11, 14, 0);
+        partido(f1, "GP de Singapur · Duelos", "Max Verstappen", "George Russell", 2026, 10, 11, 14, 0);
+        partido(motoGp, "GP de Australia · Duelos", "Marc Márquez", "Francesco Bagnaia", 2026, 10, 18, 5, 0);
+        partido(motoGp, "GP de Australia · Duelos", "Jorge Martín", "Pedro Acosta", 2026, 10, 18, 5, 0);
+        partido(motoGp, "GP de Australia · Duelos", "Álex Márquez", "Marco Bezzecchi", 2026, 10, 18, 5, 0);
     }
 
     private void usuario(String email, String nombre, String password, Rol rol) {
@@ -203,13 +277,15 @@ public class DatosIniciales implements ApplicationRunner {
         equipos.save(equipo);
     }
 
-    private void partido(Competicion competicion, String local, String visitante,
+    private void partido(Competicion competicion, String fase, String local, String visitante,
                          int anio, int mes, int dia, int hora, int minuto) {
         Equipo equipoLocal = equipos.findByNombre(local).orElseThrow();
         Equipo equipoVisitante = equipos.findByNombre(visitante).orElseThrow();
         LocalDateTime fechaHora = LocalDateTime.of(anio, mes, dia, hora, minuto);
-        if (!eventos.existsByLocalAndVisitanteAndFechaHora(equipoLocal, equipoVisitante, fechaHora)) {
-            eventos.save(new Evento(competicion, equipoLocal, equipoVisitante, fechaHora));
+        Evento evento = eventos.findByLocalAndVisitanteAndFechaHora(equipoLocal, equipoVisitante, fechaHora)
+                .orElseGet(() -> eventos.save(new Evento(competicion, equipoLocal, equipoVisitante, fechaHora)));
+        if (evento.getFase() == null) {
+            evento.setFase(fase);
         }
     }
 }

@@ -2,6 +2,8 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -48,6 +50,22 @@ public class UsuarioService {
         Usuario usuario = usuarios.findByEmail(normalizar(email)).orElseThrow();
         usuario.aplicarRecargaPeriodica(LocalDateTime.now(reloj), saldo.recargaPeriodo(), saldo.recargaImporte());
         return usuario;
+    }
+
+    /**
+     * Ranking de usuarios por saldo (HU-36). De momento se ordena por saldo; cuando se resuelvan
+     * las apuestas se podrá ordenar también por ganancias o por porcentaje de aciertos.
+     */
+    @Transactional(readOnly = true)
+    public List<PuestoRanking> ranking(String emailActual) {
+        String yo = emailActual == null ? null : normalizar(emailActual);
+        List<Usuario> ordenados = usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO);
+        List<PuestoRanking> puestos = new ArrayList<>();
+        for (int i = 0; i < ordenados.size(); i++) {
+            Usuario u = ordenados.get(i);
+            puestos.add(new PuestoRanking(i + 1, u.getNombre(), u.getSaldo(), u.getEmail().equals(yo)));
+        }
+        return puestos;
     }
 
     @Transactional(readOnly = true)

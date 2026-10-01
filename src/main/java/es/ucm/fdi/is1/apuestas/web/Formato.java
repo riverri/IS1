@@ -62,4 +62,24 @@ public class Formato {
         int tono = Math.floorMod(nombre.hashCode(), 360);
         return "hsl(" + tono + " 55% 38%)";
     }
+
+    /**
+     * Colores del escudo dibujado: {fondo, borde, texto}. Usa los colores del club si se conocen;
+     * el texto es oscuro sobre fondos claros y blanco sobre fondos oscuros.
+     */
+    public String[] colores(String nombre) {
+        String[] club = Colores.CLUBES.get(nombre);
+        if (club == null) {
+            return new String[] {color(nombre), "#ffffff", "#ffffff"};
+        }
+        String texto = esClaro(club[0]) ? (esClaro(club[1]) ? "#0f172a" : club[1]) : "#ffffff";
+        return new String[] {club[0], club[1], texto};
+    }
+
+    private static boolean esClaro(String hex) {
+        int r = Integer.parseInt(hex.substring(1, 3), 16);
+        int g = Integer.parseInt(hex.substring(3, 5), 16);
+        int b = Integer.parseInt(hex.substring(5, 7), 16);
+        return (0.299 * r + 0.587 * g + 0.114 * b) > 170;
+    }
 }
