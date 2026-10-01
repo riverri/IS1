@@ -24,13 +24,17 @@
     <h2>Eventos</h2>
     <div class="tarjeta tabla">
         <table>
-            <thead><tr><th>Fecha</th><th>Competición</th><th>Partido</th><th>Estado</th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Competición</th><th>Partido</th><th>Estado</th><th></th></tr></thead>
             <tbody>
             <tr th:each="ev : ${eventos}">
                 <td th:text="${#temporals.format(ev.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</td>
                 <td th:text="${ev.competicion.nombre}">LaLiga</td>
                 <td th:text="${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">Real Madrid – Getafe CF</td>
-                <td><span class="estado" th:classappend="${#strings.toLowerCase(ev.estado)}" th:text="${ev.estado}">PROGRAMADO</span></td>
+                <td>
+                    <span class="estado" th:classappend="${#strings.toLowerCase(ev.estado)}" th:text="${ev.estado}">PROGRAMADO</span>
+                    <span class="estado pendiente" th:if="${ev.estado.name() == 'PROGRAMADO' and ev.haEmpezado(ahora)}">FALTA RESULTADO</span>
+                </td>
+                <td><a th:href="@{/gestion/eventos/{id}(id=${ev.id})}">Gestionar</a></td>
             </tr>
             </tbody>
         </table>
