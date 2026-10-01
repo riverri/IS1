@@ -20,6 +20,7 @@
         </div>
     </div>
 
+    <h2>Activas</h2>
     <div class="vacio" th:if="${#lists.isEmpty(activas)}">
         <p>Todavía no tienes apuestas activas.</p>
         <a class="boton" th:href="@{/eventos}">Ver partidos</a>
@@ -49,6 +50,40 @@
                 <button class="boton boton-secundario boton-bloque" type="submit">Cancelar apuesta</button>
             </form>
         </article>
+    </div>
+
+    <h2>Historial</h2>
+    <div class="estadisticas" th:if="${estadisticas.tieneDatos}">
+        <div class="tarjeta estadistica"><span th:text="${estadisticas.resueltas}">5</span>apuestas resueltas</div>
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(estadisticas.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %'">60,0 %</span>de aciertos</div>
+        <div class="tarjeta estadistica">
+            <span th:classappend="${estadisticas.beneficio.signum() >= 0} ? 'positivo' : 'negativo'"
+                  th:text="${estadisticas.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(estadisticas.beneficio, 1, 'POINT', 2, 'COMMA')}">+35,00</span>
+            balance
+            <small th:text="${#numbers.formatDecimal(estadisticas.rentabilidad, 1, 'POINT', 1, 'COMMA')} + ' % de rentabilidad'">12,5 % de rentabilidad</small>
+        </div>
+    </div>
+    <div class="vacio" th:if="${#lists.isEmpty(historial)}">
+        <p>Aquí aparecerán tus apuestas cuando se resuelvan.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(historial)}">
+        <table>
+            <thead><tr><th>Partido</th><th>Pronóstico</th><th>Cuota</th><th>Importe</th><th>Estado</th><th>Balance</th></tr></thead>
+            <tbody>
+            <tr th:each="a : ${historial}">
+                <td>
+                    <span th:text="${a.evento.local.nombre} + ' – ' + ${a.evento.visitante.nombre}">Real Madrid – Getafe CF</span><br>
+                    <small class="aviso" th:text="${a.evento.competicion.nombre} + ' · ' + ${@formato.dia(a.evento.fechaHora)}">LaLiga · Sáb 10 oct</small>
+                </td>
+                <td th:text="${a.pronostico.simbolo} + ' · ' + ${a.descripcionPronostico}">1 · Real Madrid</td>
+                <td th:text="${@formato.cuota(a.cuota)}">1,85</td>
+                <td th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</td>
+                <td><span class="estado" th:classappend="${#strings.toLowerCase(a.estado)}" th:text="${a.estado}">GANADA</span></td>
+                <td th:classappend="${a.beneficio.signum() > 0} ? 'positivo' : (${a.beneficio.signum() < 0} ? 'negativo')"
+                    th:text="${a.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(a.beneficio, 1, 'POINT', 2, 'COMMA')}">+8,50</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </main>
 </body>

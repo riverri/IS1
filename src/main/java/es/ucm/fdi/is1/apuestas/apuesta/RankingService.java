@@ -1,0 +1,59 @@
+package es.ucm.fdi.is1.apuestas.apuesta;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
+import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
+
+/** Ranking de jugadores por saldo, ganancias o porcentaje de aciertos (HU-36). */
+@Service
+public class RankingService {
+
+    private final UsuarioRepository usuarios;
+    private final ApuestaRepository apuestas;
+
+    public RankingService(UsuarioRepository usuarios, ApuestaRepository apuestas) {
+        this.usuarios = usuarios;
+        this.apuestas = apuestas;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio) {
+        String yo = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
+        Map<Long, List<Apuesta>> porUsuario = apuestas
+                .findByEstadoIn(EnumSet.of(EstadoApuesta.GANADA, EstadoApuesta.PERDIDA)).stream()
+                .collect(Collectors.groupingBy(a -> a.getUsuario().getId()));
+
+        record Fila(Usuario usuario, Estadisticas estadisticas) {
+        }
+        List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
+                .map(u -> new Fila(u, Estadisticas.de(porUsuario.getOrDefault(u.getId(), List.of()))))
+                .toList());
+
+        Comparator<Fila> orden = switch (criterio) {
+            case SALDO -> Comparator.comparing((Fila f) -> f.usuario().getSaldo()).reversed();
+            case GANANCIAS -> Comparator.comparing((Fila f) -> f.estadisticas().beneficio()).reversed();
+            case ACIERTOS -> Comparator.comparing((Fila f) -> f.estadisticas().isTieneDatos()).reversed()
+                    .thenComparing(Comparator.comparing((Fila f) -> f.estadisticas().getPorcentajeAciertos()).reversed());
+        };
+        filas.sort(orden.thenComparing(f -> f.usuario().getNombre()));
+
+        List<PuestoRanking> puestos = new ArrayList<>();
+        for (int i = 0; i < filas.size(); i++) {
+            Fila f = filas.get(i);
+            puestos.add(new PuestoRanking(i + 1, f.usuario().getNombre(), f.usuario().getSaldo(),
+                    f.estadisticas(), f.usuario().getEmail().equals(yo)));
+        }
+        return puestos;
+    }
+}

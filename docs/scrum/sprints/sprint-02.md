@@ -1,4 +1,4 @@
-# Sprint 2 · 01/10 – 15/10
+# Sprint 2 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -41,12 +41,12 @@ Las cuotas se calculan en el momento, así que si el creador cambia la calificac
 - **01/10**: algoritmo de cuotas, apuesta simple y "Mis apuestas".
 - **01/10**: catálogo por deportes con buscador, nuevos deportes, cancelación de apuestas, ranking y escudos dibujados.
 
-## Sprint Review (15/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (01/10)
+- **Historias completadas:** HU-03 (versión 1), HU-20, HU-23, HU-24, HU-22, HU-26 y HU-36 (por saldo), más los deportes nuevos y los escudos.
+- **Historias no completadas:** ninguna de las comprometidas. HU-36 se completa en el Sprint 3, con orden por ganancias y aciertos.
+- **Feedback del PO:** añadir apuestas a largo plazo (Balón de Oro, campeón de liga…). Entra en el backlog como fila 28 (HU-44, HU-45), después de la resolución de apuestas.
 
-## Retrospectiva (15/10)
+## Retrospectiva (01/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**

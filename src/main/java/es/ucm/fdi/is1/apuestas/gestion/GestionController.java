@@ -1,5 +1,8 @@
 package es.ucm.fdi.is1.apuestas.gestion;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,10 +11,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
+import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
+import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import jakarta.validation.Valid;
 
 /** Panel del creador de apuestas (solo rol CREADOR, ver SeguridadConfig). */
@@ -20,9 +27,13 @@ import jakarta.validation.Valid;
 public class GestionController {
 
     private final GestionService gestion;
+    private final ResolucionService resolucion;
+    private final Clock reloj;
 
-    public GestionController(GestionService gestion) {
+    public GestionController(GestionService gestion, ResolucionService resolucion, Clock reloj) {
         this.gestion = gestion;
+        this.resolucion = resolucion;
+        this.reloj = reloj;
     }
 
     @ModelAttribute("deportes")
@@ -35,6 +46,7 @@ public class GestionController {
         model.addAttribute("competiciones", gestion.competiciones());
         model.addAttribute("equipos", gestion.equipos());
         model.addAttribute("eventos", gestion.eventos());
+        model.addAttribute("ahora", LocalDateTime.now(reloj));
         return "gestion/panel";
     }
 
@@ -127,6 +139,54 @@ public class GestionController {
             }
         }
         return formularioEvento(model);
+    }
+
+    @GetMapping("/eventos/{id}")
+    public String evento(@PathVariable Long id, Model model) {
+        Evento evento = resolucion.evento(id);
+        model.addAttribute("evento", evento);
+        model.addAttribute("volumen", resolucion.volumen(id));
+        model.addAttribute("empezado", evento.haEmpezado(LocalDateTime.now(reloj)));
+        return "gestion/evento-detalle";
+    }
+
+    @PostMapping("/eventos/{id}/resultado")
+    public String resultado(@PathVariable Long id, @RequestParam Resultado resultado,
+                            RedirectAttributes redireccion) {
+        try {
+            int resueltas = resolucion.introducirResultado(id, resultado);
+            redireccion.addFlashAttribute("mensaje",
+                    "Resultado guardado: " + resultado.getDescripcion() + ". Apuestas resueltas: " + resueltas + ".");
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/gestion/eventos/" + id;
+    }
+
+    @PostMapping("/eventos/{id}/suspender")
+    public String suspender(@PathVariable Long id, RedirectAttributes redireccion) {
+        return accion(id, () -> resolucion.suspender(id), "Evento suspendido: no admite apuestas nuevas.", redireccion);
+    }
+
+    @PostMapping("/eventos/{id}/reactivar")
+    public String reactivar(@PathVariable Long id, RedirectAttributes redireccion) {
+        return accion(id, () -> resolucion.reactivar(id), "Evento reactivado.", redireccion);
+    }
+
+    @PostMapping("/eventos/{id}/anular")
+    public String anular(@PathVariable Long id, RedirectAttributes redireccion) {
+        return accion(id, () -> resolucion.anular(id),
+                "Evento anulado. Se ha devuelto el importe de todas sus apuestas.", redireccion);
+    }
+
+    private String accion(Long id, Runnable accion, String mensaje, RedirectAttributes redireccion) {
+        try {
+            accion.run();
+            redireccion.addFlashAttribute("mensaje", mensaje);
+        } catch (IllegalStateException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/gestion/eventos/" + id;
     }
 
     private String formularioEvento(Model model) {

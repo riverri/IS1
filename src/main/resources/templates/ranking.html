@@ -7,7 +7,11 @@
     <div class="titulo-pagina">
         <h1>Ranking</h1>
     </div>
-    <p class="subtitulo" th:text="${total} + ' jugadores ordenados por saldo'">12 jugadores ordenados por saldo</p>
+    <p class="subtitulo" th:text="${total} + ' jugadores'">12 jugadores</p>
+    <nav class="pestanas" aria-label="Ordenar por">
+        <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
+           th:href="@{/ranking(orden=${c})}" th:text="${c.nombre}">Saldo</a>
+    </nav>
 
     <div class="vacio" th:if="${#lists.isEmpty(primeros)}">
         <p>Todavía no hay jugadores.</p>
@@ -21,14 +25,14 @@
                 <span th:text="${p.nombre}">Ana</span>
                 <small th:if="${p.soyYo}">(tú)</small>
             </span>
-            <span class="ranking-saldo" th:text="${#numbers.formatDecimal(p.saldo, 1, 'POINT', 2, 'COMMA')}">1.250,00</span>
+            <span class="ranking-saldo" th:replace="~{fragments/ranking :: cifra(${p}, ${orden})}">1.250,00</span>
         </li>
         <th:block th:if="${mio != null}">
             <li class="ranking-separador" aria-hidden="true">…</li>
             <li class="soy-yo">
                 <span class="ranking-posicion" th:text="${mio.posicion}">34</span>
                 <span class="ranking-nombre"><span th:text="${mio.nombre}">Yo</span> <small>(tú)</small></span>
-                <span class="ranking-saldo" th:text="${#numbers.formatDecimal(mio.saldo, 1, 'POINT', 2, 'COMMA')}">800,00</span>
+                <span class="ranking-saldo" th:replace="~{fragments/ranking :: cifra(${mio}, ${orden})}">800,00</span>
             </li>
         </th:block>
     </ol>
