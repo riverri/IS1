@@ -6,7 +6,7 @@
 <main>
     <h1>Eventos disponibles</h1>
 
-    <p class="vacio" th:if="${#maps.isEmpty(eventosPorDeporte)}">No hay eventos disponibles ahora mismo.</p>
+    <p class="vacio" th:if="${#maps.isEmpty(eventosPorDeporte)}">No hay eventos disponibles ahora mismo. El creador de apuestas los da de alta desde Gestión.</p>
 
     <section th:each="grupo : ${eventosPorDeporte}">
         <h2 th:text="${grupo.key.nombre}">Fútbol</h2>
