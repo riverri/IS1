@@ -1,8 +1,10 @@
 # Sprint NN · dd/mm – dd/mm
 
 ## Sprint Planning (dd/mm)
-**Asistentes:**
-**Objetivo del sprint:**
+- **Asistentes:**
+- **Sprint Goal:**
+- **Velocidad del sprint anterior:** — puntos · **Puntos comprometidos:**
+- **Mejora de la retrospectiva anterior incluida:**
 
 | Issue | Historia | Puntos | Responsable |
 |---|---|---|---|
