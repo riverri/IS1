@@ -78,7 +78,7 @@ public class DatosIniciales implements ApplicationRunner {
         Competicion f1 = competicion("Fórmula 1", Deporte.AUTOMOVILISMO);
 
         // Calificaciones orientativas (0-10): el creador de apuestas debe revisarlas
-        equipo("Real Madrid", Deporte.FUTBOL, 9.5, laLiga, champions);
+        equipo("Real Madrid", Deporte.FUTBOL, 6.7, laLiga, champions);
         equipo("FC Barcelona", Deporte.FUTBOL, 9.9, laLiga, champions);
         equipo("Atlético de Madrid", Deporte.FUTBOL, 8.7, laLiga, champions);
         equipo("Villarreal CF", Deporte.FUTBOL, 8.0, laLiga, champions);
