@@ -1,4 +1,4 @@
-# Sprint 1 · 01/10 – 14/10
+# Sprint 1 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -27,12 +27,14 @@ Estimaciones iniciales en puntos de historia (Fibonacci). Se revisarán en Plann
 ## Dailies
 - **01/10**: arranque del sprint, modelo de datos y seguridad. Se quitan los partidos de ejemplo inventados; la base de datos pasa a guardarse en archivo. Se cargan los 20 equipos de LaLiga, los partidos reales de las jornadas 8 y 9 y la jornada 2 de la Champions.
 
-## Sprint Review (14/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (01/10)
+- **Historias completadas:** HU-01, HU-08, HU-11, HU-12, HU-13, HU-14, HU-19 (23 puntos).
+- **Trabajo añadido durante el sprint:** partidos reales de LaLiga y Champions, base de datos persistente, rediseño visual, escudos y edición de equipos desde Gestión.
+- **Historias no completadas:** ninguna.
+- **Velocidad:** 23 puntos.
+- **Feedback del PO/profesor:** _(pendiente)_
 
-## Retrospectiva (14/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+## Retrospectiva (01/10)
+- **Bien:** _(rellenar en equipo)_
+- **A mejorar:** _(rellenar en equipo)_
+- **Acciones para el próximo sprint:** _(rellenar en equipo)_

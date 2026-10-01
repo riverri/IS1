@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Mis apuestas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <div class="titulo-pagina">
+        <h1>Mis apuestas</h1>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Apuesta registrada</p>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${activas.size()}">2</span>apuestas activas</div>
+        <div class="tarjeta estadistica">
+            <span th:text="${#numbers.formatDecimal(comprometido, 1, 'POINT', 2, 'COMMA')}">50,00</span>monedas en juego
+        </div>
+        <div class="tarjeta estadistica" th:if="${usuarioActual != null}">
+            <span th:text="${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')}">950,00</span>monedas disponibles
+        </div>
+    </div>
+
+    <div class="vacio" th:if="${#lists.isEmpty(activas)}">
+        <p>Todavía no tienes apuestas activas.</p>
+        <a class="boton" th:href="@{/eventos}">Ver partidos</a>
+    </div>
+
+    <div class="rejilla-partidos">
+        <article class="partido apuesta" th:each="a : ${activas}">
+            <div class="partido-cabecera">
+                <span class="chip" th:text="${a.evento.competicion.nombre}">LaLiga</span>
+                <time>
+                    <span th:text="${@formato.dia(a.evento.fechaHora)}">Sáb 10 oct</span>
+                    · <strong th:text="${@formato.hora(a.evento.fechaHora)}">21:00</strong>
+                </time>
+            </div>
+            <p class="apuesta-partido" th:text="${a.evento.local.nombre} + ' – ' + ${a.evento.visitante.nombre}">Real Madrid – Getafe CF</p>
+            <div class="apuesta-pronostico">
+                <span class="opcion-simbolo" th:text="${a.pronostico.simbolo}">1</span>
+                <strong th:text="${a.descripcionPronostico}">Real Madrid</strong>
+                <span class="chip" th:text="'Cuota ' + ${@formato.cuota(a.cuota)}">Cuota 1,85</span>
+            </div>
+            <dl class="apuesta-cifras">
+                <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
+                <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
+            </dl>
+        </article>
+    </div>
+</main>
+</body>
+</html>

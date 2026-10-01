@@ -23,6 +23,7 @@
         <nav class="menu">
             <a th:href="@{/eventos}">Eventos</a>
             <a th:href="@{/equipos}">Equipos</a>
+            <a th:if="${usuarioActual != null}" th:href="@{/apuestas}">Mis apuestas</a>
             <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
             <th:block th:if="${usuarioActual == null}">
                 <a th:href="@{/login}">Entrar</a>
@@ -46,6 +47,7 @@
       th:style="'background:' + ${@formato.color(eq.nombre)}">
     <span th:text="${@formato.iniciales(eq.nombre)}">RM</span>
     <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy"
+         referrerpolicy="no-referrer"
          onerror="this.parentElement.classList.remove('con-imagen'); this.remove();">
 </span>
 
@@ -70,13 +72,21 @@
             </li>
         </ul>
     </div>
-    <div class="partido-pie">
-        <div class="cuotas" title="Cuotas disponibles próximamente">
-            <span class="cuota"><small>1</small><b>–</b></span>
-            <span class="cuota"><small>X</small><b>–</b></span>
-            <span class="cuota"><small>2</small><b>–</b></span>
+    <div class="partido-pie" th:with="c=${@calculadoraCuotas.calcular(ev)}">
+        <div class="cuotas">
+            <a class="cuota" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado='LOCAL')}"
+               th:title="'Gana ' + ${ev.local.nombre}">
+                <small>1</small><b th:text="${@formato.cuota(c.local)}">1,85</b>
+            </a>
+            <a class="cuota" th:if="${c.empate != null}" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado='EMPATE')}"
+               title="Empate">
+                <small>X</small><b th:text="${@formato.cuota(c.empate)}">3,40</b>
+            </a>
+            <a class="cuota" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado='VISITANTE')}"
+               th:title="'Gana ' + ${ev.visitante.nombre}">
+                <small>2</small><b th:text="${@formato.cuota(c.visitante)}">4,20</b>
+            </a>
         </div>
-        <a class="boton" th:href="@{/eventos/{id}/apostar(id=${ev.id})}">Apostar</a>
     </div>
 </article>
 </body>
