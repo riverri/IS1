@@ -42,6 +42,10 @@ public class Equipo {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Competicion> competiciones = new HashSet<>();
 
+    /** Identificador del equipo en la API de datos deportivos (football-data.org). */
+    @Column(unique = true)
+    private Integer idExterno;
+
     /** Dirección de la imagen del escudo; si es null se muestran las iniciales. */
     @Column(length = 500)
     private String escudoUrl;
@@ -86,6 +90,14 @@ public class Equipo {
 
     public Set<Competicion> getCompeticiones() {
         return competiciones;
+    }
+
+    public Integer getIdExterno() {
+        return idExterno;
+    }
+
+    public void setIdExterno(Integer idExterno) {
+        this.idExterno = idExterno;
     }
 
     public String getEscudoUrl() {
