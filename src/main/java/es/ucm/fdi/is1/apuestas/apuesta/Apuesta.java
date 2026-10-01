@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
+import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import jakarta.persistence.Column;
@@ -67,7 +68,9 @@ public class Apuesta {
 
     /** Una apuesta activa se puede cancelar mientras el evento no haya empezado (HU-26). */
     public boolean cancelable(LocalDateTime ahora) {
-        return estado == EstadoApuesta.ACTIVA && evento.getFechaHora().isAfter(ahora);
+        return estado == EstadoApuesta.ACTIVA
+                && evento.getEstado() == EstadoEvento.PROGRAMADO
+                && evento.getFechaHora().isAfter(ahora);
     }
 
     /** Cancela la apuesta y devuelve el importe al usuario. */
@@ -77,6 +80,44 @@ public class Apuesta {
         }
         estado = EstadoApuesta.CANCELADA;
         usuario.abonar(importe);
+    }
+
+    /**
+     * Resuelve la apuesta con el resultado del evento y paga si se ha acertado (HU-25).
+     * Si ya estaba resuelta (corrección de resultado), primero deshace el pago anterior (HU-04).
+     */
+    public void resolver(Resultado resultado) {
+        if (estado == EstadoApuesta.ANULADA || estado == EstadoApuesta.CANCELADA) {
+            return;
+        }
+        if (estado == EstadoApuesta.GANADA) {
+            usuario.ajustar(getGananciaPotencial().negate());
+        }
+        estado = pronostico == resultado ? EstadoApuesta.GANADA : EstadoApuesta.PERDIDA;
+        if (estado == EstadoApuesta.GANADA) {
+            usuario.abonar(getGananciaPotencial());
+        }
+    }
+
+    /** El evento se ha anulado: se devuelve el importe (HU-05). */
+    public void anular() {
+        if (estado == EstadoApuesta.ACTIVA) {
+            estado = EstadoApuesta.ANULADA;
+            usuario.abonar(importe);
+        }
+    }
+
+    public boolean isResuelta() {
+        return estado == EstadoApuesta.GANADA || estado == EstadoApuesta.PERDIDA;
+    }
+
+    /** Beneficio neto de una apuesta resuelta: ganancia − importe si se acierta, −importe si no. */
+    public BigDecimal getBeneficio() {
+        return switch (estado) {
+            case GANADA -> getGananciaPotencial().subtract(importe);
+            case PERDIDA -> importe.negate();
+            default -> BigDecimal.ZERO;
+        };
     }
 
     /** "Real Madrid", "Empate" o el nombre del visitante, según el pronóstico. */

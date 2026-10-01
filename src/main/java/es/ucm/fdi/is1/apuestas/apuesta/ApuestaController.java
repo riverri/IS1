@@ -30,13 +30,15 @@ public class ApuestaController {
     private final CatalogoService catalogo;
     private final CalculadoraCuotas calculadora;
 
+    private final RankingService rankings;
     private final Clock reloj;
 
     public ApuestaController(ApuestaService apuestas, CatalogoService catalogo, CalculadoraCuotas calculadora,
-                             Clock reloj) {
+                             RankingService rankings, Clock reloj) {
         this.apuestas = apuestas;
         this.catalogo = catalogo;
         this.calculadora = calculadora;
+        this.rankings = rankings;
         this.reloj = reloj;
     }
 
@@ -77,7 +79,23 @@ public class ApuestaController {
         model.addAttribute("activas", activas);
         model.addAttribute("comprometido", comprometido);
         model.addAttribute("ahora", LocalDateTime.now(reloj));
+        model.addAttribute("historial", apuestas.historial(principal.getName()));
+        model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
         return "apuestas";
+    }
+
+    /** Ranking público: top 20 y, si no estás entre ellos, también tu posición (HU-36). */
+    @GetMapping("/ranking")
+    public String ranking(@RequestParam(defaultValue = "SALDO") CriterioRanking orden, Principal principal,
+                          Model model) {
+        List<PuestoRanking> todos = rankings.ranking(principal == null ? null : principal.getName(), orden);
+        model.addAttribute("primeros", todos.stream().limit(20).toList());
+        model.addAttribute("mio", todos.stream().filter(PuestoRanking::soyYo)
+                .filter(p -> p.posicion() > 20).findFirst().orElse(null));
+        model.addAttribute("total", todos.size());
+        model.addAttribute("orden", orden);
+        model.addAttribute("criterios", CriterioRanking.values());
+        return "ranking";
     }
 
     @PostMapping("/apuestas/{id}/cancelar")

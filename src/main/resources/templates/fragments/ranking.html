@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="cifra(p, orden)">
+    <span class="ranking-saldo" th:if="${orden.name() == 'SALDO'}"
+          th:text="${#numbers.formatDecimal(p.saldo, 1, 'POINT', 2, 'COMMA')}">1.250,00</span>
+    <span class="ranking-saldo" th:if="${orden.name() == 'GANANCIAS'}"
+          th:classappend="${p.estadisticas.beneficio.signum() >= 0} ? 'positivo' : 'negativo'"
+          th:text="${p.estadisticas.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(p.estadisticas.beneficio, 1, 'POINT', 2, 'COMMA')}">+35,00</span>
+    <span class="ranking-saldo" th:if="${orden.name() == 'ACIERTOS'}"
+          th:text="${p.estadisticas.tieneDatos} ? (${#numbers.formatDecimal(p.estadisticas.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %') : '–'">60,0 %</span>
+</th:block>
+</body>
+</html>

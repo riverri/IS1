@@ -75,6 +75,14 @@ public class Usuario {
         saldo = saldo.subtract(importe);
     }
 
+    /**
+     * Ajuste por corrección de un resultado: puede restar una ganancia ya pagada.
+     * A diferencia de {@link #cargar}, permite que el saldo quede negativo.
+     */
+    public void ajustar(BigDecimal diferencia) {
+        saldo = saldo.add(diferencia);
+    }
+
     /** Devuelve o abona un importe al saldo (cancelaciones y ganancias). */
     public void abonar(BigDecimal importe) {
         saldo = saldo.add(importe);
