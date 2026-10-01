@@ -1,142 +1,429 @@
+/* ==========================================================================
+   Apuestas IS1 · hoja de estilos
+   ========================================================================== */
+
 :root {
-    --fondo: #f6f7f9;
+    --fondo: #f1f4f8;
     --superficie: #ffffff;
-    --texto: #1d2330;
-    --texto-suave: #5b6472;
-    --primario: #0b6e4f;
-    --primario-oscuro: #08553d;
-    --borde: #d9dde3;
-    --error: #b42318;
+    --texto: #0f172a;
+    --texto-suave: #64748b;
+    --borde: #e2e8f0;
+
+    --oscuro: #0b1220;
+    --oscuro-2: #111c30;
+    --primario: #10a36b;
+    --primario-oscuro: #0b7f53;
+    --primario-suave: #e6f6ef;
+    --oro: #f5b301;
+
+    --error: #d92d20;
+    --error-suave: #fef3f2;
     --exito: #067647;
+    --exito-suave: #ecfdf3;
+
+    --radio: 14px;
+    --sombra: 0 1px 2px rgba(15, 23, 42, .06), 0 4px 16px rgba(15, 23, 42, .06);
+    --sombra-fuerte: 0 8px 28px rgba(15, 23, 42, .14);
 }
 
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--fondo);
     color: var(--texto);
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--primario); }
+a { color: var(--primario-oscuro); }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.02em; }
+h1 { font-size: 1.9rem; margin: 0 0 8px; }
+h2 { font-size: 1.3rem; margin: 32px 0 14px; }
 
-/* Cabecera */
-header {
+.solo-lectores {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- Cabecera ---------- */
+
+.cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--oscuro);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.cabecera-interior {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 12px 16px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 16px;
-    justify-content: space-between;
+    gap: 10px 20px;
     align-items: center;
-    padding: 12px 16px;
-    background: var(--primario);
+    justify-content: space-between;
 }
 
-header a { color: #fff; text-decoration: none; }
-.marca { font-weight: 700; font-size: 1.2rem; }
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.15rem;
+}
+.marca-logo { width: 30px; height: 30px; }
 
-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
-nav .saldo { font-weight: 600; background: rgba(255, 255, 255, .15); padding: 4px 10px; border-radius: 999px; }
+.menu { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
+.menu > a, .enlace { color: #cbd5e1; text-decoration: none; font-weight: 500; }
+.menu > a:hover, .enlace:hover { color: #fff; }
+
+.saldo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(245, 179, 1, .14);
+    color: #ffd666 !important;
+    font-weight: 700;
+}
+.moneda {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffe08a, var(--oro) 60%, #b98500);
+}
 
 .en-linea { display: inline; margin: 0; }
-.enlace { background: none; border: 0; color: #fff; font: inherit; cursor: pointer; padding: 0; }
+.enlace { background: none; border: 0; font: inherit; cursor: pointer; padding: 0; }
 
-/* Contenido */
-main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
-main.estrecho { max-width: 480px; }
-
-.portada { padding: 32px 0; }
-.portada h1 { font-size: 2rem; margin-bottom: 8px; }
-
-.acciones { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+/* ---------- Botones ---------- */
 
 .boton {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     padding: 10px 18px;
-    border: 0;
-    border-radius: 6px;
+    border: 1px solid transparent;
+    border-radius: 10px;
     background: var(--primario);
-    color: #fff;
+    color: #fff !important;
     font: inherit;
+    font-weight: 600;
     text-decoration: none;
     cursor: pointer;
+    transition: background .15s, transform .15s, box-shadow .15s;
 }
 .boton:hover { background: var(--primario-oscuro); }
-.boton-secundario { background: var(--superficie); color: var(--primario); border: 1px solid var(--primario); }
-.boton-secundario:hover { background: var(--fondo); }
-header .boton-claro { background: #fff; color: var(--primario); padding: 6px 12px; }
-
-.aviso, .vacio { color: var(--texto-suave); }
-.error { color: var(--error); font-weight: 600; }
-.exito { color: var(--exito); font-weight: 600; }
-
-/* Tablas */
-.tabla { overflow-x: auto; margin-bottom: 24px; }
-table { width: 100%; border-collapse: collapse; background: var(--superficie); }
-th, td { padding: 10px; border-bottom: 1px solid var(--borde); text-align: left; }
-
-.etiqueta {
-    display: inline-block;
-    margin: 2px 4px 2px 0;
-    padding: 0 8px;
-    border-radius: 999px;
-    background: var(--fondo);
-    border: 1px solid var(--borde);
-    font-size: .85rem;
+.boton:active { transform: translateY(1px); }
+.boton:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+    outline: 3px solid rgba(16, 163, 107, .35);
+    outline-offset: 2px;
 }
 
-/* Catálogo de eventos */
-.eventos { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 8px; }
+.boton-pequeno { padding: 7px 14px; font-size: .95rem; }
+.boton-grande { padding: 14px 24px; font-size: 1.05rem; }
+.boton-bloque { width: 100%; }
+.boton-secundario { background: var(--superficie); color: var(--texto) !important; border-color: var(--borde); }
+.boton-secundario:hover { background: var(--fondo); }
+.boton-fantasma { background: transparent; border-color: rgba(255, 255, 255, .35); }
+.boton-fantasma:hover { background: rgba(255, 255, 255, .1); }
 
-.evento {
+/* ---------- Estructura ---------- */
+
+main { max-width: 1100px; margin: 0 auto; padding: 28px 16px 48px; }
+main.estrecho { max-width: 480px; }
+
+.tarjeta {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+}
+
+.titulo-pagina {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: 12px;
-    padding: 12px 16px;
-    background: var(--superficie);
-    border: 1px solid var(--borde);
-    border-radius: 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
 
-.evento-info { flex: 1 1 240px; display: flex; flex-direction: column; }
-.competicion, .evento time { color: var(--texto-suave); font-size: .9rem; }
+.seccion-titulo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+.seccion-titulo a { font-weight: 600; text-decoration: none; }
 
-.cuotas { display: flex; gap: 6px; }
-.cuotas span {
-    min-width: 56px;
-    padding: 4px 8px;
+.acciones { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+.aviso { color: var(--texto-suave); }
+.centrado { text-align: center; }
+
+.vacio {
+    padding: 40px 20px;
     text-align: center;
-    border: 1px solid var(--borde);
-    border-radius: 6px;
     color: var(--texto-suave);
-}
-
-/* Formularios */
-.formulario { display: flex; flex-direction: column; gap: 6px; }
-.formulario label { font-weight: 600; margin-top: 8px; }
-.formulario input, .formulario select {
-    padding: 8px 10px;
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    font: inherit;
     background: var(--superficie);
+    border: 1px dashed var(--borde);
+    border-radius: var(--radio);
 }
-.formulario .boton { margin-top: 16px; align-self: flex-start; }
-.formulario fieldset { border: 1px solid var(--borde); border-radius: 6px; margin-top: 8px; }
-.formulario .casilla { display: flex; gap: 8px; align-items: center; font-weight: 400; margin: 0; }
-.error-campo { color: var(--error); font-size: .9rem; }
 
-/* Cuenta */
-.tarjeta {
+.chip {
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--primario-suave);
+    color: var(--primario-oscuro);
+    font-size: .8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.chip-filtro {
+    padding: 6px 14px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    color: var(--texto);
+    text-decoration: none;
+}
+.chip-filtro:hover { border-color: var(--primario); color: var(--primario-oscuro); }
+.filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ---------- Portada ---------- */
+
+.portada {
+    background:
+        radial-gradient(circle at 85% 20%, rgba(16, 163, 107, .35), transparent 45%),
+        radial-gradient(circle at 10% 90%, rgba(245, 179, 1, .18), transparent 40%),
+        linear-gradient(135deg, var(--oscuro) 0%, var(--oscuro-2) 100%);
+    color: #fff;
+}
+.portada-interior { max-width: 1100px; margin: 0 auto; padding: 64px 16px 72px; }
+.portada h1 { font-size: clamp(2rem, 5vw, 3.2rem); max-width: 14ch; margin-bottom: 16px; }
+.portada-texto { font-size: 1.15rem; color: #cbd5e1; max-width: 46ch; }
+.portada-texto strong { color: #ffd666; }
+.antetitulo {
+    display: inline-block;
+    margin: 0 0 16px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .08);
+    color: #9ee6c4;
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.ventajas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: -56px;
+}
+.ventaja {
+    padding: 20px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-fuerte);
+}
+.ventaja h3 { margin: 10px 0 4px; font-size: 1.05rem; }
+.ventaja p { margin: 0; color: var(--texto-suave); font-size: .95rem; }
+.ventaja-icono {
+    display: inline-grid;
+    place-items: center;
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: var(--primario-suave);
+    font-size: 1.3rem;
+}
+
+/* ---------- Partidos ---------- */
+
+.rejilla-partidos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+}
+
+.partido {
     display: flex;
     flex-direction: column;
+    gap: 14px;
     padding: 16px;
     background: var(--superficie);
     border: 1px solid var(--borde);
-    border-radius: 8px;
-    margin-bottom: 16px;
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    transition: transform .15s, box-shadow .15s, border-color .15s;
 }
-.tarjeta-titulo { color: var(--texto-suave); }
-.tarjeta-valor { font-size: 1.8rem; font-weight: 700; color: var(--primario); }
+.partido:hover { transform: translateY(-2px); box-shadow: var(--sombra-fuerte); border-color: #cfd8e3; }
+
+.partido-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: .88rem;
+    color: var(--texto-suave);
+}
+.partido-cabecera strong { color: var(--texto); }
+
+.partido-pie { display: flex; gap: 8px; align-items: stretch; }
+.partido-pie .boton { flex: none; padding-inline: 20px; }
+
+.rivales { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+.rivales li { display: flex; align-items: center; gap: 10px; font-weight: 600; min-width: 0; }
+.rival-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.escudo {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .25);
+}
+.escudo-pequeno { width: 26px; height: 26px; font-size: .65rem; }
+.escudo-grande { width: 64px; height: 64px; font-size: 1.3rem; }
+
+.cuotas { display: flex; gap: 6px; flex: 1; }
+.cuota {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    color: var(--texto-suave);
+    line-height: 1.2;
+}
+.cuota small { font-size: .72rem; font-weight: 600; }
+.cuota b { color: var(--texto); }
+
+.competicion { scroll-margin-top: 80px; }
+.competicion h3 {
+    margin: 22px 0 12px;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--texto-suave);
+}
+
+/* ---------- Página de un partido ---------- */
+
+.marcador { padding: 24px; text-align: center; }
+.marcador-rivales {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 12px;
+}
+.marcador-equipo { display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }
+.marcador-vs { font-weight: 800; color: var(--texto-suave); }
+.marcador-fecha { color: var(--texto-suave); }
+
+/* ---------- Formularios ---------- */
+
+.tarjeta-formulario { padding: 28px; }
+.subtitulo { margin: 0 0 16px; color: var(--texto-suave); }
+
+.formulario { display: flex; flex-direction: column; gap: 6px; }
+.formulario label { font-weight: 600; font-size: .92rem; margin-top: 10px; }
+.formulario input, .formulario select {
+    padding: 11px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    font: inherit;
+    background: var(--superficie);
+    transition: border-color .15s, box-shadow .15s;
+}
+.formulario input:focus, .formulario select:focus {
+    outline: none;
+    border-color: var(--primario);
+    box-shadow: 0 0 0 4px rgba(16, 163, 107, .15);
+}
+.formulario .con-error { border-color: var(--error); }
+.formulario > .boton { margin-top: 18px; }
+.formulario fieldset { border: 1px solid var(--borde); border-radius: 10px; margin-top: 10px; padding: 10px 14px; }
+.formulario legend { font-weight: 600; font-size: .92rem; padding: 0 4px; }
+.formulario .casilla { display: flex; gap: 8px; align-items: center; font-weight: 400; margin: 4px 0; }
+.acciones-formulario { display: flex; gap: 10px; margin-top: 18px; }
+
+.error-campo { color: var(--error); font-size: .86rem; }
+.pie-formulario { margin: 18px 0 0; text-align: center; color: var(--texto-suave); }
+
+.alerta { padding: 10px 14px; border-radius: 10px; font-weight: 600; }
+.alerta-error { background: var(--error-suave); color: var(--error); }
+.alerta-exito { background: var(--exito-suave); color: var(--exito); }
+
+.codigo-error { font-size: 3rem; font-weight: 800; color: var(--primario); margin: 0; }
+
+/* ---------- Cuenta ---------- */
+
+.tarjeta-saldo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 16px 0;
+    padding: 24px;
+    border-radius: 18px;
+    color: #fff;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(245, 179, 1, .35), transparent 45%),
+        linear-gradient(135deg, var(--oscuro), #0e3b2c);
+    box-shadow: var(--sombra-fuerte);
+}
+.tarjeta-saldo-titulo { color: #9ee6c4; font-weight: 600; }
+.tarjeta-saldo-valor { font-size: 2.2rem; font-weight: 800; letter-spacing: -.02em; }
+.tarjeta-saldo-email { color: #94a3b8; font-size: .9rem; }
+
+.recarga { display: flex; gap: 14px; align-items: center; padding: 16px; margin-bottom: 16px; }
+.recarga p { margin: 2px 0 0; text-transform: none; }
+
+/* ---------- Tablas y gestión ---------- */
+
+.tabla { overflow-x: auto; margin-bottom: 24px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px 14px; border-bottom: 1px solid var(--borde); text-align: left; vertical-align: middle; }
+th { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--texto-suave); background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #f8fafc; }
+
+.equipo-celda { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; }
+
+.calidad { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.calidad-barra { width: 70px; height: 6px; border-radius: 999px; background: var(--borde); overflow: hidden; }
+.calidad-barra span { display: block; height: 100%; background: linear-gradient(90deg, var(--primario), var(--oro)); }
+
+.estadisticas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
+.estadistica { padding: 16px; color: var(--texto-suave); font-weight: 500; }
+.estadistica span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--texto); }
+
+.estado { font-size: .78rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--fondo); }
+.estado.programado { background: var(--primario-suave); color: var(--primario-oscuro); }
+.estado.suspendido { background: #fffaeb; color: #b54708; }
+.estado.anulado { background: var(--error-suave); color: var(--error); }
+
+/* ---------- Móvil ---------- */
+
+@media (max-width: 560px) {
+    h1 { font-size: 1.6rem; }
+    .portada-interior { padding: 40px 16px 72px; }
+    .rejilla-partidos { grid-template-columns: 1fr; }
+    .tarjeta-formulario { padding: 20px; }
+}

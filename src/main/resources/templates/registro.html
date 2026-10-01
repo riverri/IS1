@@ -4,30 +4,32 @@
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
-    <h1>Crear cuenta</h1>
-    <p>Al registrarte recibes <strong th:text="${#numbers.formatDecimal(bienvenida, 1, 'POINT', 0, 'COMMA')}">1.000</strong>
-        moneditas de bienvenida. No se usa dinero real.</p>
+    <div class="tarjeta tarjeta-formulario">
+        <h1>Crear cuenta</h1>
+        <p class="subtitulo">Recibes <strong th:text="${#numbers.formatDecimal(bienvenida, 1, 'POINT', 0, 'COMMA')}">1.000</strong>
+            moneditas de bienvenida. No se usa dinero real.</p>
 
-    <form class="formulario" th:action="@{/registro}" th:object="${registro}" method="post" novalidate>
-        <label for="nombre">Nombre</label>
-        <input id="nombre" type="text" th:field="*{nombre}" autocomplete="name">
-        <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+        <form class="formulario" th:action="@{/registro}" th:object="${registro}" method="post" novalidate>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" th:field="*{nombre}" th:errorclass="con-error" autocomplete="name">
+            <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:text="${#fields.errors('nombre')[0]}"></span>
 
-        <label for="email">Email</label>
-        <input id="email" type="email" th:field="*{email}" autocomplete="email">
-        <span class="error-campo" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            <label for="email">Email</label>
+            <input id="email" type="email" th:field="*{email}" th:errorclass="con-error" autocomplete="email">
+            <span class="error-campo" th:if="${#fields.hasErrors('email')}" th:text="${#fields.errors('email')[0]}"></span>
 
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" th:field="*{password}" autocomplete="new-password">
-        <span class="error-campo" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" th:field="*{password}" th:errorclass="con-error" autocomplete="new-password">
+            <span class="error-campo" th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')[0]}"></span>
 
-        <label for="confirmacion">Repite la contraseña</label>
-        <input id="confirmacion" type="password" th:field="*{confirmacion}" autocomplete="new-password">
-        <span class="error-campo" th:if="${#fields.hasErrors('confirmacion')}" th:errors="*{confirmacion}"></span>
+            <label for="confirmacion">Repite la contraseña</label>
+            <input id="confirmacion" type="password" th:field="*{confirmacion}" th:errorclass="con-error" autocomplete="new-password">
+            <span class="error-campo" th:if="${#fields.hasErrors('confirmacion')}" th:text="${#fields.errors('confirmacion')[0]}"></span>
 
-        <button class="boton" type="submit">Crear cuenta</button>
-    </form>
-    <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+            <button class="boton boton-bloque" type="submit">Crear cuenta</button>
+        </form>
+        <p class="pie-formulario">¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+    </div>
 </main>
 </body>
 </html>

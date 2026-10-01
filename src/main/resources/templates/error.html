@@ -4,13 +4,15 @@
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
-    <th:block th:switch="${status}">
-        <h1 th:case="403">No tienes permiso para ver esta página</h1>
-        <h1 th:case="404">Página no encontrada</h1>
-        <h1 th:case="*">Algo ha ido mal</h1>
-    </th:block>
-    <p class="aviso" th:text="'Código ' + ${status}">Código 500</p>
-    <a class="boton" th:href="@{/eventos}">Ir al catálogo</a>
+    <div class="tarjeta tarjeta-formulario centrado">
+        <p class="codigo-error" th:text="${status}">404</p>
+        <th:block th:switch="${status}">
+            <h1 th:case="403">No tienes permiso para ver esta página</h1>
+            <h1 th:case="404">Página no encontrada</h1>
+            <h1 th:case="*">Algo ha ido mal</h1>
+        </th:block>
+        <a class="boton" th:href="@{/eventos}">Ir al catálogo</a>
+    </div>
 </main>
 </body>
 </html>
