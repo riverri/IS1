@@ -56,7 +56,24 @@ cd IS1
 ./mvnw spring-boot:run        # en Windows: mvnw.cmd spring-boot:run
 ```
 
-Abrir http://localhost:8080. La página de equipos está en http://localhost:8080/equipos.
+Abrir http://localhost:8080.
+
+**Usuarios de prueba** (se crean al arrancar, junto con equipos y eventos de ejemplo):
+
+| Rol | Email | Contraseña |
+|---|---|---|
+| Creador de apuestas (acceso a *Gestión*) | `creador@apuestas.es` | `creador123` |
+| Usuario | `usuario@apuestas.es` | `usuario123` |
+
+## Funcionalidades disponibles
+
+| Página | Qué hace | Historias |
+|---|---|---|
+| `/eventos` | Catálogo público de eventos, agrupados por deporte y ordenados por fecha | HU-08, HU-19 |
+| `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
+| `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
+| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos | HU-01 |
+| `/equipos` | Listado público de equipos y deportistas | — |
 
 - **Pruebas:** `./mvnw test`
 - **Consola de la base de datos:** http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:apuestas`, usuario `sa`, sin contraseña)
@@ -67,4 +84,4 @@ Abrir http://localhost:8080. La página de equipos está en http://localhost:808
 1. Leer [CONTRIBUTING.md](CONTRIBUTING.md) (flujo Git, ramas y pull requests).
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).
 3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) y las [historias de usuario](docs/requisitos/historias-de-usuario.md).
-4. Arrancar la aplicación (ver arriba) y echar un vistazo al código de ejemplo (`Equipo`, `InicioController`, plantillas).
+4. Arrancar la aplicación (ver arriba) y revisar el [Sprint 1](docs/scrum/sprints/sprint-01.md).
