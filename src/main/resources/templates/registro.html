@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Registro')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Crear cuenta</h1>
+    <p>Al registrarte recibes <strong th:text="${#numbers.formatDecimal(bienvenida, 1, 'POINT', 0, 'COMMA')}">1.000</strong>
+        moneditas de bienvenida. No se usa dinero real.</p>
+
+    <form class="formulario" th:action="@{/registro}" th:object="${registro}" method="post" novalidate>
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" th:field="*{nombre}" autocomplete="name">
+        <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" th:field="*{email}" autocomplete="email">
+        <span class="error-campo" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" th:field="*{password}" autocomplete="new-password">
+        <span class="error-campo" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+
+        <label for="confirmacion">Repite la contraseña</label>
+        <input id="confirmacion" type="password" th:field="*{confirmacion}" autocomplete="new-password">
+        <span class="error-campo" th:if="${#fields.hasErrors('confirmacion')}" th:errors="*{confirmacion}"></span>
+
+        <button class="boton" type="submit">Crear cuenta</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+</main>
+</body>
+</html>

@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Apuestas IS1</title>
-    <link rel="stylesheet" th:href="@{/css/estilos.css}">
-</head>
+<head th:replace="~{fragments/comun :: cabeza('Inicio')}"></head>
 <body>
-<header>
-    <a class="marca" th:href="@{/}">Apuestas IS1</a>
-    <nav><a th:href="@{/equipos}">Equipos</a></nav>
-</header>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
 <main>
-    <h1>Apuesta sin arriesgar dinero real</h1>
-    <p>Recibe moneditas virtuales, apuesta a tus deportes favoritos y crea tus propias combinadas.</p>
-    <p class="aviso">Proyecto académico de Ingeniería del Software I (UCM). Esqueleto inicial: el catálogo de eventos, el registro y las apuestas llegarán en los próximos sprints.</p>
-    <a class="boton" th:href="@{/equipos}">Ver equipos</a>
+    <section class="portada">
+        <h1>Apuesta sin arriesgar dinero real</h1>
+        <p>Regístrate, recibe tus moneditas virtuales y apuesta a tus deportes favoritos.</p>
+        <div class="acciones">
+            <a class="boton" th:href="@{/eventos}">Ver eventos</a>
+            <a class="boton boton-secundario" th:if="${usuarioActual == null}" th:href="@{/registro}">Crear cuenta</a>
+        </div>
+    </section>
 </main>
 </body>
 </html>

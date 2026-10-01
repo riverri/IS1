@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Eventos')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <h1>Eventos disponibles</h1>
+
+    <p class="vacio" th:if="${#maps.isEmpty(eventosPorDeporte)}">No hay eventos disponibles ahora mismo.</p>
+
+    <section th:each="grupo : ${eventosPorDeporte}">
+        <h2 th:text="${grupo.key.nombre}">Fútbol</h2>
+        <ul class="eventos">
+            <li class="evento" th:each="ev : ${grupo.value}">
+                <div class="evento-info">
+                    <span class="competicion" th:text="${ev.competicion.nombre}">LaLiga</span>
+                    <strong th:text="${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">Real Madrid – Getafe CF</strong>
+                    <time th:text="${#temporals.format(ev.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</time>
+                </div>
+                <div class="cuotas" title="Las cuotas se calcularán con el algoritmo de la casa">
+                    <span>1 <b>–</b></span><span>X <b>–</b></span><span>2 <b>–</b></span>
+                </div>
+                <a class="boton" th:href="@{/eventos/{id}/apostar(id=${ev.id})}">Apostar</a>
+            </li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>
