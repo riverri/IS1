@@ -65,6 +65,21 @@ Abrir http://localhost:8080.
 | Creador de apuestas (acceso a *Gestión*) | `creador@apuestas.es` | `creador123` |
 | Usuario | `usuario@apuestas.es` | `usuario123` |
 
+## Jugar desde otros ordenadores (túnel)
+
+La aplicación se ejecuta en un solo ordenador y los demás entran desde el navegador (también desde el móvil) con un enlace público, sin instalar nada. Todos juegan sobre la misma base de datos: mismo ranking, mismos eventos.
+
+**Windows:** doble clic en `compartir.bat` (o `compartir.bat` desde la terminal, en la carpeta del proyecto).
+1. La primera vez descarga `cloudflared.exe` (no se sube a GitHub).
+2. Abre la aplicación en otra ventana y espera a que arranque (la primera vez tarda un poco).
+3. Saca un enlace del tipo `https://palabras-al-azar.trycloudflare.com`. Ese es el que se comparte.
+
+**macOS / Linux:** `brew install cloudflared` (o el paquete de su web) y después `./compartir.sh`.
+
+- El enlace solo funciona mientras ese ordenador esté encendido y con las dos ventanas abiertas, y **cambia cada vez** que se lanza.
+- Usa el perfil `compartir`, que desactiva la consola de H2: no tiene contraseña y con el túnel cualquiera podría entrar en la base de datos. **No compartas nunca la aplicación arrancada desde IntelliJ sin ese perfil.**
+- Si la red de la facultad bloquea el túnel, prueba con los datos del móvil.
+
 ## Funcionalidades disponibles
 
 | Página | Qué hace | Historias |
