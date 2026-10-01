@@ -81,10 +81,24 @@ Abrir http://localhost:8080.
 | `/equipos` | Listado público de equipos y deportistas | — |
 
 - **Pruebas:** `./mvnw test`
-- **Partidos:** vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
+- **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
 - **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Para empezar de cero, para la aplicación y borra esa carpeta.
 - **Consola de la base de datos:** http://localhost:8080/h2-console (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
 - **IDE recomendado:** IntelliJ IDEA Community. Abrir la carpeta, que detecta el `pom.xml`. También valen Eclipse y VS Code con el "Extension Pack for Java".
+
+## Datos reales con la API (football-data.org)
+
+La aplicación puede descargar sola los partidos y resultados reales de **LaLiga** y la **Champions League**. Al terminar un partido, su resultado entra automáticamente y las apuestas se pagan.
+
+1. Regístrate gratis en https://www.football-data.org/client/register. Te llega por email una clave (*API token*).
+2. En IntelliJ: *Run → Edit Configurations… → ApuestasApplication → Environment variables* y añade `FOOTBALL_DATA_TOKEN=tu_clave`.
+   Desde la terminal de Windows: `set FOOTBALL_DATA_TOKEN=tu_clave` y después `mvnw.cmd spring-boot:run`.
+3. Arranca la aplicación. Se sincroniza a los 30 segundos y luego cada 30 minutos; también hay un botón **Sincronizar ahora** en *Gestión*.
+
+- **La clave es personal: no la escribas en ningún archivo del repositorio.**
+- El plan gratuito permite 10 peticiones por minuto. Cada sincronización hace una por competición.
+- Las competiciones se configuran en `application.properties` (`apuestas.api.competiciones`): `PD` es LaLiga, `CL` la Champions, `PL` la Premier, `SA` la Serie A, `BL1` la Bundesliga y `FL1` la Ligue 1.
+- Los equipos nuevos que llegan por la API reciben una calificación de 6,0. El creador de apuestas la ajusta en *Gestión → Editar*.
 
 ## Cómo empezar
 
