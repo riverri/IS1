@@ -417,6 +417,30 @@ a.cuota:hover b { color: var(--primario-oscuro); }
 .marcador-vs { font-weight: 800; color: var(--texto-suave); }
 .marcador-fecha { color: var(--texto-suave); }
 
+/* ---------- Apuestas a largo plazo ---------- */
+
+.mercados { display: grid; gap: 20px; }
+.mercado { padding: 20px 22px; }
+.mercado h2 { margin: 10px 0 14px; }
+.mercado .candidatos { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.mercado .opcion { gap: 10px; }
+.mercado-importe {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    align-items: end;
+    margin-top: 6px;
+}
+.mercado-importe > div:first-child { display: flex; flex-direction: column; gap: 6px; }
+.mercado-importe label { margin-top: 0; }
+.mercado-importe .ganancia { margin-top: 0; }
+.mercado .boton-bloque { margin-top: 14px; }
+.forma { font-weight: 600; white-space: nowrap; color: var(--texto-suave); }
+.cuota-editable { display: inline-flex; gap: 6px; align-items: center; }
+.cuota-editable input { width: 90px; padding: 6px 8px; border: 1px solid var(--borde); border-radius: 8px; font: inherit; }
+.forma-positiva { color: var(--primario-oscuro); }
+.forma-negativa { color: #c2410c; }
+
 /* ---------- Boleto ---------- */
 
 .boleto { text-align: left; margin-top: 16px; }
@@ -575,7 +599,7 @@ a.partido-cuerpo:hover .rival-nombre { text-decoration: underline; }
 
 .formulario { display: flex; flex-direction: column; gap: 6px; }
 .formulario label { font-weight: 600; font-size: .92rem; margin-top: 10px; }
-.formulario input, .formulario select {
+.formulario input, .formulario select, .formulario textarea {
     padding: 11px 12px;
     border: 1px solid var(--borde);
     border-radius: 10px;
@@ -583,7 +607,7 @@ a.partido-cuerpo:hover .rival-nombre { text-decoration: underline; }
     background: var(--superficie);
     transition: border-color .15s, box-shadow .15s;
 }
-.formulario input:focus, .formulario select:focus {
+.formulario input:focus, .formulario select:focus, .formulario textarea:focus {
     outline: none;
     border-color: var(--primario);
     box-shadow: 0 0 0 4px rgba(16, 163, 107, .15);
@@ -689,6 +713,9 @@ tbody tr:hover { background: #f8fafc; }
 .estado.ganada { background: var(--exito-suave); color: var(--exito); }
 .estado.perdida { background: var(--error-suave); color: var(--error); }
 .estado.cancelada { background: var(--fondo); color: var(--texto-suave); }
+.estado.abierto { background: var(--primario-suave); color: var(--primario-oscuro); }
+.estado.cerrado { background: #fffaeb; color: #b54708; }
+.estado.resuelto { background: #eef2ff; color: #3538cd; }
 .positivo { color: var(--exito) !important; font-weight: 700; }
 .negativo { color: var(--error) !important; font-weight: 700; }
 .boton-peligro { background: var(--error); }
@@ -699,6 +726,7 @@ tbody tr:hover { background: #f8fafc; }
 /* ---------- Móvil ---------- */
 
 @media (max-width: 560px) {
+    .mercado-importe { grid-template-columns: 1fr; }
     h1 { font-size: 1.6rem; }
     .portada-interior { padding: 40px 16px 72px; }
     .rejilla-partidos { grid-template-columns: 1fr; }

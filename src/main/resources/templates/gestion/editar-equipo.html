@@ -16,6 +16,13 @@
             <span class="error-campo" th:if="${#fields.hasErrors('calidad')}"
                   th:text="${#fields.errors('calidad')[0]}"></span>
 
+            <label for="forma">Forma reciente</label>
+            <select id="forma" th:field="*{forma}" th:errorclass="con-error">
+                <option th:each="f : ${formas}" th:value="${f}" th:text="${f.simbolo} + ' ' + ${f.descripcion}">= Normal</option>
+            </select>
+            <span class="error-campo" th:if="${#fields.hasErrors('forma')}" th:text="${#fields.errors('forma')[0]}"></span>
+            <span class="aviso">Rachas, moral, lesiones… Cada nivel suma o resta 0,4 puntos a la calificación al calcular las cuotas.</span>
+
             <label for="escudoUrl">Dirección del escudo</label>
             <input id="escudoUrl" type="url" th:field="*{escudoUrl}" th:errorclass="con-error"
                    placeholder="https://…/escudo.png">

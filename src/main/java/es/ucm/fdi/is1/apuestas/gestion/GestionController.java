@@ -17,11 +17,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.ucm.fdi.is1.apuestas.api.ApiProperties;
 import es.ucm.fdi.is1.apuestas.api.ResumenSincronizacion;
 import es.ucm.fdi.is1.apuestas.api.SincronizacionService;
+import es.ucm.fdi.is1.apuestas.apuesta.Limites;
+import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
 import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
+import es.ucm.fdi.is1.apuestas.equipos.Forma;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.mercados.MercadoService;
 import jakarta.validation.Valid;
 
 /** Panel del creador de apuestas (solo rol CREADOR, ver SeguridadConfig). */
@@ -32,14 +36,19 @@ public class GestionController {
     private final GestionService gestion;
     private final ResolucionService resolucion;
     private final SincronizacionService sincronizacion;
+    private final MercadoService mercados;
+    private final LimitesService limites;
     private final ApiProperties api;
     private final Clock reloj;
 
     public GestionController(GestionService gestion, ResolucionService resolucion,
-                             SincronizacionService sincronizacion, ApiProperties api, Clock reloj) {
+                             SincronizacionService sincronizacion, MercadoService mercados, LimitesService limites,
+                             ApiProperties api, Clock reloj) {
         this.gestion = gestion;
         this.resolucion = resolucion;
         this.sincronizacion = sincronizacion;
+        this.mercados = mercados;
+        this.limites = limites;
         this.api = api;
         this.reloj = reloj;
     }
@@ -64,14 +73,49 @@ public class GestionController {
         return Deporte.values();
     }
 
+    @ModelAttribute("formas")
+    public Forma[] formas() {
+        return Forma.values();
+    }
+
     @GetMapping
     public String panel(Model model) {
         model.addAttribute("competiciones", gestion.competiciones());
         model.addAttribute("equipos", gestion.equipos());
         model.addAttribute("eventos", gestion.eventos());
+        model.addAttribute("mercados", mercados.todos());
+        model.addAttribute("limites", limites.actuales());
         model.addAttribute("ahora", LocalDateTime.now(reloj));
         model.addAttribute("apiConfigurada", api.configurada());
         return "gestion/panel";
+    }
+
+    // --- Límites de apuesta (HU-07) ---
+
+    @GetMapping("/limites")
+    public String limites(Model model) {
+        Limites actuales = limites.actuales();
+        LimitesForm form = new LimitesForm();
+        form.setImporteMinimo(actuales.getImporteMinimo());
+        form.setImporteMaximo(actuales.getImporteMaximo());
+        form.setMaxSelecciones(actuales.getMaxSelecciones());
+        model.addAttribute("limites", form);
+        return "gestion/limites";
+    }
+
+    @PostMapping("/limites")
+    public String guardarLimites(@Valid @ModelAttribute("limites") LimitesForm form, BindingResult errores,
+                                 RedirectAttributes redireccion) {
+        if (!errores.hasErrors()) {
+            try {
+                limites.cambiar(form.getImporteMinimo(), form.getImporteMaximo(), form.getMaxSelecciones());
+                redireccion.addFlashAttribute("mensaje", "Límites de apuesta actualizados");
+                return "redirect:/gestion";
+            } catch (IllegalArgumentException e) {
+                errores.rejectValue("importeMaximo", "invalido", e.getMessage());
+            }
+        }
+        return "gestion/limites";
     }
 
     // --- Competiciones ---
@@ -123,6 +167,7 @@ public class GestionController {
         Equipo equipo = gestion.equipo(id);
         EdicionEquipoForm form = new EdicionEquipoForm();
         form.setCalidad(equipo.getCalidad());
+        form.setForma(equipo.getForma());
         form.setEscudoUrl(equipo.getEscudoUrl());
         model.addAttribute("equipo", equipo);
         model.addAttribute("edicion", form);

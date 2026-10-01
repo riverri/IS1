@@ -39,8 +39,11 @@
                 <strong id="cuota-total" th:attr="data-cuota=${vista.cuotaTotal}" th:text="'× ' + ${@formato.cuota(vista.cuotaTotal)}">× 4,52</strong>
             </div>
             <label for="importe">Importe</label>
-            <input id="importe" name="importe" type="number" min="1" step="0.01" inputmode="decimal" required
+            <input id="importe" name="importe" type="number" min="0.01" step="0.01" inputmode="decimal" required
                    th:value="${importe}" placeholder="10">
+            <span class="aviso" th:if="${limitesApuesta != null}"
+                  th:text="'Entre ' + ${#numbers.formatDecimal(limitesApuesta.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' y ' + ${#numbers.formatDecimal(limitesApuesta.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas por apuesta'">
+                Entre 1,00 y 500,00 monedas por apuesta</span>
             <span class="aviso" th:if="${usuarioActual != null}"
                   th:text="'Saldo disponible: ' + ${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">
                 Saldo disponible: 1.000,00 monedas</span>

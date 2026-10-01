@@ -24,16 +24,19 @@ public class BoletoController {
 
     private final BoletoService boletos;
     private final Boleto boleto;
+    private final LimitesService limites;
 
-    public BoletoController(BoletoService boletos, Boleto boleto) {
+    public BoletoController(BoletoService boletos, Boleto boleto, LimitesService limites) {
         this.boletos = boletos;
         this.boleto = boleto;
+        this.limites = limites;
     }
 
     @GetMapping
     public String ver(Model model) {
         model.addAttribute("vista", boletos.vista(boleto));
         model.addAttribute("ocultarBarraBoleto", true);
+        model.addAttribute("limitesApuesta", limites.actuales());
         return "boleto";
     }
 
@@ -60,8 +63,8 @@ public class BoletoController {
     @PostMapping("/confirmar")
     public String confirmar(@RequestParam(required = false) BigDecimal importe, Principal principal,
                             RedirectAttributes redireccion) {
-        if (importe == null || importe.compareTo(BigDecimal.ONE) < 0 || importe.scale() > 2) {
-            redireccion.addFlashAttribute("error", "Introduce un importe de al menos 1 moneda, con 2 decimales como mucho");
+        if (importe == null || importe.signum() <= 0 || importe.stripTrailingZeros().scale() > 2) {
+            redireccion.addFlashAttribute("error", "Introduce un importe válido, con 2 decimales como mucho");
             return "redirect:/boleto";
         }
         try {
