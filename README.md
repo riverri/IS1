@@ -71,11 +71,12 @@ Abrir http://localhost:8080.
 |---|---|---|
 | `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador | HU-08, HU-19, HU-20, HU-22 |
 | `/eventos/{id}/apostar` | Apuesta simple: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
-| `/apuestas` | Mis apuestas activas, dinero en juego y ganancia si acierto; cancelar antes de que empiece el evento | HU-24, HU-26 |
-| `/ranking` | Ranking de jugadores por saldo, con tu posición destacada | HU-36 |
+| `/apuestas` | Mis apuestas activas (con opción de cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-34, HU-35 |
+| `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos, y edición de la calificación y el escudo de cada equipo | HU-01 |
+| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular | HU-04, HU-05, HU-06, HU-25 |
 | `/equipos` | Listado público de equipos y deportistas | — |
 
 - **Pruebas:** `./mvnw test`

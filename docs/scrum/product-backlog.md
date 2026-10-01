@@ -45,6 +45,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 | 25 | Vinculación de cuenta bancaria y retiradas de saldo | ½ sprint | 4 (opcional) | W | |
 | 26 | Parte social: seguir usuarios, privacidad, feed, copiar apuestas | 1 sprint | 4 (opcional) | W | |
 | 27 | Límites de juego responsable y pausa temporal | ¼ sprint | 3 (opcional) | C | |
+| 28 | Apuestas a largo plazo: mercados con varios candidatos (Balón de Oro, campeón de LaLiga, Pichichi, campeón de F1). El creador crea el mercado, fija las cuotas de cada candidato, lo cierra y marca el ganador. *Depende de la fila 16* | ½–1 sprint | 7 | S | |
 
 ## Puntos a revisar en equipo
 
