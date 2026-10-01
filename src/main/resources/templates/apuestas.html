@@ -29,15 +29,16 @@
     <div class="rejilla-partidos">
         <article class="partido apuesta" th:each="a : ${activas}">
             <div class="partido-cabecera">
-                <span class="chip" th:text="${a.combinada} ? ('Combinada · ' + ${#lists.size(a.selecciones)}) : 'Simple'">Simple</span>
+                <span class="chip" th:text="${a.combinada} ? ('Combinada · ' + ${#lists.size(a.selecciones)}) : (${a.largoPlazo} ? 'Largo plazo' : 'Simple')">Simple</span>
                 <span class="chip" th:text="'Cuota ' + ${@formato.cuota(a.cuota)}">Cuota 1,85</span>
             </div>
             <ul class="selecciones">
                 <li th:each="s : ${a.selecciones}" th:classappend="${#strings.toLowerCase(s.estado)}">
-                    <span class="opcion-simbolo" th:text="${s.pronostico.simbolo}">1</span>
+                    <span class="opcion-simbolo" th:text="${s.simbolo}">1</span>
                     <div class="linea-texto">
                         <strong th:text="${s.descripcionPronostico}">Real Madrid</strong>
-                        <small th:text="${s.evento.local.nombre} + ' – ' + ${s.evento.visitante.nombre} + ' · ' + ${@formato.dia(s.evento.fechaHora)} + ' ' + ${@formato.hora(s.evento.fechaHora)}">Real Madrid – Getafe CF · Sáb 10 oct 21:00</small>
+                        <small th:unless="${s.largoPlazo}" th:text="${s.titulo} + ' · ' + ${@formato.dia(s.fecha)} + ' ' + ${@formato.hora(s.fecha)}">Real Madrid – Getafe CF · Sáb 10 oct 21:00</small>
+                        <small th:if="${s.largoPlazo}" th:text="${s.titulo} + ' · cierra el ' + ${#temporals.format(s.fecha, 'dd/MM/yyyy')}">Balón de Oro 2027 · cierra el 31/08/2027</small>
                     </div>
                     <span class="seleccion-cuota" th:text="${@formato.cuota(s.cuota)}">1,85</span>
                 </li>
@@ -69,16 +70,16 @@
     </div>
     <div class="tarjeta tabla" th:unless="${#lists.isEmpty(historial)}">
         <table>
-            <thead><tr><th>Partidos</th><th>Pronóstico</th><th>Cuota</th><th>Importe</th><th>Estado</th><th>Balance</th></tr></thead>
+            <thead><tr><th>Apuesta</th><th>Pronóstico</th><th>Cuota</th><th>Importe</th><th>Estado</th><th>Balance</th></tr></thead>
             <tbody>
             <tr th:each="a : ${historial}">
                 <td>
                     <th:block th:each="s, i : ${a.selecciones}">
-                        <span th:text="${s.evento.local.nombre} + ' – ' + ${s.evento.visitante.nombre}">Real Madrid – Getafe CF</span>
-                        <small class="aviso" th:text="'(' + ${s.pronostico.simbolo} + ')'">(1)</small><br th:unless="${i.last}">
+                        <span th:text="${s.titulo}">Real Madrid – Getafe CF</span>
+                        <small class="aviso" th:unless="${s.largoPlazo}" th:text="'(' + ${s.simbolo} + ')'">(1)</small><br th:unless="${i.last}">
                     </th:block>
                 </td>
-                <td th:text="${a.combinada} ? ('Combinada · ' + ${#lists.size(a.selecciones)}) : (${a.selecciones[0].pronostico.simbolo} + ' · ' + ${a.selecciones[0].descripcionPronostico})">1 · Real Madrid</td>
+                <td th:text="${a.combinada} ? ('Combinada · ' + ${#lists.size(a.selecciones)}) : (${a.selecciones[0].simbolo} + ' · ' + ${a.selecciones[0].descripcionPronostico})">1 · Real Madrid</td>
                 <td th:text="${@formato.cuota(a.cuota)}">1,85</td>
                 <td th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</td>
                 <td><span class="estado" th:classappend="${#strings.toLowerCase(a.estado)}" th:text="${a.estado}">GANADA</span></td>

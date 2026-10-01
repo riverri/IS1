@@ -25,11 +25,22 @@
         <div class="tarjeta estadistica"><span th:text="${eventos.size()}">34</span>eventos</div>
         <div class="tarjeta estadistica"><span th:text="${equipos.size()}">56</span>equipos</div>
         <div class="tarjeta estadistica"><span th:text="${competiciones.size()}">5</span>competiciones</div>
+        <div class="tarjeta estadistica"><span th:text="${mercados.size()}">4</span>mercados a largo plazo</div>
+    </div>
+
+    <div class="tarjeta api-estado">
+        <div>
+            <strong>Límites de apuesta</strong>
+            <p class="aviso" th:text="'Importe entre ' + ${#numbers.formatDecimal(limites.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' y ' + ${#numbers.formatDecimal(limites.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas · combinadas de hasta ' + ${limites.maxSelecciones} + ' selecciones'">
+                Importe entre 1,00 y 500,00 monedas · combinadas de hasta 10 selecciones</p>
+        </div>
+        <a class="boton boton-secundario" th:href="@{/gestion/limites}">Cambiar</a>
     </div>
 
     <div class="acciones">
         <a class="boton boton-secundario" th:href="@{/gestion/competiciones/nueva}">+ Nueva competición</a>
         <a class="boton boton-secundario" th:href="@{/gestion/equipos/nuevo}">+ Nuevo equipo</a>
+        <a class="boton boton-secundario" th:href="@{/gestion/mercados/nuevo}">+ Nuevo mercado a largo plazo</a>
         <a class="boton" th:href="@{/gestion/eventos/nuevo}">+ Nuevo evento</a>
     </div>
 
@@ -52,10 +63,32 @@
         </table>
     </div>
 
+    <h2>Apuestas a largo plazo</h2>
+    <div class="vacio" th:if="${#lists.isEmpty(mercados)}">
+        <p>Todavía no hay mercados a largo plazo.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(mercados)}">
+        <table>
+            <thead><tr><th>Cierre</th><th>Mercado</th><th>Candidatos</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="m : ${mercados}">
+                <td th:text="${#temporals.format(m.cierre, 'dd/MM/yyyy HH:mm')}">31/08/2027 23:59</td>
+                <td th:text="${m.deporte.icono} + ' ' + ${m.nombre}">⚽ Balón de Oro 2027</td>
+                <td th:text="${#lists.size(m.candidatos)}">10</td>
+                <td>
+                    <span class="estado" th:classappend="${#strings.toLowerCase(m.estado)}" th:text="${m.estado}">ABIERTO</span>
+                    <span class="estado pendiente" th:if="${m.estado.name() == 'ABIERTO' and !m.cierre.isAfter(ahora)}">FALTA GANADOR</span>
+                </td>
+                <td><a th:href="@{/gestion/mercados/{id}(id=${m.id})}">Gestionar</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <h2>Equipos</h2>
     <div class="tarjeta tabla">
         <table>
-            <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th><th></th></tr></thead>
+            <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th><th>Forma</th><th></th></tr></thead>
             <tbody>
             <tr th:each="e : ${equipos}">
                 <td>
@@ -67,6 +100,8 @@
                 <td th:text="${e.deporte.nombre}">Fútbol</td>
                 <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
                 <td th:text="${e.calidad}">9.5</td>
+                <td><span class="forma" th:classappend="${e.forma.valor > 0} ? 'forma-positiva' : (${e.forma.valor < 0} ? 'forma-negativa')"
+                          th:title="${e.forma.descripcion}" th:text="${e.forma.simbolo}">=</span></td>
                 <td><a th:href="@{/gestion/equipos/{id}/editar(id=${e.id})}">Editar</a></td>
             </tr>
             </tbody>

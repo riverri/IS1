@@ -41,7 +41,7 @@
         <div class="tarjeta tabla">
             <table>
                 <thead>
-                <tr><th>Nombre</th><th>Competiciones</th><th>Calidad</th></tr>
+                <tr><th>Nombre</th><th>Competiciones</th><th>Calidad</th><th>Forma</th></tr>
                 </thead>
                 <tbody>
                 <tr th:each="e : ${grupo.value}">
@@ -58,6 +58,8 @@
                             <span th:text="${e.calidad}">9.5</span>
                         </span>
                     </td>
+                    <td><span class="forma" th:classappend="${e.forma.valor > 0} ? 'forma-positiva' : (${e.forma.valor < 0} ? 'forma-negativa')"
+                              th:title="${e.forma.descripcion}" th:text="${e.forma.simbolo} + ' ' + ${e.forma.descripcion}">= Normal</span></td>
                 </tr>
                 </tbody>
             </table>

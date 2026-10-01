@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Apuestas a largo plazo')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <div class="titulo-pagina">
+        <h1>Apuestas a largo plazo</h1>
+        <p class="subtitulo">¿Quién ganará el Balón de Oro, la liga o el mundial? Elige un candidato y cobra cuando se conozca el ganador.</p>
+    </div>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">La cuota ha cambiado</p>
+    <p class="aviso" th:if="${usuarioActual != null and limitesApuesta != null}"
+       th:text="'Saldo disponible: ' + ${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas · entre ' + ${#numbers.formatDecimal(limitesApuesta.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' y ' + ${#numbers.formatDecimal(limitesApuesta.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas por apuesta'">
+        Saldo disponible: 1.000,00 monedas · entre 1,00 y 500,00 monedas por apuesta</p>
+
+    <div class="vacio" th:if="${#lists.isEmpty(abiertos)}">
+        <p>Ahora mismo no hay apuestas a largo plazo abiertas.</p>
+        <a class="boton" th:href="@{/eventos}">Ver partidos</a>
+    </div>
+
+    <div class="mercados">
+        <article class="tarjeta mercado" th:each="m : ${abiertos}" th:id="'mercado-' + ${m.id}">
+            <div class="partido-cabecera">
+                <span class="chip" th:text="${m.deporte.icono} + ' ' + ${m.deporte.nombre}">⚽ Fútbol</span>
+                <small th:text="'Cierra el ' + ${#temporals.format(m.cierre, 'dd/MM/yyyy')}">Cierra el 31/08/2027</small>
+            </div>
+            <h2 th:text="${m.nombre}">Balón de Oro 2027</h2>
+            <form class="formulario" th:action="@{/mercados/{id}/apostar(id=${m.id})}" method="post">
+                <fieldset class="opciones candidatos">
+                    <legend class="solo-lectores" th:text="'Candidatos a ' + ${m.nombre}">Candidatos</legend>
+                    <label class="opcion" th:each="c : ${m.candidatos}">
+                        <input type="radio" name="candidato" th:value="${c.id}" th:attr="data-cuota=${c.cuota}" required>
+                        <th:block th:if="${c.equipo != null}"><span th:replace="~{fragments/comun :: escudo(${c.equipo}, 'escudo-pequeno')}"></span></th:block>
+                        <th:block th:if="${c.equipo == null}"><span th:replace="~{fragments/comun :: avatar(${c.nombre}, 'escudo-pequeno')}"></span></th:block>
+                        <span class="opcion-nombre" th:text="${c.nombre}">Lamine Yamal</span>
+                        <b th:text="${@formato.cuota(c.cuota)}">3,50</b>
+                    </label>
+                </fieldset>
+                <input type="hidden" name="cuota" class="cuota-vista">
+                <th:block th:if="${usuarioActual != null}">
+                    <div class="mercado-importe">
+                        <div>
+                            <label th:for="'importe-' + ${m.id}">Importe</label>
+                            <input th:id="'importe-' + ${m.id}" class="importe" name="importe" type="number" min="0.01"
+                                   step="0.01" inputmode="decimal" required placeholder="10">
+                        </div>
+                        <div class="ganancia">
+                            <span>Ganancia potencial</span>
+                            <strong class="ganancia-calculada">–</strong>
+                        </div>
+                    </div>
+                    <button class="boton boton-bloque" type="submit">Apostar</button>
+                </th:block>
+                <a class="boton boton-bloque" th:if="${usuarioActual == null}" th:href="@{/login}">Entra para apostar</a>
+            </form>
+        </article>
+    </div>
+
+    <th:block th:unless="${#lists.isEmpty(terminados)}">
+        <h2>Cerrados y resueltos</h2>
+        <div class="tarjeta tabla">
+            <table>
+                <thead><tr><th>Mercado</th><th>Cierre</th><th>Ganador</th></tr></thead>
+                <tbody>
+                <tr th:each="m : ${terminados}">
+                    <td th:text="${m.deporte.icono} + ' ' + ${m.nombre}">⚽ Balón de Oro 2026</td>
+                    <td th:text="${#temporals.format(m.cierre, 'dd/MM/yyyy')}">31/08/2026</td>
+                    <td>
+                        <strong th:if="${m.ganador != null}" th:text="${m.ganador.nombre}">Ousmane Dembélé</strong>
+                        <span class="aviso" th:if="${m.ganador == null}">Pendiente</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+</main>
+<script>
+    (function () {
+        const formato = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.querySelectorAll('.mercado form').forEach(function (form) {
+            const importe = form.querySelector('.importe');
+            const salida = form.querySelector('.ganancia-calculada');
+            const cuotaVista = form.querySelector('.cuota-vista');
+            function actualizar() {
+                const elegido = form.querySelector('input[name="candidato"]:checked');
+                cuotaVista.value = elegido ? elegido.dataset.cuota : '';
+                if (!importe || !salida) { return; }
+                const cantidad = parseFloat(importe.value);
+                if (!elegido || !(cantidad > 0)) { salida.textContent = '–'; return; }
+                const ganancia = Math.floor(cantidad * parseFloat(elegido.dataset.cuota) * 100) / 100;
+                salida.textContent = formato.format(ganancia) + ' monedas';
+            }
+            form.querySelectorAll('input[name="candidato"]').forEach(r => r.addEventListener('change', actualizar));
+            if (importe) { importe.addEventListener('input', actualizar); }
+            actualizar();
+        });
+    })();
+</script>
+</body>
+</html>
