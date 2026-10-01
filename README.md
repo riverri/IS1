@@ -82,9 +82,20 @@ Abrir http://localhost:8080.
 
 - **Pruebas:** `./mvnw test`
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
-- **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Para empezar de cero, para la aplicación y borra esa carpeta.
+- **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Las tablas las crea y actualiza **Flyway** (ver más abajo), así que al actualizar el proyecto no hace falta borrarla. Para empezar de cero, para la aplicación y borra esa carpeta.
 - **Consola de la base de datos:** http://localhost:8080/h2-console (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
 - **IDE recomendado:** IntelliJ IDEA Community. Abrir la carpeta, que detecta el `pom.xml`. También valen Eclipse y VS Code con el "Extension Pack for Java".
+
+## Base de datos y migraciones (Flyway)
+
+Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar: `V1__esquema_inicial.sql`, `V2__identificadores_api.sql`… Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+
+**Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
+1. Crea un script nuevo con el número siguiente, por ejemplo `V3__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario.
+2. **No modifiques nunca un script que ya esté en `main`**: otros ordenadores ya lo han aplicado.
+3. Arranca y ejecuta `./mvnw test`. Hibernate comprueba (`ddl-auto=validate`) que las entidades coinciden con las tablas; si falta una migración, la aplicación no arranca y dice qué columna o tabla falta.
+
+Si tu carpeta `datos/` es de antes del Sprint 4 (apuestas combinadas), no se puede actualizar: para la aplicación y bórrala.
 
 ## Datos reales con la API (football-data.org)
 

@@ -22,3 +22,6 @@ Ejemplo: `feat: calcula el multiplicador de apuestas combinadas (#6)`
 - ¿Cumple los criterios de aceptación del issue?
 - ¿Se entiende el código? ¿Tiene pruebas?
 - Comentarios constructivos y concretos.
+
+## Cambios en la base de datos
+Todo cambio en las entidades JPA necesita su script de migración en `src/main/resources/db/migration` (`V<n>__descripcion.sql`). Los scripts que ya están en `main` no se modifican nunca. Más detalles en el README.
