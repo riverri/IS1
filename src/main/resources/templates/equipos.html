@@ -46,10 +46,10 @@
                 <tbody>
                 <tr th:each="e : ${grupo.value}">
                     <td>
-                        <span class="equipo-celda">
+                        <a class="equipo-celda" th:href="@{/equipos/{id}(id=${e.id})}">
                             <span th:replace="~{fragments/comun :: escudo(${e}, 'escudo-pequeno')}"></span>
                             <span th:text="${e.nombre}">Real Madrid</span>
-                        </span>
+                        </a>
                     </td>
                     <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
                     <td>

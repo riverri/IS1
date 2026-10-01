@@ -67,6 +67,43 @@
         </form>
         <a class="enlace-volver" th:href="@{/eventos}">← Volver al catálogo</a>
     </div>
+
+    <section class="tarjeta cara-a-cara" th:with="cc=${caraACara}">
+        <h2>Cara a cara</h2>
+        <div class="cara-a-cara-rachas">
+            <div>
+                <a th:href="@{/equipos/{id}(id=${evento.local.id})}" th:text="${evento.local.nombre}">Real Madrid</a>
+                <span class="racha">
+                    <span class="resultado-equipo" th:each="r : ${cc.rachaLocal}" th:classappend="${#strings.toLowerCase(r)}"
+                          th:text="${r.letra}" th:title="${r.descripcion}">V</span>
+                    <span class="aviso" th:if="${#lists.isEmpty(cc.rachaLocal)}">Sin resultados</span>
+                </span>
+            </div>
+            <div>
+                <a th:href="@{/equipos/{id}(id=${evento.visitante.id})}" th:text="${evento.visitante.nombre}">Getafe CF</a>
+                <span class="racha">
+                    <span class="resultado-equipo" th:each="r : ${cc.rachaVisitante}" th:classappend="${#strings.toLowerCase(r)}"
+                          th:text="${r.letra}" th:title="${r.descripcion}">D</span>
+                    <span class="aviso" th:if="${#lists.isEmpty(cc.rachaVisitante)}">Sin resultados</span>
+                </span>
+            </div>
+        </div>
+        <p class="aviso" th:if="${#lists.isEmpty(cc.anteriores)}">No hay enfrentamientos anteriores registrados.</p>
+        <th:block th:unless="${#lists.isEmpty(cc.anteriores)}">
+            <p class="cara-a-cara-balance">
+                <span><strong th:text="${cc.balanceLocal.victorias()}">2</strong> <span th:text="${evento.local.nombre}">Real Madrid</span></span>
+                <span th:if="${evento.deporte.admiteEmpate}"><strong th:text="${cc.balanceLocal.empates()}">1</strong> empates</span>
+                <span><strong th:text="${cc.balanceLocal.derrotas()}">0</strong> <span th:text="${evento.visitante.nombre}">Getafe CF</span></span>
+            </p>
+            <ul class="enfrentamientos">
+                <li th:each="e : ${cc.anteriores}">
+                    <span class="aviso" th:text="${#temporals.format(e.fechaHora, 'dd/MM/yyyy')}">12/04/2026</span>
+                    <span th:text="${e.local.nombre} + ' – ' + ${e.visitante.nombre}">Real Madrid – Getafe CF</span>
+                    <strong th:text="${e.resultado.simbolo}">1</strong>
+                </li>
+            </ul>
+        </th:block>
+    </section>
 </main>
 <script>
     (function () {

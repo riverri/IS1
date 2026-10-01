@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.EquiposService;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
+import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoProperties;
 
 @Controller
@@ -17,11 +19,14 @@ public class InicioController {
 
     private final EquiposService equipos;
     private final CatalogoService catalogo;
+    private final FichaEquipoService fichas;
     private final SaldoProperties saldo;
 
-    public InicioController(EquiposService equipos, CatalogoService catalogo, SaldoProperties saldo) {
+    public InicioController(EquiposService equipos, CatalogoService catalogo, FichaEquipoService fichas,
+                            SaldoProperties saldo) {
         this.equipos = equipos;
         this.catalogo = catalogo;
+        this.fichas = fichas;
         this.saldo = saldo;
     }
 
@@ -44,5 +49,12 @@ public class InicioController {
         model.addAttribute("competiciones", deporte == null ? List.of() : equipos.competiciones(deporte));
         model.addAttribute("q", q == null ? "" : q.trim());
         return "equipos";
+    }
+
+    /** Ficha pública de un equipo o deportista (HU-31). */
+    @GetMapping("/equipos/{id}")
+    public String ficha(@PathVariable Long id, Model model) {
+        model.addAttribute("ficha", fichas.ficha(id));
+        return "equipo";
     }
 }

@@ -1,4 +1,4 @@
-# Sprint 6 · 01/10 – 15/10
+# Sprint 6 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -52,12 +52,14 @@
 ## Dailies
 - **01/10**: forma y ajuste por volumen en las cuotas, límites de apuesta, mercados a largo plazo, pantallas, migración V3 y pruebas.
 
-## Sprint Review (15/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (01/10)
+- **Historias completadas:** HU-02, HU-03 (versión 2), HU-07, HU-44 y HU-45.
+- **Historias no completadas:** ninguna.
+- **Feedback del PO:**
+  - Añadir al backlog tres historias nuevas: HU-46 (editar y borrar eventos), HU-47 (cambiar nombre y contraseña) y HU-48 (perfil público desde el ranking).
+  - Siguiente sprint: ficha de equipo, cara a cara, notificaciones y modificar el importe de una apuesta.
 
-## Retrospectiva (15/10)
+## Retrospectiva (01/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**

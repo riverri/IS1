@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza(${ficha.equipo.nombre})}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main th:with="equipo=${ficha.equipo}">
+    <a class="enlace-volver" th:href="@{/equipos(deporte=${equipo.deporte})}">← Equipos y deportistas</a>
+
+    <div class="tarjeta ficha-cabecera">
+        <span th:replace="~{fragments/comun :: escudo(${equipo}, 'escudo-grande')}"></span>
+        <div class="ficha-datos">
+            <h1 th:text="${equipo.nombre}">FC Barcelona</h1>
+            <p>
+                <span class="chip" th:text="${equipo.deporte.icono} + ' ' + ${equipo.deporte.nombre}">⚽ Fútbol</span>
+                <span class="chip" th:each="c : ${equipo.competiciones}" th:text="${c.nombre}">LaLiga</span>
+            </p>
+            <p class="ficha-nivel">
+                <span>Calidad</span>
+                <span class="calidad">
+                    <span class="calidad-barra"><span th:style="'width:' + ${equipo.calidad * 10} + '%'"></span></span>
+                    <strong th:text="${equipo.calidad}">9.9</strong>
+                </span>
+                <span>Forma</span>
+                <strong class="forma" th:classappend="${equipo.forma.valor > 0} ? 'forma-positiva' : (${equipo.forma.valor < 0} ? 'forma-negativa')"
+                        th:text="${equipo.forma.simbolo} + ' ' + ${equipo.forma.descripcion}">▲ Buena racha</strong>
+            </p>
+        </div>
+        <div class="racha" th:unless="${#lists.isEmpty(ficha.racha)}" title="Últimos resultados, el más reciente a la derecha">
+            <span class="racha-titulo">Racha</span>
+            <span class="resultado-equipo" th:each="r : ${ficha.racha}" th:classappend="${#strings.toLowerCase(r)}"
+                  th:text="${r.letra}" th:title="${r.descripcion}">V</span>
+        </div>
+    </div>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${ficha.balance.jugados()}">8</span>partidos jugados</div>
+        <div class="tarjeta estadistica"><span th:text="${ficha.balance.victorias()}">6</span>victorias</div>
+        <div class="tarjeta estadistica" th:if="${equipo.deporte.admiteEmpate}"><span th:text="${ficha.balance.empates()}">1</span>empates</div>
+        <div class="tarjeta estadistica"><span th:text="${ficha.balance.derrotas()}">1</span>derrotas</div>
+    </div>
+
+    <th:block th:unless="${#lists.isEmpty(ficha.clasificaciones)}">
+        <h2>Clasificación</h2>
+        <p class="aviso">Calculada con los resultados registrados en la web: 3 puntos por victoria y 1 por empate.</p>
+        <div class="estadisticas">
+            <div class="tarjeta estadistica" th:each="p : ${ficha.clasificaciones}">
+                <span th:text="${p.posicion()} + 'º'">1º</span>
+                <th:block th:text="${p.competicion().nombre} + ' · ' + ${p.balance().puntos()} + ' puntos'">LaLiga · 19 puntos</th:block>
+                <small th:text="'de ' + ${p.participantes()} + ' equipos con partidos jugados'">de 20 equipos</small>
+            </div>
+        </div>
+    </th:block>
+
+    <h2>Últimos resultados</h2>
+    <div class="vacio" th:if="${#lists.isEmpty(ficha.ultimos)}">
+        <p>Todavía no hay resultados registrados de este equipo.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(ficha.ultimos)}">
+        <table>
+            <thead><tr><th>Fecha</th><th>Competición</th><th>Rival</th><th></th><th>Resultado</th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${ficha.ultimos}">
+                <td th:text="${#temporals.format(p.evento().fechaHora, 'dd/MM/yyyy')}">04/10/2026</td>
+                <td th:text="${p.evento().competicion.nombre}">LaLiga</td>
+                <td>
+                    <a class="equipo-celda" th:href="@{/equipos/{id}(id=${p.rival().id})}">
+                        <span th:replace="~{fragments/comun :: escudo(${p.rival()}, 'escudo-pequeno')}"></span>
+                        <span th:text="${p.rival().nombre}">Real Madrid</span>
+                    </a>
+                </td>
+                <td class="aviso" th:text="${p.enCasa()} ? 'En casa' : 'Fuera'">En casa</td>
+                <td><span class="resultado-equipo" th:classappend="${#strings.toLowerCase(p.resultado())}"
+                          th:text="${p.resultado().letra}" th:title="${p.resultado().descripcion}">V</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <th:block th:unless="${#lists.isEmpty(ficha.proximos)}">
+        <h2>Próximos partidos</h2>
+        <div class="rejilla-partidos">
+            <th:block th:each="ev : ${ficha.proximos}">
+                <article th:replace="~{fragments/comun :: partido(${ev})}"></article>
+            </th:block>
+        </div>
+    </th:block>
+</main>
+</body>
+</html>
