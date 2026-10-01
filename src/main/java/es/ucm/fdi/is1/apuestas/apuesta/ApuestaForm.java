@@ -13,7 +13,7 @@ public class ApuestaForm {
     private Resultado resultado;
 
     @NotNull(message = "Introduce un importe")
-    @DecimalMin(value = "1", message = "El importe mínimo es 1 moneda")
+    @DecimalMin(value = "0.01", message = "El importe tiene que ser mayor que 0")
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal importe;
 

@@ -22,6 +22,7 @@
         </a>
         <nav class="menu">
             <a th:href="@{/eventos}">Eventos</a>
+            <a th:href="@{/mercados}">Largo plazo</a>
             <a th:href="@{/equipos}">Equipos</a>
             <a th:href="@{/ranking}">Ranking</a>
             <a th:if="${usuarioActual != null}" th:href="@{/apuestas}">Mis apuestas</a>
@@ -71,6 +72,16 @@
     <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy"
          referrerpolicy="no-referrer"
          onerror="this.parentElement.classList.remove('con-imagen'); this.remove();">
+</span>
+
+<span th:fragment="avatar(nombre, tam)" class="escudo redondo" th:classappend="${tam}"
+      th:with="col=${@formato.colores(nombre)}, ini=${@formato.iniciales(nombre)}">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="19" th:attr="fill=${col[1]}"/>
+        <circle cx="20" cy="20" r="16" th:attr="fill=${col[0]}"/>
+        <text x="20" y="25" text-anchor="middle" font-size="13" font-weight="800"
+              th:attr="fill=${col[2]}" th:text="${ini}">LY</text>
+    </svg>
 </span>
 
 <article class="partido" th:fragment="partido(ev)"

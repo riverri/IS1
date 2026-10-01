@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.config;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -15,12 +16,16 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.mercados.Candidato;
+import es.ucm.fdi.is1.apuestas.mercados.Mercado;
+import es.ucm.fdi.is1.apuestas.mercados.MercadoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
 /**
- * Datos iniciales: usuarios de prueba, competiciones, equipos y partidos reales de LaLiga y Champions 2026/27.
+ * Datos iniciales: usuarios de prueba, competiciones, equipos, partidos reales de LaLiga y Champions 2026/27
+ * y mercados a largo plazo.
  * Solo se añade lo que falta (por nombre), así que no duplica ni borra lo que el creador
  * de apuestas haya introducido desde el panel de gestión.
  */
@@ -30,14 +35,16 @@ public class DatosIniciales implements ApplicationRunner {
     private final CompeticionRepository competiciones;
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
+    private final MercadoRepository mercados;
     private final UsuarioRepository usuarioRepository;
     private final UsuarioService usuarios;
 
     public DatosIniciales(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
-                          UsuarioRepository usuarioRepository, UsuarioService usuarios) {
+                          MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
+        this.mercados = mercados;
         this.usuarioRepository = usuarioRepository;
         this.usuarios = usuarios;
     }
@@ -197,6 +204,7 @@ public class DatosIniciales implements ApplicationRunner {
         partido(laLiga, "Jornada 9", "CA Osasuna", "Racing de Santander", 2026, 10, 18, 14, 0);
 
         eventosDeEjemplo(acb, euroliga, nba, atp, f1, motoGp);
+        mercadosALargoPlazo();
 
         // Escudos: solo se rellenan si el equipo aún no tiene uno (no pisa los cambios hechos en Gestión)
         // y se guarda el identificador de football-data.org para enlazar con la API
@@ -259,6 +267,41 @@ public class DatosIniciales implements ApplicationRunner {
         partido(motoGp, "GP de Australia · Duelos", "Marc Márquez", "Francesco Bagnaia", 2026, 10, 18, 5, 0);
         partido(motoGp, "GP de Australia · Duelos", "Jorge Martín", "Pedro Acosta", 2026, 10, 18, 5, 0);
         partido(motoGp, "GP de Australia · Duelos", "Álex Márquez", "Marco Bezzecchi", 2026, 10, 18, 5, 0);
+    }
+
+    /**
+     * Apuestas a largo plazo (HU-44). Las cuotas son una propuesta inicial: el creador de apuestas las ajusta
+     * en Gestión. El mercado de F1 es de ejemplo, como el resto de eventos de otros deportes.
+     */
+    private void mercadosALargoPlazo() {
+        mercado("Campeón de la Champions 2026/27", Deporte.FUTBOL, LocalDateTime.of(2027, 2, 15, 23, 59),
+                "FC Barcelona;5.50", "Paris Saint-Germain;6.00", "Arsenal;6.00", "Bayern de Múnich;7.00",
+                "Real Madrid;8.00", "Manchester City;8.00", "Liverpool;9.00", "Inter de Milán;15.00",
+                "Atlético de Madrid;21.00", "Borussia Dortmund;34.00");
+        mercado("Campeón de LaLiga 2026/27", Deporte.FUTBOL, LocalDateTime.of(2027, 4, 30, 23, 59),
+                "FC Barcelona;1.80", "Real Madrid;2.75", "Atlético de Madrid;6.00", "Villarreal CF;21.00",
+                "Athletic Club;41.00", "Real Betis;51.00");
+        mercado("Balón de Oro 2027", Deporte.FUTBOL, LocalDateTime.of(2027, 8, 31, 23, 59),
+                "Lamine Yamal;3.50", "Kylian Mbappé;4.50", "Ousmane Dembélé;9.00", "Harry Kane;10.00",
+                "Erling Haaland;12.00", "Pedri;12.00", "Raphinha;15.00", "Vitinha;15.00",
+                "Jude Bellingham;20.00", "Michael Olise;25.00");
+        mercado("Campeón del Mundial de F1 2026", Deporte.AUTOMOVILISMO, LocalDateTime.of(2026, 11, 20, 23, 59),
+                "Max Verstappen;3.00", "Lando Norris;3.50", "George Russell;4.00", "Oscar Piastri;5.00",
+                "Charles Leclerc;9.00", "Lewis Hamilton;15.00", "Fernando Alonso;40.00", "Carlos Sainz;50.00");
+    }
+
+    /** Candidatos con el formato "Nombre;cuota". Si el nombre es un equipo o deportista, se enlaza con él. */
+    private void mercado(String nombre, Deporte deporte, LocalDateTime cierre, String... candidatos) {
+        if (mercados.findByNombre(nombre).isPresent()) {
+            return;
+        }
+        Mercado mercado = new Mercado(nombre, deporte, cierre);
+        for (String linea : candidatos) {
+            String[] partes = linea.split(";");
+            Candidato candidato = mercado.anadirCandidato(partes[0], new BigDecimal(partes[1]));
+            equipos.findByNombre(partes[0]).filter(e -> e.getDeporte() == deporte).ifPresent(candidato::setEquipo);
+        }
+        mercados.save(mercado);
     }
 
     private void usuario(String email, String nombre, String password, Rol rol) {

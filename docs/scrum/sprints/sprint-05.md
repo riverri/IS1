@@ -1,4 +1,4 @@
-# Sprint 5 · 01/10 – 15/10
+# Sprint 5 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -45,12 +45,15 @@
 - **01/10**: cliente de la API, sincronización, tarea programada, botón en Gestión y documentación.
 - **01/10**: error 500 en Ranking con una base de datos antigua; se introducen las migraciones con Flyway.
 
-## Sprint Review (15/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (01/10)
+- **Historias completadas:** HU-21, HU-25 y HU-05 (desde la API), los escudos oficiales y las migraciones con Flyway.
+- **Historias no completadas:** ninguna. Queda pendiente probar la sincronización con una clave real de la API.
+- **Feedback del PO:**
+  - Equipos agrupados por deporte, con filtro por competición y buscador (hecho).
+  - Script `compartir.bat` para jugar en clase desde varios ordenadores con un túnel de Cloudflare (hecho).
+  - Siguiente sprint: terminar el algoritmo de cuotas, los límites de apuesta y las apuestas a largo plazo.
 
-## Retrospectiva (15/10)
+## Retrospectiva (01/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**

@@ -15,6 +15,9 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.mercados.Candidato;
+import es.ucm.fdi.is1.apuestas.mercados.CandidatoRepository;
+import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
@@ -24,15 +27,18 @@ public class ApuestaService {
     private final ApuestaRepository apuestas;
     private final EventoRepository eventos;
     private final UsuarioRepository usuarios;
+    private final CandidatoRepository candidatos;
     private final CalculadoraCuotas calculadora;
-    private final LimitesProperties limites;
+    private final LimitesService limites;
     private final Clock reloj;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
-                          CalculadoraCuotas calculadora, LimitesProperties limites, Clock reloj) {
+                          CandidatoRepository candidatos, CalculadoraCuotas calculadora, LimitesService limites,
+                          Clock reloj) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
+        this.candidatos = candidatos;
         this.calculadora = calculadora;
         this.limites = limites;
         this.reloj = reloj;
@@ -46,7 +52,7 @@ public class ApuestaService {
 
     /**
      * Registra una apuesta simple o combinada (HU-23, HU-28, HU-29): comprueba que los eventos admiten
-     * apuestas, que no se repiten, el número máximo de selecciones y el saldo, y descuenta el importe.
+     * apuestas, que no se repiten, los límites de apuesta (HU-07) y el saldo, y descuenta el importe.
      * Las cuotas se calculan en el servidor. Si el usuario vio una cuota distinta de la actual, no se apuesta
      * y se le pide que acepte las nuevas (HU-29).
      */
@@ -55,10 +61,9 @@ public class ApuestaService {
         if (pedidas.isEmpty()) {
             throw new IllegalArgumentException("El boleto está vacío");
         }
-        if (pedidas.size() > limites.maxSelecciones()) {
-            throw new IllegalArgumentException("Una combinada admite como máximo " + limites.maxSelecciones()
-                    + " selecciones");
-        }
+        Limites limitesActuales = limites.actuales();
+        limitesActuales.comprobarSelecciones(pedidas.size());
+        limitesActuales.comprobarImporte(importe);
         LocalDateTime ahora = LocalDateTime.now(reloj);
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
@@ -84,7 +89,31 @@ public class ApuestaService {
     }
 
     /**
-     * Cancela una apuesta activa del usuario antes de que empiece el evento y le devuelve el importe (HU-26).
+     * Apuesta a largo plazo (HU-44): al candidato de un mercado abierto, con la cuota que ha fijado el creador.
+     * Si el usuario vio otra cuota (el creador la ha cambiado mientras tanto), no se apuesta.
+     */
+    @Transactional
+    public Apuesta apostarMercado(String email, Long mercadoId, Long candidatoId, BigDecimal cuotaVista,
+                                  BigDecimal importe) {
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        Candidato candidato = candidatos.findById(candidatoId)
+                .filter(c -> c.getMercado().getId().equals(mercadoId))
+                .filter(c -> c.getMercado().admiteApuestas(ahora))
+                .orElseThrow(() -> new MercadoNoDisponibleException(mercadoId));
+        limites.actuales().comprobarImporte(importe);
+        if (cuotaVista != null && cuotaVista.compareTo(candidato.getCuota()) != 0) {
+            throw new CuotasCambiadasException(List.of());
+        }
+        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        Apuesta apuesta = new Apuesta(usuario, importe, ahora);
+        apuesta.anadir(candidato, candidato.getCuota());
+        usuario.cargar(importe);
+        return apuestas.save(apuesta);
+    }
+
+    /**
+     * Cancela una apuesta activa del usuario antes de que empiece el evento (o, a largo plazo, mientras el
+     * mercado siga abierto) y le devuelve el importe (HU-26).
      * Si la apuesta no es suya se trata como inexistente.
      */
     @Transactional
