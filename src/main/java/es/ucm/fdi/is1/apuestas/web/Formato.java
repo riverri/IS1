@@ -34,6 +34,11 @@ public class Formato {
         return sinTildes.toLowerCase(ES).replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
     }
 
+    /** Cuota con coma decimal: 1.85 → "1,85". */
+    public String cuota(java.math.BigDecimal cuota) {
+        return cuota == null ? "–" : cuota.setScale(2, java.math.RoundingMode.DOWN).toPlainString().replace('.', ',');
+    }
+
     /** "21:00". */
     public String hora(LocalDateTime fecha) {
         return HORA.format(fecha);
