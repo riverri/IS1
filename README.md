@@ -17,9 +17,10 @@ Profesor: Gonzalo Rubén Méndez Pozo.
 
 ## ¿Qué es?
 
-Una web donde los usuarios apuestan **sin dinero real** (moneda ficticia) sobre eventos deportivos:
+Una web donde los usuarios apuestan con **moneditas virtuales (sin dinero real)** sobre eventos deportivos:
 
-- Apuestas simples y **combinadas**, con cálculo automático de la cuota/multiplicador, como en las casas de apuestas online.
+- **Cuotas calculadas por nuestro algoritmo** a partir de la calidad y la forma de cada equipo y del volumen apostado.
+- Apuestas simples y **combinadas** (multiplicador = producto de las cuotas), resueltas automáticamente al introducir el resultado.
 - **Banco de estadísticas** para consultar la evolución de los equipos antes de apostar.
 
 Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
@@ -29,9 +30,10 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 ```
 .
 ├── docs/
-│   ├── requisitos/      # Visión del producto, requisitos
+│   ├── requisitos/      # Visión del producto e historias de usuario
 │   ├── scrum/           # Proceso, Product Backlog y actas de sprint
-│   └── decisiones/      # Decisiones técnicas (stack, arquitectura…)
+│   ├── decisiones/      # Decisiones técnicas (stack, arquitectura…)
+│   └── recursos.md      # Enlaces de teoría y de Git
 ├── src/                 # Código fuente (cuando se elija el stack)
 ├── .github/             # Plantillas de issues y pull requests
 └── CONTRIBUTING.md      # Cómo trabajamos con Git y GitHub
@@ -41,7 +43,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 
 1. Leer [CONTRIBUTING.md](CONTRIBUTING.md) (flujo Git, ramas y pull requests).
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).
-3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) inicial.
+3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) y las [historias de usuario](docs/requisitos/historias-de-usuario.md).
 4. Decidir el stack: [docs/decisiones/0001-stack-tecnologico.md](docs/decisiones/0001-stack-tecnologico.md).
 
 ## Uso de IA
