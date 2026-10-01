@@ -19,12 +19,68 @@
         </div>
         <h1 class="solo-lectores" th:text="${evento.local.nombre} + ' – ' + ${evento.visitante.nombre}">Real Madrid – Getafe CF</h1>
         <p class="marcador-fecha">
-            <span th:text="${@formato.dia(evento.fechaHora)}">sáb 10 oct</span> ·
+            <span th:text="${@formato.dia(evento.fechaHora)}">Sáb 10 oct</span> ·
             <strong th:text="${@formato.hora(evento.fechaHora)}">21:00</strong>
         </p>
-        <p class="aviso">Las apuestas estarán disponibles en cuanto se publiquen las cuotas de este partido.</p>
-        <a class="boton boton-secundario" th:href="@{/eventos}">← Volver al catálogo</a>
+
+        <form class="formulario boleto" th:action="@{/eventos/{id}/apostar(id=${evento.id})}" th:object="${apuesta}" method="post">
+            <fieldset class="opciones">
+                <legend>Tu pronóstico</legend>
+                <label class="opcion">
+                    <input type="radio" th:field="*{resultado}" value="LOCAL" th:attr="data-cuota=${cuotas.local}">
+                    <span class="opcion-simbolo">1</span>
+                    <span class="opcion-nombre" th:text="${evento.local.nombre}">Real Madrid</span>
+                    <b th:text="${@formato.cuota(cuotas.local)}">1,85</b>
+                </label>
+                <label class="opcion" th:if="${cuotas.empate != null}">
+                    <input type="radio" th:field="*{resultado}" value="EMPATE" th:attr="data-cuota=${cuotas.empate}">
+                    <span class="opcion-simbolo">X</span>
+                    <span class="opcion-nombre">Empate</span>
+                    <b th:text="${@formato.cuota(cuotas.empate)}">3,40</b>
+                </label>
+                <label class="opcion">
+                    <input type="radio" th:field="*{resultado}" value="VISITANTE" th:attr="data-cuota=${cuotas.visitante}">
+                    <span class="opcion-simbolo">2</span>
+                    <span class="opcion-nombre" th:text="${evento.visitante.nombre}">Getafe CF</span>
+                    <b th:text="${@formato.cuota(cuotas.visitante)}">4,20</b>
+                </label>
+            </fieldset>
+            <span class="error-campo" th:if="${#fields.hasErrors('resultado')}" th:text="${#fields.errors('resultado')[0]}"></span>
+
+            <label for="importe">Importe</label>
+            <input id="importe" type="number" min="1" step="0.01" inputmode="decimal" th:field="*{importe}"
+                   th:errorclass="con-error" placeholder="10">
+            <span class="error-campo" th:if="${#fields.hasErrors('importe')}" th:text="${#fields.errors('importe')[0]}"></span>
+            <span class="aviso" th:if="${usuarioActual != null}"
+                  th:text="'Saldo disponible: ' + ${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">
+                Saldo disponible: 1.000,00 monedas</span>
+
+            <div class="ganancia">
+                <span>Ganancia potencial</span>
+                <strong id="ganancia">–</strong>
+            </div>
+
+            <button class="boton boton-bloque" type="submit">Confirmar apuesta</button>
+        </form>
+        <a class="enlace-volver" th:href="@{/eventos}">← Volver al catálogo</a>
     </div>
 </main>
+<script>
+    (function () {
+        const importe = document.getElementById('importe');
+        const salida = document.getElementById('ganancia');
+        const formato = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        function actualizar() {
+            const elegido = document.querySelector('input[name="resultado"]:checked');
+            const cantidad = parseFloat(importe.value);
+            if (!elegido || !(cantidad > 0)) { salida.textContent = '–'; return; }
+            const ganancia = Math.floor(cantidad * parseFloat(elegido.dataset.cuota) * 100) / 100;
+            salida.textContent = formato.format(ganancia) + ' monedas';
+        }
+        document.querySelectorAll('input[name="resultado"]').forEach(r => r.addEventListener('change', actualizar));
+        importe.addEventListener('input', actualizar);
+        actualizar();
+    })();
+</script>
 </body>
 </html>
