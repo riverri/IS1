@@ -3,14 +3,30 @@
 <head th:replace="~{fragments/comun :: cabeza('Apostar')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main>
-    <h1 th:text="${evento.local.nombre} + ' – ' + ${evento.visitante.nombre}">Real Madrid – Getafe CF</h1>
-    <p>
-        <span th:text="${evento.competicion.nombre}">LaLiga</span> ·
-        <time th:text="${#temporals.format(evento.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</time>
-    </p>
-    <p class="aviso">Las apuestas estarán disponibles en cuanto se publiquen las cuotas de este evento.</p>
-    <a class="boton boton-secundario" th:href="@{/eventos}">Volver al catálogo</a>
+<main class="estrecho">
+    <div class="tarjeta marcador">
+        <span class="chip" th:text="${evento.competicion.nombre}">LaLiga</span>
+        <div class="marcador-rivales">
+            <div class="marcador-equipo">
+                <span class="escudo escudo-grande" th:style="'background:' + ${@formato.color(evento.local.nombre)}"
+                      th:text="${@formato.iniciales(evento.local.nombre)}">RM</span>
+                <span th:text="${evento.local.nombre}">Real Madrid</span>
+            </div>
+            <span class="marcador-vs">VS</span>
+            <div class="marcador-equipo">
+                <span class="escudo escudo-grande" th:style="'background:' + ${@formato.color(evento.visitante.nombre)}"
+                      th:text="${@formato.iniciales(evento.visitante.nombre)}">G</span>
+                <span th:text="${evento.visitante.nombre}">Getafe CF</span>
+            </div>
+        </div>
+        <h1 class="solo-lectores" th:text="${evento.local.nombre} + ' – ' + ${evento.visitante.nombre}">Real Madrid – Getafe CF</h1>
+        <p class="marcador-fecha">
+            <span th:text="${@formato.dia(evento.fechaHora)}">sáb 10 oct</span> ·
+            <strong th:text="${@formato.hora(evento.fechaHora)}">21:00</strong>
+        </p>
+        <p class="aviso">Las apuestas estarán disponibles en cuanto se publiquen las cuotas de este partido.</p>
+        <a class="boton boton-secundario" th:href="@{/eventos}">← Volver al catálogo</a>
+    </div>
 </main>
 </body>
 </html>

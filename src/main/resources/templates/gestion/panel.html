@@ -4,17 +4,25 @@
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main>
-    <h1>Panel del creador de apuestas</h1>
-    <p class="exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <div class="titulo-pagina">
+        <h1>Panel del creador de apuestas</h1>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${eventos.size()}">34</span>eventos</div>
+        <div class="tarjeta estadistica"><span th:text="${equipos.size()}">56</span>equipos</div>
+        <div class="tarjeta estadistica"><span th:text="${competiciones.size()}">5</span>competiciones</div>
+    </div>
 
     <div class="acciones">
-        <a class="boton" th:href="@{/gestion/competiciones/nueva}">Nueva competición</a>
-        <a class="boton" th:href="@{/gestion/equipos/nuevo}">Nuevo equipo</a>
-        <a class="boton" th:href="@{/gestion/eventos/nuevo}">Nuevo evento</a>
+        <a class="boton boton-secundario" th:href="@{/gestion/competiciones/nueva}">+ Nueva competición</a>
+        <a class="boton boton-secundario" th:href="@{/gestion/equipos/nuevo}">+ Nuevo equipo</a>
+        <a class="boton" th:href="@{/gestion/eventos/nuevo}">+ Nuevo evento</a>
     </div>
 
     <h2>Eventos</h2>
-    <div class="tabla">
+    <div class="tarjeta tabla">
         <table>
             <thead><tr><th>Fecha</th><th>Competición</th><th>Partido</th><th>Estado</th></tr></thead>
             <tbody>
@@ -22,21 +30,21 @@
                 <td th:text="${#temporals.format(ev.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</td>
                 <td th:text="${ev.competicion.nombre}">LaLiga</td>
                 <td th:text="${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">Real Madrid – Getafe CF</td>
-                <td th:text="${ev.estado}">PROGRAMADO</td>
+                <td><span class="estado" th:classappend="${#strings.toLowerCase(ev.estado)}" th:text="${ev.estado}">PROGRAMADO</span></td>
             </tr>
             </tbody>
         </table>
     </div>
 
     <h2>Equipos</h2>
-    <div class="tabla">
+    <div class="tarjeta tabla">
         <table>
             <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th></tr></thead>
             <tbody>
             <tr th:each="e : ${equipos}">
                 <td th:text="${e.nombre}">Real Madrid</td>
                 <td th:text="${e.deporte.nombre}">Fútbol</td>
-                <td><span class="etiqueta" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
+                <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
                 <td th:text="${e.calidad}">9.5</td>
             </tr>
             </tbody>
@@ -44,7 +52,7 @@
     </div>
 
     <h2>Competiciones</h2>
-    <div class="tabla">
+    <div class="tarjeta tabla">
         <table>
             <thead><tr><th>Nombre</th><th>Deporte</th></tr></thead>
             <tbody>

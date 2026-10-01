@@ -4,6 +4,7 @@
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
+    <div class="tarjeta tarjeta-formulario">
     <h1>Nuevo equipo o deportista</h1>
     <form class="formulario" th:action="@{/gestion/equipos/nuevo}" th:object="${equipo}" method="post">
         <label for="nombre">Nombre</label>
@@ -30,9 +31,12 @@
         </fieldset>
         <span class="error-campo" th:if="${#fields.hasErrors('competicionIds')}" th:errors="*{competicionIds}"></span>
 
-        <button class="boton" type="submit">Guardar</button>
-        <a th:href="@{/gestion}">Cancelar</a>
+        <div class="acciones-formulario">
+            <button class="boton" type="submit">Guardar</button>
+            <a class="boton boton-secundario" th:href="@{/gestion}">Cancelar</a>
+        </div>
     </form>
+    </div>
 </main>
 </body>
 </html>

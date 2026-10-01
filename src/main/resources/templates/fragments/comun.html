@@ -4,27 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${titulo} + ' · Apuestas IS1'">Apuestas IS1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
-<header th:fragment="cabecera">
-    <a class="marca" th:href="@{/}">Apuestas IS1</a>
-    <nav>
-        <a th:href="@{/eventos}">Eventos</a>
-        <a th:href="@{/equipos}">Equipos</a>
-        <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
-        <th:block th:if="${usuarioActual == null}">
-            <a th:href="@{/login}">Entrar</a>
-            <a class="boton boton-claro" th:href="@{/registro}">Registrarse</a>
-        </th:block>
-        <th:block th:if="${usuarioActual != null}">
-            <a class="saldo" th:href="@{/cuenta}" title="Mi cuenta"
-               th:text="${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</a>
-            <form th:action="@{/logout}" method="post" class="en-linea">
-                <button type="submit" class="enlace">Salir</button>
-            </form>
-        </th:block>
-    </nav>
+<header class="cabecera" th:fragment="cabecera">
+    <div class="cabecera-interior">
+        <a class="marca" th:href="@{/}">
+            <svg class="marca-logo" viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="16" cy="16" r="15" fill="#f5b301"/>
+                <circle cx="16" cy="16" r="11" fill="none" stroke="#a87700" stroke-width="2"/>
+                <text x="16" y="21" text-anchor="middle" font-size="13" font-weight="800" fill="#7a5600">IS</text>
+            </svg>
+            <span>Apuestas IS1</span>
+        </a>
+        <nav class="menu">
+            <a th:href="@{/eventos}">Eventos</a>
+            <a th:href="@{/equipos}">Equipos</a>
+            <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
+            <th:block th:if="${usuarioActual == null}">
+                <a th:href="@{/login}">Entrar</a>
+                <a class="boton boton-pequeno" th:href="@{/registro}">Registrarse</a>
+            </th:block>
+            <th:block th:if="${usuarioActual != null}">
+                <a class="saldo" th:href="@{/cuenta}" title="Mi cuenta">
+                    <span class="moneda" aria-hidden="true"></span>
+                    <span th:text="${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</span>
+                </a>
+                <form th:action="@{/logout}" method="post" class="en-linea">
+                    <button type="submit" class="enlace">Salir</button>
+                </form>
+            </th:block>
+        </nav>
+    </div>
 </header>
+
+<article class="partido" th:fragment="partido(ev)"
+         th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
+    <div class="partido-cabecera">
+        <span class="chip" th:text="${ev.competicion.nombre}">LaLiga</span>
+        <time th:datetime="${ev.fechaHora}">
+            <span th:text="${@formato.dia(ev.fechaHora)}">sáb 10 oct</span>
+            · <strong th:text="${@formato.hora(ev.fechaHora)}">21:00</strong>
+        </time>
+    </div>
+    <div class="partido-cuerpo">
+        <ul class="rivales">
+            <li>
+                <span class="escudo" th:style="'background:' + ${@formato.color(ev.local.nombre)}"
+                      th:text="${@formato.iniciales(ev.local.nombre)}">RM</span>
+                <span class="rival-nombre" th:text="${ev.local.nombre}">Real Madrid</span>
+            </li>
+            <li>
+                <span class="escudo" th:style="'background:' + ${@formato.color(ev.visitante.nombre)}"
+                      th:text="${@formato.iniciales(ev.visitante.nombre)}">G</span>
+                <span class="rival-nombre" th:text="${ev.visitante.nombre}">Getafe CF</span>
+            </li>
+        </ul>
+    </div>
+    <div class="partido-pie">
+        <div class="cuotas" title="Cuotas disponibles próximamente">
+            <span class="cuota"><small>1</small><b>–</b></span>
+            <span class="cuota"><small>X</small><b>–</b></span>
+            <span class="cuota"><small>2</small><b>–</b></span>
+        </div>
+        <a class="boton" th:href="@{/eventos/{id}/apostar(id=${ev.id})}">Apostar</a>
+    </div>
+</article>
 </body>
 </html>
