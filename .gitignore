@@ -29,3 +29,7 @@ target/
 
 # Base de datos local (H2)
 datos/
+
+# Túnel para compartir (compartir.bat / compartir.sh)
+cloudflared.exe
+compartir.log
