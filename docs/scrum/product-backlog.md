@@ -13,7 +13,7 @@
 
 ## Tabla
 
-Columna **MoSCoW** (técnica de priorización del tema de estimación): propuesta a validar por el equipo, deducida del MVP y del valor asignado a cada fila.
+Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida del MVP y del valor de cada fila.
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
 
 | Orden | Elemento | Estimación | Valor | MoSCoW | MVP |
