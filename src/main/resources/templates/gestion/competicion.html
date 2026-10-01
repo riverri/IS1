@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Nueva competición')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Nueva competición</h1>
+    <form class="formulario" th:action="@{/gestion/competiciones/nueva}" th:object="${competicion}" method="post">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" th:field="*{nombre}">
+        <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+
+        <label for="deporte">Deporte</label>
+        <select id="deporte" th:field="*{deporte}">
+            <option value="">— Elige —</option>
+            <option th:each="d : ${deportes}" th:value="${d}" th:text="${d.nombre}">Fútbol</option>
+        </select>
+        <span class="error-campo" th:if="${#fields.hasErrors('deporte')}" th:errors="*{deporte}"></span>
+
+        <button class="boton" type="submit">Guardar</button>
+        <a th:href="@{/gestion}">Cancelar</a>
+    </form>
+</main>
+</body>
+</html>

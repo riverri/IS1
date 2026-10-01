@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Nuevo evento')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Nuevo evento</h1>
+    <form class="formulario" th:action="@{/gestion/eventos/nuevo}" th:object="${evento}" method="post">
+        <label for="competicionId">Competición</label>
+        <select id="competicionId" th:field="*{competicionId}">
+            <option value="">— Elige —</option>
+            <option th:each="c : ${competiciones}" th:value="${c.id}"
+                    th:text="${c.nombre} + ' (' + ${c.deporte.nombre} + ')'">LaLiga (Fútbol)</option>
+        </select>
+        <span class="error-campo" th:if="${#fields.hasErrors('competicionId')}" th:errors="*{competicionId}"></span>
+
+        <label for="localId">Local</label>
+        <select id="localId" th:field="*{localId}">
+            <option value="">— Elige —</option>
+            <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}">Real Madrid</option>
+        </select>
+        <span class="error-campo" th:if="${#fields.hasErrors('localId')}" th:errors="*{localId}"></span>
+
+        <label for="visitanteId">Visitante</label>
+        <select id="visitanteId" th:field="*{visitanteId}">
+            <option value="">— Elige —</option>
+            <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}">Getafe CF</option>
+        </select>
+        <span class="error-campo" th:if="${#fields.hasErrors('visitanteId')}" th:errors="*{visitanteId}"></span>
+
+        <label for="fechaHora">Fecha y hora</label>
+        <input id="fechaHora" type="datetime-local" th:field="*{fechaHora}">
+        <span class="error-campo" th:if="${#fields.hasErrors('fechaHora')}" th:errors="*{fechaHora}"></span>
+
+        <button class="boton" type="submit">Guardar</button>
+        <a th:href="@{/gestion}">Cancelar</a>
+    </form>
+</main>
+</body>
+</html>

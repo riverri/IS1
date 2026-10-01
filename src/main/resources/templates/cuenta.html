@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Mi cuenta')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1 th:text="'Hola, ' + ${usuario.nombre}">Hola</h1>
+    <div class="tarjeta">
+        <span class="tarjeta-titulo">Saldo disponible</span>
+        <span class="tarjeta-valor" th:text="${#numbers.formatDecimal(usuario.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</span>
+    </div>
+    <p>
+        Próxima recarga gratuita de
+        <strong th:text="${#numbers.formatDecimal(importeRecarga, 1, 'POINT', 0, 'COMMA')}">200</strong> monedas:
+        <strong th:text="${#temporals.format(proximaRecarga, 'dd/MM/yyyy HH:mm')}">08/10/2026 18:00</strong>
+    </p>
+    <p class="aviso" th:text="'Cuenta: ' + ${usuario.email}">Cuenta: usuario@apuestas.es</p>
+</main>
+</body>
+</html>
