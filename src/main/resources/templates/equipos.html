@@ -6,35 +6,63 @@
 <main>
     <div class="titulo-pagina">
         <h1>Equipos y deportistas</h1>
+        <form class="buscador" th:action="@{/equipos}" method="get" role="search">
+            <input type="hidden" name="deporte" th:if="${deporteElegido != null}" th:value="${deporteElegido}">
+            <input type="search" name="q" th:value="${q}" placeholder="Buscar equipo o deportista" aria-label="Buscar">
+            <button class="boton" type="submit">Buscar</button>
+        </form>
     </div>
-    <div class="tarjeta tabla">
-        <table>
-            <thead>
-            <tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="e : ${equipos}">
-                <td>
-                    <span class="equipo-celda">
-                        <span th:replace="~{fragments/comun :: escudo(${e}, 'escudo-pequeno')}"></span>
-                        <span th:text="${e.nombre}">Real Madrid</span>
-                    </span>
-                </td>
-                <td th:text="${e.deporte.nombre}">Fútbol</td>
-                <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
-                <td>
-                    <span class="calidad">
-                        <span class="calidad-barra"><span th:style="'width:' + ${e.calidad * 10} + '%'"></span></span>
-                        <span th:text="${e.calidad}">9.5</span>
-                    </span>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(equipos)}">
-                <td colspan="4">No hay equipos registrados.</td>
-            </tr>
-            </tbody>
-        </table>
+
+    <nav class="pestanas" aria-label="Deportes">
+        <a class="pestana" th:classappend="${deporteElegido == null} ? 'activa'" th:href="@{/equipos(q=${q})}">Todos</a>
+        <a class="pestana" th:each="r : ${recuento}" th:classappend="${deporteElegido == r.key} ? 'activa'"
+           th:href="@{/equipos(deporte=${r.key},q=${q})}">
+            <span th:text="${r.key.icono}">⚽</span>
+            <span th:text="${r.key.nombre}">Fútbol</span>
+            <span class="pestana-numero" th:text="${r.value}">40</span>
+        </a>
+    </nav>
+
+    <nav class="filtros" th:unless="${#lists.isEmpty(competiciones)}" aria-label="Competiciones">
+        <a class="chip chip-filtro" th:classappend="${competicionElegida == null} ? 'activo'"
+           th:href="@{/equipos(deporte=${deporteElegido},q=${q})}">Todas</a>
+        <a class="chip chip-filtro" th:each="c : ${competiciones}" th:classappend="${competicionElegida == c.id} ? 'activo'"
+           th:href="@{/equipos(deporte=${deporteElegido},competicion=${c.id},q=${q})}" th:text="${c.nombre}">LaLiga</a>
+    </nav>
+
+    <div class="vacio" th:if="${#maps.isEmpty(equiposPorDeporte)}">
+        <p th:text="${q != ''} ? ('Ningún equipo coincide con «' + ${q} + '».') : 'No hay equipos registrados.'">No hay equipos.</p>
+        <a class="boton boton-secundario" th:if="${q != '' or deporteElegido != null}" th:href="@{/equipos}">Ver todos</a>
     </div>
+
+    <section th:each="grupo : ${equiposPorDeporte}">
+        <h2><span th:text="${grupo.key.icono}">⚽</span> <span th:text="${grupo.key.nombre}">Fútbol</span>
+            <small class="aviso" th:text="'· ' + ${#lists.size(grupo.value)}">· 40</small></h2>
+        <div class="tarjeta tabla">
+            <table>
+                <thead>
+                <tr><th>Nombre</th><th>Competiciones</th><th>Calidad</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${grupo.value}">
+                    <td>
+                        <span class="equipo-celda">
+                            <span th:replace="~{fragments/comun :: escudo(${e}, 'escudo-pequeno')}"></span>
+                            <span th:text="${e.nombre}">Real Madrid</span>
+                        </span>
+                    </td>
+                    <td><span class="chip" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
+                    <td>
+                        <span class="calidad">
+                            <span class="calidad-barra"><span th:style="'width:' + ${e.calidad * 10} + '%'"></span></span>
+                            <span th:text="${e.calidad}">9.5</span>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>
