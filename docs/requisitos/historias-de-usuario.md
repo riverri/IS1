@@ -198,6 +198,18 @@
 - Dado que veo una apuesta pendiente de un perfil al que tengo acceso, cuando pulso "copiar", entonces sus selecciones se añaden a mi boleto con las cuotas actuales.
 - Dado que alguno de sus eventos ya ha empezado, entonces esa selección no se copia y se me avisa.
 
+## Apuestas a largo plazo
+
+**HU-44**: Como usuario, quiero apostar a quién ganará un premio o una competición (Balón de Oro, campeón de LaLiga, Pichichi…), para predecir resultados a largo plazo. *(Fila 28)*
+- Dado que hay un mercado abierto, cuando entro en él, entonces veo todos los candidatos con su cuota.
+- Dado que elijo un candidato y un importe con saldo suficiente, cuando confirmo, entonces se descuenta el importe y la apuesta queda activa.
+- Dado que el mercado está cerrado, cuando intento apostar, entonces el sistema no lo permite.
+
+**HU-45**: Como creador de apuestas, quiero crear un mercado a largo plazo con sus candidatos y cuotas, cerrarlo y marcar el ganador, para gestionar este tipo de apuestas. *(Fila 28)*
+- Dado que creo un mercado con al menos dos candidatos y sus cuotas, cuando lo guardo, entonces aparece en el catálogo.
+- Dado que cierro el mercado, entonces deja de admitir apuestas.
+- Dado que marco el candidato ganador, entonces las apuestas a ese candidato se cobran y el resto pasan a perdidas.
+
 ---
 
 ## Pendientes de refinar
