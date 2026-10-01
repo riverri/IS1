@@ -8,14 +8,12 @@
         <span class="chip" th:text="${evento.competicion.nombre}">LaLiga</span>
         <div class="marcador-rivales">
             <div class="marcador-equipo">
-                <span class="escudo escudo-grande" th:style="'background:' + ${@formato.color(evento.local.nombre)}"
-                      th:text="${@formato.iniciales(evento.local.nombre)}">RM</span>
+                <span th:replace="~{fragments/comun :: escudo(${evento.local}, 'escudo-grande')}"></span>
                 <span th:text="${evento.local.nombre}">Real Madrid</span>
             </div>
             <span class="marcador-vs">VS</span>
             <div class="marcador-equipo">
-                <span class="escudo escudo-grande" th:style="'background:' + ${@formato.color(evento.visitante.nombre)}"
-                      th:text="${@formato.iniciales(evento.visitante.nombre)}">G</span>
+                <span th:replace="~{fragments/comun :: escudo(${evento.visitante}, 'escudo-grande')}"></span>
                 <span th:text="${evento.visitante.nombre}">Getafe CF</span>
             </div>
         </div>
