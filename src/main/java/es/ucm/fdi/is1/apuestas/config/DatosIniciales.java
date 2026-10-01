@@ -199,9 +199,15 @@ public class DatosIniciales implements ApplicationRunner {
         eventosDeEjemplo(acb, euroliga, nba, atp, f1, motoGp);
 
         // Escudos: solo se rellenan si el equipo aún no tiene uno (no pisa los cambios hechos en Gestión)
-        ESCUDOS.forEach((nombre, id) -> equipos.findByNombre(nombre)
-                .filter(e -> e.getEscudoUrl() == null)
-                .ifPresent(e -> e.setEscudoUrl("https://crests.football-data.org/" + id + ".png")));
+        // y se guarda el identificador de football-data.org para enlazar con la API
+        ESCUDOS.forEach((nombre, id) -> equipos.findByNombre(nombre).ifPresent(e -> {
+            if (e.getEscudoUrl() == null) {
+                e.setEscudoUrl("https://crests.football-data.org/" + id + ".png");
+            }
+            if (e.getIdExterno() == null && equipos.findByIdExterno(id).isEmpty()) {
+                e.setIdExterno(id);
+            }
+        }));
 
         // Champions League 2026/27, jornada 2
         partido(champions, "Fase de liga · Jornada 2", "RC Lens", "Sporting CP", 2026, 10, 13, 18, 45);

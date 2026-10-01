@@ -1,12 +1,10 @@
 package es.ucm.fdi.is1.apuestas.eventos;
 
-import java.text.Normalizer;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
+import es.ucm.fdi.is1.apuestas.equipos.Nombres;
 
 @Service
 public class CatalogoService {
@@ -41,7 +40,7 @@ public class CatalogoService {
      */
     @Transactional(readOnly = true)
     public Map<Deporte, Map<String, List<Evento>>> buscar(Deporte deporte, String texto) {
-        String buscado = normalizar(texto);
+        String buscado = Nombres.normalizar(texto);
         return disponibles().stream()
                 .filter(e -> deporte == null || e.getDeporte() == deporte)
                 .filter(e -> buscado.isEmpty() || coincide(e, buscado))
@@ -66,18 +65,9 @@ public class CatalogoService {
     }
 
     private static boolean coincide(Evento evento, String buscado) {
-        return normalizar(evento.getLocal().getNombre()).contains(buscado)
-                || normalizar(evento.getVisitante().getNombre()).contains(buscado)
-                || normalizar(evento.getCompeticion().getNombre()).contains(buscado);
-    }
-
-    static String normalizar(String texto) {
-        if (texto == null) {
-            return "";
-        }
-        return Normalizer.normalize(texto.trim(), Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "")
-                .toLowerCase(Locale.ROOT);
+        return Nombres.normalizar(evento.getLocal().getNombre()).contains(buscado)
+                || Nombres.normalizar(evento.getVisitante().getNombre()).contains(buscado)
+                || Nombres.normalizar(evento.getCompeticion().getNombre()).contains(buscado);
     }
 
     /** Los próximos partidos disponibles, para la portada. */
