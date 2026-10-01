@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Boleto')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Boleto</h1>
+    </div>
+    <p class="alerta alerta-aviso" th:if="${aviso}" th:text="${aviso}">Han cambiado las cuotas</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <div class="vacio" th:if="${#lists.isEmpty(vista.lineas)}">
+        <p>Tu boleto está vacío. Pulsa las cuotas de varios partidos para crear una combinada.</p>
+        <a class="boton" th:href="@{/eventos}">Ver partidos</a>
+    </div>
+
+    <th:block th:unless="${#lists.isEmpty(vista.lineas)}">
+        <p class="subtitulo" th:text="${vista.combinada} ? ('Combinada de ' + ${#lists.size(vista.lineas)} + ' selecciones: se cobra si aciertas todas.') : 'Apuesta simple. Añade más partidos desde el catálogo para hacer una combinada.'">
+            Combinada de 3 selecciones</p>
+
+        <ul class="lineas-boleto tarjeta">
+            <li th:each="l : ${vista.lineas}">
+                <span th:replace="~{fragments/comun :: escudo(${l.resultado.name() == 'VISITANTE'} ? ${l.evento.visitante} : ${l.evento.local}, '')}"></span>
+                <div class="linea-texto">
+                    <strong th:text="${l.resultado.simbolo} + ' · ' + ${l.descripcionPronostico}">1 · Real Madrid</strong>
+                    <small th:text="${l.evento.local.nombre} + ' – ' + ${l.evento.visitante.nombre} + ' · ' + ${@formato.dia(l.evento.fechaHora)}">Real Madrid – Getafe CF · Sáb 10 oct</small>
+                </div>
+                <span class="linea-cuota" th:classappend="${l.cambiada} ? 'cambiada'" th:text="${@formato.cuota(l.cuota)}">1,85</span>
+                <form th:action="@{/boleto/quitar/{id}(id=${l.evento.id})}" method="post">
+                    <button class="quitar" type="submit" th:attr="aria-label='Quitar ' + ${l.descripcionPronostico}">✕</button>
+                </form>
+            </li>
+        </ul>
+
+        <form class="tarjeta tarjeta-formulario formulario boleto-confirmar" th:action="@{/boleto/confirmar}" method="post">
+            <div class="multiplicador">
+                <span>Multiplicador total</span>
+                <strong id="cuota-total" th:attr="data-cuota=${vista.cuotaTotal}" th:text="'× ' + ${@formato.cuota(vista.cuotaTotal)}">× 4,52</strong>
+            </div>
+            <label for="importe">Importe</label>
+            <input id="importe" name="importe" type="number" min="1" step="0.01" inputmode="decimal" required
+                   th:value="${importe}" placeholder="10">
+            <span class="aviso" th:if="${usuarioActual != null}"
+                  th:text="'Saldo disponible: ' + ${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">
+                Saldo disponible: 1.000,00 monedas</span>
+            <div class="ganancia">
+                <span>Ganancia potencial</span>
+                <strong id="ganancia">–</strong>
+            </div>
+            <button class="boton boton-bloque" type="submit"
+                    th:text="${vista.algunaCambiada} ? 'Aceptar nuevas cuotas y apostar' : 'Confirmar apuesta'">Confirmar apuesta</button>
+        </form>
+    </th:block>
+</main>
+<script>
+    (function () {
+        const importe = document.getElementById('importe');
+        const cuota = document.getElementById('cuota-total');
+        const salida = document.getElementById('ganancia');
+        if (!importe || !cuota) { return; }
+        const formato = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        function actualizar() {
+            const cantidad = parseFloat(importe.value);
+            if (!(cantidad > 0)) { salida.textContent = '–'; return; }
+            const ganancia = Math.floor(cantidad * parseFloat(cuota.dataset.cuota) * 100) / 100;
+            salida.textContent = formato.format(ganancia) + ' monedas';
+        }
+        importe.addEventListener('input', actualizar);
+        actualizar();
+    })();
+</script>
+</body>
+</html>

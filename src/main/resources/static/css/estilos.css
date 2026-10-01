@@ -347,6 +347,7 @@ main.estrecho { max-width: 480px; }
 .partido-cabecera time { white-space: nowrap; }
 
 .partido-pie { display: flex; gap: 8px; align-items: stretch; }
+main { padding-bottom: 96px; }
 
 .rivales { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
 .rivales li { display: flex; align-items: center; gap: 10px; font-weight: 600; min-width: 0; }
@@ -461,6 +462,100 @@ a.cuota:hover b { color: var(--primario-oscuro); }
 }
 .ganancia strong { color: #ffd666; font-size: 1.2rem; }
 .enlace-volver { display: inline-block; margin-top: 16px; font-weight: 600; text-decoration: none; }
+
+/* ---------- Boleto ---------- */
+
+a.cuota.en-boleto { background: var(--primario); border-color: var(--primario); color: #fff; }
+a.cuota.en-boleto b, a.cuota.en-boleto small { color: #fff; }
+a.partido-cuerpo { color: inherit; text-decoration: none; }
+a.partido-cuerpo:hover .rival-nombre { text-decoration: underline; }
+
+.contador {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px; height: 20px;
+    margin-left: 4px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--primario);
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.barra-boleto {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    z-index: 20;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(560px, calc(100% - 32px));
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: var(--oscuro);
+    color: #fff !important;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .35);
+}
+.barra-boleto strong { margin-left: auto; color: #9ee6c4; }
+.barra-boleto-numero {
+    display: inline-grid;
+    place-items: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--primario);
+    font-weight: 800;
+}
+.barra-boleto-cuota { color: #ffd666; font-weight: 700; }
+
+.aviso-flotante {
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    z-index: 30;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--exito);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: var(--sombra-fuerte);
+    animation: desvanecer 3s forwards;
+}
+.aviso-flotante-error { background: var(--error); }
+@keyframes desvanecer { 0%, 80% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+
+.lineas-boleto { list-style: none; margin: 0 0 16px; padding: 6px; }
+.lineas-boleto li, .selecciones li { display: flex; align-items: center; gap: 12px; padding: 10px; }
+.lineas-boleto li + li { border-top: 1px solid var(--borde); }
+.linea-texto { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.linea-texto small { color: var(--texto-suave); }
+.linea-cuota { font-weight: 800; font-size: 1.1rem; }
+.linea-cuota.cambiada { color: #b54708; }
+.linea-cuota.cambiada::after { content: " ↻"; }
+.quitar {
+    width: 32px; height: 32px;
+    border: 1px solid var(--borde);
+    border-radius: 50%;
+    background: var(--superficie);
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+.quitar:hover { border-color: var(--error); color: var(--error); }
+.multiplicador { display: flex; justify-content: space-between; align-items: baseline; }
+.multiplicador strong { font-size: 1.8rem; color: var(--primario-oscuro); }
+.alerta-aviso { background: #fffaeb; color: #b54708; }
+
+.selecciones { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.selecciones li { padding: 6px 8px; border-radius: 10px; background: var(--fondo); }
+.selecciones li.acertada { background: var(--exito-suave); }
+.selecciones li.fallada { background: var(--error-suave); }
+.selecciones li.anulada { opacity: .6; }
+.seleccion-cuota { font-weight: 700; }
 
 /* ---------- Mis apuestas ---------- */
 

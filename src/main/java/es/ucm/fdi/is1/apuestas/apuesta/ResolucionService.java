@@ -17,11 +17,11 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 public class ResolucionService {
 
     private final EventoRepository eventos;
-    private final ApuestaRepository apuestas;
+    private final SeleccionRepository selecciones;
 
-    public ResolucionService(EventoRepository eventos, ApuestaRepository apuestas) {
+    public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones) {
         this.eventos = eventos;
-        this.apuestas = apuestas;
+        this.selecciones = selecciones;
     }
 
     @Transactional(readOnly = true)
@@ -37,8 +37,8 @@ public class ResolucionService {
     public int introducirResultado(Long eventoId, Resultado resultado) {
         Evento evento = evento(eventoId);
         evento.finalizar(resultado);
-        List<Apuesta> afectadas = apuestas.findByEvento(evento);
-        afectadas.forEach(a -> a.resolver(resultado));
+        List<Seleccion> afectadas = selecciones.findByEvento(evento);
+        afectadas.forEach(s -> s.getApuesta().resolver(evento, resultado));
         return afectadas.size();
     }
 
@@ -57,25 +57,30 @@ public class ResolucionService {
     public int anular(Long eventoId) {
         Evento evento = evento(eventoId);
         evento.anular();
-        List<Apuesta> afectadas = apuestas.findByEvento(evento);
-        afectadas.forEach(Apuesta::anular);
+        List<Seleccion> afectadas = selecciones.findByEvento(evento);
+        afectadas.forEach(s -> s.getApuesta().anular(evento));
         return afectadas.size();
     }
 
-    /** Importe total y número de apuestas de cada resultado posible del evento (HU-06). */
+    /**
+     * Importe total y número de apuestas de cada resultado posible del evento (HU-06).
+     * En una combinada cuenta su importe completo, porque depende de este resultado.
+     */
     @Transactional(readOnly = true)
     public List<VolumenResultado> volumen(Long eventoId) {
         Evento evento = evento(eventoId);
-        List<Apuesta> delEvento = apuestas.findByEvento(evento).stream()
-                .filter(a -> a.getEstado() != EstadoApuesta.CANCELADA && a.getEstado() != EstadoApuesta.ANULADA)
+        List<Seleccion> delEvento = selecciones.findByEvento(evento).stream()
+                .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA
+                        && s.getApuesta().getEstado() != EstadoApuesta.ANULADA)
                 .toList();
         List<VolumenResultado> volumen = new ArrayList<>();
         for (Resultado resultado : Resultado.values()) {
             if (resultado == Resultado.EMPATE && !evento.getDeporte().isAdmiteEmpate()) {
                 continue;
             }
-            List<Apuesta> aEste = delEvento.stream().filter(a -> a.getPronostico() == resultado).toList();
-            BigDecimal total = aEste.stream().map(Apuesta::getImporte).reduce(BigDecimal.ZERO, BigDecimal::add);
+            List<Seleccion> aEste = delEvento.stream().filter(s -> s.getPronostico() == resultado).toList();
+            BigDecimal total = aEste.stream().map(s -> s.getApuesta().getImporte())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             volumen.add(new VolumenResultado(resultado, total, aEste.size()));
         }
         return volumen;

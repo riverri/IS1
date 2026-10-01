@@ -25,6 +25,8 @@
             <a th:href="@{/equipos}">Equipos</a>
             <a th:href="@{/ranking}">Ranking</a>
             <a th:if="${usuarioActual != null}" th:href="@{/apuestas}">Mis apuestas</a>
+            <a th:if="${usuarioActual != null}" th:href="@{/boleto}">Boleto
+                <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>
             <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
             <th:block th:if="${usuarioActual == null}">
                 <a th:href="@{/login}">Entrar</a>
@@ -41,6 +43,14 @@
             </th:block>
         </nav>
     </div>
+    <p class="aviso-flotante" th:if="${mensajeBoleto != null}" th:text="${mensajeBoleto}">Añadido al boleto</p>
+    <p class="aviso-flotante aviso-flotante-error" th:if="${errorBoleto != null}" th:text="${errorBoleto}">Error</p>
+    <a class="barra-boleto" th:if="${boletoResumen != null and !#lists.isEmpty(boletoResumen.lineas) and ocultarBarraBoleto == null}" th:href="@{/boleto}">
+        <span class="barra-boleto-numero" th:text="${#lists.size(boletoResumen.lineas)}">2</span>
+        <span th:text="${boletoResumen.combinada} ? 'Combinada' : 'Apuesta simple'">Combinada</span>
+        <span class="barra-boleto-cuota" th:text="'Cuota ' + ${@formato.cuota(boletoResumen.cuotaTotal)}">Cuota 4,52</span>
+        <strong>Ver boleto →</strong>
+    </a>
 </header>
 
 <span th:fragment="escudo(eq, tam)" class="escudo"
@@ -75,7 +85,7 @@
             · <strong th:text="${@formato.hora(ev.fechaHora)}">21:00</strong>
         </time>
     </div>
-    <div class="partido-cuerpo">
+    <a class="partido-cuerpo" th:href="@{/eventos/{id}/apostar(id=${ev.id})}" title="Ver el partido y apostar">
         <ul class="rivales">
             <li>
                 <span th:replace="~{fragments/comun :: escudo(${ev.local}, '')}"></span>
@@ -86,19 +96,22 @@
                 <span class="rival-nombre" th:text="${ev.visitante.nombre}">Getafe CF</span>
             </li>
         </ul>
-    </div>
+    </a>
     <div class="partido-pie" th:with="c=${@calculadoraCuotas.calcular(ev)}">
         <div class="cuotas">
-            <a class="cuota" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado='LOCAL')}"
-               th:title="'Gana ' + ${ev.local.nombre}">
+            <a class="cuota" th:href="@{/boleto/anadir(evento=${ev.id},resultado='LOCAL')}"
+               th:classappend="${boleto != null and boleto.contiene(ev.id, 'LOCAL')} ? 'en-boleto'"
+               th:title="'Añadir al boleto: gana ' + ${ev.local.nombre}">
                 <small>1</small><b th:text="${@formato.cuota(c.local)}">1,85</b>
             </a>
-            <a class="cuota" th:if="${c.empate != null}" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado='EMPATE')}"
-               title="Empate">
+            <a class="cuota" th:if="${c.empate != null}" th:href="@{/boleto/anadir(evento=${ev.id},resultado='EMPATE')}"
+               th:classappend="${boleto != null and boleto.contiene(ev.id, 'EMPATE')} ? 'en-boleto'"
+               title="Añadir al boleto: empate">
                 <small>X</small><b th:text="${@formato.cuota(c.empate)}">3,40</b>
             </a>
-            <a class="cuota" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado='VISITANTE')}"
-               th:title="'Gana ' + ${ev.visitante.nombre}">
+            <a class="cuota" th:href="@{/boleto/anadir(evento=${ev.id},resultado='VISITANTE')}"
+               th:classappend="${boleto != null and boleto.contiene(ev.id, 'VISITANTE')} ? 'en-boleto'"
+               th:title="'Añadir al boleto: gana ' + ${ev.visitante.nombre}">
                 <small>2</small><b th:text="${@formato.cuota(c.visitante)}">4,20</b>
             </a>
         </div>
