@@ -196,6 +196,7 @@ main.estrecho { max-width: 480px; }
 }
 .chip-filtro:hover { border-color: var(--primario); color: var(--primario-oscuro); }
 .filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-filtro.activo { background: var(--oscuro); border-color: var(--oscuro); color: #fff; }
 
 /* ---------- Catálogo: buscador y pestañas ---------- */
 
