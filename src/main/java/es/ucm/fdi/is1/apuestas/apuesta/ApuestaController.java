@@ -31,14 +31,16 @@ public class ApuestaController {
     private final CalculadoraCuotas calculadora;
 
     private final RankingService rankings;
+    private final LimitesService limites;
     private final Clock reloj;
 
     public ApuestaController(ApuestaService apuestas, CatalogoService catalogo, CalculadoraCuotas calculadora,
-                             RankingService rankings, Clock reloj) {
+                             RankingService rankings, LimitesService limites, Clock reloj) {
         this.apuestas = apuestas;
         this.catalogo = catalogo;
         this.calculadora = calculadora;
         this.rankings = rankings;
+        this.limites = limites;
         this.reloj = reloj;
     }
 
@@ -65,6 +67,8 @@ public class ApuestaController {
                 return "redirect:/apuestas";
             } catch (SaldoInsuficienteException e) {
                 errores.rejectValue("importe", "saldo", "No tienes saldo suficiente para esta apuesta");
+            } catch (ImporteFueraDeLimitesException e) {
+                errores.rejectValue("importe", "limites", e.getMessage());
             } catch (ResultadoNoValidoException e) {
                 errores.rejectValue("resultado", "invalido", e.getMessage());
             }
@@ -113,6 +117,7 @@ public class ApuestaController {
     private String vista(Evento evento, Model model) {
         model.addAttribute("evento", evento);
         model.addAttribute("cuotas", calculadora.calcular(evento));
+        model.addAttribute("limitesApuesta", limites.actuales());
         return "apostar";
     }
 }

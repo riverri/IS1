@@ -22,11 +22,11 @@ public class BoletoService {
     private final EventoRepository eventos;
     private final CalculadoraCuotas calculadora;
     private final ApuestaService apuestas;
-    private final LimitesProperties limites;
+    private final LimitesService limites;
     private final Clock reloj;
 
     public BoletoService(EventoRepository eventos, CalculadoraCuotas calculadora, ApuestaService apuestas,
-                         LimitesProperties limites, Clock reloj) {
+                         LimitesService limites, Clock reloj) {
         this.eventos = eventos;
         this.calculadora = calculadora;
         this.apuestas = apuestas;
@@ -41,9 +41,9 @@ public class BoletoService {
         if (cuota == null) {
             throw new ResultadoNoValidoException(resultado);
         }
-        if (boleto.getTamano() >= limites.maxSelecciones()) {
-            throw new IllegalArgumentException("El boleto admite como máximo " + limites.maxSelecciones()
-                    + " selecciones");
+        int maximo = limites.actuales().getMaxSelecciones();
+        if (boleto.getTamano() >= maximo) {
+            throw new IllegalArgumentException("El boleto admite como máximo " + maximo + " selecciones");
         }
         boleto.anadir(eventoId, resultado, cuota);
     }

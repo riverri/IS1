@@ -8,8 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
-import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.mercados.Candidato;
+import es.ucm.fdi.is1.apuestas.mercados.Mercado;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -26,6 +27,7 @@ import jakarta.persistence.OrderBy;
 /**
  * Apuesta de un usuario: una selección (simple) o varias de eventos distintos (combinada, HU-28).
  * La cuota total es el producto de las cuotas de las selecciones (HU-29).
+ * Las apuestas a largo plazo (HU-44) tienen una sola selección y no se combinan.
  */
 @Entity
 public class Apuesta {
@@ -72,11 +74,41 @@ public class Apuesta {
 
     /** Añade una selección; no se admiten dos del mismo evento (HU-28). */
     public void anadir(Evento evento, Resultado pronostico, BigDecimal cuotaSeleccion) {
-        if (selecciones.stream().anyMatch(s -> s.getEvento().getId().equals(evento.getId()))) {
+        if (selecciones.stream().anyMatch(Seleccion::isLargoPlazo)) {
+            throw new IllegalArgumentException("Las apuestas a largo plazo no se pueden combinar");
+        }
+        if (selecciones.stream().anyMatch(s -> s.esDe(evento))) {
             throw new IllegalArgumentException("No se pueden combinar dos selecciones del mismo evento");
         }
         selecciones.add(new Seleccion(this, evento, pronostico, cuotaSeleccion));
         cuota = producto(selecciones.stream().map(Seleccion::getCuota).toList());
+    }
+
+    /** Apuesta a largo plazo (HU-44): un candidato de un mercado, sin combinar con nada más. */
+    public void anadir(Candidato candidato, BigDecimal cuotaCandidato) {
+        if (!selecciones.isEmpty()) {
+            throw new IllegalArgumentException("Las apuestas a largo plazo no se pueden combinar");
+        }
+        selecciones.add(new Seleccion(this, candidato, cuotaCandidato));
+        cuota = producto(List.of(cuotaCandidato));
+    }
+
+    /** El creador ha marcado (o corregido) el ganador del mercado (HU-45). */
+    public void resolver(Mercado mercado, Candidato ganador) {
+        if (estado == EstadoApuesta.CANCELADA) {
+            return;
+        }
+        seleccionDe(mercado).resolver(ganador);
+        reevaluar();
+    }
+
+    /** El mercado se ha anulado: se devuelve el importe. */
+    public void anular(Mercado mercado) {
+        if (estado == EstadoApuesta.CANCELADA) {
+            return;
+        }
+        seleccionDe(mercado).anular();
+        reevaluar();
     }
 
     /** Resultado de uno de sus eventos: se resuelve la selección y se recalcula la apuesta (HU-25, HU-30). */
@@ -126,11 +158,12 @@ public class Apuesta {
         pagado = debePagar;
     }
 
-    /** Se puede cancelar mientras esté activa y ninguno de sus eventos haya empezado (HU-26). */
+    /**
+     * Se puede cancelar mientras esté activa y ninguno de sus eventos haya empezado (HU-26),
+     * o, a largo plazo, mientras el mercado admita apuestas.
+     */
     public boolean cancelable(LocalDateTime ahora) {
-        return estado == EstadoApuesta.ACTIVA && selecciones.stream()
-                .allMatch(s -> s.getEvento().getEstado() == EstadoEvento.PROGRAMADO
-                        && s.getEvento().getFechaHora().isAfter(ahora));
+        return estado == EstadoApuesta.ACTIVA && selecciones.stream().allMatch(s -> s.admiteCancelacion(ahora));
     }
 
     /** Cancela la apuesta y devuelve el importe al usuario. */
@@ -169,9 +202,18 @@ public class Apuesta {
         };
     }
 
+    public boolean isLargoPlazo() {
+        return selecciones.stream().anyMatch(Seleccion::isLargoPlazo);
+    }
+
     private Seleccion seleccionDe(Evento evento) {
-        return selecciones.stream().filter(s -> s.getEvento().getId().equals(evento.getId())).findFirst()
+        return selecciones.stream().filter(s -> s.esDe(evento)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("La apuesta no incluye ese evento"));
+    }
+
+    private Seleccion seleccionDe(Mercado mercado) {
+        return selecciones.stream().filter(s -> s.esDe(mercado)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("La apuesta no incluye ese mercado"));
     }
 
     static BigDecimal producto(List<BigDecimal> cuotas) {

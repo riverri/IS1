@@ -46,6 +46,11 @@ public class Equipo {
     @Column(unique = true)
     private Integer idExterno;
 
+    /** Forma reciente (HU-02); ajusta la calificación al calcular las cuotas. */
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Forma forma = Forma.NORMAL;
+
     /** Dirección de la imagen del escudo; si es null se muestran las iniciales. */
     @Column(length = 500)
     private String escudoUrl;
@@ -86,6 +91,14 @@ public class Equipo {
 
     public void setCalidad(Double calidad) {
         this.calidad = calidad;
+    }
+
+    public Forma getForma() {
+        return forma;
+    }
+
+    public void setForma(Forma forma) {
+        this.forma = forma;
     }
 
     public Set<Competicion> getCompeticiones() {

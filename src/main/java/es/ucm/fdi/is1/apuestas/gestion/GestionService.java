@@ -53,6 +53,7 @@ public class GestionService {
     public void editarEquipo(Long equipoId, EdicionEquipoForm form) {
         Equipo equipo = equipo(equipoId);
         equipo.setCalidad(form.getCalidad());
+        equipo.setForma(form.getForma());
         String escudo = form.getEscudoUrl();
         equipo.setEscudoUrl(escudo == null || escudo.isBlank() ? null : escudo.trim());
     }

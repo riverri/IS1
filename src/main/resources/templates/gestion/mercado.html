@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Nuevo mercado')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <div class="tarjeta tarjeta-formulario">
+        <h1>Nuevo mercado a largo plazo</h1>
+        <p class="subtitulo">Balón de Oro, campeón de liga, máximo goleador… Los usuarios eligen un candidato y cobran cuando marques el ganador.</p>
+        <form class="formulario" th:action="@{/gestion/mercados/nuevo}" th:object="${mercado}" method="post">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" th:field="*{nombre}" th:errorclass="con-error" placeholder="Balón de Oro 2027">
+            <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:text="${#fields.errors('nombre')[0]}"></span>
+
+            <label for="deporte">Deporte</label>
+            <select id="deporte" th:field="*{deporte}" th:errorclass="con-error">
+                <option value="">— Elige —</option>
+                <option th:each="d : ${deportes}" th:value="${d}" th:text="${d.icono} + ' ' + ${d.nombre}">⚽ Fútbol</option>
+            </select>
+            <span class="error-campo" th:if="${#fields.hasErrors('deporte')}" th:text="${#fields.errors('deporte')[0]}"></span>
+
+            <label for="cierre">Se puede apostar hasta</label>
+            <input id="cierre" type="datetime-local" th:field="*{cierre}" th:errorclass="con-error">
+            <span class="error-campo" th:if="${#fields.hasErrors('cierre')}" th:text="${#fields.errors('cierre')[0]}"></span>
+
+            <label for="candidatos">Candidatos y cuotas</label>
+            <textarea id="candidatos" rows="8" th:field="*{candidatos}" th:errorclass="con-error"
+                      placeholder="Lamine Yamal; 3,50&#10;Kylian Mbappé; 4,50&#10;Harry Kane; 10"></textarea>
+            <span class="error-campo" th:if="${#fields.hasErrors('candidatos')}" th:text="${#fields.errors('candidatos')[0]}"></span>
+            <span class="aviso">Uno por línea: nombre, punto y coma y cuota. Si el nombre coincide con un equipo o deportista, se muestra su escudo.</span>
+
+            <div class="acciones-formulario">
+                <button class="boton" type="submit">Crear mercado</button>
+                <a class="boton boton-secundario" th:href="@{/gestion}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
