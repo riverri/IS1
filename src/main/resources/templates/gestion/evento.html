@@ -4,6 +4,7 @@
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
+    <div class="tarjeta tarjeta-formulario">
     <h1>Nuevo evento</h1>
     <form class="formulario" th:action="@{/gestion/eventos/nuevo}" th:object="${evento}" method="post">
         <label for="competicionId">Competición</label>
@@ -32,9 +33,12 @@
         <input id="fechaHora" type="datetime-local" th:field="*{fechaHora}">
         <span class="error-campo" th:if="${#fields.hasErrors('fechaHora')}" th:errors="*{fechaHora}"></span>
 
-        <button class="boton" type="submit">Guardar</button>
-        <a th:href="@{/gestion}">Cancelar</a>
+        <div class="acciones-formulario">
+            <button class="boton" type="submit">Guardar</button>
+            <a class="boton boton-secundario" th:href="@{/gestion}">Cancelar</a>
+        </div>
     </form>
+    </div>
 </main>
 </body>
 </html>

@@ -3,13 +3,49 @@
 <head th:replace="~{fragments/comun :: cabeza('Inicio')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main>
-    <section class="portada">
-        <h1>Apuesta sin arriesgar dinero real</h1>
-        <p>Regístrate, recibe tus moneditas virtuales y apuesta a tus deportes favoritos.</p>
+
+<section class="portada">
+    <div class="portada-interior">
+        <p class="antetitulo">Sin dinero real · Solo diversión</p>
+        <h1>Demuestra que sabes de deporte</h1>
+        <p class="portada-texto">
+            Regístrate gratis, recibe
+            <strong th:text="${#numbers.formatDecimal(bienvenida, 1, 'POINT', 0, 'COMMA')} + ' moneditas'">1.000 moneditas</strong>
+            y apuesta a LaLiga, la Champions y mucho más.
+        </p>
         <div class="acciones">
-            <a class="boton" th:href="@{/eventos}">Ver eventos</a>
-            <a class="boton boton-secundario" th:if="${usuarioActual == null}" th:href="@{/registro}">Crear cuenta</a>
+            <a class="boton boton-grande" th:href="@{/eventos}">Ver partidos</a>
+            <a class="boton boton-grande boton-fantasma" th:if="${usuarioActual == null}" th:href="@{/registro}">Crear cuenta</a>
+        </div>
+    </div>
+</section>
+
+<main>
+    <section class="ventajas">
+        <div class="ventaja">
+            <span class="ventaja-icono" aria-hidden="true">🪙</span>
+            <h3>Moneditas gratis</h3>
+            <p>Saldo de bienvenida y recargas periódicas. Nunca pagas nada.</p>
+        </div>
+        <div class="ventaja">
+            <span class="ventaja-icono" aria-hidden="true">🎯</span>
+            <h3>Combinadas</h3>
+            <p>Junta varios partidos en un boleto y multiplica tus ganancias.</p>
+        </div>
+        <div class="ventaja">
+            <span class="ventaja-icono" aria-hidden="true">📊</span>
+            <h3>Estadísticas</h3>
+            <p>Consulta cómo llega cada equipo antes de decidir tu apuesta.</p>
+        </div>
+    </section>
+
+    <section th:unless="${#lists.isEmpty(proximos)}">
+        <div class="seccion-titulo">
+            <h2>Próximos partidos</h2>
+            <a th:href="@{/eventos}">Ver todos →</a>
+        </div>
+        <div class="rejilla-partidos">
+            <th:block th:each="ev : ${proximos}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
         </div>
     </section>
 </main>

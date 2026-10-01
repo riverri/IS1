@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.eventos;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,14 +24,28 @@ public class CatalogoService {
         this.reloj = reloj;
     }
 
-    /** Eventos disponibles para apostar, agrupados por deporte y ordenados por fecha (HU-19). */
+    /**
+     * Eventos disponibles para apostar, agrupados por deporte y después por competición,
+     * ordenados por fecha dentro de cada grupo (HU-19).
+     */
     @Transactional(readOnly = true)
-    public Map<Deporte, List<Evento>> eventosDisponiblesPorDeporte() {
+    public Map<Deporte, Map<String, List<Evento>>> eventosDisponiblesPorDeporte() {
         return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj))
                 .stream()
                 .collect(Collectors.groupingBy(Evento::getDeporte,
                         () -> new EnumMap<>(Deporte.class),
-                        Collectors.toList()));
+                        Collectors.groupingBy(e -> e.getCompeticion().getNombre(),
+                                LinkedHashMap::new,
+                                Collectors.toList())));
+    }
+
+    /** Los próximos partidos disponibles, para la portada. */
+    @Transactional(readOnly = true)
+    public List<Evento> proximos(int cuantos) {
+        return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj))
+                .stream()
+                .limit(cuantos)
+                .toList();
     }
 
     @Transactional(readOnly = true)

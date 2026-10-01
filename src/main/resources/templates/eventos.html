@@ -4,25 +4,30 @@
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main>
-    <h1>Eventos disponibles</h1>
+    <div class="titulo-pagina">
+        <h1>Eventos disponibles</h1>
+        <nav class="filtros" th:unless="${#maps.isEmpty(eventosPorDeporte)}" aria-label="Competiciones">
+            <th:block th:each="grupo : ${eventosPorDeporte}">
+                <th:block th:each="comp : ${grupo.value}" th:with="ancla=${@formato.ancla(comp.key)}">
+                    <a class="chip chip-filtro" th:href="|#${ancla}|"
+                       th:text="${comp.key} + ' · ' + ${comp.value.size()}">LaLiga · 16</a>
+                </th:block>
+            </th:block>
+        </nav>
+    </div>
 
-    <p class="vacio" th:if="${#maps.isEmpty(eventosPorDeporte)}">No hay eventos disponibles ahora mismo. El creador de apuestas los da de alta desde Gestión.</p>
+    <div class="vacio" th:if="${#maps.isEmpty(eventosPorDeporte)}">
+        <p>No hay eventos disponibles ahora mismo. El creador de apuestas los da de alta desde Gestión.</p>
+    </div>
 
-    <section th:each="grupo : ${eventosPorDeporte}">
+    <section class="deporte" th:each="grupo : ${eventosPorDeporte}">
         <h2 th:text="${grupo.key.nombre}">Fútbol</h2>
-        <ul class="eventos">
-            <li class="evento" th:each="ev : ${grupo.value}">
-                <div class="evento-info">
-                    <span class="competicion" th:text="${ev.competicion.nombre}">LaLiga</span>
-                    <strong th:text="${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">Real Madrid – Getafe CF</strong>
-                    <time th:text="${#temporals.format(ev.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</time>
-                </div>
-                <div class="cuotas" title="Las cuotas se calcularán con el algoritmo de la casa">
-                    <span>1 <b>–</b></span><span>X <b>–</b></span><span>2 <b>–</b></span>
-                </div>
-                <a class="boton" th:href="@{/eventos/{id}/apostar(id=${ev.id})}">Apostar</a>
-            </li>
-        </ul>
+        <section class="competicion" th:each="comp : ${grupo.value}" th:id="${@formato.ancla(comp.key)}">
+            <h3 th:text="${comp.key}">LaLiga</h3>
+            <div class="rejilla-partidos">
+                <th:block th:each="ev : ${comp.value}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
+            </div>
+        </section>
     </section>
 </main>
 </body>
