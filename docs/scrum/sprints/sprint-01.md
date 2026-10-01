@@ -25,7 +25,7 @@ Estimaciones iniciales en puntos de historia (Fibonacci). Se revisarán en Plann
 - Los partidos son reales y los introduce a mano el creador de apuestas, como indica el MVP. La API de datos (fila 13) queda para más adelante. La base de datos se guarda en archivo para no perderlos al reiniciar.
 
 ## Dailies
-- **01/10**: arranque del sprint, modelo de datos y seguridad. Se quitan los partidos de ejemplo inventados; la base de datos pasa a guardarse en archivo.
+- **01/10**: arranque del sprint, modelo de datos y seguridad. Se quitan los partidos de ejemplo inventados; la base de datos pasa a guardarse en archivo. Se cargan los 20 equipos de LaLiga, los partidos reales de las jornadas 8 y 9 y la jornada 2 de la Champions.
 
 ## Sprint Review (14/10)
 - Historias completadas:
