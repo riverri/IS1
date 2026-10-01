@@ -50,9 +50,11 @@ public class GestionService {
     }
 
     @Transactional
-    public void cambiarEscudo(Long equipoId, String escudoUrl) {
+    public void editarEquipo(Long equipoId, EdicionEquipoForm form) {
         Equipo equipo = equipo(equipoId);
-        equipo.setEscudoUrl(escudoUrl == null || escudoUrl.isBlank() ? null : escudoUrl.trim());
+        equipo.setCalidad(form.getCalidad());
+        String escudo = form.getEscudoUrl();
+        equipo.setEscudoUrl(escudo == null || escudo.isBlank() ? null : escudo.trim());
     }
 
     @Transactional

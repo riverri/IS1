@@ -60,4 +60,10 @@ class DatosInicialesTest {
         assertThat(equipos.findByNombre("FC Barcelona").orElseThrow().getEscudoUrl())
                 .isEqualTo("https://crests.football-data.org/81.png");
     }
+
+    @Test
+    void calificacionesDeBarcelonaYRealMadrid() {
+        assertThat(equipos.findByNombre("FC Barcelona").orElseThrow().getCalidad()).isEqualTo(9.9);
+        assertThat(equipos.findByNombre("Real Madrid").orElseThrow().getCalidad()).isEqualTo(6.7);
+    }
 }
