@@ -34,19 +34,37 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── scrum/           # Proceso, Product Backlog y actas de sprint
 │   ├── decisiones/      # Decisiones técnicas (stack, arquitectura…)
 │   └── recursos.md      # Enlaces de teoría y de Git
-├── src/                 # Código fuente (cuando se elija el stack)
+├── src/main/java/       # Código Java (Spring Boot)
+├── src/main/resources/  # Plantillas HTML, CSS, configuración y datos de ejemplo
+├── src/test/java/       # Pruebas (JUnit)
+├── pom.xml              # Dependencias (Maven)
 ├── .github/             # Plantillas de issues y pull requests
 └── CONTRIBUTING.md      # Cómo trabajamos con Git y GitHub
 ```
+
+## Tecnología
+
+Java 21 · Spring Boot · Thymeleaf · Spring Data JPA + H2 · Maven · JUnit. El porqué está en [docs/decisiones/0001-stack-tecnologico.md](docs/decisiones/0001-stack-tecnologico.md).
+
+## Cómo ejecutarlo
+
+Requisito: tener instalado un **JDK 21**, por ejemplo [Eclipse Temurin 21](https://adoptium.net/). Maven no hace falta: va incluido como `mvnw`.
+
+```bash
+git clone https://github.com/riverri/IS1.git
+cd IS1
+./mvnw spring-boot:run        # en Windows: mvnw.cmd spring-boot:run
+```
+
+Abrir http://localhost:8080. La página de equipos está en http://localhost:8080/equipos.
+
+- **Pruebas:** `./mvnw test`
+- **Consola de la base de datos:** http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:apuestas`, usuario `sa`, sin contraseña)
+- **IDE recomendado:** IntelliJ IDEA Community. Abrir la carpeta, que detecta el `pom.xml`. También valen Eclipse y VS Code con el "Extension Pack for Java".
 
 ## Cómo empezar
 
 1. Leer [CONTRIBUTING.md](CONTRIBUTING.md) (flujo Git, ramas y pull requests).
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).
 3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) y las [historias de usuario](docs/requisitos/historias-de-usuario.md).
-4. Decidir el stack: [docs/decisiones/0001-stack-tecnologico.md](docs/decisiones/0001-stack-tecnologico.md).
-
-## Uso de IA
-
-La asignatura permite usar IA. Todo lo generado con IA lo revisa una persona del equipo antes de integrarlo, y el equipo responde de ello.
-Si un PR incluye contenido generado con IA, se indica en su descripción.
+4. Arrancar la aplicación (ver arriba) y echar un vistazo al código de ejemplo (`Equipo`, `InicioController`, plantillas).

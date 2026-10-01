@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apuestas IS1</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<header>
+    <a class="marca" th:href="@{/}">Apuestas IS1</a>
+    <nav><a th:href="@{/equipos}">Equipos</a></nav>
+</header>
+<main>
+    <h1>Apuesta sin arriesgar dinero real</h1>
+    <p>Recibe moneditas virtuales, apuesta a tus deportes favoritos y crea tus propias combinadas.</p>
+    <p class="aviso">Proyecto académico de Ingeniería del Software I (UCM). Esqueleto inicial: el catálogo de eventos, el registro y las apuestas llegarán en los próximos sprints.</p>
+    <a class="boton" th:href="@{/equipos}">Ver equipos</a>
+</main>
+</body>
+</html>

@@ -1,7 +1,7 @@
 # Historias de usuario
 
 > Fuente: `Product_Backlog_IS1.pdf`. Formato de la asignatura: *Como [actor], quiero [acción] para [objetivo]*, con criterios de aceptación *Dado… cuando… entonces…*.
-> Los IDs (HU-xx) los he añadido yo para poder referenciarlas desde los issues de GitHub. La columna **Fila** remite al [Product Backlog](../scrum/product-backlog.md).
+> Los IDs (HU-xx) sirven para referenciarlas desde los issues de GitHub. La columna **Fila** remite al [Product Backlog](../scrum/product-backlog.md).
 
 ## Actores
 - **Visitante**: no ha iniciado sesión.
