@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Gestión')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <h1>Panel del creador de apuestas</h1>
+    <p class="exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+
+    <div class="acciones">
+        <a class="boton" th:href="@{/gestion/competiciones/nueva}">Nueva competición</a>
+        <a class="boton" th:href="@{/gestion/equipos/nuevo}">Nuevo equipo</a>
+        <a class="boton" th:href="@{/gestion/eventos/nuevo}">Nuevo evento</a>
+    </div>
+
+    <h2>Eventos</h2>
+    <div class="tabla">
+        <table>
+            <thead><tr><th>Fecha</th><th>Competición</th><th>Partido</th><th>Estado</th></tr></thead>
+            <tbody>
+            <tr th:each="ev : ${eventos}">
+                <td th:text="${#temporals.format(ev.fechaHora, 'dd/MM/yyyy HH:mm')}">05/10/2026 21:00</td>
+                <td th:text="${ev.competicion.nombre}">LaLiga</td>
+                <td th:text="${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">Real Madrid – Getafe CF</td>
+                <td th:text="${ev.estado}">PROGRAMADO</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Equipos</h2>
+    <div class="tabla">
+        <table>
+            <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th></tr></thead>
+            <tbody>
+            <tr th:each="e : ${equipos}">
+                <td th:text="${e.nombre}">Real Madrid</td>
+                <td th:text="${e.deporte.nombre}">Fútbol</td>
+                <td><span class="etiqueta" th:each="c : ${e.competiciones}" th:text="${c.nombre}">LaLiga</span></td>
+                <td th:text="${e.calidad}">9.5</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Competiciones</h2>
+    <div class="tabla">
+        <table>
+            <thead><tr><th>Nombre</th><th>Deporte</th></tr></thead>
+            <tbody>
+            <tr th:each="c : ${competiciones}">
+                <td th:text="${c.nombre}">LaLiga</td>
+                <td th:text="${c.deporte.nombre}">Fútbol</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
