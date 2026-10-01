@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Avisos')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Avisos</h1>
+    </div>
+    <div class="vacio" th:if="${#lists.isEmpty(avisos)}">
+        <p>Aquí te avisaremos cuando se resuelvan tus apuestas.</p>
+        <a class="boton" th:href="@{/eventos}">Ver partidos</a>
+    </div>
+    <ul class="avisos" th:unless="${#lists.isEmpty(avisos)}">
+        <li class="tarjeta aviso-item" th:each="a : ${avisos}" th:classappend="${a.tipo} + ${a.nuevo ? ' nuevo' : ''}">
+            <span class="aviso-icono" aria-hidden="true"
+                  th:text="${a.tipo == 'ganada'} ? '🏆' : (${a.tipo == 'perdida'} ? '✖' : '↩')">🏆</span>
+            <div>
+                <p th:text="${a.texto}">¡Has acertado tu apuesta a FC Barcelona! Cobras 18,50 monedas.</p>
+                <small class="aviso" th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy HH:mm')}">01/10/2026 21:00</small>
+            </div>
+            <span class="chip" th:if="${a.nuevo}">Nuevo</span>
+        </li>
+    </ul>
+    <a class="enlace-volver" th:href="@{/apuestas}">Ver mis apuestas →</a>
+</main>
+</body>
+</html>

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import es.ucm.fdi.is1.apuestas.apuesta.Boleto;
 import es.ucm.fdi.is1.apuestas.apuesta.BoletoService;
 import es.ucm.fdi.is1.apuestas.apuesta.BoletoVista;
+import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
@@ -18,11 +19,20 @@ public class UsuarioActualAdvice {
     private final UsuarioService usuarios;
     private final Boleto boleto;
     private final BoletoService boletos;
+    private final NotificacionService notificaciones;
 
-    public UsuarioActualAdvice(UsuarioService usuarios, Boleto boleto, BoletoService boletos) {
+    public UsuarioActualAdvice(UsuarioService usuarios, Boleto boleto, BoletoService boletos,
+                               NotificacionService notificaciones) {
         this.usuarios = usuarios;
         this.boleto = boleto;
         this.boletos = boletos;
+        this.notificaciones = notificaciones;
+    }
+
+    /** Número de avisos sin leer, para la campana de la cabecera (HU-37). */
+    @ModelAttribute("avisosSinLeer")
+    public Long avisosSinLeer(Principal principal) {
+        return principal == null ? 0L : notificaciones.sinLeer(principal.getName());
     }
 
     /** El boleto en construcción, para marcar las cuotas elegidas en el catálogo. */

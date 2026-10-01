@@ -38,6 +38,10 @@
 **HU-07**: Como creador de apuestas, quiero fijar límites de apuesta (importe mínimo y máximo, número máximo de selecciones en una combinada), para controlar el riesgo de la casa. *(Fila 17)*
 - Dado que un usuario intenta apostar fuera de esos límites, cuando confirma la apuesta, entonces el sistema lo impide y le indica el límite.
 
+**HU-46**: Como creador de apuestas, quiero editar o borrar un evento que he creado mal (fecha, equipos, fase), para corregir errores sin tener que anularlo. *(Fila 29)*
+- Dado que un evento aún no ha empezado, cuando cambio su fecha, sus equipos o su fase, entonces se guardan los cambios y las cuotas se recalculan.
+- Dado que un evento no tiene apuestas, cuando lo borro, entonces desaparece del catálogo. Si tiene apuestas, solo se puede anular (se devuelve el importe).
+
 ## General
 
 **HU-08**: Como visitante, quiero consultar el catálogo de eventos y sus cuotas sin estar registrado, para decidir si me interesa crear una cuenta. *(Fila 9)*
@@ -85,6 +89,10 @@
 **HU-18**: Como usuario, quiero eliminar mi cuenta, para que se borren mis datos personales si dejo de usar la aplicación. *(Fila 22)*
 - Dado que tengo apuestas activas, cuando intento eliminar la cuenta, entonces el sistema me avisa de que las perderé y me pide confirmación.
 - Dado que confirmo la eliminación, entonces ya no puedo iniciar sesión y mis datos personales se borran.
+
+**HU-47**: Como usuario, quiero cambiar mi nombre y mi contraseña desde *Mi cuenta*, para mantener mis datos al día. *(Fila 30)*
+- Dado que introduzco mi contraseña actual y una nueva válida, cuando la guardo, entonces la siguiente vez entro con la nueva.
+- Dado que la contraseña actual no es correcta, cuando intento cambiarla, entonces el sistema no lo permite.
 
 ## Catálogo de eventos deportivos
 
@@ -197,6 +205,9 @@
 **HU-43**: Como usuario, quiero copiar a mi boleto una apuesta pendiente de un usuario al que sigo, para apostar lo mismo que él. *(Fila 26)*
 - Dado que veo una apuesta pendiente de un perfil al que tengo acceso, cuando pulso "copiar", entonces sus selecciones se añaden a mi boleto con las cuotas actuales.
 - Dado que alguno de sus eventos ya ha empezado, entonces esa selección no se copia y se me avisa.
+
+**HU-48**: Como usuario, quiero ver el perfil público de otro jugador desde el ranking, con su porcentaje de aciertos y su balance, para compararme con él sin tener que seguirlo. *(Fila 31)*
+- Dado que pulso un nombre en el ranking, cuando se abre su perfil, entonces veo sus estadísticas pero no sus apuestas.
 
 ## Apuestas a largo plazo
 
