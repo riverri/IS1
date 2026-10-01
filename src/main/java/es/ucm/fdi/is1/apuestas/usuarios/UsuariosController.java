@@ -1,6 +1,7 @@
 package es.ucm.fdi.is1.apuestas.usuarios;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +50,19 @@ public class UsuariosController {
         }
         model.addAttribute("bienvenida", saldo.bienvenida());
         return "registro";
+    }
+
+    /** Ranking público: muestra el top 20 y, si no estás entre ellos, también tu posición (HU-36). */
+    @GetMapping("/ranking")
+    public String ranking(Principal principal, Model model) {
+        List<PuestoRanking> todos = usuarios.ranking(principal == null ? null : principal.getName());
+        List<PuestoRanking> primeros = todos.stream().limit(20).toList();
+        PuestoRanking mio = todos.stream().filter(PuestoRanking::soyYo).findFirst()
+                .filter(p -> p.posicion() > 20).orElse(null);
+        model.addAttribute("primeros", primeros);
+        model.addAttribute("mio", mio);
+        model.addAttribute("total", todos.size());
+        return "ranking";
     }
 
     @GetMapping("/cuenta")

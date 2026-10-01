@@ -29,6 +29,10 @@
         </select>
         <span class="error-campo" th:if="${#fields.hasErrors('visitanteId')}" th:errors="*{visitanteId}"></span>
 
+        <label for="fase">Jornada o fase (opcional)</label>
+        <input id="fase" type="text" th:field="*{fase}" placeholder="Jornada 10">
+        <span class="error-campo" th:if="${#fields.hasErrors('fase')}" th:errors="*{fase}"></span>
+
         <label for="fechaHora">Fecha y hora</label>
         <input id="fechaHora" type="datetime-local" th:field="*{fechaHora}">
         <span class="error-campo" th:if="${#fields.hasErrors('fechaHora')}" th:errors="*{fechaHora}"></span>

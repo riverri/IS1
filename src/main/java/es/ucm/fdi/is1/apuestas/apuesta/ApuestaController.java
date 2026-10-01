@@ -2,6 +2,8 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -28,10 +30,14 @@ public class ApuestaController {
     private final CatalogoService catalogo;
     private final CalculadoraCuotas calculadora;
 
-    public ApuestaController(ApuestaService apuestas, CatalogoService catalogo, CalculadoraCuotas calculadora) {
+    private final Clock reloj;
+
+    public ApuestaController(ApuestaService apuestas, CatalogoService catalogo, CalculadoraCuotas calculadora,
+                             Clock reloj) {
         this.apuestas = apuestas;
         this.catalogo = catalogo;
         this.calculadora = calculadora;
+        this.reloj = reloj;
     }
 
     /** Requiere sesión iniciada: un visitante es redirigido al login (HU-08). */
@@ -70,7 +76,20 @@ public class ApuestaController {
         BigDecimal comprometido = activas.stream().map(Apuesta::getImporte).reduce(BigDecimal.ZERO, BigDecimal::add);
         model.addAttribute("activas", activas);
         model.addAttribute("comprometido", comprometido);
+        model.addAttribute("ahora", LocalDateTime.now(reloj));
         return "apuestas";
+    }
+
+    @PostMapping("/apuestas/{id}/cancelar")
+    public String cancelar(@PathVariable Long id, Principal principal, RedirectAttributes redireccion) {
+        try {
+            Apuesta apuesta = apuestas.cancelar(principal.getName(), id);
+            redireccion.addFlashAttribute("mensaje", "Apuesta cancelada. Se te han devuelto "
+                    + apuesta.getImporte().toPlainString().replace('.', ',') + " monedas.");
+        } catch (IllegalStateException e) {
+            redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede cancelar: el evento ha empezado.");
+        }
+        return "redirect:/apuestas";
     }
 
     private String vista(Evento evento, Model model) {

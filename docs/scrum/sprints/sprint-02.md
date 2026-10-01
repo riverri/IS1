@@ -13,6 +13,11 @@
 | HU-23 | Apuesta simple con parte del saldo | 6, 7 | 5 | Jing Li | Hecho |
 | HU-24 | Ver mis apuestas activas | 10, 11 | 3 | Jing Li | Hecho |
 | — | Editar calificación y escudo de los equipos desde Gestión | 17 | 2 | Jing Li | Hecho |
+| HU-22 | Búsqueda y filtros del catálogo (pestañas por deporte, buscador) | 21 | 3 | Jing Li | Hecho (añadida durante el sprint) |
+| HU-26 | Cancelar una apuesta antes de que empiece el evento | 14 | 2 | Jing Li | Hecho (añadida durante el sprint) |
+| HU-36 | Ranking de usuarios | 24 | 3 | Jing Li | Parcial: por saldo (añadida durante el sprint) |
+| — | Más deportes: baloncesto (ACB, Euroliga, NBA), tenis, Fórmula 1 y MotoGP | 2 | 3 | Jing Li | Hecho |
+| — | Escudos dibujados con los colores de cada club cuando no hay imagen | — | 1 | Jing Li | Hecho |
 
 ### Algoritmo de cuotas (versión 1)
 1. **Diferencia de nivel** = (calidad local + 0,5 por jugar en casa) − calidad visitante.
@@ -27,8 +32,14 @@ Las cuotas se calculan en el momento, así que si el creador cambia la calificac
 - **Factor de forma reciente (HU-02).**
 - **Bajada de la cuota según el volumen apostado** a cada resultado (fila 3 del backlog).
 
+### Notas sobre el trabajo añadido
+- Los eventos de baloncesto, tenis, Fórmula 1 y MotoGP son **de ejemplo** (no son el calendario real). El creador de apuestas debe sustituirlos por los reales desde Gestión.
+- En Fórmula 1 y MotoGP se apuesta a **duelos**: cuál de los dos pilotos acaba por delante.
+- El ranking ordena por saldo. Cuando se resuelvan las apuestas (Sprint 3) se podrá ordenar por ganancias y por porcentaje de aciertos, como pide HU-36.
+
 ## Dailies
 - **01/10**: algoritmo de cuotas, apuesta simple y "Mis apuestas".
+- **01/10**: catálogo por deportes con buscador, nuevos deportes, cancelación de apuestas, ranking y escudos dibujados.
 
 ## Sprint Review (15/10)
 - Historias completadas:

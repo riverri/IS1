@@ -66,4 +66,15 @@ class DatosInicialesTest {
         assertThat(equipos.findByNombre("FC Barcelona").orElseThrow().getCalidad()).isEqualTo(9.9);
         assertThat(equipos.findByNombre("Real Madrid").orElseThrow().getCalidad()).isEqualTo(6.7);
     }
+
+    @Test
+    void hayEventosDeTodosLosDeportes() {
+        assertThat(eventos.findAll().stream().map(e -> e.getDeporte()).distinct())
+                .containsExactlyInAnyOrder(es.ucm.fdi.is1.apuestas.equipos.Deporte.values());
+    }
+
+    @Test
+    void losEventosTienenSuJornada() {
+        assertThat(eventos.findAll()).allMatch(e -> e.getFase() != null);
+    }
 }

@@ -6,22 +6,42 @@
 <main>
     <div class="titulo-pagina">
         <h1>Eventos disponibles</h1>
-        <nav class="filtros" th:unless="${#maps.isEmpty(eventosPorDeporte)}" aria-label="Competiciones">
-            <th:block th:each="grupo : ${eventosPorDeporte}">
-                <th:block th:each="comp : ${grupo.value}" th:with="ancla=${@formato.ancla(comp.key)}">
-                    <a class="chip chip-filtro" th:href="|#${ancla}|"
-                       th:text="${comp.key} + ' · ' + ${comp.value.size()}">LaLiga · 16</a>
-                </th:block>
-            </th:block>
-        </nav>
+        <form class="buscador" th:action="@{/eventos}" method="get" role="search">
+            <input type="hidden" name="deporte" th:if="${deporteElegido != null}" th:value="${deporteElegido}">
+            <input type="search" name="q" th:value="${q}" placeholder="Buscar equipo, jugador o competición"
+                   aria-label="Buscar">
+            <button class="boton" type="submit">Buscar</button>
+        </form>
     </div>
 
+    <nav class="pestanas" aria-label="Deportes">
+        <a class="pestana" th:classappend="${deporteElegido == null} ? 'activa'"
+           th:href="@{/eventos(q=${q})}">Todos</a>
+        <a class="pestana" th:each="r : ${recuento}" th:classappend="${deporteElegido == r.key} ? 'activa'"
+           th:href="@{/eventos(deporte=${r.key},q=${q})}">
+            <span th:text="${r.key.icono}">⚽</span>
+            <span th:text="${r.key.nombre}">Fútbol</span>
+            <span class="pestana-numero" th:text="${r.value}">34</span>
+        </a>
+    </nav>
+
+    <nav class="filtros" th:unless="${#maps.isEmpty(eventosPorDeporte)}" aria-label="Competiciones">
+        <th:block th:each="grupo : ${eventosPorDeporte}">
+            <th:block th:each="comp : ${grupo.value}" th:with="ancla=${@formato.ancla(comp.key)}">
+                <a class="chip chip-filtro" th:href="|#${ancla}|"
+                   th:text="${comp.key} + ' · ' + ${comp.value.size()}">LaLiga · 16</a>
+            </th:block>
+        </th:block>
+    </nav>
+
     <div class="vacio" th:if="${#maps.isEmpty(eventosPorDeporte)}">
-        <p>No hay eventos disponibles ahora mismo. El creador de apuestas los da de alta desde Gestión.</p>
+        <p th:if="${q != ''}" th:text="'Ningún evento coincide con «' + ${q} + '».'">Ningún evento coincide.</p>
+        <p th:if="${q == ''}">No hay eventos disponibles ahora mismo. El creador de apuestas los da de alta desde Gestión.</p>
+        <a class="boton boton-secundario" th:if="${q != '' or deporteElegido != null}" th:href="@{/eventos}">Ver todos</a>
     </div>
 
     <section class="deporte" th:each="grupo : ${eventosPorDeporte}">
-        <h2 th:text="${grupo.key.nombre}">Fútbol</h2>
+        <h2><span th:text="${grupo.key.icono}">⚽</span> <span th:text="${grupo.key.nombre}">Fútbol</span></h2>
         <section class="competicion" th:each="comp : ${grupo.value}" th:id="${@formato.ancla(comp.key)}">
             <h3 th:text="${comp.key}">LaLiga</h3>
             <div class="rejilla-partidos">

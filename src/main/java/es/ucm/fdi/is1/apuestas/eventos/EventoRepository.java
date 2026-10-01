@@ -2,6 +2,7 @@ package es.ucm.fdi.is1.apuestas.eventos;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +15,6 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Evento> findAllByOrderByFechaHoraAsc();
 
     boolean existsByLocalAndVisitanteAndFechaHora(Equipo local, Equipo visitante, LocalDateTime fechaHora);
+
+    Optional<Evento> findByLocalAndVisitanteAndFechaHora(Equipo local, Equipo visitante, LocalDateTime fechaHora);
 }

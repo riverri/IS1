@@ -66,7 +66,11 @@ public class GestionService {
                 .orElseThrow(() -> new DatosInvalidosException("competicionId", "La competición no existe"));
         Equipo local = equipoDeLaCompeticion(form.getLocalId(), competicion, "localId");
         Equipo visitante = equipoDeLaCompeticion(form.getVisitanteId(), competicion, "visitanteId");
-        return eventos.save(new Evento(competicion, local, visitante, form.getFechaHora()));
+        Evento evento = new Evento(competicion, local, visitante, form.getFechaHora());
+        if (form.getFase() != null && !form.getFase().isBlank()) {
+            evento.setFase(form.getFase().trim());
+        }
+        return eventos.save(evento);
     }
 
     private Equipo equipoDeLaCompeticion(Long equipoId, Competicion competicion, String campo) {

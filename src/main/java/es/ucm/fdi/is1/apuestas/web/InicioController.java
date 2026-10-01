@@ -24,6 +24,7 @@ public class InicioController {
     @GetMapping("/")
     public String inicio(Model model) {
         model.addAttribute("proximos", catalogo.proximos(4));
+        model.addAttribute("recuento", catalogo.recuentoPorDeporte());
         model.addAttribute("bienvenida", saldo.bienvenida());
         return "index";
     }
