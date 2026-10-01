@@ -14,7 +14,9 @@ labels: historia
 - [ ]
 
 ### Estimación
-Puntos de historia:
+- Puntos de historia (Planning Poker, Fibonacci):
+- Fila del Product Backlog:
+- MoSCoW: Must / Should / Could / Won't
 
 ### Tareas
 - [ ]

@@ -1,40 +1,63 @@
 # Cómo aplicamos Scrum
 
+> Basado en el Tema 3 (Scrum, G. Méndez) y en las técnicas de estimación ágil (E. P. Concepción).
+
 ## Roles
-- **Product Owner (PO)**: mantiene y prioriza el Product Backlog y acepta o rechaza historias en la Sprint Review.
-- **Scrum Master (SM)**: facilita las reuniones, elimina impedimentos y vela por que se siga el proceso.
-- **Equipo de desarrollo**: todos (PO y SM incluidos, por el tamaño del equipo).
+| Rol | Quién | Responsabilidad |
+|---|---|---|
+| **Product Owner** | _por decidir_ | Único responsable del Product Backlog: contenido, orden y claridad. Maximiza el valor del producto. |
+| **Scrum Master** | _por decidir_ | Vela por que Scrum se aplique bien. Facilita los eventos, controla los tiempos y elimina impedimentos. |
+| **Equipo de Desarrollo** | Los 5 (PO y SM también desarrollan) | Autoorganizado y multifuncional. Decide cuánto trabajo entra en el sprint y cómo hacerlo. |
 
-> El profesor puede hacer de "cliente". Confirmar con él si alguno de los roles lo asigna la asignatura.
+El profesor actúa como interesado o cliente: se le invita a las Sprint Reviews o se le presenta el incremento.
 
-## Sprints
-- Duración propuesta: **2 semanas** (ajustar al calendario de entregas de la asignatura).
-- Cada sprint tiene un **objetivo** y un conjunto de historias del backlog.
-- Las actas de cada sprint van en `docs/scrum/sprints/sprint-NN.md` (plantilla: [sprints/plantilla-sprint.md](sprints/plantilla-sprint.md)).
+## Sprint
+- Duración fija de **2 semanas**, que no cambia entre sprints. La teoría pone como máximo 1 mes; ajustar al calendario de entregas.
+- Cada sprint empieza justo al terminar el anterior.
+- Tiene un **Sprint Goal** (objetivo) y produce un **Incremento** "Terminado" y utilizable.
 
-## Ceremonias
-| Ceremonia | Cuándo | Duración | Resultado |
+## Eventos
+| Evento | Cuándo | Duración (sprint de 2 semanas) | Resultado |
 |---|---|---|---|
-| Sprint Planning | Inicio del sprint | ≤ 1 h | Objetivo del sprint + historias elegidas, divididas en tareas |
-| Daily (asíncrona) | 2–3 veces por semana | 15 min o mensaje | ¿Qué hice? ¿Qué haré? ¿Algo me bloquea? |
-| Sprint Review | Fin del sprint | ≤ 45 min | Demo de lo terminado; el PO acepta o rechaza |
-| Retrospectiva | Tras la review | ≤ 30 min | Qué fue bien, qué mejorar y acciones concretas |
+| **Sprint Planning** | Día 1 | ≤ 2 h | Sprint Goal y **Sprint Backlog**: historias elegidas más el plan, con tareas de ≤ 1 día |
+| **Daily Scrum** | Cada día (o 3 veces por semana, en persona o por chat) | 15 min | ¿Qué hice para el objetivo? ¿Qué haré? ¿Hay impedimentos? |
+| **Sprint Review** | Último día | ≤ 1 h | Demo del incremento. El PO dice qué está "Terminado" y se actualiza el Product Backlog |
+| **Sprint Retrospective** | Tras la review | ≤ 45 min | Qué fue bien, qué mejorar y **al menos una mejora** que entra en el siguiente Sprint Backlog |
 
-## Herramientas en GitHub
-- **Issues** = historias de usuario, tareas y bugs (con las plantillas de `.github/ISSUE_TEMPLATE`).
-- **GitHub Projects** (tablero) con columnas: `Product Backlog` → `Sprint Backlog` → `En curso` → `En revisión` → `Hecho`.
-- **Milestones** = sprints (Sprint 1, Sprint 2…), con fecha de fin.
-- **Labels**: `historia`, `tarea`, `bug`, `docs`, y prioridad `P1`/`P2`/`P3`.
-- **Estimación**: puntos de historia (1, 2, 3, 5, 8, 13), anotados en el issue.
+Las actas de cada sprint van en `docs/scrum/sprints/sprint-NN.md` (ver la [plantilla](sprints/plantilla-sprint.md)).
+
+## Artefactos y su equivalencia en GitHub
+| Artefacto Scrum | En GitHub |
+|---|---|
+| Product Backlog | [product-backlog.md](product-backlog.md) y un **Issue por historia** (plantilla "Historia de usuario"), en la columna `Product Backlog` del tablero |
+| Sprint Backlog | Issues asignados al **Milestone** del sprint ("Sprint 1"…) y a la columna `Sprint Backlog` |
+| Incremento | Rama `main` al final del sprint, marcada con un **tag/release** (`sprint-1`, `sprint-2`…) |
+
+## Tablero Kanban (GitHub Projects)
+Columnas: `Product Backlog` → `Sprint Backlog` → `En curso` → `En revisión (PR)` → `Terminado`
+- **Límite de trabajo en curso (WIP):** como máximo **1 tarea en curso por persona**. No se empieza otra hasta mover la anterior a revisión.
+- El Daily se hace mirando el tablero: ¿qué está bloqueado?, ¿qué avanza más lento de lo esperado?
+
+## Estimación
+- **Puntos de historia**, que son relativos y no equivalen a horas. Escala Fibonacci: 1, 2, 3, 5, 8, 13, 20.
+- Técnica: **Planning Poker**. El PO explica la historia, cada miembro elige carta en secreto y se revelan a la vez. Si hay mucha diferencia, los extremos explican su voto y se repite.
+- Una historia de más de 13 puntos es demasiado grande y se divide.
+- **Velocidad** = puntos terminados por sprint. Tras el Sprint 1 sirve para planificar los siguientes.
+- Seguimiento con un **burndown**: puntos pendientes por día del sprint.
+
+## Priorización
+Método **MoSCoW** (Must / Should / Could / Won't), indicado en el [Product Backlog](product-backlog.md). El MVP son los **Must**.
 
 ## Definition of Ready (una historia puede entrar en un sprint si…)
-- Tiene el formato "Como… quiero… para…".
-- Tiene criterios de aceptación verificables.
-- Está estimada y es lo bastante pequeña para un sprint.
+- Sigue el formato *Como… quiero… para…*.
+- Tiene criterios de aceptación *Dado… cuando… entonces…*.
+- Está estimada en puntos y mide ≤ 13.
+- Sus dependencias están terminadas o dentro del mismo sprint.
 
-## Definition of Done (una historia está terminada si…)
-- El código está en `main` mediante un PR revisado por al menos 1 compañero.
+## Definition of Done (una historia está "Terminada" si…)
 - Cumple todos sus criterios de aceptación.
-- Tiene pruebas (cuando aplique) y estas pasan.
+- El código está en `main` mediante un PR revisado y aprobado por al menos 1 compañero.
+- Tiene pruebas automáticas de la lógica (cuotas, saldo, resolución…) y pasan.
+- La web se ve y se usa bien en móvil y en ordenador (HU-09).
 - La documentación afectada está actualizada.
-- Se ha enseñado en la Sprint Review.
+- Se ha enseñado en la Sprint Review y el PO la ha aceptado.
