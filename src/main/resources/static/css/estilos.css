@@ -295,6 +295,17 @@ main.estrecho { max-width: 480px; }
     letter-spacing: .02em;
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .25);
 }
+.escudo { position: relative; overflow: hidden; }
+.escudo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+    object-fit: contain;
+    background: #fff;
+}
+.escudo.con-imagen { background: #fff !important; box-shadow: inset 0 0 0 1px var(--borde); }
 .escudo-pequeno { width: 26px; height: 26px; font-size: .65rem; }
 .escudo-grande { width: 64px; height: 64px; font-size: 1.3rem; }
 

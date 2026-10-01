@@ -16,8 +16,7 @@
             <tr th:each="e : ${equipos}">
                 <td>
                     <span class="equipo-celda">
-                        <span class="escudo escudo-pequeno" th:style="'background:' + ${@formato.color(e.nombre)}"
-                              th:text="${@formato.iniciales(e.nombre)}">RM</span>
+                        <span th:replace="~{fragments/comun :: escudo(${e}, 'escudo-pequeno')}"></span>
                         <span th:text="${e.nombre}">Real Madrid</span>
                     </span>
                 </td>

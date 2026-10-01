@@ -5,11 +5,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
+import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import jakarta.validation.Valid;
 
 /** Panel del creador de apuestas (solo rol CREADOR, ver SeguridadConfig). */
@@ -78,6 +80,29 @@ public class GestionController {
         }
         model.addAttribute("competiciones", gestion.competiciones());
         return "gestion/equipo";
+    }
+
+    @GetMapping("/equipos/{id}/escudo")
+    public String editarEscudo(@PathVariable Long id, Model model) {
+        Equipo equipo = gestion.equipo(id);
+        EscudoForm form = new EscudoForm();
+        form.setEscudoUrl(equipo.getEscudoUrl());
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("escudo", form);
+        return "gestion/escudo";
+    }
+
+    @PostMapping("/equipos/{id}/escudo")
+    public String guardarEscudo(@PathVariable Long id, @Valid @ModelAttribute("escudo") EscudoForm form,
+                                BindingResult errores, Model model, RedirectAttributes redireccion) {
+        Equipo equipo = gestion.equipo(id);
+        if (errores.hasErrors()) {
+            model.addAttribute("equipo", equipo);
+            return "gestion/escudo";
+        }
+        gestion.cambiarEscudo(id, form.getEscudoUrl());
+        redireccion.addFlashAttribute("mensaje", "Escudo actualizado: " + equipo.getNombre());
+        return "redirect:/gestion";
     }
 
     // --- Eventos ---
