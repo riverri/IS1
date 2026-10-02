@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
+import es.ucm.fdi.is1.apuestas.equipos.PlantillaService;
 
 /** Banco de estadísticas de equipos: ficha (HU-31) y cara a cara (HU-33). */
 @Service
@@ -26,11 +27,14 @@ public class FichaEquipoService {
 
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
+    private final PlantillaService plantillas;
     private final Clock reloj;
 
-    public FichaEquipoService(EquipoRepository equipos, EventoRepository eventos, Clock reloj) {
+    public FichaEquipoService(EquipoRepository equipos, EventoRepository eventos, PlantillaService plantillas,
+                              Clock reloj) {
         this.equipos = equipos;
         this.eventos = eventos;
+        this.plantillas = plantillas;
         this.reloj = reloj;
     }
 
@@ -58,7 +62,8 @@ public class FichaEquipoService {
                 .filter(p -> p != null)
                 .toList();
         return new FichaEquipo(equipo, ultimos, balance, racha(jugados, equipo), clasificaciones, proximos,
-                GraficoEvolucion.de(jugados.reversed(), equipo));
+                GraficoEvolucion.de(jugados.reversed(), equipo), plantillas.plantilla(equipo),
+                plantillas.alineacion(equipo));
     }
 
     @Transactional(readOnly = true)

@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.api.ApiProperties;
 import es.ucm.fdi.is1.apuestas.api.ResumenSincronizacion;
+import es.ucm.fdi.is1.apuestas.api.SincronizacionPlantillas;
 import es.ucm.fdi.is1.apuestas.api.SincronizacionService;
 import es.ucm.fdi.is1.apuestas.apuesta.Limites;
 import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
@@ -24,6 +25,9 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.Forma;
+import es.ucm.fdi.is1.apuestas.equipos.Jugador;
+import es.ucm.fdi.is1.apuestas.equipos.PlantillaService;
+import es.ucm.fdi.is1.apuestas.equipos.Posicion;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoService;
 import jakarta.validation.Valid;
@@ -36,17 +40,22 @@ public class GestionController {
     private final GestionService gestion;
     private final ResolucionService resolucion;
     private final SincronizacionService sincronizacion;
+    private final SincronizacionPlantillas sincronizacionPlantillas;
     private final MercadoService mercados;
     private final LimitesService limites;
+    private final PlantillaService plantillas;
     private final ApiProperties api;
     private final Clock reloj;
 
     public GestionController(GestionService gestion, ResolucionService resolucion,
-                             SincronizacionService sincronizacion, MercadoService mercados, LimitesService limites,
+                             SincronizacionService sincronizacion, SincronizacionPlantillas sincronizacionPlantillas,
+                             MercadoService mercados, LimitesService limites, PlantillaService plantillas,
                              ApiProperties api, Clock reloj) {
         this.gestion = gestion;
         this.resolucion = resolucion;
         this.sincronizacion = sincronizacion;
+        this.sincronizacionPlantillas = sincronizacionPlantillas;
+        this.plantillas = plantillas;
         this.mercados = mercados;
         this.limites = limites;
         this.api = api;
@@ -66,6 +75,65 @@ public class GestionController {
             redireccion.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/gestion";
+    }
+
+    /** Descarga ahora mismo las plantillas reales de los equipos. */
+    @PostMapping("/sincronizar-plantillas")
+    public String sincronizarPlantillas(RedirectAttributes redireccion) {
+        try {
+            SincronizacionPlantillas.Resumen resumen = sincronizacionPlantillas.sincronizar();
+            redireccion.addFlashAttribute("mensaje", "Plantillas descargadas: " + resumen + ".");
+            if (!resumen.errores().isEmpty()) {
+                redireccion.addFlashAttribute("error", String.join(" · ", resumen.errores()));
+            }
+        } catch (IllegalStateException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/gestion";
+    }
+
+    // --- Jugadores ---
+
+    @PostMapping("/equipos/{id}/jugadores")
+    public String anadirJugador(@PathVariable Long id, @RequestParam(required = false) String nombre,
+                                @RequestParam(required = false) Posicion posicion,
+                                @RequestParam(required = false) Integer dorsal,
+                                @RequestParam(required = false) Double nota,
+                                @RequestParam(required = false) String nacionalidad, RedirectAttributes redireccion) {
+        try {
+            Jugador jugador = plantillas.anadir(id, nombre, posicion, dorsal, nota, nacionalidad);
+            redireccion.addFlashAttribute("mensaje", "Jugador añadido: " + jugador.getNombre());
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("errorJugadores", e.getMessage());
+        }
+        return "redirect:/gestion/equipos/" + id + "/editar#jugadores";
+    }
+
+    @PostMapping("/jugadores/{id}/nota")
+    public String notaJugador(@PathVariable Long id, @RequestParam double nota, RedirectAttributes redireccion) {
+        Long equipoId;
+        try {
+            Jugador jugador = plantillas.cambiarNota(id, nota);
+            equipoId = jugador.getEquipo().getId();
+            redireccion.addFlashAttribute("mensaje", "Nota de " + jugador.getNombre() + ": "
+                    + String.valueOf(jugador.getNota()).replace('.', ','));
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gestion";
+        }
+        return "redirect:/gestion/equipos/" + equipoId + "/editar#jugadores";
+    }
+
+    @PostMapping("/jugadores/{id}/borrar")
+    public String borrarJugador(@PathVariable Long id, RedirectAttributes redireccion) {
+        try {
+            Jugador jugador = plantillas.borrar(id);
+            redireccion.addFlashAttribute("mensaje", "Jugador quitado de la plantilla: " + jugador.getNombre());
+            return "redirect:/gestion/equipos/" + jugador.getEquipo().getId() + "/editar#jugadores";
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gestion";
+        }
     }
 
     @ModelAttribute("deportes")
@@ -179,9 +247,8 @@ public class GestionController {
         form.setCalidad(equipo.getCalidad());
         form.setForma(equipo.getForma());
         form.setEscudoUrl(equipo.getEscudoUrl());
-        model.addAttribute("equipo", equipo);
         model.addAttribute("edicion", form);
-        return "gestion/editar-equipo";
+        return formularioEquipo(equipo, model);
     }
 
     @PostMapping("/equipos/{id}/editar")
@@ -189,12 +256,18 @@ public class GestionController {
                                 BindingResult errores, Model model, RedirectAttributes redireccion) {
         Equipo equipo = gestion.equipo(id);
         if (errores.hasErrors()) {
-            model.addAttribute("equipo", equipo);
-            return "gestion/editar-equipo";
+            return formularioEquipo(equipo, model);
         }
         gestion.editarEquipo(id, form);
         redireccion.addFlashAttribute("mensaje", "Equipo actualizado: " + equipo.getNombre());
         return "redirect:/gestion";
+    }
+
+    private String formularioEquipo(Equipo equipo, Model model) {
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("plantilla", plantillas.plantilla(equipo));
+        model.addAttribute("posiciones", Posicion.values());
+        return "gestion/editar-equipo";
     }
 
     // --- Eventos ---

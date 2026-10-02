@@ -49,6 +49,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 | 29 | Edición y borrado de eventos por el creador (HU-46) | ¼ sprint | 6 | S | |
 | 30 | Cambio de nombre y contraseña desde *Mi cuenta* (HU-47) | ¼ sprint | 5 | C | |
 | 31 | Perfil público de cada jugador desde el ranking, solo con sus estadísticas (HU-48). Versión mínima de la parte social | ¼ sprint | 5 | C | |
+| 32 | Plantillas de los equipos: jugadores con nota (0-10) y alineación probable, descargados de la API o gestionados a mano (HU-49, HU-50). *Depende de la fila 13* | ½ sprint | 7 | S | |
 
 ## Puntos a revisar en equipo
 
