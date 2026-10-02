@@ -80,6 +80,11 @@
 
     <h2>Otras acciones</h2>
     <div class="acciones">
+        <a class="boton boton-secundario" th:if="${editable}" th:href="@{/gestion/eventos/{id}/editar(id=${evento.id})}">Editar</a>
+        <form th:if="${editable}" th:action="@{/gestion/eventos/{id}/borrar(id=${evento.id})}" method="post"
+              onsubmit="return confirm('¿Borrar el evento? Solo se puede si nadie ha apostado.');">
+            <button class="boton boton-secundario" type="submit">Borrar</button>
+        </form>
         <form th:if="${evento.estado.name() == 'PROGRAMADO'}" th:action="@{/gestion/eventos/{id}/suspender(id=${evento.id})}" method="post">
             <button class="boton boton-secundario" type="submit">Suspender</button>
         </form>

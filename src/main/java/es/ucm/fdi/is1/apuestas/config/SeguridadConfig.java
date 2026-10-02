@@ -17,7 +17,7 @@ public class SeguridadConfig {
         http
                 .authorizeHttpRequests(peticiones -> peticiones
                         // Páginas públicas: cualquier visitante puede ver el catálogo (HU-08)
-                        .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/registro", "/login",
+                        .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login",
                                 "/css/**", "/error", "/h2-console/**").permitAll()
                         // Panel del creador de apuestas
                         .requestMatchers("/gestion/**").hasRole("CREADOR")

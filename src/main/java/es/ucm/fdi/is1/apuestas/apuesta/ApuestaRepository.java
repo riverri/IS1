@@ -14,4 +14,6 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
     List<Apuesta> findByUsuarioAndEstadoInOrderByFechaDesc(Usuario usuario, Collection<EstadoApuesta> estados);
 
     List<Apuesta> findByEstadoIn(Collection<EstadoApuesta> estados);
+
+    long countByUsuarioAndEstado(Usuario usuario, EstadoApuesta estado);
 }
