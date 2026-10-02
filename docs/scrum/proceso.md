@@ -5,8 +5,8 @@
 ## Roles
 | Rol | Quién | Responsabilidad |
 |---|---|---|
-| **Product Owner** | _por decidir_ | Único responsable del Product Backlog: contenido, orden y claridad. Maximiza el valor del producto. |
-| **Scrum Master** | _por decidir_ | Vela por que Scrum se aplique bien. Facilita los eventos, controla los tiempos y elimina impedimentos. |
+| **Product Owner** | El profesor; de momento también los 5 miembros (provisional) | Único responsable del Product Backlog: contenido, orden y claridad. Maximiza el valor del producto. |
+| **Scrum Master** | _por decidir_ ([issue #28](https://github.com/riverri/IS1/issues/28)) | Vela por que Scrum se aplique bien. Facilita los eventos, controla los tiempos y elimina impedimentos. |
 | **Equipo de Desarrollo** | Los 5 (PO y SM también desarrollan) | Autoorganizado y multifuncional. Decide cuánto trabajo entra en el sprint y cómo hacerlo. |
 
 El profesor actúa como interesado o cliente: se le invita a las Sprint Reviews o se le presenta el incremento.
@@ -34,6 +34,8 @@ Las actas de cada sprint van en `docs/scrum/sprints/sprint-NN.md` (ver la [plant
 | Incremento | Rama `main` al final del sprint, marcada con un **tag/release** (`sprint-1`, `sprint-2`…) |
 
 ## Tablero Kanban (GitHub Projects)
+Desde el Sprint 12, cada historia o tarea es un [issue](https://github.com/riverri/IS1/issues) con su etiqueta (`historia`, `tarea`, `documentación`, `sprint-12`…) y está en el tablero de la pestaña *Projects* del repositorio. Un PR que termina un issue lo cierra con `Closes #N` en su descripción.
+
 Columnas: `Product Backlog` → `Sprint Backlog` → `En curso` → `En revisión (PR)` → `Terminado`
 - **Límite de trabajo en curso (WIP):** como máximo **1 tarea en curso por persona**. No se empieza otra hasta mover la anterior a revisión.
 - El Daily se hace mirando el tablero: ¿qué está bloqueado?, ¿qué avanza más lento de lo esperado?
@@ -58,6 +60,7 @@ Método **MoSCoW** (Must / Should / Could / Won't), indicado en el [Product Back
 - Cumple todos sus criterios de aceptación.
 - El código está en `main` mediante un PR revisado y aprobado por al menos 1 compañero.
 - Tiene pruebas automáticas de la lógica (cuotas, saldo, resolución…) y pasan.
+- Sus criterios de aceptación están en la [matriz de trazabilidad](../requisitos/trazabilidad.md), cada uno con su prueba.
 - La web se ve y se usa bien en móvil y en ordenador (HU-09).
 - La documentación afectada está actualizada.
 - Se ha enseñado en la Sprint Review y el PO la ha aceptado.

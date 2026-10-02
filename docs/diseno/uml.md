@@ -74,7 +74,7 @@ flowchart TB
     subgraph datos [Acceso a datos]
         repositorios["Repositorios Spring Data JPA"]
         flyway["Migraciones Flyway<br/>V1 … V8"]
-        h2[("Base de datos H2<br/>./datos/apuestas")]
+        h2[("Base de datos<br/>H2 en local (./datos/apuestas)<br/>PostgreSQL en el servidor")]
     end
 
     seguridad["Spring Security<br/>login, roles USUARIO / CREADOR"]

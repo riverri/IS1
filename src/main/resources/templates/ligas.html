@@ -15,7 +15,7 @@
         <li class="tarjeta" th:each="l : ${ligas}">
             <a th:href="@{/ligas/{id}(id=${l.id})}">
                 <strong th:text="${l.nombre}">Los de clase</strong>
-                <span class="aviso" th:text="${#lists.size(l.miembrosActivos)} + ' miembros · código ' + ${l.codigo}">4 miembros · código K7M2QX</span>
+                <span class="aviso" th:with="n=${#lists.size(l.miembrosActivos)}" th:text="${n} + (${n == 1} ? ' miembro' : ' miembros') + ' · código ' + ${l.codigo}">4 miembros · código K7M2QX</span>
             </a>
         </li>
     </ul>

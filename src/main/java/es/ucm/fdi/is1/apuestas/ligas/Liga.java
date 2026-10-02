@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -40,7 +41,8 @@ public class Liga {
     @Column(nullable = false)
     private LocalDateTime creada;
 
-    @ManyToMany
+    /** Se cargan con la liga: las páginas los muestran fuera de la transacción (open-in-view desactivado). */
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "liga_miembro", joinColumns = @JoinColumn(name = "liga_id"),
             inverseJoinColumns = @JoinColumn(name = "usuario_id"))
     private Set<Usuario> miembros = new HashSet<>();

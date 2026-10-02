@@ -2,8 +2,10 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
 
-import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
-
-/** Cuánto se ha apostado a un resultado de un evento y en cuántas apuestas (HU-06). */
-public record VolumenResultado(Resultado resultado, BigDecimal importe, long apuestas) {
+/**
+ * Cuánto se ha apostado a una opción de un evento y en cuántas apuestas (HU-06): un resultado (1X2)
+ * o uno de los otros tipos de apuesta (HU-52), con su cuota actual.
+ */
+public record VolumenResultado(String simbolo, String descripcion, BigDecimal cuota, BigDecimal importe,
+                               long apuestas) {
 }
