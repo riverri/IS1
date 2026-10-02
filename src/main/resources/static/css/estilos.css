@@ -1233,3 +1233,4 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
 .margen-casa > div { display: flex; flex-direction: column; gap: 4px; }
 .margen-casa .aviso { grid-column: 1 / -1; margin: 0; }
 .margen-cifra { font-size: 2rem; font-weight: 800; }
+.tabla .opcion-simbolo { min-width: 28px; width: auto; padding: 0 6px; }

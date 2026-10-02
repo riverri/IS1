@@ -11,6 +11,13 @@ services:
       # Contraseña del creador de apuestas (obligatoria): Render la pide al crear el servicio
       - key: CREADOR_PASSWORD
         sync: false
+      # Base de datos PostgreSQL permanente (Neon, ver README). Sin ellas usa H2 y los datos se borran al reiniciar
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
       # Opcional: si se define, se crea también usuario@apuestas.es con esta contraseña
       - key: USUARIO_PASSWORD
         sync: false

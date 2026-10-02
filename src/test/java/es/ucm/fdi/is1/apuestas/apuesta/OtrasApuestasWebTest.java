@@ -203,6 +203,22 @@ class OtrasApuestasWebTest {
     }
 
     @Test
+    void enGestionSeVeElDineroApostadoATodosLosTipos() throws Exception {
+        apostar(futbol, "MAS_2_5");
+        String cuota = calculadora.especiales(futbol).get(Especial.MAS_2_5).toPlainString().replace('.', ',');
+
+        String pagina = mvc.perform(get("/gestion/eventos/{id}", futbol.getId()).with(CREADOR))
+                .andExpect(content().string(containsString("Local o empate")))
+                .andReturn().getResponse().getContentAsString();
+        String fila = pagina.substring(pagina.indexOf("Más de 2,5 goles"));
+        fila = fila.substring(0, fila.indexOf("</tr>"));
+        assertThat(fila).contains(cuota).contains(">1<").contains("10,00");
+
+        mvc.perform(get("/gestion/eventos/{id}", basket.getId()).with(CREADOR))
+                .andExpect(content().string(not(containsString("Local o empate"))));
+    }
+
+    @Test
     void enLasApuestasSeVeElTipo() throws Exception {
         apostar(futbol, "MAS_2_5");
         mvc.perform(get("/apuestas").with(COMO_ANA))

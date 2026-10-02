@@ -40,12 +40,12 @@
     <h2>Dinero apostado</h2>
     <div class="tarjeta tabla">
         <table>
-            <thead><tr><th>Resultado</th><th>Cuota actual</th><th>Apuestas</th><th>Importe</th></tr></thead>
+            <thead><tr><th>Apuesta</th><th>Cuota actual</th><th>Apuestas</th><th>Importe</th></tr></thead>
             <tbody>
             <tr th:each="v : ${volumen}">
-                <td><span class="opcion-simbolo" th:text="${v.resultado.simbolo}">1</span>
-                    <span th:text="${v.resultado.descripcion}">Gana el local</span></td>
-                <td th:text="${@formato.cuota(@calculadoraCuotas.calcular(evento).de(v.resultado))}">1,85</td>
+                <td><span class="opcion-simbolo" th:text="${v.simbolo}">1</span>
+                    <span th:text="${v.descripcion}">Gana el local</span></td>
+                <td th:text="${v.cuota == null} ? '–' : ${@formato.cuota(v.cuota)}">1,85</td>
                 <td th:text="${v.apuestas}">3</td>
                 <td><strong th:text="${#numbers.formatDecimal(v.importe, 1, 'POINT', 2, 'COMMA')}">120,00</strong></td>
             </tr>
