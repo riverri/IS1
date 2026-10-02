@@ -19,7 +19,8 @@
     </div>
 
     <div class="mercados">
-        <article class="tarjeta mercado" th:each="m : ${abiertos}" th:id="'mercado-' + ${m.id}">
+        <article class="tarjeta mercado" th:each="m : ${abiertos}" th:id="'mercado-' + ${m.id}"
+                 th:classappend="'deporte-' + ${#strings.toLowerCase(m.deporte)}">
             <div class="partido-cabecera">
                 <span class="chip" th:text="${m.deporte.icono} + ' ' + ${m.deporte.nombre}">⚽ Fútbol</span>
                 <small th:text="'Cierra el ' + ${#temporals.format(m.cierre, 'dd/MM/yyyy')}">Cierra el 31/08/2027</small>
@@ -97,5 +98,6 @@
         });
     })();
 </script>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>

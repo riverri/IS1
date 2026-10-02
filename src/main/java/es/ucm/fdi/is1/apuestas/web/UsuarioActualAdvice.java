@@ -14,6 +14,7 @@ import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 
 /** Datos comunes a todas las vistas: usuario con sesión iniciada (cabecera, saldo) y su boleto. */
 @ControllerAdvice
@@ -34,6 +35,12 @@ public class UsuarioActualAdvice {
         this.notificaciones = notificaciones;
         this.limites = limites;
         this.reloj = reloj;
+    }
+
+    /** Ruta de la página actual, para marcar la sección activa en el menú. */
+    @ModelAttribute("ruta")
+    public String ruta(HttpServletRequest peticion) {
+        return peticion.getRequestURI();
     }
 
     /** Si el creador ha desactivado el juego responsable, Mi cuenta no lo muestra (HU-10). */

@@ -70,6 +70,14 @@ public class CatalogoService {
                 || Nombres.normalizar(evento.getCompeticion().getNombre()).contains(buscado);
     }
 
+    /** Partido destacado de la portada: el próximo de fútbol, o el próximo de cualquier deporte. */
+    @Transactional(readOnly = true)
+    public Evento destacado() {
+        List<Evento> disponibles = disponibles();
+        return disponibles.stream().filter(e -> e.getDeporte() == Deporte.FUTBOL).findFirst()
+                .orElse(disponibles.isEmpty() ? null : disponibles.get(0));
+    }
+
     /** Los próximos partidos disponibles, para la portada. */
     @Transactional(readOnly = true)
     public List<Evento> proximos(int cuantos) {
