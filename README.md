@@ -31,7 +31,8 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 .
 ├── docs/
 │   ├── requisitos/      # Visión del producto e historias de usuario
-│   ├── scrum/           # Proceso, Product Backlog y actas de sprint
+│   ├── scrum/           # Proceso, Product Backlog, actas de sprint y métricas
+│   ├── diseno/          # Diagramas UML (casos de uso, clases, estados, secuencia, datos)
 │   ├── decisiones/      # Decisiones técnicas (stack, arquitectura…)
 │   └── recursos.md      # Enlaces de teoría y de Git
 ├── src/main/java/       # Código Java (Spring Boot)
@@ -92,10 +93,11 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-27, HU-34, HU-35 |
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
+| `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
-| `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
+| `/cuenta` | Saldo de moneditas, fecha de la próxima recarga gratuita y cambio de nombre y contraseña | HU-13, HU-14, HU-47 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma reciente y escudo de cada equipo; límites de apuesta | HU-01, HU-02, HU-07 |
-| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular | HU-04, HU-05, HU-06, HU-25 |
+| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
 | `/equipos/{id}` | Ficha del equipo: últimos resultados, racha, balance, clasificación y próximos partidos | HU-31 |
@@ -137,3 +139,4 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).
 3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) y las [historias de usuario](docs/requisitos/historias-de-usuario.md).
 4. Arrancar la aplicación (ver arriba) y revisar los sprints en [docs/scrum/sprints](docs/scrum/sprints).
+5. Para entender el diseño: [diagramas UML](docs/diseno/uml.md). Para ver cómo avanza el proyecto: [métricas de velocidad y progreso](docs/scrum/metricas.md).

@@ -1,4 +1,4 @@
-# Sprint 7 · 01/10 – 15/10
+# Sprint 7 · 01/10 (cerrado antes de plazo)
 
 ## Sprint Planning (01/10)
 - **Asistentes:** Jing Li
@@ -56,12 +56,14 @@
 ## Dailies
 - **01/10**: historias nuevas en el backlog; ficha de equipo, cara a cara, avisos, cambiar importe, migración V4 y pruebas.
 
-## Sprint Review (15/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (02/10)
+- **Historias completadas:** HU-31, HU-33, HU-37 y HU-27 (16 puntos).
+- **Historias no completadas:** ninguna.
+- **Feedback del PO:**
+  - Siguiente sprint: HU-46, HU-47 y HU-48.
+  - Además, documentación de la asignatura: diagramas UML y gráficas de velocidad y progreso.
 
-## Retrospectiva (15/10)
+## Retrospectiva (02/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**

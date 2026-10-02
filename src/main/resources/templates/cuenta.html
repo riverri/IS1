@@ -5,6 +5,7 @@
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
     <h1 th:text="'Hola, ' + ${usuario.nombre}">Hola</h1>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Nombre cambiado</p>
     <div class="tarjeta-saldo">
         <span class="tarjeta-saldo-titulo">Saldo disponible</span>
         <span class="tarjeta-saldo-valor" th:text="${#numbers.formatDecimal(usuario.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</span>
@@ -22,6 +23,30 @@
         </div>
     </div>
     <a class="boton boton-bloque" th:href="@{/eventos}">Ver partidos</a>
+
+    <h2>Mis datos</h2>
+    <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/nombre}" th:object="${datosNombre}" method="post">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" th:field="*{nombre}" th:errorclass="con-error" autocomplete="name">
+        <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:text="${#fields.errors('nombre')[0]}"></span>
+        <span class="aviso">Es el nombre que ven los demás en el ranking.</span>
+        <button class="boton boton-secundario" type="submit">Cambiar nombre</button>
+    </form>
+
+    <form class="tarjeta tarjeta-formulario formulario cambiar-password" th:action="@{/cuenta/password}" th:object="${datosPassword}" method="post">
+        <label for="actual">Contraseña actual</label>
+        <input id="actual" type="password" th:field="*{actual}" th:errorclass="con-error" autocomplete="current-password">
+        <span class="error-campo" th:if="${#fields.hasErrors('actual')}" th:text="${#fields.errors('actual')[0]}"></span>
+
+        <label for="nueva">Contraseña nueva</label>
+        <input id="nueva" type="password" th:field="*{nueva}" th:errorclass="con-error" autocomplete="new-password">
+        <span class="error-campo" th:if="${#fields.hasErrors('nueva')}" th:text="${#fields.errors('nueva')[0]}"></span>
+
+        <label for="confirmacion">Repite la contraseña nueva</label>
+        <input id="confirmacion" type="password" th:field="*{confirmacion}" th:errorclass="con-error" autocomplete="new-password">
+        <span class="error-campo" th:if="${#fields.hasErrors('confirmacion')}" th:text="${#fields.errors('confirmacion')[0]}"></span>
+        <button class="boton boton-secundario" type="submit">Cambiar contraseña</button>
+    </form>
 </main>
 </body>
 </html>
