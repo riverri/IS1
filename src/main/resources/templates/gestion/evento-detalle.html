@@ -9,6 +9,7 @@
     <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="tarjeta marcador">
+      <div class="marcador-cabecera">
         <div class="marcador-etiquetas">
             <span class="chip" th:text="${evento.deporte.icono} + ' ' + ${evento.competicion.nombre}">⚽ LaLiga</span>
             <span class="estado" th:classappend="${#strings.toLowerCase(evento.estado)}" th:text="${evento.estado}">PROGRAMADO</span>
@@ -33,6 +34,7 @@
         <p class="resultado-final" th:if="${evento.resultado != null}">
             Resultado: <strong th:text="${evento.resultado.simbolo} + ' · ' + (${evento.resultado.name() == 'LOCAL'} ? ${evento.local.nombre} : (${evento.resultado.name() == 'VISITANTE'} ? ${evento.visitante.nombre} : 'Empate'))">1 · Real Madrid</strong>
         </p>
+      </div>
     </div>
 
     <h2>Dinero apostado</h2>
@@ -100,5 +102,6 @@
             Un evento finalizado o anulado no se puede suspender ni anular.</p>
     </div>
 </main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>

@@ -3,7 +3,8 @@
 <head th:replace="~{fragments/comun :: cabeza('Entrar')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main class="estrecho">
+<main class="acceso">
+    <section th:replace="~{fragments/comun :: panelAcceso}"></section>
     <div class="tarjeta tarjeta-formulario">
         <h1>Iniciar sesión</h1>
         <p class="subtitulo">Bienvenido de nuevo</p>
@@ -24,5 +25,6 @@
         <p class="pie-formulario">¿No tienes cuenta? <a th:href="@{/registro}">Regístrate</a></p>
     </div>
 </main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>

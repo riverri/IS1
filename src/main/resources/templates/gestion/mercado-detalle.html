@@ -9,6 +9,7 @@
     <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="tarjeta marcador">
+      <div class="marcador-cabecera">
         <div class="marcador-etiquetas">
             <span class="chip" th:text="${mercado.deporte.icono} + ' ' + ${mercado.deporte.nombre}">⚽ Fútbol</span>
             <span class="estado" th:classappend="${#strings.toLowerCase(mercado.estado)}" th:text="${mercado.estado}">ABIERTO</span>
@@ -19,6 +20,7 @@
         <p class="resultado-final" th:if="${mercado.ganador != null}">
             Ganador: <strong th:text="${mercado.ganador.nombre}">Lamine Yamal</strong>
         </p>
+      </div>
     </div>
 
     <h2>Candidatos</h2>
@@ -93,5 +95,6 @@
             Un mercado resuelto o anulado no se puede cerrar ni anular.</p>
     </div>
 </main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>

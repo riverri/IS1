@@ -3,7 +3,8 @@
 <head th:replace="~{fragments/comun :: cabeza('Registro')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main class="estrecho">
+<main class="acceso">
+    <section th:replace="~{fragments/comun :: panelAcceso}"></section>
     <div class="tarjeta tarjeta-formulario">
         <h1>Crear cuenta</h1>
         <p class="subtitulo">Recibes <strong th:text="${#numbers.formatDecimal(bienvenida, 1, 'POINT', 0, 'COMMA')}">1.000</strong>
@@ -31,5 +32,6 @@
         <p class="pie-formulario">¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
     </div>
 </main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>
