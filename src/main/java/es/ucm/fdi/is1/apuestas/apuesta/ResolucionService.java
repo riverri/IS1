@@ -39,11 +39,26 @@ public class ResolucionService {
     public int introducirResultado(Long eventoId, Resultado resultado) {
         Evento evento = evento(eventoId);
         evento.finalizar(resultado);
+        return resolverApuestas(evento);
+    }
+
+    /**
+     * Igual, pero con el marcador final de un partido de fútbol: además del 1X2 se resuelven las apuestas
+     * de goles y de ambos marcan (HU-52). Sin marcador, esas se anulan.
+     */
+    @Transactional
+    public int introducirMarcador(Long eventoId, int golesLocal, int golesVisitante) {
+        Evento evento = evento(eventoId);
+        evento.finalizarConMarcador(golesLocal, golesVisitante);
+        return resolverApuestas(evento);
+    }
+
+    private int resolverApuestas(Evento evento) {
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             EstadoApuesta antes = apuesta.getEstado();
-            apuesta.resolver(evento, resultado);
+            apuesta.resolver(evento, evento.getResultado());
             avisos.siCambia(apuesta, antes);
         }
         return afectadas.size();

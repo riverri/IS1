@@ -18,7 +18,8 @@ Puntos de historia por sprint, sacados de las actas de `sprints/`. Las gráficas
 | 8 | 12 | 12 | |
 | 9 | 12 | 16 | 4 puntos añadidos: interruptor del juego responsable en Gestión y rediseño visual |
 | 10 | 11 | 11 | |
-| **Total** | **168** | **187** | Media de 18,7 puntos por sprint |
+| 11 | 17 | 17 | |
+| **Total** | **185** | **204** | Media de 18,5 puntos por sprint |
 
 - **Comprometidos:** puntos de las historias elegidas en la Sprint Planning.
 - **Completados:** todo lo terminado al cerrar el sprint, incluido el trabajo que el PO añadió durante el sprint. HU-36 (3 puntos), que en el Sprint 2 quedó a medias (ranking solo por saldo), está contada en ese sprint.
@@ -28,12 +29,12 @@ Puntos de historia por sprint, sacados de las actas de `sprints/`. Las gráficas
 
 ![Puntos completados acumulados tras cada sprint](graficas/progreso.svg)
 
-| Tras el sprint | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Puntos acumulados | 23 | 56 | 80 | 98 | 114 | 132 | 148 | 160 | 176 | 187 |
+| Tras el sprint | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Puntos acumulados | 23 | 56 | 80 | 98 | 114 | 132 | 148 | 160 | 176 | 187 | 204 |
 
 - El **MVP** quedó completo en el Sprint 4, con 98 puntos.
-- Del Sprint 5 en adelante se han hecho historias *Should* y *Could*: la API, las apuestas a largo plazo, las estadísticas de equipos, los avisos, la gestión de la cuenta y el juego responsable.
+- Del Sprint 5 en adelante se han hecho historias *Should* y *Could*: la API, las apuestas a largo plazo, las estadísticas de equipos, los avisos, la gestión de la cuenta, el juego responsable, las plantillas, las ligas privadas y los nuevos tipos de apuesta.
 
 ## ¿Y el burndown de cada sprint?
 

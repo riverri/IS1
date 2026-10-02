@@ -1,6 +1,6 @@
 # Diseño: diagramas UML
 
-Diagramas del sistema tal como está implementado al final del Sprint 10. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
+Diagramas del sistema tal como está implementado al final del Sprint 11. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
 
 1. [Casos de uso](#1-casos-de-uso)
 2. [Arquitectura por capas](#2-arquitectura-por-capas)
@@ -27,7 +27,7 @@ flowchart LR
         cu2(["Consultar ficha, evolución, plantilla y cara a cara (HU-31, HU-32, HU-33, HU-49)"])
         cu3(["Ver ranking y perfil de jugadores (HU-36, HU-48)"])
         cu4(["Registrarse e iniciar sesión (HU-11, HU-12)"])
-        cu5(["Apostar simple o combinada (HU-23, HU-28, HU-29)"])
+        cu5(["Apostar simple o combinada: 1X2, doble oportunidad, goles y ambos marcan (HU-23, HU-28, HU-29, HU-52)"])
         cu6(["Apostar a largo plazo (HU-44)"])
         cu7(["Cancelar o cambiar el importe (HU-26, HU-27)"])
         cu8(["Ver mis apuestas, historial y estadísticas (HU-24, HU-34, HU-35)"])
@@ -35,21 +35,23 @@ flowchart LR
         cu10(["Gestionar mi cuenta y saldo (HU-13, HU-14, HU-47)"])
         cu17(["Juego responsable: límites y pausa (HU-10)"])
         cu18(["Eliminar mi cuenta (HU-18)"])
+        cu19(["Crear ligas privadas y unirse con un código (HU-51)"])
         cu11(["Dar de alta competiciones, equipos y eventos (HU-01, HU-46)"])
         cu12(["Ajustar calificación, forma y jugadores (HU-01, HU-02, HU-50)"])
-        cu13(["Introducir resultado, suspender o anular (HU-04, HU-05, HU-06)"])
+        cu13(["Introducir resultado o marcador, suspender o anular (HU-04, HU-05, HU-06, HU-52)"])
         cu14(["Gestionar mercados a largo plazo (HU-45)"])
         cu15(["Fijar límites de apuesta y activar el juego responsable (HU-07, HU-10)"])
+        cu20(["Ver las cuentas de la casa (HU-54)"])
         cu16(["Sincronizar partidos, resultados y plantillas (HU-21, HU-25, HU-50)"])
     end
 
     visitante --- cu1 & cu2 & cu3 & cu4
-    usuario --- cu5 & cu6 & cu7 & cu8 & cu9 & cu10 & cu17 & cu18
-    creador --- cu11 & cu12 & cu13 & cu14 & cu15
+    usuario --- cu5 & cu6 & cu7 & cu8 & cu9 & cu10 & cu17 & cu18 & cu19
+    creador --- cu11 & cu12 & cu13 & cu14 & cu15 & cu20
     api --- cu16
 ```
 
-El usuario hereda los casos del visitante, y el creador los del usuario salvo apostar (el creador no aparece en el ranking).
+El usuario hereda los casos del visitante, y el creador los del usuario salvo apostar y las ligas (el creador no aparece en el ranking).
 
 ## 2. Arquitectura por capas
 
@@ -60,18 +62,18 @@ flowchart TB
     navegador["Navegador (HTML generado con Thymeleaf + CSS)"]
 
     subgraph presentacion [Presentación]
-        controladores["Controladores Spring MVC<br/>EventosController · ApuestaController · BoletoController<br/>MercadosController · GestionController · UsuariosController…"]
+        controladores["Controladores Spring MVC<br/>EventosController · ApuestaController · BoletoController<br/>MercadosController · LigasController · GestionController · CasaController…"]
         plantillas["Plantillas Thymeleaf<br/>templates/*.html"]
     end
 
     subgraph negocio [Lógica de negocio]
-        servicios["Servicios<br/>ApuestaService · BoletoService · ResolucionService<br/>CalculadoraCuotas · RankingService · FichaEquipoService…"]
-        dominio["Entidades del dominio<br/>Apuesta · Seleccion · Evento · Equipo · Mercado · Usuario…"]
+        servicios["Servicios<br/>ApuestaService · BoletoService · ResolucionService<br/>CalculadoraCuotas · RankingService · LigaService · CuentasCasaService…"]
+        dominio["Entidades del dominio<br/>Apuesta · Seleccion · Evento · Equipo · Mercado · Liga · Usuario…"]
     end
 
     subgraph datos [Acceso a datos]
         repositorios["Repositorios Spring Data JPA"]
-        flyway["Migraciones Flyway<br/>V1 … V7"]
+        flyway["Migraciones Flyway<br/>V1 … V8"]
         h2[("Base de datos H2<br/>./datos/apuestas")]
     end
 
@@ -94,8 +96,9 @@ flowchart TB
 | `usuarios` | Registro, inicio de sesión, cuenta, saldo y recargas |
 | `equipos` | Competiciones, equipos, deportes y forma |
 | `eventos` | Eventos, catálogo, ficha de equipo y cara a cara |
-| `cuotas` | Algoritmo de cuotas (calidad, forma y volumen) |
-| `apuesta` | Apuestas, selecciones, boleto, resolución, límites, ranking y avisos de apuestas |
+| `cuotas` | Algoritmo de cuotas (calidad, forma y volumen) y otros tipos de apuesta |
+| `apuesta` | Apuestas, selecciones, boleto, resolución, límites, ranking, cuentas de la casa y avisos de apuestas |
+| `ligas` | Ligas privadas con código de invitación |
 | `mercados` | Mercados a largo plazo y sus candidatos |
 | `notificaciones` | Avisos a los usuarios |
 | `gestion` | Panel del creador de apuestas |
@@ -171,10 +174,13 @@ classDiagram
         -LocalDateTime fechaHora
         -EstadoEvento estado
         -Resultado resultado
+        -Integer golesLocal
+        -Integer golesVisitante
         -String fase
         -Long idExterno
         +admiteApuestas(ahora) bool
         +finalizar(resultado)
+        +finalizarConMarcador(local, visitante)
         +suspender()
         +reactivar()
         +anular()
@@ -188,6 +194,7 @@ classDiagram
         -BigDecimal pagado
         -LocalDateTime fecha
         +anadir(evento, pronostico, cuota)
+        +anadir(evento, especial, cuota)
         +anadir(candidato, cuota)
         +resolver(evento, resultado)
         +resolver(mercado, ganador)
@@ -199,6 +206,7 @@ classDiagram
 
     class Seleccion {
         -Resultado pronostico
+        -Especial especial
         -BigDecimal cuota
         -EstadoSeleccion estado
         +getCuotaEfectiva() BigDecimal
@@ -243,6 +251,27 @@ classDiagram
     class CalculadoraCuotas {
         <<service>>
         +calcular(evento) Cuotas
+        +especiales(evento) Map~Especial, BigDecimal~
+    }
+
+    class Especial {
+        <<enumeration>>
+        DOBLE_1X
+        DOBLE_X2
+        DOBLE_12
+        MAS_2_5
+        MENOS_2_5
+        AMBOS_SI
+        AMBOS_NO
+        +acierta(resultado, golesLocal, golesVisitante) Boolean
+    }
+
+    class Liga {
+        -String nombre
+        -String codigo
+        -LocalDateTime creada
+        +esMiembro(usuario) bool
+        +esCreador(usuario) bool
     }
 
     class Cuotas {
@@ -260,6 +289,9 @@ classDiagram
 
     Usuario "1" --> "*" Apuesta : hace
     Usuario "1" --> "*" Notificacion : recibe
+    Liga "*" --> "1" Usuario : creador
+    Liga "*" --> "*" Usuario : miembros
+    Seleccion "*" --> "0..1" Especial : tipo
     Apuesta "1" *-- "1..*" Seleccion : selecciones
     Seleccion "*" --> "0..1" Evento : pronóstico sobre
     Seleccion "*" --> "0..1" Candidato : o candidato
@@ -277,11 +309,13 @@ classDiagram
     Boleto ..> Apuesta : al confirmar crea
 ```
 
-**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion` y `EstadoMercado`.
+**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion` y `EstadoMercado`.
 
 **Decisiones de diseño:**
 - **Una apuesta simple es una combinada de una sola selección,** así hay una única forma de guardar, pagar y mostrar las apuestas.
-- **Una selección apunta a un evento (con su pronóstico) o a un candidato de un mercado,** nunca a los dos. Por eso las apuestas a largo plazo comparten historial, estadísticas y ranking con el resto.
+- **Una selección apunta a un evento (con su pronóstico 1X2 o un tipo especial) o a un candidato de un mercado,** nunca a los dos. Por eso las apuestas a largo plazo y los nuevos tipos comparten historial, estadísticas y ranking con el resto.
+- **Las apuestas de goles necesitan el marcador:** si solo se conoce el ganador, se anulan (cuota 1,00) en lugar de darse por falladas.
+- **El ranking de una liga es el ranking general filtrado por sus miembros,** así los criterios y las cifras son siempre los mismos.
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
@@ -385,7 +419,7 @@ sequenceDiagram
 
 ## 6. Secuencia: resolver un partido
 
-El resultado lo introduce el creador en *Gestión* o llega de la API en la sincronización programada (HU-04, HU-25, HU-37).
+El resultado (o el marcador, en fútbol) lo introduce el creador en *Gestión* o llega de la API en la sincronización programada (HU-04, HU-25, HU-37, HU-52).
 
 ```mermaid
 sequenceDiagram
@@ -398,13 +432,13 @@ sequenceDiagram
     participant AV as AvisosApuestas
     participant NS as NotificacionService
 
-    C->>RS: introducirResultado(eventoId, resultado)
-    RS->>E: finalizar(resultado)
+    C->>RS: introducirResultado(eventoId, resultado) o introducirMarcador(eventoId, local, visitante)
+    RS->>E: finalizar(resultado) o finalizarConMarcador(local, visitante)
     RS->>SR: findByEvento(evento)
     SR-->>RS: selecciones del evento
     loop cada selección
         RS->>A: resolver(evento, resultado)
-        A->>A: marcar la selección acertada o fallada y recalcular el estado
+        A->>A: marcar la selección acertada, fallada o anulada (goles sin marcador) y recalcular el estado
         A->>U: ajustar(lo que debe cobrar − lo ya pagado)
         RS->>AV: siCambia(apuesta, estado anterior)
         opt ganada, perdida o anulada
@@ -431,6 +465,9 @@ erDiagram
     MERCADO ||--|{ CANDIDATO : tiene
     EQUIPO |o--o{ CANDIDATO : "es"
     EQUIPO ||--o{ JUGADOR : "plantilla"
+    USUARIO ||--o{ LIGA : crea
+    LIGA ||--o{ LIGA_MIEMBRO : tiene
+    USUARIO ||--o{ LIGA_MIEMBRO : "es miembro"
 
     USUARIO {
         bigint id PK
@@ -458,7 +495,8 @@ erDiagram
         bigint id PK
         bigint apuesta_id FK
         bigint evento_id FK "nulo en largo plazo"
-        enum pronostico "nulo en largo plazo"
+        enum pronostico "nulo en largo plazo o especial"
+        enum especial "doble oportunidad, goles…"
         bigint candidato_id FK "nulo en partidos"
         numeric cuota
         enum estado
@@ -471,6 +509,8 @@ erDiagram
         timestamp fecha_hora
         enum estado
         enum resultado
+        integer goles_local
+        integer goles_visitante
         varchar fase
         bigint id_externo UK
     }
@@ -493,6 +533,17 @@ erDiagram
         date fecha_nacimiento
         float nota
         integer id_externo UK
+    }
+    LIGA {
+        bigint id PK
+        varchar nombre
+        varchar codigo UK
+        bigint creador_id FK
+        timestamp creada
+    }
+    LIGA_MIEMBRO {
+        bigint liga_id PK
+        bigint usuario_id PK
     }
     COMPETICION {
         bigint id PK

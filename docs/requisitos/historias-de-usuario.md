@@ -42,6 +42,10 @@
 - Dado que un evento aún no ha empezado, cuando cambio su fecha, sus equipos o su fase, entonces se guardan los cambios y las cuotas se recalculan.
 - Dado que un evento no tiene apuestas, cuando lo borro, entonces desaparece del catálogo. Si tiene apuestas, solo se puede anular (se devuelve el importe).
 
+**HU-54**: Como creador de apuestas, quiero ver un panel con lo que se ha apostado, lo que se ha pagado y el beneficio de la casa, para comprobar si las cuotas están bien ajustadas. *(Fila 35)*
+- Dado que hay apuestas resueltas, cuando entro en el panel de la casa, entonces veo el total apostado, el total pagado, el beneficio y el margen real frente al margen teórico.
+- Dado que entro en el panel, entonces veo el desglose por tipo de apuesta (simples, combinadas y largo plazo) y por deporte.
+
 ## General
 
 **HU-08**: Como visitante, quiero consultar el catálogo de eventos y sus cuotas sin estar registrado, para decidir si me interesa crear una cuenta. *(Fila 9)*
@@ -135,6 +139,11 @@
 - Dado que subo el importe y tengo saldo suficiente, cuando confirmo, entonces se descuenta la diferencia y se aplica la cuota vigente en ese momento.
 - Dado que bajo el importe, cuando confirmo, entonces se me devuelve la diferencia al saldo.
 
+**HU-52**: Como usuario, quiero apostar a más cosas de un partido de fútbol (doble oportunidad, más o menos de 2,5 goles y ambos marcan), para tener más opciones que el 1X2. *(Fila 34)*
+- Dado que entro en un partido de fútbol, entonces veo las cuotas de doble oportunidad (1X, X2, 12), de más/menos de 2,5 goles y de ambos marcan (sí/no).
+- Dado que añado una de estas selecciones al boleto, entonces puedo apostarla sola o en una combinada.
+- Dado que el creador introduce el marcador final, entonces estas selecciones se resuelven solas; si solo se conoce el ganador, las de goles se anulan (cuota 1,00).
+
 ## Apuestas combinadas
 
 **HU-28**: Como usuario, quiero añadir a un mismo boleto selecciones de varios eventos, para crear mi propia apuesta combinada. *(Fila 15, 18)*
@@ -216,6 +225,11 @@
 
 **HU-48**: Como usuario, quiero ver el perfil público de otro jugador desde el ranking, con su porcentaje de aciertos y su balance, para compararme con él sin tener que seguirlo. *(Fila 31)*
 - Dado que pulso un nombre en el ranking, cuando se abre su perfil, entonces veo sus estadísticas pero no sus apuestas.
+
+**HU-51**: Como usuario, quiero crear una liga privada con mis amigos y unirme con un código de invitación, para competir en un ranking solo entre nosotros. *(Fila 33)*
+- Dado que creo una liga, entonces se genera un código que puedo compartir y yo quedo como miembro.
+- Dado que tengo el código de una liga, cuando lo introduzco, entonces entro en ella y veo su ranking con los mismos criterios que el ranking general.
+- Dado que soy miembro, cuando salgo de la liga, entonces dejo de aparecer en su ranking; si soy quien la creó, puedo borrarla.
 
 ## Apuestas a largo plazo
 

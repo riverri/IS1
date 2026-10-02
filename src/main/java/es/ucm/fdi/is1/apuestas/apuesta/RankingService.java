@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -29,6 +30,12 @@ public class RankingService {
 
     @Transactional(readOnly = true)
     public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio) {
+        return ranking(emailActual, criterio, null);
+    }
+
+    /** Ranking solo entre algunos jugadores, como los miembros de una liga privada (HU-51). Null = todos. */
+    @Transactional(readOnly = true)
+    public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio, Set<Long> soloUsuarios) {
         String yo = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
         Map<Long, List<Apuesta>> porUsuario = apuestas
                 .findByEstadoIn(EnumSet.of(EstadoApuesta.GANADA, EstadoApuesta.PERDIDA)).stream()
@@ -38,6 +45,7 @@ public class RankingService {
         }
         List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
                 .filter(u -> !u.isEliminado())
+                .filter(u -> soloUsuarios == null || soloUsuarios.contains(u.getId()))
                 .map(u -> new Fila(u, Estadisticas.de(porUsuario.getOrDefault(u.getId(), List.of()))))
                 .toList());
 

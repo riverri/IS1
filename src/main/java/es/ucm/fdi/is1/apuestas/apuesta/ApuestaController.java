@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -51,9 +52,10 @@ public class ApuestaController {
     /** Requiere sesión iniciada: un visitante es redirigido al login (HU-08). */
     @GetMapping("/eventos/{id}/apostar")
     public String formulario(@PathVariable Long id, @RequestParam(required = false) Resultado resultado,
-                             Model model) {
+                             @RequestParam(required = false) Especial especial, Model model) {
         ApuestaForm form = new ApuestaForm();
         form.setResultado(resultado);
+        form.setEspecial(especial);
         model.addAttribute("apuesta", form);
         return vista(catalogo.eventoDisponible(id), model);
     }
@@ -65,7 +67,8 @@ public class ApuestaController {
         Evento evento = catalogo.eventoDisponible(id);
         if (!errores.hasErrors()) {
             try {
-                Apuesta apuesta = apuestas.apostar(principal.getName(), id, form.getResultado(), form.getImporte());
+                Apuesta apuesta = apuestas.apostar(principal.getName(), List.of(
+                        new SeleccionPedida(id, form.getResultado(), form.getEspecial(), null)), form.getImporte());
                 redireccion.addFlashAttribute("mensaje", "Apuesta registrada. Si aciertas cobras "
                         + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
                 return "redirect:/apuestas";
@@ -74,7 +77,7 @@ public class ApuestaController {
             } catch (ImporteFueraDeLimitesException | JuegoResponsableException e) {
                 errores.rejectValue("importe", "limites", e.getMessage());
             } catch (ResultadoNoValidoException e) {
-                errores.rejectValue("resultado", "invalido", e.getMessage());
+                errores.rejectValue("opcion", "invalido", e.getMessage());
             }
         }
         return vista(evento, model);
@@ -152,6 +155,7 @@ public class ApuestaController {
     private String vista(Evento evento, Model model) {
         model.addAttribute("evento", evento);
         model.addAttribute("cuotas", calculadora.calcular(evento));
+        model.addAttribute("especiales", calculadora.especiales(evento));
         model.addAttribute("limitesApuesta", limites.actuales());
         model.addAttribute("caraACara", fichas.caraACara(evento));
         return "apostar";

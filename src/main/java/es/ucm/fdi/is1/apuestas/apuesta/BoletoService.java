@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
@@ -36,16 +37,23 @@ public class BoletoService {
 
     @Transactional(readOnly = true)
     public void anadir(Boleto boleto, Long eventoId, Resultado resultado) {
+        anadir(boleto, eventoId, resultado, null);
+    }
+
+    /** Añade un resultado (1X2) o un tipo especial (HU-52): exactamente uno de los dos. */
+    @Transactional(readOnly = true)
+    public void anadir(Boleto boleto, Long eventoId, Resultado resultado, Especial especial) {
         Evento evento = disponible(eventoId);
-        BigDecimal cuota = calculadora.calcular(evento).de(resultado);
-        if (cuota == null) {
-            throw new ResultadoNoValidoException(resultado);
-        }
+        BigDecimal cuota = apuestas.cuota(evento, resultado, especial);
         int maximo = limites.actuales().getMaxSelecciones();
         if (boleto.getTamano() >= maximo) {
             throw new IllegalArgumentException("El boleto admite como máximo " + maximo + " selecciones");
         }
-        boleto.anadir(eventoId, resultado, cuota);
+        if (especial != null) {
+            boleto.anadir(eventoId, especial, cuota);
+        } else {
+            boleto.anadir(eventoId, resultado, cuota);
+        }
     }
 
     public void quitar(Boleto boleto, Long eventoId) {
@@ -66,8 +74,8 @@ public class BoletoService {
                 boleto.quitar(linea.eventoId());
                 continue;
             }
-            BigDecimal cuota = calculadora.calcular(evento).de(linea.resultado());
-            lineas.add(new BoletoVista.LineaVista(evento, linea.resultado(), cuota,
+            BigDecimal cuota = calculadora.cuota(evento, linea.resultado(), linea.especial());
+            lineas.add(new BoletoVista.LineaVista(evento, linea.resultado(), linea.especial(), cuota,
                     cuota.compareTo(linea.cuotaVista()) != 0));
         }
         BigDecimal total = Apuesta.producto(lineas.stream().map(BoletoVista.LineaVista::cuota).toList());
@@ -81,7 +89,7 @@ public class BoletoService {
     @Transactional
     public Apuesta confirmar(String email, Boleto boleto, BigDecimal importe) {
         List<SeleccionPedida> pedidas = boleto.getLineas().stream()
-                .map(l -> new SeleccionPedida(l.eventoId(), l.resultado(), l.cuotaVista()))
+                .map(l -> new SeleccionPedida(l.eventoId(), l.resultado(), l.especial(), l.cuotaVista()))
                 .toList();
         try {
             Apuesta apuesta = apuestas.apostar(email, pedidas, importe);
