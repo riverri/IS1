@@ -47,6 +47,17 @@
                 <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
                 <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
             </dl>
+            <details class="cambiar-importe" th:if="${a.cancelable(ahora)}">
+                <summary>Cambiar importe</summary>
+                <form class="formulario" th:action="@{/apuestas/{id}/importe(id=${a.id})}" method="post">
+                    <div class="cambiar-importe-fila">
+                        <input name="importe" type="number" min="0.01" step="0.01" inputmode="decimal" required
+                               th:value="${a.importe}" th:attr="aria-label='Nuevo importe'">
+                        <button class="boton boton-pequeno" type="submit">Guardar</button>
+                    </div>
+                    <small class="aviso">Se aplica la cuota actual y se cobra o se devuelve la diferencia.</small>
+                </form>
+            </details>
             <form th:if="${a.cancelable(ahora)}" th:action="@{/apuestas/{id}/cancelar(id=${a.id})}" method="post"
                   onsubmit="return confirm('¿Cancelar la apuesta? Se te devolverá el importe.');">
                 <button class="boton boton-secundario boton-bloque" type="submit">Cancelar apuesta</button>

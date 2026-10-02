@@ -18,10 +18,12 @@ public class ResolucionService {
 
     private final EventoRepository eventos;
     private final SeleccionRepository selecciones;
+    private final AvisosApuestas avisos;
 
-    public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones) {
+    public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones, AvisosApuestas avisos) {
         this.eventos = eventos;
         this.selecciones = selecciones;
+        this.avisos = avisos;
     }
 
     @Transactional(readOnly = true)
@@ -38,7 +40,12 @@ public class ResolucionService {
         Evento evento = evento(eventoId);
         evento.finalizar(resultado);
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
-        afectadas.forEach(s -> s.getApuesta().resolver(evento, resultado));
+        for (Seleccion seleccion : afectadas) {
+            Apuesta apuesta = seleccion.getApuesta();
+            EstadoApuesta antes = apuesta.getEstado();
+            apuesta.resolver(evento, resultado);
+            avisos.siCambia(apuesta, antes);
+        }
         return afectadas.size();
     }
 
@@ -58,7 +65,12 @@ public class ResolucionService {
         Evento evento = evento(eventoId);
         evento.anular();
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
-        afectadas.forEach(s -> s.getApuesta().anular(evento));
+        for (Seleccion seleccion : afectadas) {
+            Apuesta apuesta = seleccion.getApuesta();
+            EstadoApuesta antes = apuesta.getEstado();
+            apuesta.anular(evento);
+            avisos.siCambia(apuesta, antes);
+        }
         return afectadas.size();
     }
 

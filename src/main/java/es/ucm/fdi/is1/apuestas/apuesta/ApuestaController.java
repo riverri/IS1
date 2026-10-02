@@ -20,6 +20,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 import jakarta.validation.Valid;
 
@@ -32,15 +33,18 @@ public class ApuestaController {
 
     private final RankingService rankings;
     private final LimitesService limites;
+    private final FichaEquipoService fichas;
     private final Clock reloj;
 
     public ApuestaController(ApuestaService apuestas, CatalogoService catalogo, CalculadoraCuotas calculadora,
-                             RankingService rankings, LimitesService limites, Clock reloj) {
+                             RankingService rankings, LimitesService limites, FichaEquipoService fichas,
+                             Clock reloj) {
         this.apuestas = apuestas;
         this.catalogo = catalogo;
         this.calculadora = calculadora;
         this.rankings = rankings;
         this.limites = limites;
+        this.fichas = fichas;
         this.reloj = reloj;
     }
 
@@ -114,10 +118,35 @@ public class ApuestaController {
         return "redirect:/apuestas";
     }
 
+    /** Cambiar el importe de una apuesta activa (HU-27). */
+    @PostMapping("/apuestas/{id}/importe")
+    public String modificarImporte(@PathVariable Long id, @RequestParam(required = false) BigDecimal importe,
+                                   Principal principal, RedirectAttributes redireccion) {
+        if (importe == null || importe.signum() <= 0 || importe.stripTrailingZeros().scale() > 2) {
+            redireccion.addFlashAttribute("error", "Introduce un importe válido, con 2 decimales como mucho");
+            return "redirect:/apuestas";
+        }
+        try {
+            Apuesta apuesta = apuestas.modificarImporte(principal.getName(), id, importe);
+            redireccion.addFlashAttribute("mensaje", "Importe cambiado a "
+                    + apuesta.getImporte().toPlainString().replace('.', ',') + " monedas con cuota "
+                    + apuesta.getCuota().toPlainString().replace('.', ',') + ". Si aciertas cobras "
+                    + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
+        } catch (SaldoInsuficienteException e) {
+            redireccion.addFlashAttribute("error", "No tienes saldo suficiente para subir el importe");
+        } catch (IllegalStateException e) {
+            redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede modificar: el evento ha empezado.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/apuestas";
+    }
+
     private String vista(Evento evento, Model model) {
         model.addAttribute("evento", evento);
         model.addAttribute("cuotas", calculadora.calcular(evento));
         model.addAttribute("limitesApuesta", limites.actuales());
+        model.addAttribute("caraACara", fichas.caraACara(evento));
         return "apostar";
     }
 }

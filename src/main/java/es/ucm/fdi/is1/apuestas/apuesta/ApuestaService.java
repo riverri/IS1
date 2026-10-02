@@ -125,6 +125,28 @@ public class ApuestaService {
         return apuesta;
     }
 
+    /**
+     * Cambia el importe de una apuesta activa del usuario antes de que empiece el evento (HU-27).
+     * Se aplican los límites de apuesta y las cuotas actuales, y se cobra o devuelve la diferencia.
+     */
+    @Transactional
+    public Apuesta modificarImporte(String email, Long apuestaId, BigDecimal nuevo) {
+        Apuesta apuesta = apuestas.findById(apuestaId)
+                .filter(a -> a.getUsuario().getEmail().equals(email))
+                .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
+        limites.actuales().comprobarImporte(nuevo);
+        List<BigDecimal> cuotas = apuesta.getSelecciones().stream().map(this::cuotaActual).toList();
+        apuesta.cambiarImporte(nuevo, cuotas, LocalDateTime.now(reloj));
+        return apuesta;
+    }
+
+    private BigDecimal cuotaActual(Seleccion seleccion) {
+        if (seleccion.isLargoPlazo()) {
+            return seleccion.getCandidato().getCuota();
+        }
+        return calculadora.calcular(seleccion.getEvento()).de(seleccion.getPronostico());
+    }
+
     /** Historial: apuestas ya resueltas, anuladas o canceladas, de la más reciente a la más antigua (HU-34). */
     @Transactional(readOnly = true)
     public List<Apuesta> historial(String email) {
