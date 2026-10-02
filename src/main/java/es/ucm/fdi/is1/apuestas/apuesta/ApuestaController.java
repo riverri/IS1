@@ -71,7 +71,7 @@ public class ApuestaController {
                 return "redirect:/apuestas";
             } catch (SaldoInsuficienteException e) {
                 errores.rejectValue("importe", "saldo", "No tienes saldo suficiente para esta apuesta");
-            } catch (ImporteFueraDeLimitesException e) {
+            } catch (ImporteFueraDeLimitesException | JuegoResponsableException e) {
                 errores.rejectValue("importe", "limites", e.getMessage());
             } catch (ResultadoNoValidoException e) {
                 errores.rejectValue("resultado", "invalido", e.getMessage());

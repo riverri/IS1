@@ -45,6 +45,12 @@ public class NotificacionService {
         return avisos;
     }
 
+    /** Borra los avisos de un usuario que elimina su cuenta (HU-18). */
+    @Transactional
+    public void borrarDe(Usuario usuario) {
+        notificaciones.deleteByUsuario(usuario);
+    }
+
     public record Aviso(String tipo, String texto, LocalDateTime fecha, boolean nuevo) {
     }
 }

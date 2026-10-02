@@ -39,6 +39,30 @@
         <div class="tarjeta estadistica"><span th:text="${ficha.balance.derrotas()}">1</span>derrotas</div>
     </div>
 
+    <th:block th:if="${ficha.evolucion != null}" th:with="g=${ficha.evolucion}">
+        <h2>Evolución</h2>
+        <figure class="tarjeta grafico-evolucion">
+            <svg th:attr="viewBox='0 0 ' + ${g.ancho} + ' ' + ${g.alto}" role="img"
+                 th:aria-label="'Puntos acumulados partido a partido. Último: ' + ${g.resumen}">
+                <g class="grafico-rejilla">
+                    <th:block th:each="m : ${g.ejeY}">
+                        <line th:attr="x1=${g.izquierda},x2=${g.derecha},y1=${m.y},y2=${m.y}"/>
+                        <text class="grafico-eje" text-anchor="end" th:attr="x=${m.x},y=${m.y + 4}" th:text="${m.texto}">3</text>
+                    </th:block>
+                </g>
+                <text class="grafico-eje" text-anchor="middle" th:each="m : ${g.ejeX}"
+                      th:attr="x=${m.x},y=${m.y}" th:text="${m.texto}">4 oct</text>
+                <path class="grafico-linea" th:attr="d=${g.linea}"/>
+                <g th:each="p : ${g.puntos}" class="grafico-punto" th:classappend="${p.clase}">
+                    <title th:text="${p.texto}">4 oct · Victoria contra Getafe CF · 3 puntos</title>
+                    <circle class="grafico-zona" r="12" th:attr="cx=${p.x},cy=${p.y}"/>
+                    <circle r="5" th:attr="cx=${p.x},cy=${p.y}"/>
+                </g>
+            </svg>
+            <figcaption class="aviso">Puntos acumulados partido a partido (3 por victoria y 1 por empate). Pasa el ratón por un punto para ver el partido.</figcaption>
+        </figure>
+    </th:block>
+
     <th:block th:unless="${#lists.isEmpty(ficha.clasificaciones)}">
         <h2>Clasificación</h2>
         <p class="aviso">Calculada con los resultados registrados en la web: 3 puntos por victoria y 1 por empate.</p>

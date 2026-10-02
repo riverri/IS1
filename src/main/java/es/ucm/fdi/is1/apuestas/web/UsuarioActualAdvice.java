@@ -1,6 +1,8 @@
 package es.ucm.fdi.is1.apuestas.web;
 
 import java.security.Principal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import es.ucm.fdi.is1.apuestas.apuesta.Boleto;
 import es.ucm.fdi.is1.apuestas.apuesta.BoletoService;
 import es.ucm.fdi.is1.apuestas.apuesta.BoletoVista;
+import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
@@ -20,13 +23,35 @@ public class UsuarioActualAdvice {
     private final Boleto boleto;
     private final BoletoService boletos;
     private final NotificacionService notificaciones;
+    private final LimitesService limites;
+    private final Clock reloj;
 
     public UsuarioActualAdvice(UsuarioService usuarios, Boleto boleto, BoletoService boletos,
-                               NotificacionService notificaciones) {
+                               NotificacionService notificaciones, LimitesService limites, Clock reloj) {
         this.usuarios = usuarios;
         this.boleto = boleto;
         this.boletos = boletos;
         this.notificaciones = notificaciones;
+        this.limites = limites;
+        this.reloj = reloj;
+    }
+
+    /** Si el creador ha desactivado el juego responsable, Mi cuenta no lo muestra (HU-10). */
+    @ModelAttribute("juegoResponsableActivo")
+    public boolean juegoResponsableActivo() {
+        return limites.actuales().isJuegoResponsable();
+    }
+
+    /** Fin de la pausa de apuestas del usuario, o null si no tiene una activa (HU-10). */
+    @ModelAttribute("pausaHasta")
+    public LocalDateTime pausaHasta(Principal principal) {
+        if (principal == null || !limites.actuales().isJuegoResponsable()) {
+            return null;
+        }
+        return usuarios.buscar(principal.getName())
+                .filter(u -> u.enPausa(LocalDateTime.now(reloj)))
+                .map(u -> u.getPausaHasta())
+                .orElse(null);
     }
 
     /** Número de avisos sin leer, para la campana de la cabecera (HU-37). */
