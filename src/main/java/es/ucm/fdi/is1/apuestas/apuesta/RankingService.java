@@ -51,9 +51,23 @@ public class RankingService {
         List<PuestoRanking> puestos = new ArrayList<>();
         for (int i = 0; i < filas.size(); i++) {
             Fila f = filas.get(i);
-            puestos.add(new PuestoRanking(i + 1, f.usuario().getNombre(), f.usuario().getSaldo(),
+            puestos.add(new PuestoRanking(i + 1, f.usuario().getId(), f.usuario().getNombre(), f.usuario().getSaldo(),
                     f.estadisticas(), f.usuario().getEmail().equals(yo)));
         }
         return puestos;
+    }
+
+    /**
+     * Perfil público de un jugador (HU-48): su puesto en el ranking por saldo y sus estadísticas,
+     * sin sus apuestas. El creador de apuestas no juega y no tiene perfil.
+     */
+    @Transactional(readOnly = true)
+    public PerfilJugador perfil(Long usuarioId, String emailActual) {
+        List<PuestoRanking> porSaldo = ranking(emailActual, CriterioRanking.SALDO);
+        PuestoRanking puesto = porSaldo.stream().filter(p -> p.usuarioId().equals(usuarioId)).findFirst()
+                .orElseThrow(() -> new JugadorNoEncontradoException(usuarioId));
+        Usuario usuario = usuarios.findById(usuarioId).orElseThrow();
+        long enJuego = apuestas.countByUsuarioAndEstado(usuario, EstadoApuesta.ACTIVA);
+        return new PerfilJugador(puesto, porSaldo.size(), enJuego);
     }
 }

@@ -140,6 +140,26 @@ public class Evento {
         return estado;
     }
 
+    /**
+     * El creador corrige un evento mal dado de alta (HU-46). Solo antes de que empiece y si no está
+     * finalizado ni anulado; las comprobaciones de equipos y apuestas las hace el servicio.
+     */
+    public void modificar(Equipo nuevoLocal, Equipo nuevoVisitante, LocalDateTime nuevaFecha, String nuevaFase,
+                          LocalDateTime ahora) {
+        if (!editable(ahora)) {
+            throw new IllegalStateException("Solo se puede editar un evento que aún no ha empezado");
+        }
+        local = nuevoLocal;
+        visitante = nuevoVisitante;
+        fechaHora = nuevaFecha;
+        fase = nuevaFase;
+    }
+
+    /** Programado o suspendido y sin empezar (HU-46). */
+    public boolean editable(LocalDateTime ahora) {
+        return (estado == EstadoEvento.PROGRAMADO || estado == EstadoEvento.SUSPENDIDO) && fechaHora.isAfter(ahora);
+    }
+
     /** La fuente de datos ha cambiado la fecha del partido (solo si aún no se ha jugado). */
     public void cambiarFecha(LocalDateTime nuevaFecha) {
         if (estado == EstadoEvento.PROGRAMADO || estado == EstadoEvento.SUSPENDIDO) {

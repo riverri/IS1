@@ -106,6 +106,13 @@ public class ApuestaController {
         return "ranking";
     }
 
+    /** Perfil público de un jugador desde el ranking (HU-48). */
+    @GetMapping("/jugadores/{id}")
+    public String jugador(@PathVariable Long id, Principal principal, Model model) {
+        model.addAttribute("perfil", rankings.perfil(id, principal == null ? null : principal.getName()));
+        return "jugador";
+    }
+
     @PostMapping("/apuestas/{id}/cancelar")
     public String cancelar(@PathVariable Long id, Principal principal, RedirectAttributes redireccion) {
         try {

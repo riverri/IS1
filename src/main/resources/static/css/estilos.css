@@ -656,6 +656,7 @@ a.partido-cuerpo:hover .rival-nombre { text-decoration: underline; }
 /* ---------- Formularios ---------- */
 
 .tarjeta-formulario { padding: 28px; }
+.cambiar-password { margin-top: 16px; }
 .subtitulo { margin: 0 0 16px; color: var(--texto-suave); }
 
 .formulario { display: flex; flex-direction: column; gap: 6px; }

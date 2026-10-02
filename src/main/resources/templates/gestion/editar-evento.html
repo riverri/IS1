@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Editar evento')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <a class="enlace-volver" th:href="@{/gestion/eventos/{id}(id=${evento.id})}">← Volver al evento</a>
+    <div class="tarjeta tarjeta-formulario">
+        <h1>Editar evento</h1>
+        <p class="subtitulo" th:text="${evento.competicion.nombre}">LaLiga</p>
+        <p class="alerta alerta-aviso" th:unless="${editable}">El evento ya ha empezado, ha terminado o está anulado: no se puede editar.</p>
+        <p class="aviso" th:if="${evento.idExterno != null}">Este partido llega de la API: si cambias la fecha, la próxima sincronización pondrá la oficial.</p>
+        <form class="formulario" th:if="${editable}" th:action="@{/gestion/eventos/{id}/editar(id=${evento.id})}"
+              th:object="${edicion}" method="post">
+            <label for="localId">Local</label>
+            <select id="localId" th:field="*{localId}" th:errorclass="con-error">
+                <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}">Real Madrid</option>
+            </select>
+            <span class="error-campo" th:if="${#fields.hasErrors('localId')}" th:text="${#fields.errors('localId')[0]}"></span>
+
+            <label for="visitanteId">Visitante</label>
+            <select id="visitanteId" th:field="*{visitanteId}" th:errorclass="con-error">
+                <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}">Getafe CF</option>
+            </select>
+            <span class="error-campo" th:if="${#fields.hasErrors('visitanteId')}" th:text="${#fields.errors('visitanteId')[0]}"></span>
+
+            <label for="fase">Jornada o fase (opcional)</label>
+            <input id="fase" type="text" th:field="*{fase}" placeholder="Jornada 10">
+            <span class="error-campo" th:if="${#fields.hasErrors('fase')}" th:text="${#fields.errors('fase')[0]}"></span>
+
+            <label for="fechaHora">Fecha y hora</label>
+            <input id="fechaHora" type="datetime-local" th:field="*{fechaHora}" th:errorclass="con-error">
+            <span class="error-campo" th:if="${#fields.hasErrors('fechaHora')}" th:text="${#fields.errors('fechaHora')[0]}"></span>
+            <span class="aviso">Si ya hay apuestas, solo se pueden cambiar la fecha y la fase.</span>
+
+            <div class="acciones-formulario">
+                <button class="boton" type="submit">Guardar</button>
+                <a class="boton boton-secundario" th:href="@{/gestion/eventos/{id}(id=${evento.id})}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

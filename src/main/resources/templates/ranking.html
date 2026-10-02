@@ -22,7 +22,7 @@
             <span class="ranking-posicion" th:classappend="${p.posicion <= 3} ? ('podio-' + ${p.posicion})"
                   th:text="${p.posicion}">1</span>
             <span class="ranking-nombre">
-                <span th:text="${p.nombre}">Ana</span>
+                <a th:href="@{/jugadores/{id}(id=${p.usuarioId})}" th:text="${p.nombre}">Ana</a>
                 <small th:if="${p.soyYo}">(tú)</small>
             </span>
             <span class="ranking-saldo" th:replace="~{fragments/ranking :: cifra(${p}, ${orden})}">1.250,00</span>
@@ -31,7 +31,7 @@
             <li class="ranking-separador" aria-hidden="true">…</li>
             <li class="soy-yo">
                 <span class="ranking-posicion" th:text="${mio.posicion}">34</span>
-                <span class="ranking-nombre"><span th:text="${mio.nombre}">Yo</span> <small>(tú)</small></span>
+                <span class="ranking-nombre"><a th:href="@{/jugadores/{id}(id=${mio.usuarioId})}" th:text="${mio.nombre}">Yo</a> <small>(tú)</small></span>
                 <span class="ranking-saldo" th:replace="~{fragments/ranking :: cifra(${mio}, ${orden})}">800,00</span>
             </li>
         </th:block>

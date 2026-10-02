@@ -210,12 +210,60 @@ public class GestionController {
         return formularioEvento(model);
     }
 
+    @GetMapping("/eventos/{id}/editar")
+    public String editarEvento(@PathVariable Long id, Model model) {
+        Evento evento = gestion.evento(id);
+        EdicionEventoForm form = new EdicionEventoForm();
+        form.setLocalId(evento.getLocal().getId());
+        form.setVisitanteId(evento.getVisitante().getId());
+        form.setFechaHora(evento.getFechaHora());
+        form.setFase(evento.getFase());
+        model.addAttribute("edicion", form);
+        return formularioEdicionEvento(evento, model);
+    }
+
+    @PostMapping("/eventos/{id}/editar")
+    public String guardarEvento(@PathVariable Long id, @Valid @ModelAttribute("edicion") EdicionEventoForm form,
+                                BindingResult errores, Model model, RedirectAttributes redireccion) {
+        if (!errores.hasErrors()) {
+            try {
+                gestion.editarEvento(id, form);
+                redireccion.addFlashAttribute("mensaje", "Evento actualizado");
+                return "redirect:/gestion/eventos/" + id;
+            } catch (DatosInvalidosException e) {
+                errores.rejectValue(e.getCampo(), "invalido", e.getMessage());
+            }
+        }
+        return formularioEdicionEvento(gestion.evento(id), model);
+    }
+
+    @PostMapping("/eventos/{id}/borrar")
+    public String borrarEvento(@PathVariable Long id, RedirectAttributes redireccion) {
+        try {
+            gestion.borrarEvento(id);
+            redireccion.addFlashAttribute("mensaje", "Evento borrado");
+            return "redirect:/gestion";
+        } catch (IllegalStateException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gestion/eventos/" + id;
+        }
+    }
+
+    private String formularioEdicionEvento(Evento evento, Model model) {
+        model.addAttribute("evento", evento);
+        model.addAttribute("equipos",
+                gestion.equipos().stream().filter(e -> e.participaEn(evento.getCompeticion().getId())).toList());
+        model.addAttribute("editable", evento.editable(LocalDateTime.now(reloj)));
+        return "gestion/editar-evento";
+    }
+
     @GetMapping("/eventos/{id}")
     public String evento(@PathVariable Long id, Model model) {
         Evento evento = resolucion.evento(id);
         model.addAttribute("evento", evento);
         model.addAttribute("volumen", resolucion.volumen(id));
         model.addAttribute("empezado", evento.haEmpezado(LocalDateTime.now(reloj)));
+        model.addAttribute("editable", evento.editable(LocalDateTime.now(reloj)));
         return "gestion/evento-detalle";
     }
 

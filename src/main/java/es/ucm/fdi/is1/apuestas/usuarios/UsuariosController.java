@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 
@@ -54,6 +55,50 @@ public class UsuariosController {
     @GetMapping("/cuenta")
     public String cuenta(Principal principal, Model model) {
         Usuario usuario = usuarios.consultarConRecarga(principal.getName());
+        NombreForm nombre = new NombreForm();
+        nombre.setNombre(usuario.getNombre());
+        model.addAttribute("datosNombre", nombre);
+        model.addAttribute("datosPassword", new PasswordForm());
+        return cuenta(usuario, model);
+    }
+
+    /** HU-47. */
+    @PostMapping("/cuenta/nombre")
+    public String cambiarNombre(@Valid @ModelAttribute("datosNombre") NombreForm form, BindingResult errores,
+                                Principal principal, Model model, RedirectAttributes redireccion) {
+        if (errores.hasErrors()) {
+            model.addAttribute("datosPassword", new PasswordForm());
+            return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
+        }
+        usuarios.cambiarNombre(principal.getName(), form.getNombre());
+        redireccion.addFlashAttribute("mensaje", "Nombre cambiado");
+        return "redirect:/cuenta";
+    }
+
+    /** HU-47. */
+    @PostMapping("/cuenta/password")
+    public String cambiarPassword(@Valid @ModelAttribute("datosPassword") PasswordForm form, BindingResult errores,
+                                  Principal principal, Model model, RedirectAttributes redireccion) {
+        if (form.getNueva() != null && !form.getNueva().equals(form.getConfirmacion())) {
+            errores.rejectValue("confirmacion", "noCoincide", "Las contraseñas no coinciden");
+        }
+        if (!errores.hasErrors()) {
+            try {
+                usuarios.cambiarPassword(principal.getName(), form.getActual(), form.getNueva());
+                redireccion.addFlashAttribute("mensaje", "Contraseña cambiada. Úsala la próxima vez que entres.");
+                return "redirect:/cuenta";
+            } catch (PasswordIncorrectaException e) {
+                errores.rejectValue("actual", "incorrecta", e.getMessage());
+            }
+        }
+        Usuario usuario = usuarios.consultarConRecarga(principal.getName());
+        NombreForm nombre = new NombreForm();
+        nombre.setNombre(usuario.getNombre());
+        model.addAttribute("datosNombre", nombre);
+        return cuenta(usuario, model);
+    }
+
+    private String cuenta(Usuario usuario, Model model) {
         model.addAttribute("usuario", usuario);
         model.addAttribute("proximaRecarga", usuario.proximaRecarga(saldo.recargaPeriodo()));
         model.addAttribute("importeRecarga", saldo.recargaImporte());

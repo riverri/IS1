@@ -12,6 +12,8 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
 
     List<Seleccion> findByEvento(Evento evento);
 
+    boolean existsByEvento(Evento evento);
+
     List<Seleccion> findByCandidatoMercado(Mercado mercado);
 
     /** Pares (pronóstico, importe total) de las apuestas activas a un evento, para el ajuste por volumen. */

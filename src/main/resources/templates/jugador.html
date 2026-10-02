@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza(${perfil.puesto.nombre})}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio" th:with="p=${perfil.puesto}, est=${perfil.puesto.estadisticas}">
+    <a class="enlace-volver" th:href="@{/ranking}">← Ranking</a>
+
+    <div class="tarjeta ficha-cabecera">
+        <span th:replace="~{fragments/comun :: avatar(${p.nombre}, 'escudo-grande')}"></span>
+        <div class="ficha-datos">
+            <h1>
+                <span th:text="${p.nombre}">Ana</span>
+                <small class="aviso" th:if="${p.soyYo}">(tú)</small>
+            </h1>
+            <p class="aviso" th:text="${p.posicion} + 'º de ' + ${perfil.jugadores} + ' jugadores por saldo'">3º de 12 jugadores por saldo</p>
+        </div>
+    </div>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica">
+            <span th:text="${#numbers.formatDecimal(p.saldo, 1, 'POINT', 2, 'COMMA')}">1.250,00</span>monedas
+        </div>
+        <div class="tarjeta estadistica"><span th:text="${perfil.apuestasEnJuego}">2</span>apuestas en juego</div>
+        <div class="tarjeta estadistica"><span th:text="${est.resueltas}">8</span>apuestas resueltas</div>
+    </div>
+    <div class="estadisticas" th:if="${est.tieneDatos}">
+        <div class="tarjeta estadistica">
+            <span th:text="${#numbers.formatDecimal(est.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %'">62,5 %</span>de aciertos
+        </div>
+        <div class="tarjeta estadistica">
+            <span th:classappend="${est.beneficio.signum() >= 0} ? 'positivo' : 'negativo'"
+                  th:text="${est.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(est.beneficio, 1, 'POINT', 2, 'COMMA')}">+35,00</span>
+            balance
+            <small th:text="${#numbers.formatDecimal(est.rentabilidad, 1, 'POINT', 1, 'COMMA')} + ' % de rentabilidad'">12,5 % de rentabilidad</small>
+        </div>
+    </div>
+    <p class="vacio" th:unless="${est.tieneDatos}">Todavía no tiene apuestas resueltas.</p>
+    <p class="aviso">Las apuestas de cada jugador son privadas: aquí solo se ven sus cifras.</p>
+</main>
+</body>
+</html>

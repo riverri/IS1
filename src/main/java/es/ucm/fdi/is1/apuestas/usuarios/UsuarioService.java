@@ -50,6 +50,22 @@ public class UsuarioService {
         return usuario;
     }
 
+    /** Cambia el nombre visible (HU-47). */
+    @Transactional
+    public void cambiarNombre(String email, String nombre) {
+        usuarios.findByEmail(normalizar(email)).orElseThrow().cambiarNombre(nombre.trim());
+    }
+
+    /** Cambia la contraseña si la actual es correcta (HU-47). */
+    @Transactional
+    public void cambiarPassword(String email, String actual, String nueva) {
+        Usuario usuario = usuarios.findByEmail(normalizar(email)).orElseThrow();
+        if (!passwordEncoder.matches(actual, usuario.getPasswordHash())) {
+            throw new PasswordIncorrectaException();
+        }
+        usuario.cambiarPasswordHash(passwordEncoder.encode(nueva));
+    }
+
     @Transactional(readOnly = true)
     public Optional<Usuario> buscar(String email) {
         return usuarios.findByEmail(normalizar(email));
