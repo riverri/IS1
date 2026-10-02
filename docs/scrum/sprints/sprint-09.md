@@ -3,7 +3,7 @@
 ## Sprint Planning (02/10)
 - **Asistentes:** Jing Li
 - **Sprint Goal:** la ficha de cada equipo muestra su evolución en la temporada; cada usuario puede ponerse límites o tomarse una pausa, y eliminar su cuenta cuando quiera.
-- **Velocidad media de los sprints anteriores:** 20 puntos · **Puntos comprometidos:** 12
+- **Velocidad media de los sprints anteriores:** 20 puntos · **Puntos comprometidos:** 12 (13 con lo añadido durante el sprint)
 - **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 8)_
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
@@ -11,7 +11,8 @@
 | HU-32 | Gráfico de evolución de un equipo en la temporada | 20 | 3 | Jing Li | Hecho |
 | HU-10 | Juego responsable: límites diario y semanal y pausa temporal | 27 | 5 | Jing Li | Hecho |
 | HU-18 | Eliminar la cuenta | 22 | 3 | Jing Li | Hecho |
-| — | Migración V5 de la base de datos | — | 1 | Jing Li | Hecho |
+| — | Migraciones V5 y V6 de la base de datos | — | 1 | Jing Li | Hecho |
+| HU-10 | Interruptor en Gestión para activar o desactivar el juego responsable | 27 | 1 | Jing Li | Hecho (añadida durante el sprint) |
 
 ### Gráfico de evolución (HU-32)
 - En la ficha de cada equipo con dos o más partidos jugados.
@@ -29,6 +30,9 @@
   - Durante la pausa no se puede apostar ni subir el importe de una apuesta, pero sí bajarlo o cancelarla.
   - No se puede acortar: si ya hay una pausa más larga, se mantiene.
   - Una franja en la cabecera recuerda hasta cuándo dura.
+- **Interruptor en Gestión** (pedido por el PO durante el sprint): el creador puede desactivar el juego responsable en toda la web.
+  - Mientras está desactivado no se aplican los límites ni las pausas, y la sección desaparece de *Mi cuenta* y de la cabecera.
+  - Lo que cada usuario tenga guardado se conserva y vuelve a aplicarse al activarlo.
 - **Decisión:** los límites cambian en el momento, también al subirlos. En las casas de apuestas reales subir un límite tarda unas horas en aplicarse; aquí no hace falta porque no hay dinero real. Queda anotado como posible mejora.
 
 ### Eliminar la cuenta (HU-18)
@@ -41,8 +45,9 @@
 - El jugador desaparece del ranking y su email queda libre para registrarse de nuevo.
 - La cuenta del creador de apuestas no se puede eliminar.
 
-### Cambios en la base de datos (migración V5)
-- Columnas `limite_diario`, `limite_semanal`, `pausa_hasta` y `eliminado` en la tabla `usuario`.
+### Cambios en la base de datos (migraciones V5 y V6)
+- **V5:** columnas `limite_diario`, `limite_semanal`, `pausa_hasta` y `eliminado` en la tabla `usuario`.
+- **V6:** columna `juego_responsable` en la tabla `limites` (activado por defecto).
 - Las bases de datos del Sprint 8 se actualizan solas al arrancar (comprobado).
 
 ## Dailies

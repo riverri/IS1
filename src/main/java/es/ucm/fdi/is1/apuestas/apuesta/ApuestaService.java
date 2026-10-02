@@ -155,8 +155,12 @@ public class ApuestaService {
     /**
      * Juego responsable (HU-10): con una pausa activa no se puede apostar, y lo apostado en las últimas
      * 24 horas o 7 días más el nuevo importe no puede superar los límites que se ha puesto el usuario.
+     * No se comprueba nada si el creador lo ha desactivado en Gestión.
      */
     private void comprobarJuegoResponsable(Usuario usuario, BigDecimal importe, LocalDateTime ahora) {
+        if (!limites.actuales().isJuegoResponsable()) {
+            return;
+        }
         if (usuario.enPausa(ahora)) {
             throw new JuegoResponsableException("Has pausado tus apuestas hasta el "
                     + FECHA.format(usuario.getPausaHasta()) + ".");

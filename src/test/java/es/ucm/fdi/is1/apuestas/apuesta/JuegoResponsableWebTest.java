@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -157,5 +158,37 @@ class JuegoResponsableWebTest {
         mvc.perform(post("/cuenta/pausa").with(COMO_ANA).with(csrf()).param("dias", "365"))
                 .andExpect(flash().attribute("error", containsString("1, 7 o 30 días")));
         assertThat(ana().getPausaHasta()).isNull();
+    }
+
+    @Test
+    void elCreadorPuedeDesactivarloYVolverAActivarlo() throws Exception {
+        RequestPostProcessor creador = user("creador@apuestas.es").roles("CREADOR");
+        usuarioService.fijarLimites(ANA, new BigDecimal("10"), null);
+        usuarioService.pausar(ANA, 7);
+
+        mvc.perform(post("/gestion/juego-responsable").with(creador).with(csrf()).param("activo", "false"))
+                .andExpect(redirectedUrl("/gestion"))
+                .andExpect(flash().attribute("mensaje", containsString("desactivado")));
+
+        // Desactivado: ni pausa ni límites, y la sección desaparece de Mi cuenta
+        apostar("50");
+        mvc.perform(get("/cuenta").with(COMO_ANA))
+                .andExpect(content().string(not(containsString("id=\"juego-responsable\""))))
+                .andExpect(content().string(not(containsString("Apuestas en pausa hasta el"))));
+        mvc.perform(get("/gestion").with(creador))
+                .andExpect(content().string(containsString("Desactivado: no se aplican")));
+
+        mvc.perform(post("/gestion/juego-responsable").with(creador).with(csrf()).param("activo", "true"));
+
+        // Activado de nuevo: lo que tenía guardado vuelve a aplicarse
+        assertThatThrownBy(() -> apostar("5")).hasMessageContaining("Has pausado tus apuestas");
+        mvc.perform(get("/cuenta").with(COMO_ANA))
+                .andExpect(content().string(containsString("id=\"juego-responsable\"")));
+    }
+
+    @Test
+    void unUsuarioNormalNoPuedeDesactivarlo() throws Exception {
+        mvc.perform(post("/gestion/juego-responsable").with(COMO_ANA).with(csrf()).param("activo", "false"))
+                .andExpect(status().isForbidden());
     }
 }

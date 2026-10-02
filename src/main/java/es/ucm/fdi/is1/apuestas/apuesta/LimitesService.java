@@ -21,6 +21,12 @@ public class LimitesService {
                 .orElseThrow(() -> new IllegalStateException("Faltan los límites de apuesta (migración V3)"));
     }
 
+    /** Activa o desactiva el juego responsable en toda la web (HU-10). */
+    @Transactional
+    public void activarJuegoResponsable(boolean activo) {
+        actuales().activarJuegoResponsable(activo);
+    }
+
     @Transactional
     public Limites cambiar(BigDecimal importeMinimo, BigDecimal importeMaximo, int maxSelecciones) {
         Limites actuales = actuales();
