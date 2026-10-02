@@ -96,11 +96,11 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
-| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma reciente y escudo de cada equipo; límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
+| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
-| `/equipos/{id}` | Ficha del equipo: últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32 |
+| `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32, HU-49 |
 
 - **Pruebas:** `./mvnw test`
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
@@ -127,6 +127,7 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
 2. En IntelliJ: *Run → Edit Configurations… → ApuestasApplication → Environment variables* y añade `FOOTBALL_DATA_TOKEN=tu_clave`.
    Desde la terminal de Windows: `set FOOTBALL_DATA_TOKEN=tu_clave` y después `mvnw.cmd spring-boot:run`.
 3. Arranca la aplicación. Se sincroniza a los 30 segundos y luego cada 30 minutos; también hay un botón **Sincronizar ahora** en *Gestión*.
+4. Las **plantillas** (jugadores de cada equipo) se descargan a los 2 minutos de arrancar y una vez al día, o con el botón **Descargar plantillas** de *Gestión*. Las notas de los jugadores las pone el creador de apuestas.
 
 - **La clave es personal: no la escribas en ningún archivo del repositorio.**
 - El plan gratuito permite 10 peticiones por minuto. Cada sincronización hace una por competición.

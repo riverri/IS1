@@ -39,6 +39,19 @@ public class Formato {
         return cuota == null ? "–" : cuota.setScale(2, java.math.RoundingMode.DOWN).toPlainString().replace('.', ',');
     }
 
+    /**
+     * Nombre corto para el campo de la alineación: "Lamine Yamal" → "Yamal", "Pedri" → "Pedri",
+     * "Frenkie de Jong" → "de Jong" (se mantienen las partículas en minúscula delante del apellido).
+     */
+    public String apellido(String nombre) {
+        String[] partes = nombre.trim().split("\\s+");
+        int inicio = partes.length - 1;
+        while (inicio > 1 && Character.isLowerCase(partes[inicio - 1].charAt(0))) {
+            inicio--;
+        }
+        return String.join(" ", Arrays.copyOfRange(partes, inicio, partes.length));
+    }
+
     /** "21:00". */
     public String hora(LocalDateTime fecha) {
         return HORA.format(fecha);

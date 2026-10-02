@@ -1,6 +1,6 @@
 # Diseño: diagramas UML
 
-Diagramas del sistema tal como está implementado al final del Sprint 9. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
+Diagramas del sistema tal como está implementado al final del Sprint 10. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
 
 1. [Casos de uso](#1-casos-de-uso)
 2. [Arquitectura por capas](#2-arquitectura-por-capas)
@@ -24,7 +24,7 @@ flowchart LR
     subgraph sistema [Web de apuestas]
         direction TB
         cu1(["Consultar catálogo y cuotas (HU-08, HU-19, HU-20, HU-22)"])
-        cu2(["Consultar ficha, evolución y cara a cara (HU-31, HU-32, HU-33)"])
+        cu2(["Consultar ficha, evolución, plantilla y cara a cara (HU-31, HU-32, HU-33, HU-49)"])
         cu3(["Ver ranking y perfil de jugadores (HU-36, HU-48)"])
         cu4(["Registrarse e iniciar sesión (HU-11, HU-12)"])
         cu5(["Apostar simple o combinada (HU-23, HU-28, HU-29)"])
@@ -36,11 +36,11 @@ flowchart LR
         cu17(["Juego responsable: límites y pausa (HU-10)"])
         cu18(["Eliminar mi cuenta (HU-18)"])
         cu11(["Dar de alta competiciones, equipos y eventos (HU-01, HU-46)"])
-        cu12(["Ajustar calificación y forma (HU-01, HU-02)"])
+        cu12(["Ajustar calificación, forma y jugadores (HU-01, HU-02, HU-50)"])
         cu13(["Introducir resultado, suspender o anular (HU-04, HU-05, HU-06)"])
         cu14(["Gestionar mercados a largo plazo (HU-45)"])
         cu15(["Fijar límites de apuesta y activar el juego responsable (HU-07, HU-10)"])
-        cu16(["Sincronizar partidos y resultados (HU-21, HU-25)"])
+        cu16(["Sincronizar partidos, resultados y plantillas (HU-21, HU-25, HU-50)"])
     end
 
     visitante --- cu1 & cu2 & cu3 & cu4
@@ -71,7 +71,7 @@ flowchart TB
 
     subgraph datos [Acceso a datos]
         repositorios["Repositorios Spring Data JPA"]
-        flyway["Migraciones Flyway<br/>V1 … V6"]
+        flyway["Migraciones Flyway<br/>V1 … V7"]
         h2[("Base de datos H2<br/>./datos/apuestas")]
     end
 
@@ -145,6 +145,26 @@ classDiagram
         -String escudoUrl
         -Integer idExterno
         +participaEn(competicionId) bool
+    }
+
+    class Jugador {
+        -String nombre
+        -Posicion posicion
+        -Integer dorsal
+        -String nacionalidad
+        -LocalDate fechaNacimiento
+        -double nota
+        -Integer idExterno
+        +cambiarNota(nota)
+        +actualizar(equipo, nombre, posicion, dorsal, nacionalidad, fecha)
+    }
+
+    class Alineacion {
+        <<record>>
+        String sistema
+        List~Linea~ lineas
+        double notaMedia
+        +de(plantilla)$ Alineacion
     }
 
     class Evento {
@@ -250,12 +270,14 @@ classDiagram
     Mercado "1" *-- "2..*" Candidato : candidatos
     Mercado "*" --> "0..1" Candidato : ganador
     Candidato "*" --> "0..1" Equipo : es
+    Jugador "*" --> "1" Equipo : juega en
+    Alineacion ..> Jugador : elige los de mejor nota
     CalculadoraCuotas ..> Evento : usa calidad y forma
     CalculadoraCuotas ..> Cuotas : crea
     Boleto ..> Apuesta : al confirmar crea
 ```
 
-**Enumerados:** `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion` y `EstadoMercado`.
+**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion` y `EstadoMercado`.
 
 **Decisiones de diseño:**
 - **Una apuesta simple es una combinada de una sola selección,** así hay una única forma de guardar, pagar y mostrar las apuestas.
@@ -408,6 +430,7 @@ erDiagram
     EQUIPO }o--o{ COMPETICION : "equipo_competiciones"
     MERCADO ||--|{ CANDIDATO : tiene
     EQUIPO |o--o{ CANDIDATO : "es"
+    EQUIPO ||--o{ JUGADOR : "plantilla"
 
     USUARIO {
         bigint id PK
@@ -458,6 +481,17 @@ erDiagram
         float calidad
         enum forma
         varchar escudo_url
+        integer id_externo UK
+    }
+    JUGADOR {
+        bigint id PK
+        bigint equipo_id FK
+        varchar nombre
+        enum posicion
+        integer dorsal
+        varchar nacionalidad
+        date fecha_nacimiento
+        float nota
         integer id_externo UK
     }
     COMPETICION {
