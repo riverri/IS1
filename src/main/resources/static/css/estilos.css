@@ -502,6 +502,20 @@ a.equipo-celda:hover span:last-child { text-decoration: underline; }
 .aviso-item.ganada .aviso-icono { background: var(--exito-suave); }
 .aviso-item.perdida .aviso-icono { background: var(--error-suave); color: var(--error); }
 
+/* ---------- Gráfico de evolución ---------- */
+
+.grafico-evolucion { padding: 16px 18px 10px; margin: 0; }
+.grafico-evolucion svg { width: 100%; height: auto; display: block; }
+.grafico-rejilla line { stroke: var(--borde); stroke-width: 1; }
+.grafico-eje { font-size: 11px; fill: var(--texto-suave); }
+.grafico-linea { fill: none; stroke: var(--primario); stroke-width: 2; stroke-linejoin: round; }
+.grafico-punto circle { stroke: var(--superficie); stroke-width: 2; }
+.grafico-punto .grafico-zona { fill: transparent; stroke: none; }
+.grafico-punto.victoria circle:last-of-type { fill: #12b76a; }
+.grafico-punto.empate circle:last-of-type { fill: #98a2b3; }
+.grafico-punto.derrota circle:last-of-type { fill: #f04438; }
+.grafico-punto:hover circle:last-of-type { r: 7; }
+
 /* ---------- Boleto ---------- */
 
 .boleto { text-align: left; margin-top: 16px; }
@@ -657,6 +671,9 @@ a.partido-cuerpo:hover .rival-nombre { text-decoration: underline; }
 
 .tarjeta-formulario { padding: 28px; }
 .cambiar-password { margin-top: 16px; }
+.pausa { margin-top: 16px; }
+.pausa .acciones { margin-top: 12px; }
+.aviso-pausa { margin: 0; padding: 6px 16px; text-align: center; background: #fffaeb; color: #b54708; font-size: .9rem; font-weight: 600; }
 .subtitulo { margin: 0 0 16px; color: var(--texto-suave); }
 
 .formulario { display: flex; flex-direction: column; gap: 6px; }

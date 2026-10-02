@@ -37,6 +37,19 @@
         <a class="boton boton-secundario" th:href="@{/gestion/limites}">Cambiar</a>
     </div>
 
+    <div class="tarjeta api-estado">
+        <div>
+            <strong>Juego responsable</strong>
+            <p class="aviso" th:if="${limites.juegoResponsable}">Activado: cada usuario puede ponerse límites diario y semanal o una pausa en <em>Mi cuenta</em>, y se respetan al apostar.</p>
+            <p class="aviso" th:unless="${limites.juegoResponsable}">Desactivado: no se aplican los límites ni las pausas de los usuarios y la opción no aparece en <em>Mi cuenta</em>. Lo que cada uno tenga guardado se conserva.</p>
+        </div>
+        <form th:action="@{/gestion/juego-responsable}" method="post">
+            <input type="hidden" name="activo" th:value="${!limites.juegoResponsable}">
+            <button class="boton" th:classappend="${limites.juegoResponsable} ? 'boton-secundario'" type="submit"
+                    th:text="${limites.juegoResponsable} ? 'Desactivar' : 'Activar'">Desactivar</button>
+        </form>
+    </div>
+
     <div class="acciones">
         <a class="boton boton-secundario" th:href="@{/gestion/competiciones/nueva}">+ Nueva competición</a>
         <a class="boton boton-secundario" th:href="@{/gestion/equipos/nuevo}">+ Nuevo equipo</a>

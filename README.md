@@ -95,12 +95,12 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
-| `/cuenta` | Saldo de moneditas, fecha de la próxima recarga gratuita y cambio de nombre y contraseña | HU-13, HU-14, HU-47 |
-| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma reciente y escudo de cada equipo; límites de apuesta | HU-01, HU-02, HU-07 |
+| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
+| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma reciente y escudo de cada equipo; límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
-| `/equipos/{id}` | Ficha del equipo: últimos resultados, racha, balance, clasificación y próximos partidos | HU-31 |
+| `/equipos/{id}` | Ficha del equipo: últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32 |
 
 - **Pruebas:** `./mvnw test`
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.

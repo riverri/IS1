@@ -27,6 +27,13 @@ public class Limites {
     @Column(nullable = false)
     private int maxSelecciones;
 
+    /**
+     * Si es false, no se aplican los límites personales ni las pausas de los usuarios (HU-10) y la opción
+     * desaparece de Mi cuenta. Lo que cada usuario tenga guardado se conserva para cuando se vuelva a activar.
+     */
+    @Column(nullable = false)
+    private boolean juegoResponsable = true;
+
     protected Limites() {
         // requerido por JPA
     }
@@ -57,6 +64,14 @@ public class Limites {
         if (selecciones > maxSelecciones) {
             throw new IllegalArgumentException("Una combinada admite como máximo " + maxSelecciones + " selecciones");
         }
+    }
+
+    public void activarJuegoResponsable(boolean activo) {
+        juegoResponsable = activo;
+    }
+
+    public boolean isJuegoResponsable() {
+        return juegoResponsable;
     }
 
     public BigDecimal getImporteMinimo() {

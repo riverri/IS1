@@ -1,8 +1,10 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -23,6 +25,9 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
 @Service
 public class ApuestaService {
+
+    private static final DateTimeFormatter FECHA =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy 'a las' HH:mm");
 
     private final ApuestaRepository apuestas;
     private final EventoRepository eventos;
@@ -84,6 +89,7 @@ public class ApuestaService {
         if (!cambiadas.isEmpty()) {
             throw new CuotasCambiadasException(cambiadas);
         }
+        comprobarJuegoResponsable(usuario, importe, ahora);
         usuario.cargar(importe);
         return apuestas.save(apuesta);
     }
@@ -105,6 +111,7 @@ public class ApuestaService {
             throw new CuotasCambiadasException(List.of());
         }
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        comprobarJuegoResponsable(usuario, importe, ahora);
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
         apuesta.anadir(candidato, candidato.getCuota());
         usuario.cargar(importe);
@@ -135,9 +142,47 @@ public class ApuestaService {
                 .filter(a -> a.getUsuario().getEmail().equals(email))
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         limites.actuales().comprobarImporte(nuevo);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        BigDecimal aumento = nuevo.subtract(apuesta.getImporte());
+        if (aumento.signum() > 0) {
+            comprobarJuegoResponsable(apuesta.getUsuario(), aumento, ahora);
+        }
         List<BigDecimal> cuotas = apuesta.getSelecciones().stream().map(this::cuotaActual).toList();
-        apuesta.cambiarImporte(nuevo, cuotas, LocalDateTime.now(reloj));
+        apuesta.cambiarImporte(nuevo, cuotas, ahora);
         return apuesta;
+    }
+
+    /**
+     * Juego responsable (HU-10): con una pausa activa no se puede apostar, y lo apostado en las últimas
+     * 24 horas o 7 días más el nuevo importe no puede superar los límites que se ha puesto el usuario.
+     * No se comprueba nada si el creador lo ha desactivado en Gestión.
+     */
+    private void comprobarJuegoResponsable(Usuario usuario, BigDecimal importe, LocalDateTime ahora) {
+        if (!limites.actuales().isJuegoResponsable()) {
+            return;
+        }
+        if (usuario.enPausa(ahora)) {
+            throw new JuegoResponsableException("Has pausado tus apuestas hasta el "
+                    + FECHA.format(usuario.getPausaHasta()) + ".");
+        }
+        comprobarLimite(usuario, usuario.getLimiteDiario(), ahora.minusDays(1), importe, "diario", "24 horas");
+        comprobarLimite(usuario, usuario.getLimiteSemanal(), ahora.minusDays(7), importe, "semanal", "7 días");
+    }
+
+    private void comprobarLimite(Usuario usuario, BigDecimal limite, LocalDateTime desde, BigDecimal importe,
+                                 String nombre, String periodo) {
+        if (limite == null) {
+            return;
+        }
+        BigDecimal apostado = apuestas.apostadoDesde(usuario, desde);
+        if (apostado.add(importe).compareTo(limite) > 0) {
+            throw new JuegoResponsableException("Superarías tu límite " + nombre + " de " + monedas(limite)
+                    + " monedas: llevas " + monedas(apostado) + " apostadas en los últimos " + periodo + ".");
+        }
+    }
+
+    private static String monedas(BigDecimal cantidad) {
+        return cantidad.setScale(2, RoundingMode.DOWN).toPlainString().replace('.', ',');
     }
 
     private BigDecimal cuotaActual(Seleccion seleccion) {

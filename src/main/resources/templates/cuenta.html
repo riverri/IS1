@@ -6,6 +6,7 @@
 <main class="estrecho">
     <h1 th:text="'Hola, ' + ${usuario.nombre}">Hola</h1>
     <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Nombre cambiado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
     <div class="tarjeta-saldo">
         <span class="tarjeta-saldo-titulo">Saldo disponible</span>
         <span class="tarjeta-saldo-valor" th:text="${#numbers.formatDecimal(usuario.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</span>
@@ -47,6 +48,49 @@
         <span class="error-campo" th:if="${#fields.hasErrors('confirmacion')}" th:text="${#fields.errors('confirmacion')[0]}"></span>
         <button class="boton boton-secundario" type="submit">Cambiar contraseña</button>
     </form>
+
+    <th:block th:if="${juegoResponsableActivo}">
+        <h2 id="juego-responsable">Juego responsable</h2>
+        <p class="aviso">Aunque aquí no se juega con dinero real, puedes ponerte límites o tomarte un descanso.</p>
+        <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/limites}" th:object="${limitesPersonales}" method="post">
+            <label for="diario">Máximo apostado en 24 horas</label>
+            <input id="diario" type="number" min="1" step="0.01" th:field="*{diario}" th:errorclass="con-error" placeholder="Sin límite">
+            <span class="error-campo" th:if="${#fields.hasErrors('diario')}" th:text="${#fields.errors('diario')[0]}"></span>
+
+            <label for="semanal">Máximo apostado en 7 días</label>
+            <input id="semanal" type="number" min="1" step="0.01" th:field="*{semanal}" th:errorclass="con-error" placeholder="Sin límite">
+            <span class="error-campo" th:if="${#fields.hasErrors('semanal')}" th:text="${#fields.errors('semanal')[0]}"></span>
+            <span class="aviso">Déjalo vacío para no tener límite. Cuentan todas las apuestas menos las canceladas.</span>
+            <button class="boton boton-secundario" type="submit">Guardar límites</button>
+        </form>
+
+        <div class="tarjeta tarjeta-formulario pausa">
+            <strong>Pausa temporal</strong>
+            <p class="alerta alerta-aviso" th:if="${enPausa}"
+               th:text="'Tienes las apuestas en pausa hasta el ' + ${#temporals.format(usuario.pausaHasta, 'dd/MM/yyyy')} + ' a las ' + ${#temporals.format(usuario.pausaHasta, 'HH:mm')} + '.'">
+                Tienes las apuestas en pausa hasta el 09/10/2026 a las 18:00.</p>
+            <p class="aviso">Durante la pausa no podrás apostar. No se puede cancelar antes de tiempo.</p>
+            <form class="acciones" th:action="@{/cuenta/pausa}" method="post"
+                  onsubmit="return confirm('¿Seguro? Durante la pausa no podrás apostar y no se puede cancelar.');">
+                <button class="boton boton-secundario" type="submit" name="dias" value="1">1 día</button>
+                <button class="boton boton-secundario" type="submit" name="dias" value="7">7 días</button>
+                <button class="boton boton-secundario" type="submit" name="dias" value="30">30 días</button>
+            </form>
+        </div>
+
+    </th:block>
+
+    <th:block th:unless="${usuario.creador}">
+        <h2 id="eliminar-cuenta">Eliminar cuenta</h2>
+        <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/eliminar}" method="post"
+              onsubmit="return confirm('¿Eliminar tu cuenta? No se puede deshacer.');">
+            <p class="alerta alerta-error" th:if="${errorBaja}" th:text="${errorBaja}">La contraseña no es correcta</p>
+            <p class="aviso">Se borran tu email, tu nombre y tus avisos, y pierdes tu saldo. Las apuestas que aún no han empezado se cancelan. No se puede deshacer.</p>
+            <label for="password-baja">Contraseña</label>
+            <input id="password-baja" name="password" type="password" required autocomplete="current-password">
+            <button class="boton boton-peligro" type="submit">Eliminar mi cuenta</button>
+        </form>
+    </th:block>
 </main>
 </body>
 </html>

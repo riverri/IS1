@@ -118,6 +118,16 @@ public class GestionController {
         return "gestion/limites";
     }
 
+    /** Activa o desactiva el juego responsable en toda la web (HU-10). */
+    @PostMapping("/juego-responsable")
+    public String juegoResponsable(@RequestParam boolean activo, RedirectAttributes redireccion) {
+        limites.activarJuegoResponsable(activo);
+        redireccion.addFlashAttribute("mensaje", activo
+                ? "Juego responsable activado: se vuelven a aplicar los límites y pausas de cada usuario."
+                : "Juego responsable desactivado: no se aplican los límites ni las pausas de los usuarios.");
+        return "redirect:/gestion";
+    }
+
     // --- Competiciones ---
 
     @GetMapping("/competiciones/nueva")

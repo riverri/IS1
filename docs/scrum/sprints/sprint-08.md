@@ -1,4 +1,4 @@
-# Sprint 8 · 02/10 – 16/10
+# Sprint 8 · 02/10 (cerrado antes de plazo)
 
 ## Sprint Planning (02/10)
 - **Asistentes:** Jing Li
@@ -44,12 +44,12 @@
 ## Dailies
 - **02/10**: HU-46, HU-47 y HU-48, pruebas, diagramas UML y métricas.
 
-## Sprint Review (16/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (02/10)
+- **Historias completadas:** HU-46, HU-47 y HU-48, más la documentación UML y las métricas (12 puntos).
+- **Historias no completadas:** ninguna.
+- **Feedback del PO:** seguir con funcionalidades. Siguiente sprint: gráfico de evolución (HU-32), juego responsable (HU-10) y eliminar la cuenta (HU-18).
 
-## Retrospectiva (16/10)
+## Retrospectiva (02/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**
