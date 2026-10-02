@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/comun :: cabeza('Ranking')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main class="estrecho ancho-medio">
+<main class="estrecho ancho-medio" th:with="podio=${#lists.size(primeros) >= 3}">
     <div class="titulo-pagina">
         <h1>Ranking</h1>
     </div>
@@ -17,10 +17,23 @@
         <p>Todavía no hay jugadores.</p>
     </div>
 
-    <ol class="ranking tarjeta" th:unless="${#lists.isEmpty(primeros)}">
-        <li th:each="p : ${primeros}" th:classappend="${p.soyYo} ? 'soy-yo'">
+    <div class="podio" th:if="${podio}">
+        <a class="podio-puesto" th:each="i : ${ {0, 1, 2} }" th:with="p=${primeros[i]}"
+           th:classappend="'puesto-' + ${p.posicion} + ${p.soyYo ? ' soy-yo' : ''}"
+           th:href="@{/jugadores/{id}(id=${p.usuarioId})}">
+            <span class="podio-medalla" th:text="${p.posicion == 1} ? '🥇' : (${p.posicion == 2} ? '🥈' : '🥉')">🥇</span>
+            <span th:replace="~{fragments/comun :: avatar(${p.nombre}, 'escudo-grande')}"></span>
+            <strong class="podio-nombre" th:text="${p.nombre}">Ana</strong>
+            <span th:replace="~{fragments/ranking :: cifra(${p}, ${orden})}">1.250,00</span>
+            <span class="podio-base" th:text="${p.posicion}">1</span>
+        </a>
+    </div>
+
+    <ol class="ranking tarjeta" th:unless="${#lists.isEmpty(primeros) or (podio and #lists.size(primeros) == 3 and mio == null)}">
+        <li th:each="p : ${primeros}" th:unless="${podio and p.posicion <= 3}" th:classappend="${p.soyYo} ? 'soy-yo'">
             <span class="ranking-posicion" th:classappend="${p.posicion <= 3} ? ('podio-' + ${p.posicion})"
                   th:text="${p.posicion}">1</span>
+            <span th:replace="~{fragments/comun :: avatar(${p.nombre}, 'escudo-pequeno')}"></span>
             <span class="ranking-nombre">
                 <a th:href="@{/jugadores/{id}(id=${p.usuarioId})}" th:text="${p.nombre}">Ana</a>
                 <small th:if="${p.soyYo}">(tú)</small>
@@ -28,7 +41,7 @@
             <span class="ranking-saldo" th:replace="~{fragments/ranking :: cifra(${p}, ${orden})}">1.250,00</span>
         </li>
         <th:block th:if="${mio != null}">
-            <li class="ranking-separador" aria-hidden="true">…</li>
+            <li class="ranking-separador" aria-hidden="true" th:unless="${podio and #lists.size(primeros) == 3}">…</li>
             <li class="soy-yo">
                 <span class="ranking-posicion" th:text="${mio.posicion}">34</span>
                 <span class="ranking-nombre"><a th:href="@{/jugadores/{id}(id=${mio.usuarioId})}" th:text="${mio.nombre}">Yo</a> <small>(tú)</small></span>
@@ -37,5 +50,6 @@
         </th:block>
     </ol>
 </main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>

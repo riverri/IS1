@@ -5,7 +5,8 @@
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
     <div class="tarjeta marcador">
-        <span class="chip" th:text="${evento.competicion.nombre}">LaLiga</span>
+      <div class="marcador-cabecera">
+        <span class="chip" th:text="${evento.deporte.icono} + ' ' + ${evento.competicion.nombre}">LaLiga</span>
         <div class="marcador-rivales">
             <div class="marcador-equipo">
                 <span th:replace="~{fragments/comun :: escudo(${evento.local}, 'escudo-grande')}"></span>
@@ -19,9 +20,11 @@
         </div>
         <h1 class="solo-lectores" th:text="${evento.local.nombre} + ' – ' + ${evento.visitante.nombre}">Real Madrid – Getafe CF</h1>
         <p class="marcador-fecha">
+            <span th:if="${evento.fase != null}" th:text="${evento.fase} + ' · '">Jornada 8 · </span>
             <span th:text="${@formato.dia(evento.fechaHora)}">Sáb 10 oct</span> ·
             <strong th:text="${@formato.hora(evento.fechaHora)}">21:00</strong>
         </p>
+      </div>
 
         <form class="formulario boleto" th:action="@{/eventos/{id}/apostar(id=${evento.id})}" th:object="${apuesta}" method="post">
             <fieldset class="opciones">
@@ -122,5 +125,6 @@
         actualizar();
     })();
 </script>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
 </html>
