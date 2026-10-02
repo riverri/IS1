@@ -1,0 +1,19 @@
+# Configuración para Render (https://render.com): New → Blueprint → este repositorio.
+services:
+  - type: web
+    name: apuestas-is1
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    healthCheckPath: /
+    envVars:
+      # Contraseña del creador de apuestas (obligatoria): Render la pide al crear el servicio
+      - key: CREADOR_PASSWORD
+        sync: false
+      # Opcional: si se define, se crea también usuario@apuestas.es con esta contraseña
+      - key: USUARIO_PASSWORD
+        sync: false
+      # Opcional: clave de football-data.org para los partidos reales
+      - key: FOOTBALL_DATA_TOKEN
+        sync: false
