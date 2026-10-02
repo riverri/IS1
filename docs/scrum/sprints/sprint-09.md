@@ -3,7 +3,7 @@
 ## Sprint Planning (02/10)
 - **Asistentes:** Jing Li
 - **Sprint Goal:** la ficha de cada equipo muestra su evolución en la temporada; cada usuario puede ponerse límites o tomarse una pausa, y eliminar su cuenta cuando quiera.
-- **Velocidad media de los sprints anteriores:** 20 puntos · **Puntos comprometidos:** 12 (13 con lo añadido durante el sprint)
+- **Velocidad media de los sprints anteriores:** 20 puntos · **Puntos comprometidos:** 12 (16 con lo añadido durante el sprint)
 - **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 8)_
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
@@ -13,6 +13,7 @@
 | HU-18 | Eliminar la cuenta | 22 | 3 | Jing Li | Hecho |
 | — | Migraciones V5 y V6 de la base de datos | — | 1 | Jing Li | Hecho |
 | HU-10 | Interruptor en Gestión para activar o desactivar el juego responsable | 27 | 1 | Jing Li | Hecho (añadida durante el sprint) |
+| HU-09 | Rediseño visual: portada con partido destacado, colores por deporte, cabecera de partido, podio del ranking, acceso y pie de página | — | 3 | Jing Li | Hecho (añadida durante el sprint) |
 
 ### Gráfico de evolución (HU-32)
 - En la ficha de cada equipo con dos o más partidos jugados.
@@ -45,6 +46,19 @@
 - El jugador desaparece del ranking y su email queda libre para registrarse de nuevo.
 - La cuenta del creador de apuestas no se puede eliminar.
 
+### Rediseño visual (pedido por el PO durante el sprint)
+- **Cabecera:**
+  - fondo translúcido;
+  - la sección en la que estás queda marcada en el menú;
+  - en el móvil, el menú es una sola fila que se desliza en horizontal.
+- **Portada:** el título lleva un degradado y a la derecha aparece el **partido destacado** (el próximo de fútbol), con sus cuotas para añadirlo al boleto.
+- **Color por deporte:** cada deporte tiene su color (fútbol verde, baloncesto naranja, tenis lima, F1 rojo, MotoGP violeta). Se ve en la franja superior de las tarjetas de partidos y de largo plazo, en sus etiquetas y en los accesos de la portada.
+- **Página de un partido:** cabecera oscura tipo "entrada", con los escudos, la competición, la jornada y la hora.
+- **Ranking:** **podio** con medallas para los tres primeros y avatar con iniciales en el resto.
+- **Entrar y registrarse:** a dos columnas, con un panel que resume qué ofrece la web.
+- **Pie de página** en todas las páginas, con enlaces y el aviso de que es un juego sin dinero real.
+- **Detalles:** botones con relieve, títulos de sección con una marca de color, tarjetas más redondeadas y sombras más suaves.
+
 ### Cambios en la base de datos (migraciones V5 y V6)
 - **V5:** columnas `limite_diario`, `limite_semanal`, `pausa_hasta` y `eliminado` en la tabla `usuario`.
 - **V6:** columna `juego_responsable` en la tabla `limites` (activado por defecto).
@@ -52,6 +66,7 @@
 
 ## Dailies
 - **02/10**: gráfico de evolución, juego responsable, eliminar la cuenta, migración V5, pruebas y actualización de los diagramas y las métricas.
+- **02/10**: interruptor del juego responsable en Gestión y rediseño visual.
 
 ## Sprint Review (16/10)
 - Historias completadas:

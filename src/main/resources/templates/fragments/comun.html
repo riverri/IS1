@@ -20,21 +20,21 @@
             </svg>
             <span>Apuestas IS1</span>
         </a>
-        <nav class="menu">
-            <a th:href="@{/eventos}">Eventos</a>
-            <a th:href="@{/mercados}">Largo plazo</a>
-            <a th:href="@{/equipos}">Equipos</a>
-            <a th:href="@{/ranking}">Ranking</a>
-            <a th:if="${usuarioActual != null}" th:href="@{/apuestas}">Mis apuestas</a>
-            <a th:if="${usuarioActual != null}" th:href="@{/boleto}">Boleto
+        <nav class="menu" aria-label="Principal">
+            <a th:href="@{/eventos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'activo'">Eventos</a>
+            <a th:href="@{/mercados}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/mercados')} ? 'activo'">Largo plazo</a>
+            <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
+            <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
+            <a th:if="${usuarioActual != null}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
+            <a th:if="${usuarioActual != null}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>
-            <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
-            <a th:if="${usuarioActual != null}" class="campana" th:href="@{/notificaciones}"
+            <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/gestion')} ? 'activo'">Gestión</a>
+            <a th:if="${usuarioActual != null}" class="campana" th:href="@{/notificaciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/notificaciones')} ? 'activo'"
                th:title="${avisosSinLeer > 0} ? ${avisosSinLeer} + ' avisos sin leer' : 'Avisos'">
                 <span aria-hidden="true">🔔</span><span class="solo-lectores">Avisos</span>
                 <span class="contador" th:if="${avisosSinLeer > 0}" th:text="${avisosSinLeer}">2</span></a>
             <th:block th:if="${usuarioActual == null}">
-                <a th:href="@{/login}">Entrar</a>
+                <a th:href="@{/login}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/login')} ? 'activo'">Entrar</a>
                 <a class="boton boton-pequeno" th:href="@{/registro}">Registrarse</a>
             </th:block>
             <th:block th:if="${usuarioActual != null}">
@@ -81,6 +81,45 @@
          onerror="this.parentElement.classList.remove('con-imagen'); this.remove();">
 </span>
 
+<section class="acceso-panel" th:fragment="panelAcceso">
+    <p class="antetitulo">Sin dinero real · Solo diversión</p>
+    <h2>Demuestra que sabes de deporte</h2>
+    <ul class="acceso-ventajas">
+        <li><span aria-hidden="true">🪙</span> Moneditas de bienvenida y recargas gratis cada semana</li>
+        <li><span aria-hidden="true">🎯</span> Apuestas simples, combinadas y a largo plazo</li>
+        <li><span aria-hidden="true">🏆</span> Compite con tus amigos en el ranking</li>
+    </ul>
+</section>
+
+<footer class="pie" th:fragment="pie">
+    <div class="pie-interior">
+        <div class="pie-marca">
+            <a class="marca" th:href="@{/}">
+                <svg class="marca-logo" viewBox="0 0 32 32" aria-hidden="true">
+                    <circle cx="16" cy="16" r="15" fill="#f5b301"/>
+                    <circle cx="16" cy="16" r="11" fill="none" stroke="#a87700" stroke-width="2"/>
+                    <text x="16" y="21" text-anchor="middle" font-size="13" font-weight="800" fill="#7a5600">IS</text>
+                </svg>
+                <span>Apuestas IS1</span>
+            </a>
+            <p>Apuestas deportivas con moneditas virtuales. Sin dinero real: solo para divertirse y demostrar quién sabe más.</p>
+        </div>
+        <nav class="pie-enlaces" aria-label="Pie de página">
+            <strong>Jugar</strong>
+            <a th:href="@{/eventos}">Eventos</a>
+            <a th:href="@{/mercados}">Largo plazo</a>
+            <a th:href="@{/boleto}">Boleto</a>
+        </nav>
+        <nav class="pie-enlaces" aria-label="Comunidad">
+            <strong>Comunidad</strong>
+            <a th:href="@{/ranking}">Ranking</a>
+            <a th:href="@{/equipos}">Equipos</a>
+            <a th:href="@{/cuenta}">Mi cuenta</a>
+        </nav>
+    </div>
+    <p class="pie-legal">Proyecto de Ingeniería del Software I · Universidad Complutense de Madrid · Juego ficticio, sin dinero real</p>
+</footer>
+
 <span th:fragment="avatar(nombre, tam)" class="escudo redondo" th:classappend="${tam}"
       th:with="col=${@formato.colores(nombre)}, ini=${@formato.iniciales(nombre)}">
     <svg viewBox="0 0 40 40" aria-hidden="true">
@@ -91,7 +130,7 @@
     </svg>
 </span>
 
-<article class="partido" th:fragment="partido(ev)"
+<article class="partido" th:fragment="partido(ev)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
          th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
     <div class="partido-cabecera">
         <span class="partido-competicion">
