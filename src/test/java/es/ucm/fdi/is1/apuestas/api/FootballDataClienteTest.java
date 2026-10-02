@@ -52,7 +52,7 @@ class FootballDataClienteTest {
         RestClient.Builder builder = RestClient.builder();
         MockRestServiceServer servidor = MockRestServiceServer.bindTo(builder).build();
         ApiProperties propiedades = new ApiProperties("https://api.football-data.org/v4", "mi-clave",
-                List.of("PD"), 7, 21, "Europe/Madrid");
+                List.of("PD"), null, 7, 21, "Europe/Madrid");
         FootballDataCliente cliente = new FootballDataCliente(builder, propiedades);
 
         servidor.expect(requestTo(
@@ -78,7 +78,7 @@ class FootballDataClienteTest {
         RestClient.Builder builder = RestClient.builder();
         MockRestServiceServer servidor = MockRestServiceServer.bindTo(builder).build();
         ApiProperties propiedades = new ApiProperties("https://api.football-data.org/v4", "mi-clave",
-                List.of("PD"), 7, 21, "Europe/Madrid");
+                List.of("PD"), null, 7, 21, "Europe/Madrid");
         FootballDataCliente cliente = new FootballDataCliente(builder, propiedades);
         servidor.expect(requestTo("https://api.football-data.org/v4/competitions/PD/teams"))
                 .andExpect(header("X-Auth-Token", "mi-clave"))

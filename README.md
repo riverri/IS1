@@ -7,13 +7,15 @@ Profesor: Gonzalo Rubén Méndez Pozo.
 
 | Miembro | Rol Scrum (provisional) |
 |---|---|
-| Carlos Martín-Salas | _por decidir_ |
-| Jaime Martín | _por decidir_ |
-| David Ortega | _por decidir_ |
-| Jing Li | _por decidir_ |
-| Carlos Jurado | _por decidir_ |
+| Carlos Martín-Salas | Product Owner · Equipo de Desarrollo |
+| Jaime Martín | Product Owner · Equipo de Desarrollo |
+| David Ortega | Product Owner · Equipo de Desarrollo |
+| Jing Li | Product Owner · Equipo de Desarrollo |
+| Carlos Jurado | Product Owner · Equipo de Desarrollo |
 
-> Los roles se definen en la primera reunión. Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
+> El profesor actúa como Product Owner y cliente. De momento los cinco compartimos también ese rol, y el **Scrum Master** está por decidir ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
+
+**Tablero del sprint:** las tareas y las historias pendientes están en los [issues](https://github.com/riverri/IS1/issues) y en el tablero de GitHub Projects del repositorio (pestaña *Projects*).
 
 ## ¿Qué es?
 
@@ -36,7 +38,8 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 ├── docs/
 │   ├── requisitos/
 │   │   ├── vision.md                  # Visión del producto
-│   │   └── historias-de-usuario.md    # Historias de usuario con sus criterios de aceptación
+│   │   ├── historias-de-usuario.md    # Historias de usuario con sus criterios de aceptación
+│   │   └── trazabilidad.md            # Qué prueba comprueba cada criterio de aceptación
 │   ├── scrum/
 │   │   ├── proceso.md                 # Cómo aplicamos Scrum
 │   │   ├── product-backlog.md         # Product Backlog (orden, estimación, MoSCoW y estado)
@@ -51,7 +54,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 ├── src/test/java/                     # Pruebas (JUnit)
 ├── pom.xml                            # Dependencias (Maven)
 ├── compartir.bat, compartir.sh        # Jugar desde otros ordenadores con un enlace público
-├── Dockerfile, render.yaml            # Publicar la aplicación en Internet (Render)
+├── Dockerfile, render.yaml            # Publicar la aplicación en Internet (Render + Neon)
 ├── .github/                           # Plantillas de issues y pull requests, y CI
 └── CONTRIBUTING.md                    # Cómo trabajamos con Git y GitHub
 ```
@@ -94,22 +97,44 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 - Usa el perfil `compartir`, que desactiva la consola de H2: no tiene contraseña y con el túnel cualquiera podría entrar en la base de datos. **No compartas nunca la aplicación arrancada desde IntelliJ sin ese perfil.**
 - Si la red de la facultad bloquea el túnel, prueba con los datos del móvil.
 
-## Publicarla en Internet (Render)
+## Publicarla en Internet (servidor permanente y gratuito)
 
-Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordenador encendido, la aplicación se puede publicar gratis en [Render](https://render.com). El repositorio ya trae el `Dockerfile` y la configuración (`render.yaml`).
+Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordenador encendido. Se usan tres servicios gratuitos, ninguno pide tarjeta:
 
-1. Entra en https://render.com con tu cuenta de GitHub (no pide tarjeta).
-2. *New → Blueprint* y elige el repositorio `riverri/IS1`. Render lee `render.yaml`.
-3. Te pide las variables:
-   - `CREADOR_PASSWORD` (**obligatoria**): la contraseña de `creador@apuestas.es`. Pon una tuya; la del README es pública.
-   - `USUARIO_PASSWORD` (opcional): si la pones, se crea también `usuario@apuestas.es` con esa contraseña.
-   - `FOOTBALL_DATA_TOKEN` (opcional): la clave de la API para los partidos reales.
-4. *Apply*. La primera vez tarda unos minutos en compilar. Después queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
+| Servicio | Para qué |
+|---|---|
+| [Render](https://render.com) | Ejecuta la aplicación. El repositorio ya trae el `Dockerfile` y `render.yaml`. |
+| [Neon](https://neon.tech) | Base de datos PostgreSQL permanente (0,5 GB, de sobra para el proyecto). |
+| [UptimeRobot](https://uptimerobot.com) (opcional) | Visita la web cada 5 minutos para que Render no la apague. |
 
-Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola.
+**1. Base de datos (Neon)**
+1. Entra en https://neon.tech con tu cuenta de GitHub y crea un proyecto (región *Europe (Frankfurt)*).
+2. En *Connect* desactiva *Connection pooling* y copia los datos de conexión. Neon los da como `postgresql://USUARIO:CONTRASEÑA@HOST/neondb?sslmode=require`.
 
-- **Arranque lento:** en el plan gratuito la aplicación se apaga tras unos 15 minutos sin visitas, y la primera visita después tarda alrededor de un minuto.
-- **Los datos no se guardan:** la base de datos H2 se borra cada vez que la aplicación se reinicia o se vuelve a publicar. Usuarios, apuestas y ligas vuelven a los datos iniciales. Sirve para enseñarla, no para jugar durante semanas.
+**2. Aplicación (Render)**
+1. Entra en https://render.com con tu cuenta de GitHub. Crea un *Web Service* con el repositorio `riverri/IS1`, rama `main`, lenguaje *Docker* e instancia *Free* (o *New → Blueprint*, que lo rellena desde `render.yaml`).
+2. En *Environment* añade:
+
+| Variable | Valor |
+|---|---|
+| `CREADOR_PASSWORD` | **Obligatoria.** La contraseña de `creador@apuestas.es` (la del README es pública). |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://HOST/neondb?sslmode=require` (el `HOST` de Neon) |
+| `SPRING_DATASOURCE_USERNAME` | el `USUARIO` de Neon |
+| `SPRING_DATASOURCE_PASSWORD` | la `CONTRASEÑA` de Neon |
+| `USUARIO_PASSWORD` | Opcional: crea también `usuario@apuestas.es` con esta contraseña. |
+| `FOOTBALL_DATA_TOKEN` | Opcional: la clave de la API para los partidos reales. |
+
+3. Despliega. La primera vez tarda unos minutos. Las tablas las crea Flyway solo, y queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
+
+Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los datos siguen en Neon.
+
+**3. Que no se apague (UptimeRobot, opcional)**
+
+Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, crea en UptimeRobot un monitor *HTTP(s)* con el enlace de Render cada 5 minutos. El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
+
+**Notas**
+- Sin las variables `SPRING_DATASOURCE_*` funciona igual, pero con H2: los datos se borran en cada reinicio.
+- No uses la base de datos PostgreSQL gratuita de Render: se borra a los 30 días.
 - Usa el perfil `nube`: la consola de H2 está desactivada y, si falta `CREADOR_PASSWORD`, la aplicación no arranca.
 
 ## Funcionalidades disponibles
@@ -143,10 +168,12 @@ Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola.
 
 ## Base de datos y migraciones (Flyway)
 
-Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar: de `V1__esquema_inicial.sql` a `V8__ligas_y_mas_apuestas.sql`. Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar. Hay una carpeta por base de datos:
+- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V8__ligas_y_mas_apuestas.sql`.
+- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente. Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
-1. Crea un script nuevo con el número siguiente, por ejemplo `V9__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario.
+1. Crea un script nuevo con el número siguiente, por ejemplo `V9__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
 2. **No modifiques nunca un script que ya esté en `main`**: otros ordenadores ya lo han aplicado.
 3. Arranca y ejecuta `./mvnw test`. Hibernate comprueba (`ddl-auto=validate`) que las entidades coinciden con las tablas; si falta una migración, la aplicación no arranca y dice qué columna o tabla falta.
 
@@ -161,6 +188,9 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
    Desde la terminal de Windows: `set FOOTBALL_DATA_TOKEN=tu_clave` y después `mvnw.cmd spring-boot:run`.
 3. Arranca la aplicación. Se sincroniza a los 30 segundos y luego cada 30 minutos; también hay un botón **Sincronizar ahora** en *Gestión*.
 4. Las **plantillas** (jugadores de cada equipo) se descargan a los 2 minutos de arrancar y una vez al día, o con el botón **Descargar plantillas** de *Gestión*. Las notas de los jugadores las pone el creador de apuestas.
+   - En el plan gratuito la Champions no trae jugadores, así que las plantillas salen de la liga de cada equipo (`apuestas.api.competiciones-plantillas`: LaLiga, Premier, Bundesliga, Serie A, Ligue 1, Liga Portugal y Eredivisie).
+   - Los equipos de otras ligas (Turquía, Bélgica, Grecia…) no tienen plantilla en el plan gratuito. Sus jugadores se añaden a mano en *Gestión → Editar equipo*.
+   - El plan gratuito no da dorsales: todos los jugadores entran sin dorsal y con nota 6,0.
 
 - **La clave es personal: no la escribas en ningún archivo del repositorio.**
 - El plan gratuito permite 10 peticiones por minuto. Cada sincronización hace una por competición.
@@ -171,6 +201,6 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
 
 1. Leer [CONTRIBUTING.md](CONTRIBUTING.md) (flujo Git, ramas y pull requests).
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).
-3. Revisar el [Product Backlog](docs/scrum/product-backlog.md) y las [historias de usuario](docs/requisitos/historias-de-usuario.md).
+3. Revisar el [Product Backlog](docs/scrum/product-backlog.md), las [historias de usuario](docs/requisitos/historias-de-usuario.md) y la [matriz de trazabilidad](docs/requisitos/trazabilidad.md) (qué prueba comprueba cada criterio).
 4. Arrancar la aplicación (ver arriba) y revisar los sprints en [docs/scrum/sprints](docs/scrum/sprints).
 5. Para entender el diseño: [diagramas UML](docs/diseno/uml.md). Para ver cómo avanza el proyecto: [métricas de velocidad y progreso](docs/scrum/metricas.md).
