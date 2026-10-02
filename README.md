@@ -96,7 +96,7 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
-| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma reciente y escudo de cada equipo; límites de apuesta | HU-01, HU-02, HU-07 |
+| `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma reciente y escudo de cada equipo; límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |

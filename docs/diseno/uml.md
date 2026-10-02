@@ -39,7 +39,7 @@ flowchart LR
         cu12(["Ajustar calificación y forma (HU-01, HU-02)"])
         cu13(["Introducir resultado, suspender o anular (HU-04, HU-05, HU-06)"])
         cu14(["Gestionar mercados a largo plazo (HU-45)"])
-        cu15(["Fijar límites de apuesta (HU-07)"])
+        cu15(["Fijar límites de apuesta y activar el juego responsable (HU-07, HU-10)"])
         cu16(["Sincronizar partidos y resultados (HU-21, HU-25)"])
     end
 
@@ -71,7 +71,7 @@ flowchart TB
 
     subgraph datos [Acceso a datos]
         repositorios["Repositorios Spring Data JPA"]
-        flyway["Migraciones Flyway<br/>V1 … V5"]
+        flyway["Migraciones Flyway<br/>V1 … V6"]
         h2[("Base de datos H2<br/>./datos/apuestas")]
     end
 
@@ -207,6 +207,7 @@ classDiagram
         -BigDecimal importeMinimo
         -BigDecimal importeMaximo
         -int maxSelecciones
+        -boolean juegoResponsable
         +comprobarImporte(importe)
         +comprobarSelecciones(n)
     }
@@ -492,5 +493,6 @@ erDiagram
         numeric importe_minimo
         numeric importe_maximo
         integer max_selecciones
+        boolean juego_responsable
     }
 ```

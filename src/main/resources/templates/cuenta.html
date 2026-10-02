@@ -49,33 +49,36 @@
         <button class="boton boton-secundario" type="submit">Cambiar contraseña</button>
     </form>
 
-    <h2 id="juego-responsable">Juego responsable</h2>
-    <p class="aviso">Aunque aquí no se juega con dinero real, puedes ponerte límites o tomarte un descanso.</p>
-    <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/limites}" th:object="${limitesPersonales}" method="post">
-        <label for="diario">Máximo apostado en 24 horas</label>
-        <input id="diario" type="number" min="1" step="0.01" th:field="*{diario}" th:errorclass="con-error" placeholder="Sin límite">
-        <span class="error-campo" th:if="${#fields.hasErrors('diario')}" th:text="${#fields.errors('diario')[0]}"></span>
+    <th:block th:if="${juegoResponsableActivo}">
+        <h2 id="juego-responsable">Juego responsable</h2>
+        <p class="aviso">Aunque aquí no se juega con dinero real, puedes ponerte límites o tomarte un descanso.</p>
+        <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/limites}" th:object="${limitesPersonales}" method="post">
+            <label for="diario">Máximo apostado en 24 horas</label>
+            <input id="diario" type="number" min="1" step="0.01" th:field="*{diario}" th:errorclass="con-error" placeholder="Sin límite">
+            <span class="error-campo" th:if="${#fields.hasErrors('diario')}" th:text="${#fields.errors('diario')[0]}"></span>
 
-        <label for="semanal">Máximo apostado en 7 días</label>
-        <input id="semanal" type="number" min="1" step="0.01" th:field="*{semanal}" th:errorclass="con-error" placeholder="Sin límite">
-        <span class="error-campo" th:if="${#fields.hasErrors('semanal')}" th:text="${#fields.errors('semanal')[0]}"></span>
-        <span class="aviso">Déjalo vacío para no tener límite. Cuentan todas las apuestas menos las canceladas.</span>
-        <button class="boton boton-secundario" type="submit">Guardar límites</button>
-    </form>
-
-    <div class="tarjeta tarjeta-formulario pausa">
-        <strong>Pausa temporal</strong>
-        <p class="alerta alerta-aviso" th:if="${enPausa}"
-           th:text="'Tienes las apuestas en pausa hasta el ' + ${#temporals.format(usuario.pausaHasta, 'dd/MM/yyyy')} + ' a las ' + ${#temporals.format(usuario.pausaHasta, 'HH:mm')} + '.'">
-            Tienes las apuestas en pausa hasta el 09/10/2026 a las 18:00.</p>
-        <p class="aviso">Durante la pausa no podrás apostar. No se puede cancelar antes de tiempo.</p>
-        <form class="acciones" th:action="@{/cuenta/pausa}" method="post"
-              onsubmit="return confirm('¿Seguro? Durante la pausa no podrás apostar y no se puede cancelar.');">
-            <button class="boton boton-secundario" type="submit" name="dias" value="1">1 día</button>
-            <button class="boton boton-secundario" type="submit" name="dias" value="7">7 días</button>
-            <button class="boton boton-secundario" type="submit" name="dias" value="30">30 días</button>
+            <label for="semanal">Máximo apostado en 7 días</label>
+            <input id="semanal" type="number" min="1" step="0.01" th:field="*{semanal}" th:errorclass="con-error" placeholder="Sin límite">
+            <span class="error-campo" th:if="${#fields.hasErrors('semanal')}" th:text="${#fields.errors('semanal')[0]}"></span>
+            <span class="aviso">Déjalo vacío para no tener límite. Cuentan todas las apuestas menos las canceladas.</span>
+            <button class="boton boton-secundario" type="submit">Guardar límites</button>
         </form>
-    </div>
+
+        <div class="tarjeta tarjeta-formulario pausa">
+            <strong>Pausa temporal</strong>
+            <p class="alerta alerta-aviso" th:if="${enPausa}"
+               th:text="'Tienes las apuestas en pausa hasta el ' + ${#temporals.format(usuario.pausaHasta, 'dd/MM/yyyy')} + ' a las ' + ${#temporals.format(usuario.pausaHasta, 'HH:mm')} + '.'">
+                Tienes las apuestas en pausa hasta el 09/10/2026 a las 18:00.</p>
+            <p class="aviso">Durante la pausa no podrás apostar. No se puede cancelar antes de tiempo.</p>
+            <form class="acciones" th:action="@{/cuenta/pausa}" method="post"
+                  onsubmit="return confirm('¿Seguro? Durante la pausa no podrás apostar y no se puede cancelar.');">
+                <button class="boton boton-secundario" type="submit" name="dias" value="1">1 día</button>
+                <button class="boton boton-secundario" type="submit" name="dias" value="7">7 días</button>
+                <button class="boton boton-secundario" type="submit" name="dias" value="30">30 días</button>
+            </form>
+        </div>
+
+    </th:block>
 
     <th:block th:unless="${usuario.creador}">
         <h2 id="eliminar-cuenta">Eliminar cuenta</h2>
