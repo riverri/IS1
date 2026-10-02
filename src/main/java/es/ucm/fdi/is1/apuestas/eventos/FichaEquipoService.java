@@ -57,7 +57,8 @@ public class FichaEquipoService {
                 .map(c -> puesto(c, equipo))
                 .filter(p -> p != null)
                 .toList();
-        return new FichaEquipo(equipo, ultimos, balance, racha(jugados, equipo), clasificaciones, proximos);
+        return new FichaEquipo(equipo, ultimos, balance, racha(jugados, equipo), clasificaciones, proximos,
+                GraficoEvolucion.de(jugados.reversed(), equipo));
     }
 
     @Transactional(readOnly = true)

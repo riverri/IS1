@@ -1,6 +1,6 @@
 # Diseño: diagramas UML
 
-Diagramas del sistema tal como está implementado al final del Sprint 8. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
+Diagramas del sistema tal como está implementado al final del Sprint 9. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
 
 1. [Casos de uso](#1-casos-de-uso)
 2. [Arquitectura por capas](#2-arquitectura-por-capas)
@@ -24,7 +24,7 @@ flowchart LR
     subgraph sistema [Web de apuestas]
         direction TB
         cu1(["Consultar catálogo y cuotas (HU-08, HU-19, HU-20, HU-22)"])
-        cu2(["Consultar ficha de equipo y cara a cara (HU-31, HU-33)"])
+        cu2(["Consultar ficha, evolución y cara a cara (HU-31, HU-32, HU-33)"])
         cu3(["Ver ranking y perfil de jugadores (HU-36, HU-48)"])
         cu4(["Registrarse e iniciar sesión (HU-11, HU-12)"])
         cu5(["Apostar simple o combinada (HU-23, HU-28, HU-29)"])
@@ -33,6 +33,8 @@ flowchart LR
         cu8(["Ver mis apuestas, historial y estadísticas (HU-24, HU-34, HU-35)"])
         cu9(["Recibir avisos (HU-37)"])
         cu10(["Gestionar mi cuenta y saldo (HU-13, HU-14, HU-47)"])
+        cu17(["Juego responsable: límites y pausa (HU-10)"])
+        cu18(["Eliminar mi cuenta (HU-18)"])
         cu11(["Dar de alta competiciones, equipos y eventos (HU-01, HU-46)"])
         cu12(["Ajustar calificación y forma (HU-01, HU-02)"])
         cu13(["Introducir resultado, suspender o anular (HU-04, HU-05, HU-06)"])
@@ -42,7 +44,7 @@ flowchart LR
     end
 
     visitante --- cu1 & cu2 & cu3 & cu4
-    usuario --- cu5 & cu6 & cu7 & cu8 & cu9 & cu10
+    usuario --- cu5 & cu6 & cu7 & cu8 & cu9 & cu10 & cu17 & cu18
     creador --- cu11 & cu12 & cu13 & cu14 & cu15
     api --- cu16
 ```
@@ -69,7 +71,7 @@ flowchart TB
 
     subgraph datos [Acceso a datos]
         repositorios["Repositorios Spring Data JPA"]
-        flyway["Migraciones Flyway<br/>V1 … V4"]
+        flyway["Migraciones Flyway<br/>V1 … V5"]
         h2[("Base de datos H2<br/>./datos/apuestas")]
     end
 
@@ -115,11 +117,19 @@ classDiagram
         -Rol rol
         -BigDecimal saldo
         -LocalDateTime ultimaRecarga
+        -BigDecimal limiteDiario
+        -BigDecimal limiteSemanal
+        -LocalDateTime pausaHasta
+        -boolean eliminado
         +cargar(importe)
         +abonar(importe)
         +ajustar(diferencia)
         +aplicarRecargaPeriodica(ahora, periodo, importe) bool
         +cambiarNombre(nombre)
+        +fijarLimites(diario, semanal)
+        +pausarHasta(fecha)
+        +enPausa(ahora) bool
+        +eliminar(hash)
     }
 
     class Competicion {
@@ -251,6 +261,7 @@ classDiagram
 - **Una selección apunta a un evento (con su pronóstico) o a un candidato de un mercado,** nunca a los dos. Por eso las apuestas a largo plazo comparten historial, estadísticas y ranking con el resto.
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
+- **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
 
 ## 4. Estados
 
@@ -340,6 +351,7 @@ sequenceDiagram
         BS-->>BC: excepción
         BC-->>U: aviso "han cambiado las cuotas", confirmar de nuevo
     else cuotas iguales
+        AS->>AS: juego responsable: sin pausa y dentro de los límites del usuario (HU-10)
         AS->>US: cargar(importe)
         AS->>AR: save(apuesta)
         AS-->>BS: apuesta
@@ -404,6 +416,10 @@ erDiagram
         enum rol
         numeric saldo
         timestamp ultima_recarga
+        numeric limite_diario
+        numeric limite_semanal
+        timestamp pausa_hasta
+        boolean eliminado
     }
     APUESTA {
         bigint id PK
