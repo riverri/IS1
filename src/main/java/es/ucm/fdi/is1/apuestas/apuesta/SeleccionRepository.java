@@ -19,7 +19,8 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
     /** Pares (pronóstico, importe total) de las apuestas activas a un evento, para el ajuste por volumen. */
     @Query("""
             select s.pronostico, sum(s.apuesta.importe) from Seleccion s
-            where s.evento = :evento and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA
+            where s.evento = :evento and s.pronostico is not null
+              and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA
             group by s.pronostico""")
     List<Object[]> importesActivosPorPronostico(Evento evento);
 }

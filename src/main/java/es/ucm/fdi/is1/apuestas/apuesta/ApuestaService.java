@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
@@ -77,14 +78,15 @@ public class ApuestaService {
             Evento evento = eventos.findById(pedida.eventoId())
                     .filter(e -> e.admiteApuestas(ahora))
                     .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));
-            BigDecimal cuota = calculadora.calcular(evento).de(pedida.resultado());
-            if (cuota == null) {
-                throw new ResultadoNoValidoException(pedida.resultado());
-            }
+            BigDecimal cuota = cuota(evento, pedida.resultado(), pedida.especial());
             if (pedida.cuotaVista() != null && pedida.cuotaVista().compareTo(cuota) != 0) {
                 cambiadas.add(evento.getId());
             }
-            apuesta.anadir(evento, pedida.resultado(), cuota);
+            if (pedida.especial() != null) {
+                apuesta.anadir(evento, pedida.especial(), cuota);
+            } else {
+                apuesta.anadir(evento, pedida.resultado(), cuota);
+            }
         }
         if (!cambiadas.isEmpty()) {
             throw new CuotasCambiadasException(cambiadas);
@@ -189,7 +191,17 @@ public class ApuestaService {
         if (seleccion.isLargoPlazo()) {
             return seleccion.getCandidato().getCuota();
         }
-        return calculadora.calcular(seleccion.getEvento()).de(seleccion.getPronostico());
+        return calculadora.cuota(seleccion.getEvento(), seleccion.getPronostico(), seleccion.getEspecial());
+    }
+
+    /** Cuota actual de un resultado o de un tipo especial (HU-52); exactamente uno de los dos. */
+    BigDecimal cuota(Evento evento, Resultado resultado, Especial especial) {
+        BigDecimal cuota = (resultado == null) == (especial == null) ? null
+                : calculadora.cuota(evento, resultado, especial);
+        if (cuota == null) {
+            throw ResultadoNoValidoException.de(resultado, especial);
+        }
+        return cuota;
     }
 
     /** Historial: apuestas ya resueltas, anuladas o canceladas, de la más reciente a la más antigua (HU-34). */

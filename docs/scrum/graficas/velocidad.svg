@@ -17,46 +17,50 @@
 <text x="48" y="135.0" font-size="11" text-anchor="end" fill="#52514e">30</text>
 <line x1="56" x2="736" y1="64.0" y2="64.0" stroke="#e4e3df" stroke-width="1"/>
 <text x="48" y="68.0" font-size="11" text-anchor="end" fill="#52514e">40</text>
-<g><title>Sprint 1: 23 puntos comprometidos</title><path d="M66.3,332.0 V181.9 Q66.3,177.9 70.3,177.9 H85.0 Q89.0,177.9 89.0,181.9 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 1: 23 puntos completados</title><path d="M91.0,332.0 V181.9 Q91.0,177.9 95.0,177.9 H109.7 Q113.7,177.9 113.7,181.9 V332.0 Z" fill="#2a78d6"/></g>
-<text x="90.0" y="171.9" font-size="11" text-anchor="start" fill="#0b0b0b">23</text>
-<text x="90.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 1</text>
-<g><title>Sprint 2: 21 puntos comprometidos</title><path d="M134.3,332.0 V195.3 Q134.3,191.3 138.3,191.3 H153.0 Q157.0,191.3 157.0,195.3 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 2: 33 puntos completados</title><path d="M159.0,332.0 V114.9 Q159.0,110.9 163.0,110.9 H177.7 Q181.7,110.9 181.7,114.9 V332.0 Z" fill="#2a78d6"/></g>
-<text x="158.0" y="104.9" font-size="11" text-anchor="start" fill="#0b0b0b">33</text>
-<text x="158.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 2</text>
-<g><title>Sprint 3: 24 puntos comprometidos</title><path d="M202.3,332.0 V175.2 Q202.3,171.2 206.3,171.2 H221.0 Q225.0,171.2 225.0,175.2 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 3: 24 puntos completados</title><path d="M227.0,332.0 V175.2 Q227.0,171.2 231.0,171.2 H245.7 Q249.7,171.2 249.7,175.2 V332.0 Z" fill="#2a78d6"/></g>
-<text x="226.0" y="165.2" font-size="11" text-anchor="start" fill="#0b0b0b">24</text>
-<text x="226.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 3</text>
-<g><title>Sprint 4: 18 puntos comprometidos</title><path d="M270.3,332.0 V215.4 Q270.3,211.4 274.3,211.4 H289.0 Q293.0,211.4 293.0,215.4 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 4: 18 puntos completados</title><path d="M295.0,332.0 V215.4 Q295.0,211.4 299.0,211.4 H313.7 Q317.7,211.4 317.7,215.4 V332.0 Z" fill="#2a78d6"/></g>
-<text x="294.0" y="205.4" font-size="11" text-anchor="start" fill="#0b0b0b">18</text>
-<text x="294.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 4</text>
-<g><title>Sprint 5: 13 puntos comprometidos</title><path d="M338.3,332.0 V248.9 Q338.3,244.9 342.3,244.9 H357.0 Q361.0,244.9 361.0,248.9 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 5: 16 puntos completados</title><path d="M363.0,332.0 V228.8 Q363.0,224.8 367.0,224.8 H381.7 Q385.7,224.8 385.7,228.8 V332.0 Z" fill="#2a78d6"/></g>
-<text x="362.0" y="218.8" font-size="11" text-anchor="start" fill="#0b0b0b">16</text>
-<text x="362.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 5</text>
-<g><title>Sprint 6: 18 puntos comprometidos</title><path d="M406.3,332.0 V215.4 Q406.3,211.4 410.3,211.4 H425.0 Q429.0,211.4 429.0,215.4 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 6: 18 puntos completados</title><path d="M431.0,332.0 V215.4 Q431.0,211.4 435.0,211.4 H449.7 Q453.7,211.4 453.7,215.4 V332.0 Z" fill="#2a78d6"/></g>
-<text x="430.0" y="205.4" font-size="11" text-anchor="start" fill="#0b0b0b">18</text>
-<text x="430.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 6</text>
-<g><title>Sprint 7: 16 puntos comprometidos</title><path d="M474.3,332.0 V228.8 Q474.3,224.8 478.3,224.8 H493.0 Q497.0,224.8 497.0,228.8 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 7: 16 puntos completados</title><path d="M499.0,332.0 V228.8 Q499.0,224.8 503.0,224.8 H517.7 Q521.7,224.8 521.7,228.8 V332.0 Z" fill="#2a78d6"/></g>
-<text x="498.0" y="218.8" font-size="11" text-anchor="start" fill="#0b0b0b">16</text>
-<text x="498.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 7</text>
-<g><title>Sprint 8: 12 puntos comprometidos</title><path d="M542.3,332.0 V255.6 Q542.3,251.6 546.3,251.6 H561.0 Q565.0,251.6 565.0,255.6 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 8: 12 puntos completados</title><path d="M567.0,332.0 V255.6 Q567.0,251.6 571.0,251.6 H585.7 Q589.7,251.6 589.7,255.6 V332.0 Z" fill="#2a78d6"/></g>
-<text x="566.0" y="245.6" font-size="11" text-anchor="start" fill="#0b0b0b">12</text>
-<text x="566.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 8</text>
-<g><title>Sprint 9: 12 puntos comprometidos</title><path d="M610.3,332.0 V255.6 Q610.3,251.6 614.3,251.6 H629.0 Q633.0,251.6 633.0,255.6 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 9: 16 puntos completados</title><path d="M635.0,332.0 V228.8 Q635.0,224.8 639.0,224.8 H653.7 Q657.7,224.8 657.7,228.8 V332.0 Z" fill="#2a78d6"/></g>
-<text x="634.0" y="218.8" font-size="11" text-anchor="start" fill="#0b0b0b">16</text>
-<text x="634.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 9</text>
-<g><title>Sprint 10: 11 puntos comprometidos</title><path d="M678.3,332.0 V262.3 Q678.3,258.3 682.3,258.3 H697.0 Q701.0,258.3 701.0,262.3 V332.0 Z" fill="#eb6834"/></g>
-<g><title>Sprint 10: 11 puntos completados</title><path d="M703.0,332.0 V262.3 Q703.0,258.3 707.0,258.3 H721.7 Q725.7,258.3 725.7,262.3 V332.0 Z" fill="#2a78d6"/></g>
-<text x="702.0" y="252.3" font-size="11" text-anchor="start" fill="#0b0b0b">11</text>
-<text x="702.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 10</text>
-<line x1="56" x2="736" y1="206.7" y2="206.7" stroke="#52514e" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="736" y="200.7" font-size="11" text-anchor="end" fill="#52514e">media 18.7</text>
+<g><title>Sprint 1: 23 puntos comprometidos</title><path d="M65.3,332.0 V181.9 Q65.3,177.9 69.3,177.9 H81.9 Q85.9,177.9 85.9,181.9 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 1: 23 puntos completados</title><path d="M87.9,332.0 V181.9 Q87.9,177.9 91.9,177.9 H104.5 Q108.5,177.9 108.5,181.9 V332.0 Z" fill="#2a78d6"/></g>
+<text x="86.9" y="171.9" font-size="11" text-anchor="start" fill="#0b0b0b">23</text>
+<text x="86.9" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 1</text>
+<g><title>Sprint 2: 21 puntos comprometidos</title><path d="M127.1,332.0 V195.3 Q127.1,191.3 131.1,191.3 H143.7 Q147.7,191.3 147.7,195.3 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 2: 33 puntos completados</title><path d="M149.7,332.0 V114.9 Q149.7,110.9 153.7,110.9 H166.3 Q170.3,110.9 170.3,114.9 V332.0 Z" fill="#2a78d6"/></g>
+<text x="148.7" y="104.9" font-size="11" text-anchor="start" fill="#0b0b0b">33</text>
+<text x="148.7" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 2</text>
+<g><title>Sprint 3: 24 puntos comprometidos</title><path d="M188.9,332.0 V175.2 Q188.9,171.2 192.9,171.2 H205.5 Q209.5,171.2 209.5,175.2 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 3: 24 puntos completados</title><path d="M211.5,332.0 V175.2 Q211.5,171.2 215.5,171.2 H228.2 Q232.2,171.2 232.2,175.2 V332.0 Z" fill="#2a78d6"/></g>
+<text x="210.5" y="165.2" font-size="11" text-anchor="start" fill="#0b0b0b">24</text>
+<text x="210.5" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 3</text>
+<g><title>Sprint 4: 18 puntos comprometidos</title><path d="M250.8,332.0 V215.4 Q250.8,211.4 254.8,211.4 H267.4 Q271.4,211.4 271.4,215.4 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 4: 18 puntos completados</title><path d="M273.4,332.0 V215.4 Q273.4,211.4 277.4,211.4 H290.0 Q294.0,211.4 294.0,215.4 V332.0 Z" fill="#2a78d6"/></g>
+<text x="272.4" y="205.4" font-size="11" text-anchor="start" fill="#0b0b0b">18</text>
+<text x="272.4" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 4</text>
+<g><title>Sprint 5: 13 puntos comprometidos</title><path d="M312.6,332.0 V248.9 Q312.6,244.9 316.6,244.9 H329.2 Q333.2,244.9 333.2,248.9 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 5: 16 puntos completados</title><path d="M335.2,332.0 V228.8 Q335.2,224.8 339.2,224.8 H351.8 Q355.8,224.8 355.8,228.8 V332.0 Z" fill="#2a78d6"/></g>
+<text x="334.2" y="218.8" font-size="11" text-anchor="start" fill="#0b0b0b">16</text>
+<text x="334.2" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 5</text>
+<g><title>Sprint 6: 18 puntos comprometidos</title><path d="M374.4,332.0 V215.4 Q374.4,211.4 378.4,211.4 H391.0 Q395.0,211.4 395.0,215.4 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 6: 18 puntos completados</title><path d="M397.0,332.0 V215.4 Q397.0,211.4 401.0,211.4 H413.6 Q417.6,211.4 417.6,215.4 V332.0 Z" fill="#2a78d6"/></g>
+<text x="396.0" y="205.4" font-size="11" text-anchor="start" fill="#0b0b0b">18</text>
+<text x="396.0" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 6</text>
+<g><title>Sprint 7: 16 puntos comprometidos</title><path d="M436.2,332.0 V228.8 Q436.2,224.8 440.2,224.8 H452.8 Q456.8,224.8 456.8,228.8 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 7: 16 puntos completados</title><path d="M458.8,332.0 V228.8 Q458.8,224.8 462.8,224.8 H475.4 Q479.4,224.8 479.4,228.8 V332.0 Z" fill="#2a78d6"/></g>
+<text x="457.8" y="218.8" font-size="11" text-anchor="start" fill="#0b0b0b">16</text>
+<text x="457.8" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 7</text>
+<g><title>Sprint 8: 12 puntos comprometidos</title><path d="M498.0,332.0 V255.6 Q498.0,251.6 502.0,251.6 H514.6 Q518.6,251.6 518.6,255.6 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 8: 12 puntos completados</title><path d="M520.6,332.0 V255.6 Q520.6,251.6 524.6,251.6 H537.2 Q541.2,251.6 541.2,255.6 V332.0 Z" fill="#2a78d6"/></g>
+<text x="519.6" y="245.6" font-size="11" text-anchor="start" fill="#0b0b0b">12</text>
+<text x="519.6" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 8</text>
+<g><title>Sprint 9: 12 puntos comprometidos</title><path d="M559.8,332.0 V255.6 Q559.8,251.6 563.8,251.6 H576.5 Q580.5,251.6 580.5,255.6 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 9: 16 puntos completados</title><path d="M582.5,332.0 V228.8 Q582.5,224.8 586.5,224.8 H599.1 Q603.1,224.8 603.1,228.8 V332.0 Z" fill="#2a78d6"/></g>
+<text x="581.5" y="218.8" font-size="11" text-anchor="start" fill="#0b0b0b">16</text>
+<text x="581.5" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 9</text>
+<g><title>Sprint 10: 11 puntos comprometidos</title><path d="M621.7,332.0 V262.3 Q621.7,258.3 625.7,258.3 H638.3 Q642.3,258.3 642.3,262.3 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 10: 11 puntos completados</title><path d="M644.3,332.0 V262.3 Q644.3,258.3 648.3,258.3 H660.9 Q664.9,258.3 664.9,262.3 V332.0 Z" fill="#2a78d6"/></g>
+<text x="643.3" y="252.3" font-size="11" text-anchor="start" fill="#0b0b0b">11</text>
+<text x="643.3" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 10</text>
+<g><title>Sprint 11: 17 puntos comprometidos</title><path d="M683.5,332.0 V222.1 Q683.5,218.1 687.5,218.1 H700.1 Q704.1,218.1 704.1,222.1 V332.0 Z" fill="#eb6834"/></g>
+<g><title>Sprint 11: 17 puntos completados</title><path d="M706.1,332.0 V222.1 Q706.1,218.1 710.1,218.1 H722.7 Q726.7,218.1 726.7,222.1 V332.0 Z" fill="#2a78d6"/></g>
+<text x="705.1" y="212.1" font-size="11" text-anchor="start" fill="#0b0b0b">17</text>
+<text x="705.1" y="350" font-size="12" text-anchor="middle" fill="#52514e">Sprint 11</text>
+<line x1="56" x2="736" y1="207.7" y2="207.7" stroke="#52514e" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="736" y="201.7" font-size="11" text-anchor="end" fill="#52514e">media 18.5</text>
 </svg>

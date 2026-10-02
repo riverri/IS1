@@ -32,7 +32,7 @@
             <strong th:text="${@formato.hora(evento.fechaHora)}">21:00</strong>
         </p>
         <p class="resultado-final" th:if="${evento.resultado != null}">
-            Resultado: <strong th:text="${evento.resultado.simbolo} + ' · ' + (${evento.resultado.name() == 'LOCAL'} ? ${evento.local.nombre} : (${evento.resultado.name() == 'VISITANTE'} ? ${evento.visitante.nombre} : 'Empate'))">1 · Real Madrid</strong>
+            Resultado: <strong th:if="${evento.conMarcador}" th:text="${evento.golesLocal} + '-' + ${evento.golesVisitante} + ' · '">2-1 · </strong><strong th:text="${evento.resultado.simbolo} + ' · ' + (${evento.resultado.name() == 'LOCAL'} ? ${evento.local.nombre} : (${evento.resultado.name() == 'VISITANTE'} ? ${evento.visitante.nombre} : 'Empate'))">1 · Real Madrid</strong>
         </p>
       </div>
     </div>
@@ -58,10 +58,24 @@
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/gestion/eventos/{id}/resultado(id=${evento.id})}" method="post"
               th:attr="onsubmit=${empezado} ? null : 'return confirm(\'El evento aún no ha empezado. ¿Guardar el resultado igualmente?\');'">
             <p class="aviso" th:if="${evento.resultado != null}">Si cambias el resultado, las apuestas se vuelven a resolver y los saldos se ajustan.</p>
+            <fieldset class="marcador-final" th:if="${evento.deporte.admiteEmpate}">
+                <legend>Marcador final</legend>
+                <label>
+                    <span th:text="${evento.local.nombre}">Real Madrid</span>
+                    <input type="number" name="golesLocal" min="0" max="99" inputmode="numeric" th:value="${evento.golesLocal}">
+                </label>
+                <span class="marcador-guion">–</span>
+                <label>
+                    <input type="number" name="golesVisitante" min="0" max="99" inputmode="numeric" th:value="${evento.golesVisitante}">
+                    <span th:text="${evento.visitante.nombre}">Getafe CF</span>
+                </label>
+            </fieldset>
+            <p class="aviso" th:if="${evento.deporte.admiteEmpate}">Con el marcador se resuelven también las apuestas de goles y de ambos marcan.
+                Si solo sabes quién ganó, deja el marcador vacío y marca el resultado: esas apuestas se anularán.</p>
             <fieldset class="opciones">
-                <legend>Resultado final</legend>
+                <legend th:text="${evento.deporte.admiteEmpate} ? 'O solo el ganador' : 'Resultado final'">Resultado final</legend>
                 <label class="opcion">
-                    <input type="radio" name="resultado" value="LOCAL" required th:checked="${evento.resultado != null and evento.resultado.name() == 'LOCAL'}">
+                    <input type="radio" name="resultado" value="LOCAL" th:required="${!evento.deporte.admiteEmpate}" th:checked="${evento.resultado != null and evento.resultado.name() == 'LOCAL'}">
                     <span class="opcion-simbolo">1</span>
                     <span class="opcion-nombre" th:text="'Gana ' + ${evento.local.nombre}">Gana Real Madrid</span>
                 </label>

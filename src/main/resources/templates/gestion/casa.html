@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Cuentas de la casa')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main th:with="t=${cuentas.total}">
+    <div class="titulo-pagina">
+        <h1>Cuentas de la casa</h1>
+        <a class="boton boton-secundario" th:href="@{/gestion}">← Volver a Gestión</a>
+    </div>
+    <p class="subtitulo">Lo apostado y lo pagado en las apuestas ya cerradas (ganadas, perdidas o anuladas). Las canceladas no cuentan.</p>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(t.apostado, 1, 'POINT', 2, 'COMMA')}">1.200,00</span>apostado</div>
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(t.pagado, 1, 'POINT', 2, 'COMMA')}">1.100,00</span>pagado</div>
+        <div class="tarjeta estadistica">
+            <span th:classappend="${t.beneficio.signum() < 0} ? 'negativo' : 'positivo'" th:text="${#numbers.formatDecimal(t.beneficio, 1, 'POINT', 2, 'COMMA')}">100,00</span>beneficio</div>
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(t.enJuego, 1, 'POINT', 2, 'COMMA')}">300,00</span>en juego</div>
+    </div>
+
+    <div class="tarjeta margen-casa">
+        <div>
+            <strong>Margen real</strong>
+            <span class="margen-cifra" th:text="${t.margen == null} ? '–' : ${#numbers.formatDecimal(t.margen, 1, 'POINT', 1, 'COMMA')} + ' %'">8,3 %</span>
+        </div>
+        <div>
+            <strong>Margen teórico</strong>
+            <span class="margen-cifra" th:text="${#numbers.formatDecimal(cuentas.margenTeorico, 1, 'POINT', 1, 'COMMA')} + ' %'">6,5 %</span>
+        </div>
+        <p class="aviso">El teórico es lo que se queda la casa por el margen de las cuotas (1,07) si las probabilidades
+            fueran exactas; en las combinadas el margen se multiplica y es mayor. Con pocas apuestas el real varía mucho:
+            si queda muy por debajo durante semanas, las cuotas están siendo demasiado generosas.</p>
+        <p class="aviso" th:text="${cuentas.jugadores} + (${cuentas.jugadores == 1} ? ' jugador ha hecho ' : ' jugadores han hecho ') + ${t.apuestas} + (${t.apuestas == 1} ? ' apuesta.' : ' apuestas.')">12 jugadores han hecho 80 apuestas.</p>
+    </div>
+
+    <th:block th:each="tabla : ${ { {'Por tipo de apuesta', cuentas.porTipo}, {'Simples por deporte', cuentas.porDeporte} } }">
+    <h2 th:text="${tabla[0]}">Por tipo de apuesta</h2>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Tipo</th><th>Apuestas</th><th>En juego</th><th>Apostado</th><th>Pagado</th><th>Beneficio</th><th>Margen</th></tr></thead>
+            <tbody>
+            <tr th:each="f : ${tabla[1]}">
+                <td th:text="${f.nombre}">Simples</td>
+                <td th:text="${f.apuestas}">40</td>
+                <td th:text="${#numbers.formatDecimal(f.enJuego, 1, 'POINT', 2, 'COMMA')}">100,00</td>
+                <td th:text="${#numbers.formatDecimal(f.apostado, 1, 'POINT', 2, 'COMMA')}">600,00</td>
+                <td th:text="${#numbers.formatDecimal(f.pagado, 1, 'POINT', 2, 'COMMA')}">550,00</td>
+                <td><strong th:classappend="${f.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(f.beneficio, 1, 'POINT', 2, 'COMMA')}">50,00</strong></td>
+                <td th:text="${f.margen == null} ? '–' : ${#numbers.formatDecimal(f.margen, 1, 'POINT', 1, 'COMMA')} + ' %'">8,3 %</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(tabla[1])}"><td colspan="7" class="aviso">Todavía no hay apuestas.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

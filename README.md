@@ -86,18 +86,20 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | Página | Qué hace | Historias |
 |---|---|---|
 | `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador | HU-08, HU-19, HU-20, HU-22 |
-| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
+| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial. En fútbol también doble oportunidad, más/menos de 2,5 goles y ambos marcan, que se pueden añadir al boleto | HU-03, HU-23, HU-52 |
 | `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/mercados` | Apuestas a largo plazo: Balón de Oro, campeón de liga… Se elige un candidato y se cobra al conocerse el ganador | HU-44 |
 | `/eventos/{id}/apostar` · cara a cara | Racha de cada equipo y enfrentamientos anteriores entre los dos | HU-33 |
 | `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-27, HU-34, HU-35 |
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
+| `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros | HU-51 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
-| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46 |
+| `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-54 |
+| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
 | `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32, HU-49 |

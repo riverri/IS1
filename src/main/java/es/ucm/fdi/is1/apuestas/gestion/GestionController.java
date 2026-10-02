@@ -351,12 +351,24 @@ public class GestionController {
     }
 
     @PostMapping("/eventos/{id}/resultado")
-    public String resultado(@PathVariable Long id, @RequestParam Resultado resultado,
+    public String resultado(@PathVariable Long id, @RequestParam(required = false) Resultado resultado,
+                            @RequestParam(required = false) Integer golesLocal,
+                            @RequestParam(required = false) Integer golesVisitante,
                             RedirectAttributes redireccion) {
         try {
-            int resueltas = resolucion.introducirResultado(id, resultado);
+            String guardado;
+            int resueltas;
+            if (golesLocal != null && golesVisitante != null) {
+                resueltas = resolucion.introducirMarcador(id, golesLocal, golesVisitante);
+                guardado = golesLocal + "-" + golesVisitante;
+            } else if (resultado != null) {
+                resueltas = resolucion.introducirResultado(id, resultado);
+                guardado = resultado.getDescripcion();
+            } else {
+                throw new IllegalArgumentException("Indica el marcador o el ganador");
+            }
             redireccion.addFlashAttribute("mensaje",
-                    "Resultado guardado: " + resultado.getDescripcion() + ". Apuestas resueltas: " + resueltas + ".");
+                    "Resultado guardado: " + guardado + ". Apuestas resueltas: " + resueltas + ".");
         } catch (IllegalStateException | IllegalArgumentException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }

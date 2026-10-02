@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.mercados.Candidato;
@@ -74,13 +75,22 @@ public class Apuesta {
 
     /** Añade una selección; no se admiten dos del mismo evento (HU-28). */
     public void anadir(Evento evento, Resultado pronostico, BigDecimal cuotaSeleccion) {
+        anadir(evento, new Seleccion(this, evento, pronostico, cuotaSeleccion));
+    }
+
+    /** Doble oportunidad, goles o ambos marcan (HU-52); también una sola por evento. */
+    public void anadir(Evento evento, Especial especial, BigDecimal cuotaSeleccion) {
+        anadir(evento, new Seleccion(this, evento, especial, cuotaSeleccion));
+    }
+
+    private void anadir(Evento evento, Seleccion nueva) {
         if (selecciones.stream().anyMatch(Seleccion::isLargoPlazo)) {
             throw new IllegalArgumentException("Las apuestas a largo plazo no se pueden combinar");
         }
         if (selecciones.stream().anyMatch(s -> s.esDe(evento))) {
             throw new IllegalArgumentException("No se pueden combinar dos selecciones del mismo evento");
         }
-        selecciones.add(new Seleccion(this, evento, pronostico, cuotaSeleccion));
+        selecciones.add(nueva);
         cuota = producto(selecciones.stream().map(Seleccion::getCuota).toList());
     }
 
@@ -116,7 +126,7 @@ public class Apuesta {
         if (estado == EstadoApuesta.CANCELADA) {
             return;
         }
-        seleccionDe(evento).resolver(resultado);
+        seleccionDe(evento).resolver(resultado, evento.getGolesLocal(), evento.getGolesVisitante());
         reevaluar();
     }
 
@@ -263,6 +273,11 @@ public class Apuesta {
 
     public EstadoApuesta getEstado() {
         return estado;
+    }
+
+    /** Lo abonado al usuario por esta apuesta: ganancia (con el importe) o devolución. */
+    public BigDecimal getPagado() {
+        return pagado;
     }
 
     public LocalDateTime getFecha() {

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza(${liga.nombre})}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <a class="enlace-volver" th:href="@{/ligas}">← Mis ligas</a>
+    <div class="titulo-pagina">
+        <h1 th:text="${liga.nombre}">Los de clase</h1>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <div class="tarjeta invitacion">
+        <div>
+            <span class="aviso">Código para invitar</span>
+            <strong class="codigo-liga" th:text="${liga.codigo}">K7M2QX</strong>
+        </div>
+        <p class="aviso" th:text="'Creada por ' + ${liga.creador.nombre} + ' · ' + ${#lists.size(liga.miembrosActivos)} + ' miembros'">Creada por Ana · 4 miembros</p>
+    </div>
+
+    <nav class="pestanas" aria-label="Ordenar por">
+        <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
+           th:href="@{/ligas/{id}(id=${liga.id}, orden=${c})}" th:text="${c.nombre}">Saldo</a>
+    </nav>
+
+    <ol class="ranking tarjeta">
+        <li th:each="p : ${puestos}" th:classappend="${p.soyYo} ? 'soy-yo'">
+            <span class="ranking-posicion" th:classappend="${p.posicion <= 3} ? ('podio-' + ${p.posicion})"
+                  th:text="${p.posicion}">1</span>
+            <span th:replace="~{fragments/comun :: avatar(${p.nombre}, 'escudo-pequeno')}"></span>
+            <span class="ranking-nombre">
+                <a th:href="@{/jugadores/{id}(id=${p.usuarioId})}" th:text="${p.nombre}">Ana</a>
+                <small th:if="${p.soyYo}">(tú)</small>
+            </span>
+            <span class="ranking-saldo" th:replace="~{fragments/ranking :: cifra(${p}, ${orden})}">1.250,00</span>
+        </li>
+    </ol>
+    <p class="aviso" th:if="${#lists.size(puestos) < 2}">Pasa el código a tus amigos: en cuanto se unan aparecerán aquí.</p>
+
+    <div class="acciones">
+        <form th:unless="${soyCreador}" th:action="@{/ligas/{id}/salir(id=${liga.id})}" method="post"
+              onsubmit="return confirm('¿Salir de la liga?');">
+            <button class="boton boton-secundario" type="submit">Salir de la liga</button>
+        </form>
+        <form th:if="${soyCreador}" th:action="@{/ligas/{id}/borrar(id=${liga.id})}" method="post"
+              onsubmit="return confirm('¿Borrar la liga? Sus miembros dejarán de verla.');">
+            <button class="boton boton-peligro" type="submit">Borrar la liga</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

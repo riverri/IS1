@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Ligas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Ligas con amigos</h1>
+    </div>
+    <p class="subtitulo">Crea una liga, pasa el código a tus amigos y competid en un ranking solo entre vosotros.</p>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <ul class="lista-ligas" th:unless="${#lists.isEmpty(ligas)}">
+        <li class="tarjeta" th:each="l : ${ligas}">
+            <a th:href="@{/ligas/{id}(id=${l.id})}">
+                <strong th:text="${l.nombre}">Los de clase</strong>
+                <span class="aviso" th:text="${#lists.size(l.miembrosActivos)} + ' miembros · código ' + ${l.codigo}">4 miembros · código K7M2QX</span>
+            </a>
+        </li>
+    </ul>
+    <div class="vacio" th:if="${#lists.isEmpty(ligas)}">
+        <p>Todavía no estás en ninguna liga.</p>
+    </div>
+
+    <div class="ligas-formularios">
+        <form class="tarjeta tarjeta-formulario formulario" th:action="@{/ligas}" method="post">
+            <h2>Crear una liga</h2>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" maxlength="40" required placeholder="Los de IS1">
+            <button class="boton boton-bloque" type="submit">Crear</button>
+        </form>
+        <form class="tarjeta tarjeta-formulario formulario" th:action="@{/ligas/unirse}" method="post">
+            <h2>Unirme con un código</h2>
+            <label for="codigo">Código de invitación</label>
+            <input id="codigo" name="codigo" maxlength="10" required autocomplete="off" class="codigo-liga" placeholder="K7M2QX">
+            <button class="boton boton-secundario boton-bloque" type="submit">Unirme</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

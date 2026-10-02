@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -17,8 +18,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 /**
- * Un pronóstico dentro de una apuesta, con la cuota fijada al apostar: el resultado de un evento (1/X/2)
- * o el ganador de un mercado a largo plazo (HU-44). Tiene evento y pronóstico, o candidato.
+ * Un pronóstico dentro de una apuesta, con la cuota fijada al apostar: el resultado de un evento (1/X/2),
+ * otro tipo de apuesta del partido (doble oportunidad, goles o ambos marcan, HU-52) o el ganador de un mercado
+ * a largo plazo (HU-44). Tiene evento y pronóstico, evento y especial, o candidato.
  */
 @Entity
 public class Seleccion {
@@ -35,6 +37,9 @@ public class Seleccion {
 
     @Enumerated(EnumType.STRING)
     private Resultado pronostico;
+
+    @Enumerated(EnumType.STRING)
+    private Especial especial;
 
     @ManyToOne
     private Candidato candidato;
@@ -54,6 +59,13 @@ public class Seleccion {
         this.apuesta = apuesta;
         this.evento = evento;
         this.pronostico = pronostico;
+        this.cuota = cuota;
+    }
+
+    Seleccion(Apuesta apuesta, Evento evento, Especial especial, BigDecimal cuota) {
+        this.apuesta = apuesta;
+        this.evento = evento;
+        this.especial = especial;
         this.cuota = cuota;
     }
 
@@ -88,8 +100,15 @@ public class Seleccion {
         estado = candidato.getId().equals(ganador.getId()) ? EstadoSeleccion.ACERTADA : EstadoSeleccion.FALLADA;
     }
 
-    void resolver(Resultado resultado) {
-        estado = pronostico == resultado ? EstadoSeleccion.ACERTADA : EstadoSeleccion.FALLADA;
+    /** Con el resultado del evento y, si se conoce, su marcador (las de goles se anulan sin él). */
+    void resolver(Resultado resultado, Integer golesLocal, Integer golesVisitante) {
+        Boolean acierto = especial != null ? especial.acierta(resultado, golesLocal, golesVisitante)
+                : Boolean.valueOf(pronostico == resultado);
+        if (acierto == null) {
+            estado = EstadoSeleccion.ANULADA;
+        } else {
+            estado = acierto ? EstadoSeleccion.ACERTADA : EstadoSeleccion.FALLADA;
+        }
     }
 
     void anular() {
@@ -111,6 +130,9 @@ public class Seleccion {
         if (candidato != null) {
             return candidato.getNombre();
         }
+        if (especial != null) {
+            return especial.getDescripcion();
+        }
         return switch (pronostico) {
             case LOCAL -> evento.getLocal().getNombre();
             case EMPATE -> "Empate";
@@ -118,9 +140,12 @@ public class Seleccion {
         };
     }
 
-    /** "1", "X", "2" o un trofeo en las apuestas a largo plazo. */
+    /** "1", "X", "2", el del tipo especial ("1X", "+2,5"…) o un trofeo en las apuestas a largo plazo. */
     public String getSimbolo() {
-        return candidato != null ? "🏆" : pronostico.getSimbolo();
+        if (candidato != null) {
+            return "🏆";
+        }
+        return especial != null ? especial.getSimbolo() : pronostico.getSimbolo();
     }
 
     /** "Real Madrid – Getafe CF" o el nombre del mercado ("Balón de Oro 2027"). */
@@ -150,6 +175,10 @@ public class Seleccion {
 
     public Resultado getPronostico() {
         return pronostico;
+    }
+
+    public Especial getEspecial() {
+        return especial;
     }
 
     public Candidato getCandidato() {

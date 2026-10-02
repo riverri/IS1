@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import es.ucm.fdi.is1.apuestas.apuesta.Apuesta;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
 import es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta;
+import es.ucm.fdi.is1.apuestas.apuesta.SeleccionPedida;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
@@ -131,6 +133,51 @@ class SincronizacionServiceTest {
 
         // Volver a sincronizar no vuelve a pagar
         assertThat(sincronizacion.sincronizar().getResultados()).isZero();
+    }
+
+    @Test
+    void conElMarcadorSeResuelvenTambienLasApuestasDeGoles() {
+        LocalDateTime fecha = LocalDateTime.now().plusHours(1).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        devuelve(partido(900006, fecha, "TIMED", null, elche, celta));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900006L).orElseThrow();
+        Apuesta mas = apuestas.apostar("usuario@apuestas.es",
+                List.of(new SeleccionPedida(evento.getId(), null, Especial.MAS_2_5, null)), new BigDecimal("10"));
+        Apuesta ambos = apuestas.apostar("usuario@apuestas.es",
+                List.of(new SeleccionPedida(evento.getId(), null, Especial.AMBOS_SI, null)), new BigDecimal("10"));
+
+        devuelve(new PartidoApi(900006L, utc(fecha), "FINISHED", 10, elche, celta,
+                new PartidoApi.MarcadorApi("AWAY_TEAM", "REGULAR", new PartidoApi.GolesApi(0, 3))));
+        sincronizacion.sincronizar();
+
+        assertThat(evento.getGolesLocal()).isZero();
+        assertThat(evento.getGolesVisitante()).isEqualTo(3);
+        assertThat(evento.getResultado()).isEqualTo(Resultado.VISITANTE);
+        assertThat(mas.getEstado()).isEqualTo(EstadoApuesta.GANADA);
+        assertThat(ambos.getEstado()).isEqualTo(EstadoApuesta.PERDIDA);
+        assertThat(sincronizacion.sincronizar().getResultados()).isZero();
+    }
+
+    @Test
+    void conProrrogaSoloSeUsaElGanador() {
+        LocalDateTime fecha = LocalDateTime.now().plusHours(1).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        devuelve(partido(900007, fecha, "TIMED", null, elche, celta));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900007L).orElseThrow();
+        Apuesta mas = apuestas.apostar("usuario@apuestas.es",
+                List.of(new SeleccionPedida(evento.getId(), null, Especial.MAS_2_5, null)), new BigDecimal("10"));
+
+        devuelve(new PartidoApi(900007L, utc(fecha), "FINISHED", 10, elche, celta,
+                new PartidoApi.MarcadorApi("HOME_TEAM", "EXTRA_TIME", new PartidoApi.GolesApi(2, 1))));
+        sincronizacion.sincronizar();
+
+        assertThat(evento.getResultado()).isEqualTo(Resultado.LOCAL);
+        assertThat(evento.isConMarcador()).isFalse();
+        assertThat(mas.getEstado()).isEqualTo(EstadoApuesta.ANULADA);
     }
 
     @Test
