@@ -37,6 +37,7 @@ public class RankingService {
         record Fila(Usuario usuario, Estadisticas estadisticas) {
         }
         List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
+                .filter(u -> !u.isEliminado())
                 .map(u -> new Fila(u, Estadisticas.de(porUsuario.getOrDefault(u.getId(), List.of()))))
                 .toList());
 

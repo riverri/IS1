@@ -48,6 +48,9 @@
             </th:block>
         </nav>
     </div>
+    <p class="aviso-pausa" th:if="${pausaHasta != null}">
+        <a th:href="@{/cuenta#juego-responsable}" th:text="'Apuestas en pausa hasta el ' + ${#temporals.format(pausaHasta, 'dd/MM/yyyy HH:mm')}">Apuestas en pausa hasta el 09/10/2026 18:00</a>
+    </p>
     <p class="aviso-flotante" th:if="${mensajeBoleto != null}" th:text="${mensajeBoleto}">Añadido al boleto</p>
     <p class="aviso-flotante aviso-flotante-error" th:if="${errorBoleto != null}" th:text="${errorBoleto}">Error</p>
     <a class="barra-boleto" th:if="${boletoResumen != null and !#lists.isEmpty(boletoResumen.lineas) and ocultarBarraBoleto == null}" th:href="@{/boleto}">

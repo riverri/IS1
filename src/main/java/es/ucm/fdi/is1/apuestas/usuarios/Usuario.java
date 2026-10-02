@@ -39,6 +39,21 @@ public class Usuario {
     @Column(nullable = false)
     private LocalDateTime ultimaRecarga;
 
+    /** Juego responsable (HU-10): máximo apostado en 24 horas; null = sin límite. */
+    @Column(precision = 12, scale = 2)
+    private BigDecimal limiteDiario;
+
+    /** Juego responsable (HU-10): máximo apostado en 7 días; null = sin límite. */
+    @Column(precision = 12, scale = 2)
+    private BigDecimal limiteSemanal;
+
+    /** Juego responsable (HU-10): no puede apostar hasta esta fecha. */
+    private LocalDateTime pausaHasta;
+
+    /** Cuenta eliminada y anonimizada (HU-18). */
+    @Column(nullable = false)
+    private boolean eliminado;
+
     protected Usuario() {
         // requerido por JPA
     }
@@ -100,6 +115,57 @@ public class Usuario {
 
     public LocalDateTime proximaRecarga(Duration periodo) {
         return ultimaRecarga.plus(periodo);
+    }
+
+    /** HU-10: null quita el límite. No se comprueba aquí que el diario no supere al semanal. */
+    public void fijarLimites(BigDecimal diario, BigDecimal semanal) {
+        limiteDiario = diario;
+        limiteSemanal = semanal;
+    }
+
+    /**
+     * HU-10: pausa las apuestas hasta la fecha indicada. Una pausa no se puede acortar:
+     * si ya había una más larga, se mantiene.
+     */
+    public void pausarHasta(LocalDateTime hasta) {
+        if (pausaHasta == null || hasta.isAfter(pausaHasta)) {
+            pausaHasta = hasta;
+        }
+    }
+
+    public boolean enPausa(LocalDateTime ahora) {
+        return pausaHasta != null && pausaHasta.isAfter(ahora);
+    }
+
+    /**
+     * HU-18: borra los datos personales y deja la cuenta inutilizable. Se conserva la fila para que
+     * las apuestas ya hechas y su historial sigan cuadrando.
+     */
+    public void eliminar(String hashInutilizable) {
+        email = "eliminado-" + id + "@apuestas.invalid";
+        nombre = "Usuario eliminado";
+        passwordHash = hashInutilizable;
+        saldo = BigDecimal.ZERO;
+        limiteDiario = null;
+        limiteSemanal = null;
+        pausaHasta = null;
+        eliminado = true;
+    }
+
+    public BigDecimal getLimiteDiario() {
+        return limiteDiario;
+    }
+
+    public BigDecimal getLimiteSemanal() {
+        return limiteSemanal;
+    }
+
+    public LocalDateTime getPausaHasta() {
+        return pausaHasta;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
     }
 
     public boolean isCreador() {

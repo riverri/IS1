@@ -138,4 +138,26 @@ class FichaEquipoWebTest {
                 .andExpect(content().string(containsString("Cara a cara")))
                 .andExpect(content().string(containsString("Sevilla FC – Getafe CF")));
     }
+
+    @Test
+    void elGraficoDeEvolucionAcumulaLosPuntos() throws Exception {
+        GraficoEvolucion grafico = fichas.ficha(getafe.getId()).evolucion();
+
+        // Victoria, empate, derrota, derrota: 3, 4, 4, 4 puntos
+        assertThat(grafico.puntos()).hasSize(4);
+        assertThat(grafico.puntos()).extracting(GraficoEvolucion.Marca::clase)
+                .containsExactly("victoria", "empate", "derrota", "derrota");
+        assertThat(grafico.puntos().get(1).texto()).contains("Empate contra Sevilla FC").endsWith("4 puntos");
+        assertThat(grafico.puntos().get(0).y()).isGreaterThan(grafico.puntos().get(1).y());
+        assertThat(grafico.linea()).startsWith("M").contains(" L");
+
+        mvc.perform(get("/equipos/{id}", getafe.getId()))
+                .andExpect(content().string(containsString("Evolución")))
+                .andExpect(content().string(containsString("grafico-linea")));
+    }
+
+    @Test
+    void conMenosDeDosPartidosNoHayGrafico() {
+        assertThat(fichas.ficha(equipos.findByNombre("Levante UD").orElseThrow().getId()).evolucion()).isNull();
+    }
 }
