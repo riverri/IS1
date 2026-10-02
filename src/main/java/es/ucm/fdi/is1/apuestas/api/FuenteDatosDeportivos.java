@@ -7,4 +7,7 @@ import java.util.List;
 public interface FuenteDatosDeportivos {
 
     List<PartidoApi> partidos(String competicion, LocalDate desde, LocalDate hasta);
+
+    /** Equipos de una competición con sus plantillas. */
+    List<PlantillaApi> plantillas(String competicion);
 }

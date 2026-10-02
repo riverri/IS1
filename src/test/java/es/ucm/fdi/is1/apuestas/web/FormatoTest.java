@@ -31,4 +31,11 @@ class FormatoTest {
         assertThat(formato.iniciales("Racing de Santander")).isEqualTo("RS");
         assertThat(formato.iniciales("Carlos Alcaraz")).isEqualTo("CA");
     }
+
+    @Test
+    void apellidoParaElCampo() {
+        assertThat(formato.apellido("Lamine Yamal")).isEqualTo("Yamal");
+        assertThat(formato.apellido("Pedri")).isEqualTo("Pedri");
+        assertThat(formato.apellido("  Frenkie de  Jong ")).isEqualTo("de Jong");
+    }
 }

@@ -72,4 +72,39 @@ class FootballDataClienteTest {
         assertThat(primero.score().winner()).isNull();
         assertThat(partidos.get(1).score().winner()).isEqualTo("HOME_TEAM");
     }
+
+    @Test
+    void pideLasPlantillasDeUnaCompeticion() {
+        RestClient.Builder builder = RestClient.builder();
+        MockRestServiceServer servidor = MockRestServiceServer.bindTo(builder).build();
+        ApiProperties propiedades = new ApiProperties("https://api.football-data.org/v4", "mi-clave",
+                List.of("PD"), 7, 21, "Europe/Madrid");
+        FootballDataCliente cliente = new FootballDataCliente(builder, propiedades);
+        servidor.expect(requestTo("https://api.football-data.org/v4/competitions/PD/teams"))
+                .andExpect(header("X-Auth-Token", "mi-clave"))
+                .andRespond(withSuccess("""
+                        {
+                          "count": 1,
+                          "teams": [
+                            {"id": 82, "name": "Getafe CF", "shortName": "Getafe", "tla": "GET",
+                             "coach": {"id": 1, "name": "Entrenador"},
+                             "squad": [
+                               {"id": 9001, "name": "Portero Uno", "position": "Goalkeeper",
+                                "dateOfBirth": "2000-05-17", "nationality": "Spain", "shirtNumber": 13},
+                               {"id": 9002, "name": "Defensa Dos", "position": "Centre-Back",
+                                "dateOfBirth": "1998-01-02", "nationality": "Spain"}
+                             ]}
+                          ]
+                        }
+                        """, MediaType.APPLICATION_JSON));
+
+        List<PlantillaApi> plantillas = cliente.plantillas("PD");
+
+        servidor.verify();
+        assertThat(plantillas).hasSize(1);
+        assertThat(plantillas.get(0).id()).isEqualTo(82);
+        assertThat(plantillas.get(0).squad()).hasSize(2);
+        assertThat(plantillas.get(0).squad().get(0).shirtNumber()).isEqualTo(13);
+        assertThat(plantillas.get(0).squad().get(1).position()).isEqualTo("Centre-Back");
+    }
 }

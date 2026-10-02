@@ -161,6 +161,14 @@
 **HU-32**: Como usuario, quiero ver la evolución de un equipo a lo largo de la temporada en un gráfico, para detectar tendencias (rachas, mejora o bajón). *(Fila 20)*
 - Dado que entro en la ficha de un equipo, cuando abro la pestaña de evolución, entonces veo un gráfico con sus puntos o su posición jornada a jornada.
 
+**HU-49**: Como usuario, quiero ver la plantilla de cada equipo con la nota de cada jugador y su alineación probable, para saber con quién juega antes de apostar. *(Fila 32)*
+- Dado que entro en la ficha de un equipo de fútbol con jugadores suficientes, entonces veo la alineación probable (4-3-3) en un campo, con los jugadores de mejor nota en cada posición.
+- Dado que el equipo tiene jugadores, entonces veo la plantilla agrupada por posición, con dorsal, nacionalidad, edad y nota.
+
+**HU-50**: Como creador de apuestas, quiero descargar las plantillas reales desde la API y añadir, puntuar o quitar jugadores a mano, para mantenerlas al día. *(Fila 32)*
+- Dado que la API está configurada, cuando pulso *Descargar plantillas*, entonces se crean o actualizan los jugadores de nuestros equipos sin cambiar las notas que ya puse.
+- Dado que un jugador deja el equipo en la API, entonces desaparece de la plantilla; los jugadores añadidos a mano no se tocan.
+
 **HU-33**: Como usuario, quiero comparar cara a cara a los dos rivales de un evento, para decidir mi apuesta con más información. *(Fila 20)*
 - Dado que entro en un evento, cuando pulso "comparar", entonces veo el historial de enfrentamientos entre ambos y sus estadísticas principales una junto a otra.
 - Dado que no hay enfrentamientos previos, entonces se indica y se muestran solo las estadísticas de cada uno.
