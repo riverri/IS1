@@ -3,10 +3,14 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
+import es.ucm.fdi.is1.apuestas.cuotas.Cuotas;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
@@ -19,11 +23,14 @@ public class ResolucionService {
     private final EventoRepository eventos;
     private final SeleccionRepository selecciones;
     private final AvisosApuestas avisos;
+    private final CalculadoraCuotas calculadora;
 
-    public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones, AvisosApuestas avisos) {
+    public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones, AvisosApuestas avisos,
+                             CalculadoraCuotas calculadora) {
         this.eventos = eventos;
         this.selecciones = selecciones;
         this.avisos = avisos;
+        this.calculadora = calculadora;
     }
 
     @Transactional(readOnly = true)
@@ -90,8 +97,9 @@ public class ResolucionService {
     }
 
     /**
-     * Importe total y número de apuestas de cada resultado posible del evento (HU-06).
-     * En una combinada cuenta su importe completo, porque depende de este resultado.
+     * Importe total y número de apuestas de cada opción del evento (HU-06): primero el 1X2 y después,
+     * en fútbol, la doble oportunidad, los goles y ambos marcan (HU-52).
+     * En una combinada cuenta su importe completo, porque depende de esta selección.
      */
     @Transactional(readOnly = true)
     public List<VolumenResultado> volumen(Long eventoId) {
@@ -100,16 +108,29 @@ public class ResolucionService {
                 .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA
                         && s.getApuesta().getEstado() != EstadoApuesta.ANULADA)
                 .toList();
+        Cuotas cuotas = calculadora.calcular(evento);
         List<VolumenResultado> volumen = new ArrayList<>();
         for (Resultado resultado : Resultado.values()) {
             if (resultado == Resultado.EMPATE && !evento.getDeporte().isAdmiteEmpate()) {
                 continue;
             }
-            List<Seleccion> aEste = delEvento.stream().filter(s -> s.getPronostico() == resultado).toList();
-            BigDecimal total = aEste.stream().map(s -> s.getApuesta().getImporte())
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            volumen.add(new VolumenResultado(resultado, total, aEste.size()));
+            volumen.add(fila(resultado.getSimbolo(), resultado.getDescripcion(), cuotas.de(resultado),
+                    delEvento.stream().filter(s -> s.getPronostico() == resultado).toList()));
+        }
+        Map<Especial, BigDecimal> especiales = calculadora.especiales(evento);
+        for (Especial especial : Especial.values()) {
+            List<Seleccion> aEste = delEvento.stream().filter(s -> s.getEspecial() == especial).toList();
+            if (especiales.containsKey(especial) || !aEste.isEmpty()) {
+                volumen.add(fila(especial.getSimbolo(), especial.getDescripcion(), especiales.get(especial), aEste));
+            }
         }
         return volumen;
+    }
+
+    private static VolumenResultado fila(String simbolo, String descripcion, BigDecimal cuota,
+                                         List<Seleccion> aEsta) {
+        BigDecimal total = aEsta.stream().map(s -> s.getApuesta().getImporte())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new VolumenResultado(simbolo, descripcion, cuota, total, aEsta.size());
     }
 }

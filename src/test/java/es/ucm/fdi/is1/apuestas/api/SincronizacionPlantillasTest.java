@@ -94,4 +94,31 @@ class SincronizacionPlantillasTest {
         assertThat(jugadores.findByIdExterno(9002)).isEmpty();
         assertThat(jugadores.findById(manual.getId())).isPresent();
     }
+
+    @Test
+    void lasPlantillasDeLosEquiposDeChampionsSalenDeSuLiga() {
+        Equipo bayern = equipos.findByNombre("Bayern de Múnich").orElseThrow();
+        devuelve();
+        when(fuente.plantillas(eq("BL1"))).thenReturn(List.of(new PlantillaApi(bayern.getIdExterno(),
+                "FC Bayern München", "Bayern", List.of(jugador(9201, "Portero Bávaro", "Goalkeeper", null)))));
+
+        sincronizacion.sincronizar();
+
+        Jugador portero = jugadores.findByIdExterno(9201).orElseThrow();
+        assertThat(portero.getEquipo()).isEqualTo(bayern);
+        assertThat(portero.getDorsal()).as("el plan gratuito no da dorsales").isNull();
+    }
+
+    @Test
+    void unaPlantillaVaciaNoBorraLaQueYaHay() {
+        devuelve(new PlantillaApi(getafe.getIdExterno(), "Getafe CF", "Getafe", List.of(
+                jugador(9001, "Portero Uno", "Goalkeeper", 13))));
+        sincronizacion.sincronizar();
+
+        devuelve(new PlantillaApi(getafe.getIdExterno(), "Getafe CF", "Getafe", List.of()));
+        SincronizacionPlantillas.Resumen resumen = sincronizacion.sincronizar();
+
+        assertThat(resumen.retirados()).isZero();
+        assertThat(jugadores.findByIdExterno(9001)).isPresent();
+    }
 }

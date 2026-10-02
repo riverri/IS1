@@ -17,3 +17,31 @@ jobs:
           cache: maven
       - name: Compilar y ejecutar pruebas
         run: ./mvnw -B verify
+
+  # Las mismas pruebas contra PostgreSQL, la base de datos del servidor:
+  # comprueba que las migraciones de db/migration/postgresql siguen al día con las entidades.
+  postgresql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: apuestas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/apuestas
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Ejecutar pruebas con PostgreSQL
+        run: ./mvnw -B test

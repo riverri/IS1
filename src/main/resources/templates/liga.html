@@ -16,7 +16,7 @@
             <span class="aviso">Código para invitar</span>
             <strong class="codigo-liga" th:text="${liga.codigo}">K7M2QX</strong>
         </div>
-        <p class="aviso" th:text="'Creada por ' + ${liga.creador.nombre} + ' · ' + ${#lists.size(liga.miembrosActivos)} + ' miembros'">Creada por Ana · 4 miembros</p>
+        <p class="aviso" th:with="n=${#lists.size(liga.miembrosActivos)}" th:text="'Creada por ' + ${liga.creador.nombre} + ' · ' + ${n} + (${n == 1} ? ' miembro' : ' miembros')">Creada por Ana · 4 miembros</p>
     </div>
 
     <nav class="pestanas" aria-label="Ordenar por">
