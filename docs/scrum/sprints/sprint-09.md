@@ -1,4 +1,4 @@
-# Sprint 9 · 02/10 – 16/10
+# Sprint 9 · 02/10 (cerrado antes de plazo)
 
 ## Sprint Planning (02/10)
 - **Asistentes:** Jing Li
@@ -68,12 +68,12 @@
 - **02/10**: gráfico de evolución, juego responsable, eliminar la cuenta, migración V5, pruebas y actualización de los diagramas y las métricas.
 - **02/10**: interruptor del juego responsable en Gestión y rediseño visual.
 
-## Sprint Review (16/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+## Sprint Review (02/10)
+- **Historias completadas:** HU-32, HU-10 (con el interruptor en Gestión) y HU-18, más el rediseño visual (16 puntos).
+- **Historias no completadas:** ninguna.
+- **Feedback del PO:** poder entrar en cada equipo y ver sus jugadores, su alineación y su puntuación. Entra en el backlog como fila 32 (HU-49 y HU-50).
 
-## Retrospectiva (16/10)
+## Retrospectiva (02/10)
 - **Bien:**
 - **A mejorar:**
 - **Acciones para el próximo sprint:**

@@ -16,9 +16,14 @@
             <p class="aviso" th:if="${apiConfigurada}">Conectada: LaLiga y Champions se sincronizan solas cada 30 minutos.</p>
             <p class="aviso" th:unless="${apiConfigurada}">Sin configurar: define la variable de entorno <code>FOOTBALL_DATA_TOKEN</code> (ver README).</p>
         </div>
-        <form th:action="@{/gestion/sincronizar}" method="post">
-            <button class="boton" type="submit" th:disabled="${!apiConfigurada}">Sincronizar ahora</button>
-        </form>
+        <div class="acciones">
+            <form th:action="@{/gestion/sincronizar-plantillas}" method="post">
+                <button class="boton boton-secundario" type="submit" th:disabled="${!apiConfigurada}">Descargar plantillas</button>
+            </form>
+            <form th:action="@{/gestion/sincronizar}" method="post">
+                <button class="boton" type="submit" th:disabled="${!apiConfigurada}">Sincronizar ahora</button>
+            </form>
+        </div>
     </div>
 
     <div class="estadisticas">

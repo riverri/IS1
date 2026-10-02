@@ -67,10 +67,13 @@ public class UsuarioActualAdvice {
         return principal == null ? 0L : notificaciones.sinLeer(principal.getName());
     }
 
-    /** El boleto en construcción, para marcar las cuotas elegidas en el catálogo. */
+    /**
+     * El boleto en construcción, para marcar las cuotas elegidas en el catálogo. Los visitantes no tienen
+     * boleto: así no se les crea una sesión, que fallaría si parte de la página ya se ha enviado al navegador.
+     */
     @ModelAttribute("boleto")
-    public Boleto boleto() {
-        return boleto;
+    public Boleto boleto(Principal principal) {
+        return principal == null ? null : boleto;
     }
 
     /** Resumen para la barra del boleto: número de selecciones y multiplicador. Null si está vacío. */

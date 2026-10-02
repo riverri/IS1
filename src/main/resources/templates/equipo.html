@@ -63,6 +63,52 @@
         </figure>
     </th:block>
 
+    <th:block th:if="${ficha.alineacion != null}" th:with="al=${ficha.alineacion}">
+        <h2>Alineación probable</h2>
+        <div class="alineacion">
+            <div class="campo" role="img" th:aria-label="'Alineación probable en ' + ${al.sistema}">
+                <div class="campo-linea" th:each="linea : ${al.lineas}">
+                    <div class="campo-jugador" th:each="j : ${linea.jugadores}"
+                         th:title="${j.nombre} + ' · ' + ${j.posicion.nombre} + ' · nota ' + ${#numbers.formatDecimal(j.nota, 1, 1, 'COMMA')}">
+                        <span class="campo-camiseta" th:text="${j.dorsal != null} ? ${j.dorsal} : ${linea.posicion.abreviatura}">10</span>
+                        <span class="campo-nombre" th:text="${@formato.apellido(j.nombre)}">Yamal</span>
+                        <span class="campo-nota" th:text="${#numbers.formatDecimal(j.nota, 1, 1, 'COMMA')}">8,9</span>
+                    </div>
+                </div>
+            </div>
+            <aside class="tarjeta alineacion-resumen">
+                <span class="aviso">Sistema</span>
+                <strong th:text="${al.sistema}">4-3-3</strong>
+                <span class="aviso">Nota media del once</span>
+                <strong class="nota-grande" th:text="${#numbers.formatDecimal(al.notaMedia, 1, 1, 'COMMA')}">7,4</strong>
+                <p class="aviso">Salen los jugadores con mejor nota en cada posición; a igual nota, el dorsal más bajo.</p>
+            </aside>
+        </div>
+    </th:block>
+
+    <th:block th:unless="${equipo.deporte.individual}">
+        <h2>Plantilla</h2>
+        <div class="vacio" th:if="${#maps.isEmpty(ficha.plantilla)}">
+            <p>Todavía no hay jugadores de este equipo. Se descargan de la API o los añade el creador de apuestas en Gestión.</p>
+        </div>
+        <div class="plantilla" th:unless="${#maps.isEmpty(ficha.plantilla)}">
+            <section class="tarjeta plantilla-grupo" th:each="grupo : ${ficha.plantilla}">
+                <h3 th:text="${grupo.key.plural}">Porteros</h3>
+                <ul>
+                    <li th:each="j : ${grupo.value}">
+                        <span class="plantilla-dorsal" th:text="${j.dorsal != null} ? ${j.dorsal} : '–'">1</span>
+                        <span class="plantilla-nombre">
+                            <strong th:text="${j.nombre}">Joan García</strong>
+                            <small th:text="${j.nacionalidad != null ? j.nacionalidad : ''} + ${j.edad != null ? ' · ' + j.edad + ' años' : ''}">España · 25 años</small>
+                        </span>
+                        <span class="nota" th:classappend="${j.nota >= 8} ? 'nota-alta' : (${j.nota >= 6.5} ? 'nota-media' : 'nota-baja')"
+                              th:text="${#numbers.formatDecimal(j.nota, 1, 1, 'COMMA')}">7,5</span>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </th:block>
+
     <th:block th:unless="${#lists.isEmpty(ficha.clasificaciones)}">
         <h2>Clasificación</h2>
         <p class="aviso">Calculada con los resultados registrados en la web: 3 puntos por victoria y 1 por empate.</p>

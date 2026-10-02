@@ -27,4 +27,13 @@ public class FootballDataCliente implements FuenteDatosDeportivos {
                 .body(PartidoApi.Respuesta.class);
         return respuesta == null || respuesta.matches() == null ? List.of() : respuesta.matches();
     }
+
+    @Override
+    public List<PlantillaApi> plantillas(String competicion) {
+        PlantillaApi.Respuesta respuesta = http.get()
+                .uri("/competitions/{codigo}/teams", competicion)
+                .retrieve()
+                .body(PlantillaApi.Respuesta.class);
+        return respuesta == null || respuesta.teams() == null ? List.of() : respuesta.teams();
+    }
 }

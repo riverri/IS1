@@ -12,11 +12,28 @@ public class SincronizacionProgramada {
     private static final Logger LOG = LoggerFactory.getLogger(SincronizacionProgramada.class);
 
     private final SincronizacionService sincronizacion;
+    private final SincronizacionPlantillas plantillas;
     private final ApiProperties propiedades;
 
-    public SincronizacionProgramada(SincronizacionService sincronizacion, ApiProperties propiedades) {
+    public SincronizacionProgramada(SincronizacionService sincronizacion, SincronizacionPlantillas plantillas,
+                                    ApiProperties propiedades) {
         this.sincronizacion = sincronizacion;
+        this.plantillas = plantillas;
         this.propiedades = propiedades;
+    }
+
+    /** Las plantillas cambian poco: una vez al día (y al poco de arrancar). */
+    @Scheduled(initialDelayString = "${apuestas.api.retraso-inicial-plantillas:PT2M}",
+            fixedDelayString = "${apuestas.api.intervalo-plantillas:P1D}")
+    public void sincronizarPlantillas() {
+        if (!propiedades.configurada()) {
+            return;
+        }
+        try {
+            plantillas.sincronizar();
+        } catch (RuntimeException e) {
+            LOG.error("Error al descargar las plantillas", e);
+        }
     }
 
     @Scheduled(initialDelayString = "${apuestas.api.retraso-inicial:PT30S}",
