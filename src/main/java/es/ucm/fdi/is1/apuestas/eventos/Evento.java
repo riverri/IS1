@@ -46,6 +46,11 @@ public class Evento {
     @Enumerated(EnumType.STRING)
     private Resultado resultado;
 
+    /** Marcador final, si se conoce (HU-52). Sin él, las apuestas de goles se anulan. */
+    private Integer golesLocal;
+
+    private Integer golesVisitante;
+
     /** Identificador del partido en la API de datos deportivos. */
     @Column(unique = true)
     private Long idExterno;
@@ -78,7 +83,22 @@ public class Evento {
             throw new IllegalArgumentException("En " + getDeporte().getNombre() + " no hay empate");
         }
         resultado = resultadoFinal;
+        golesLocal = null;
+        golesVisitante = null;
         estado = EstadoEvento.FINALIZADO;
+    }
+
+    /** Fija (o corrige) el marcador final; el resultado sale de él (HU-52). Solo en fútbol. */
+    public void finalizarConMarcador(int local, int visitante) {
+        if (local < 0 || visitante < 0) {
+            throw new IllegalArgumentException("Los goles no pueden ser negativos");
+        }
+        if (!getDeporte().isAdmiteEmpate()) {
+            throw new IllegalArgumentException("En " + getDeporte().getNombre() + " solo se indica el ganador");
+        }
+        finalizar(local > visitante ? Resultado.LOCAL : local < visitante ? Resultado.VISITANTE : Resultado.EMPATE);
+        golesLocal = local;
+        golesVisitante = visitante;
     }
 
     /** Deja de admitir apuestas nuevas hasta que se reactive (HU-05). */
@@ -110,6 +130,18 @@ public class Evento {
 
     public Resultado getResultado() {
         return resultado;
+    }
+
+    public Integer getGolesLocal() {
+        return golesLocal;
+    }
+
+    public Integer getGolesVisitante() {
+        return golesVisitante;
+    }
+
+    public boolean isConMarcador() {
+        return golesLocal != null && golesVisitante != null;
     }
 
     public Deporte getDeporte() {

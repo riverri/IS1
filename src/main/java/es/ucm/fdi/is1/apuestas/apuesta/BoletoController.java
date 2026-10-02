@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 
@@ -40,13 +42,24 @@ public class BoletoController {
         return "boleto";
     }
 
-    /** Se llega pulsando una cuota del catálogo; vuelve a la página de la que se venía. */
-    @GetMapping("/anadir")
-    public String anadir(@RequestParam("evento") Long eventoId, @RequestParam Resultado resultado,
+    /**
+     * Se llega pulsando una cuota del catálogo, o con el botón "Añadir al boleto" de la página del partido,
+     * que envía la opción elegida ({@code opcion}); vuelve a la página de la que se venía.
+     */
+    @RequestMapping(path = "/anadir", method = {RequestMethod.GET, RequestMethod.POST})
+    public String anadir(@RequestParam("evento") Long eventoId, @RequestParam(required = false) Resultado resultado,
+                         @RequestParam(required = false) Especial especial,
+                         @RequestParam(required = false) String opcion,
                          @RequestHeader(value = "Referer", required = false) String referer,
                          RedirectAttributes redireccion) {
+        if (opcion != null) {
+            ApuestaForm elegida = new ApuestaForm();
+            elegida.setOpcion(opcion);
+            resultado = elegida.getResultado();
+            especial = elegida.getEspecial();
+        }
         try {
-            boletos.anadir(boleto, eventoId, resultado);
+            boletos.anadir(boleto, eventoId, resultado, especial);
             redireccion.addFlashAttribute("mensajeBoleto", "Añadido al boleto");
         } catch (IllegalArgumentException | ResultadoNoValidoException e) {
             redireccion.addFlashAttribute("errorBoleto", e.getMessage());

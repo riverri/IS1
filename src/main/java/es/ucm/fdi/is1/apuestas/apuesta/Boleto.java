@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 
 /**
@@ -23,17 +24,38 @@ public class Boleto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** Una selección elegida, con la cuota que vio el usuario al añadirla. */
-    public record Linea(Long eventoId, Resultado resultado, BigDecimal cuotaVista) implements Serializable {
+    /**
+     * Una selección elegida, con la cuota que vio el usuario al añadirla: un resultado (1X2)
+     * o un tipo especial (HU-52).
+     */
+    public record Linea(Long eventoId, Resultado resultado, Especial especial, BigDecimal cuotaVista)
+            implements Serializable {
+
+        public Linea(Long eventoId, Resultado resultado, BigDecimal cuotaVista) {
+            this(eventoId, resultado, null, cuotaVista);
+        }
+
+        /** "LOCAL", "EMPATE"… o "MAS_2_5", "AMBOS_SI"… */
+        String opcion() {
+            return especial != null ? especial.name() : resultado.name();
+        }
     }
 
     private final List<Linea> lineas = new ArrayList<>();
 
     void anadir(Long eventoId, Resultado resultado, BigDecimal cuotaVista) {
-        if (contiene(eventoId)) {
+        anadir(new Linea(eventoId, resultado, cuotaVista));
+    }
+
+    void anadir(Long eventoId, Especial especial, BigDecimal cuotaVista) {
+        anadir(new Linea(eventoId, null, especial, cuotaVista));
+    }
+
+    private void anadir(Linea linea) {
+        if (contiene(linea.eventoId())) {
             throw new IllegalArgumentException("Ya tienes una selección de ese partido en el boleto");
         }
-        lineas.add(new Linea(eventoId, resultado, cuotaVista));
+        lineas.add(linea);
     }
 
     void quitar(Long eventoId) {
@@ -41,7 +63,7 @@ public class Boleto implements Serializable {
     }
 
     void actualizarCuota(Long eventoId, BigDecimal cuota) {
-        lineas.replaceAll(l -> l.eventoId().equals(eventoId) ? new Linea(eventoId, l.resultado(), cuota) : l);
+        lineas.replaceAll(l -> l.eventoId().equals(eventoId) ? new Linea(eventoId, l.resultado(), l.especial(), cuota) : l);
     }
 
     void vaciar() {
@@ -52,9 +74,12 @@ public class Boleto implements Serializable {
         return lineas.stream().anyMatch(l -> l.eventoId().equals(eventoId));
     }
 
-    /** Para marcar en el catálogo la cuota elegida: {@code ${boleto.contiene(ev.id, 'LOCAL')}}. */
-    public boolean contiene(Long eventoId, String resultado) {
-        return lineas.stream().anyMatch(l -> l.eventoId().equals(eventoId) && l.resultado().name().equals(resultado));
+    /**
+     * Para marcar en el catálogo la cuota elegida: {@code ${boleto.contiene(ev.id, 'LOCAL')}}
+     * o {@code ${boleto.contiene(ev.id, 'MAS_2_5')}}.
+     */
+    public boolean contiene(Long eventoId, String opcion) {
+        return lineas.stream().anyMatch(l -> l.eventoId().equals(eventoId) && l.opcion().equals(opcion));
     }
 
     public List<Linea> getLineas() {

@@ -21,9 +21,9 @@
 
         <ul class="lineas-boleto tarjeta">
             <li th:each="l : ${vista.lineas}">
-                <span th:replace="~{fragments/comun :: escudo(${l.resultado.name() == 'VISITANTE'} ? ${l.evento.visitante} : ${l.evento.local}, '')}"></span>
+                <span th:replace="~{fragments/comun :: escudo(${l.equipo}, '')}"></span>
                 <div class="linea-texto">
-                    <strong th:text="${l.resultado.simbolo} + ' · ' + ${l.descripcionPronostico}">1 · Real Madrid</strong>
+                    <strong th:text="${l.simbolo} + ' · ' + ${l.descripcionPronostico}">1 · Real Madrid</strong>
                     <small th:text="${l.evento.local.nombre} + ' – ' + ${l.evento.visitante.nombre} + ' · ' + ${@formato.dia(l.evento.fechaHora)}">Real Madrid – Getafe CF · Sáb 10 oct</small>
                 </div>
                 <span class="linea-cuota" th:classappend="${l.cambiada} ? 'cambiada'" th:text="${@formato.cuota(l.cuota)}">1,85</span>

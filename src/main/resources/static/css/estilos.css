@@ -1198,3 +1198,38 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
     .rejilla-partidos { grid-template-columns: 1fr; }
     .tarjeta-formulario { padding: 20px; }
 }
+
+/* ---------- Otros tipos de apuesta (HU-52) ---------- */
+
+.opciones-especiales { margin-top: 16px !important; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.opciones-especiales legend { grid-column: 1 / -1; }
+.opciones-especiales .opcion { padding: 10px 12px; }
+.opciones-especiales .opcion-simbolo { min-width: 40px; width: auto; padding: 0 6px; font-size: .85rem; }
+.boleto .boton-secundario { margin-top: 8px; }
+
+.marcador-final { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; border: 0 !important; padding: 0 !important; }
+.marcador-final legend { width: 100%; margin-bottom: 8px; }
+.marcador-final label { display: flex !important; align-items: center; gap: 8px; margin: 0 !important; font-weight: 600; }
+.marcador-final input { width: 72px !important; text-align: center; font-size: 1.3rem; font-weight: 800; }
+.marcador-guion { font-size: 1.4rem; font-weight: 800; color: var(--texto-suave); }
+
+/* ---------- Ligas privadas (HU-51) ---------- */
+
+.lista-ligas { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 10px; }
+.lista-ligas a { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 18px; color: var(--texto); text-decoration: none; }
+.lista-ligas li { padding: 0; transition: border-color .15s, transform .15s; }
+.lista-ligas li:hover { border-color: var(--primario); transform: translateY(-1px); }
+.ligas-formularios { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.ligas-formularios h2 { margin-top: 0; font-size: 1.1rem; }
+.codigo-liga { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2em; text-transform: uppercase; }
+.invitacion { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 20px; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--primario-suave), #fff7d6); }
+.invitacion .aviso { display: block; }
+.invitacion strong.codigo-liga { font-size: 1.6rem; color: var(--primario-oscuro); }
+
+/* ---------- Cuentas de la casa (HU-54) ---------- */
+
+.margen-casa { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 24px; padding: 20px; margin: 16px 0; }
+.margen-casa > div { display: flex; flex-direction: column; gap: 4px; }
+.margen-casa .aviso { grid-column: 1 / -1; margin: 0; }
+.margen-cifra { font-size: 2rem; font-weight: 800; }

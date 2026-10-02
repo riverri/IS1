@@ -21,7 +21,11 @@ Una web donde los usuarios apuestan con **moneditas virtuales (sin dinero real)*
 
 - **Cuotas calculadas por nuestro algoritmo** a partir de la calidad y la forma de cada equipo y del volumen apostado.
 - Apuestas simples, **combinadas** (multiplicador = producto de las cuotas) y **a largo plazo** (Balón de Oro, campeón de liga…), resueltas automáticamente al introducir el resultado o el ganador.
-- **Banco de estadísticas** para consultar la evolución de los equipos antes de apostar.
+- En fútbol, además del 1X2: **doble oportunidad, más/menos de 2,5 goles y ambos marcan**.
+- **Banco de estadísticas** para consultar la evolución de los equipos, su plantilla y su alineación probable antes de apostar.
+- **Ranking** general y **ligas privadas** para competir con los amigos.
+- **Panel del creador de apuestas** para gestionar eventos y mercados, introducir resultados y ver las cuentas de la casa.
+- **Datos reales** de LaLiga y la Champions con la API de football-data.org.
 
 Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 
@@ -30,22 +34,30 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 ```
 .
 ├── docs/
-│   ├── requisitos/      # Visión del producto e historias de usuario
-│   ├── scrum/           # Proceso, Product Backlog, actas de sprint y métricas
-│   ├── diseno/          # Diagramas UML (casos de uso, clases, estados, secuencia, datos)
-│   ├── decisiones/      # Decisiones técnicas (stack, arquitectura…)
-│   └── recursos.md      # Enlaces de teoría y de Git
-├── src/main/java/       # Código Java (Spring Boot)
-├── src/main/resources/  # Plantillas HTML, CSS, configuración y datos de ejemplo
-├── src/test/java/       # Pruebas (JUnit)
-├── pom.xml              # Dependencias (Maven)
-├── .github/             # Plantillas de issues y pull requests
-└── CONTRIBUTING.md      # Cómo trabajamos con Git y GitHub
+│   ├── requisitos/
+│   │   ├── vision.md                  # Visión del producto
+│   │   └── historias-de-usuario.md    # Historias de usuario con sus criterios de aceptación
+│   ├── scrum/
+│   │   ├── proceso.md                 # Cómo aplicamos Scrum
+│   │   ├── product-backlog.md         # Product Backlog (orden, estimación, MoSCoW y estado)
+│   │   ├── sprints/                   # Actas de cada sprint (planning, dailies, review y retro)
+│   │   ├── metricas.md                # Velocidad y progreso
+│   │   └── graficas/                  # Gráficas de las métricas y el script que las genera
+│   ├── diseno/uml.md                  # Diagramas UML (casos de uso, clases, estados, secuencia, datos)
+│   ├── decisiones/                    # Decisiones técnicas (stack, arquitectura…)
+│   └── recursos.md                    # Enlaces de teoría y de Git
+├── src/main/java/                     # Código Java (Spring Boot), un paquete por parte del dominio
+├── src/main/resources/                # Plantillas HTML, CSS, configuración y migraciones de la base de datos
+├── src/test/java/                     # Pruebas (JUnit)
+├── pom.xml                            # Dependencias (Maven)
+├── compartir.bat, compartir.sh        # Jugar desde otros ordenadores con un enlace público
+├── .github/                           # Plantillas de issues y pull requests, y CI
+└── CONTRIBUTING.md                    # Cómo trabajamos con Git y GitHub
 ```
 
 ## Tecnología
 
-Java 21 · Spring Boot · Thymeleaf · Spring Data JPA + H2 · Maven · JUnit. El porqué está en [docs/decisiones/0001-stack-tecnologico.md](docs/decisiones/0001-stack-tecnologico.md).
+Java 21 · Spring Boot · Spring Security · Thymeleaf · Spring Data JPA + H2 · Flyway · Maven · JUnit. El porqué está en [docs/decisiones/0001-stack-tecnologico.md](docs/decisiones/0001-stack-tecnologico.md).
 
 ## Cómo ejecutarlo
 
@@ -86,21 +98,23 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | Página | Qué hace | Historias |
 |---|---|---|
 | `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador | HU-08, HU-19, HU-20, HU-22 |
-| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
+| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial. En fútbol también doble oportunidad, más/menos de 2,5 goles y ambos marcan, que se pueden añadir al boleto | HU-03, HU-23, HU-52 |
+| `/eventos/{id}/apostar` · cara a cara | Racha de cada equipo y enfrentamientos anteriores entre los dos | HU-33 |
+| `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
+| `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32, HU-49 |
 | `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/mercados` | Apuestas a largo plazo: Balón de Oro, campeón de liga… Se elige un candidato y se cobra al conocerse el ganador | HU-44 |
-| `/eventos/{id}/apostar` · cara a cara | Racha de cada equipo y enfrentamientos anteriores entre los dos | HU-33 |
 | `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-27, HU-34, HU-35 |
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
+| `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros | HU-51 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
-| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46 |
+| `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-54 |
+| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
-| `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
-| `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32, HU-49 |
 
 - **Pruebas:** `./mvnw test`
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
@@ -110,10 +124,10 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 
 ## Base de datos y migraciones (Flyway)
 
-Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar: `V1__esquema_inicial.sql`, `V2__identificadores_api.sql`… Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar: de `V1__esquema_inicial.sql` a `V8__ligas_y_mas_apuestas.sql`. Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
-1. Crea un script nuevo con el número siguiente, por ejemplo `V3__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario.
+1. Crea un script nuevo con el número siguiente, por ejemplo `V9__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario.
 2. **No modifiques nunca un script que ya esté en `main`**: otros ordenadores ya lo han aplicado.
 3. Arranca y ejecuta `./mvnw test`. Hibernate comprueba (`ddl-auto=validate`) que las entidades coinciden con las tablas; si falta una migración, la aplicación no arranca y dice qué columna o tabla falta.
 
