@@ -82,7 +82,15 @@ public class DatosIniciales implements ApplicationRunner {
             Map.entry("Napoli", 113), Map.entry("AS Roma", 100),
             Map.entry("PSV Eindhoven", 674), Map.entry("Feyenoord", 675),
             Map.entry("FC Porto", 503), Map.entry("Sporting CP", 498),
-            Map.entry("Club Brujas", 851), Map.entry("Galatasaray", 610));
+            Map.entry("Club Brujas", 851), Map.entry("Galatasaray", 610),
+            // Su nombre en la API es distinto ("Real Racing Club de Santander", "Como 1907", "PAE AEK"...):
+            // sin el identificador, la sincronización los crearía otra vez
+            Map.entry("Racing de Santander", 5335), Map.entry("Como", 7397),
+            Map.entry("Fenerbahçe", 613), Map.entry("RC Lens", 546),
+            Map.entry("Shakhtar Donetsk", 1887), Map.entry("Bodø/Glimt", 5721),
+            Map.entry("Slavia Praga", 930), Map.entry("AEK Atenas", 1899),
+            Map.entry("Slovan Bratislava", 7509), Map.entry("LASK", 2016),
+            Map.entry("Viking FK", 5720), Map.entry("Sabah FK", 10233));
 
     @Override
     @Transactional
