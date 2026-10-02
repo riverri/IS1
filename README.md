@@ -51,6 +51,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 ├── src/test/java/                     # Pruebas (JUnit)
 ├── pom.xml                            # Dependencias (Maven)
 ├── compartir.bat, compartir.sh        # Jugar desde otros ordenadores con un enlace público
+├── Dockerfile, render.yaml            # Publicar la aplicación en Internet (Render)
 ├── .github/                           # Plantillas de issues y pull requests, y CI
 └── CONTRIBUTING.md                    # Cómo trabajamos con Git y GitHub
 ```
@@ -71,7 +72,7 @@ cd IS1
 
 Abrir http://localhost:8080.
 
-**Usuarios de prueba** (se crean en el primer arranque, junto con competiciones y equipos):
+**Usuarios de prueba** (se crean en el primer arranque, junto con competiciones y equipos; las contraseñas se pueden cambiar con las variables `CREADOR_PASSWORD` y `USUARIO_PASSWORD`):
 
 | Rol | Email | Contraseña |
 |---|---|---|
@@ -92,6 +93,24 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 - El enlace solo funciona mientras ese ordenador esté encendido y con las dos ventanas abiertas, y **cambia cada vez** que se lanza.
 - Usa el perfil `compartir`, que desactiva la consola de H2: no tiene contraseña y con el túnel cualquiera podría entrar en la base de datos. **No compartas nunca la aplicación arrancada desde IntelliJ sin ese perfil.**
 - Si la red de la facultad bloquea el túnel, prueba con los datos del móvil.
+
+## Publicarla en Internet (Render)
+
+Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordenador encendido, la aplicación se puede publicar gratis en [Render](https://render.com). El repositorio ya trae el `Dockerfile` y la configuración (`render.yaml`).
+
+1. Entra en https://render.com con tu cuenta de GitHub (no pide tarjeta).
+2. *New → Blueprint* y elige el repositorio `riverri/IS1`. Render lee `render.yaml`.
+3. Te pide las variables:
+   - `CREADOR_PASSWORD` (**obligatoria**): la contraseña de `creador@apuestas.es`. Pon una tuya; la del README es pública.
+   - `USUARIO_PASSWORD` (opcional): si la pones, se crea también `usuario@apuestas.es` con esa contraseña.
+   - `FOOTBALL_DATA_TOKEN` (opcional): la clave de la API para los partidos reales.
+4. *Apply*. La primera vez tarda unos minutos en compilar. Después queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
+
+Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola.
+
+- **Arranque lento:** en el plan gratuito la aplicación se apaga tras unos 15 minutos sin visitas, y la primera visita después tarda alrededor de un minuto.
+- **Los datos no se guardan:** la base de datos H2 se borra cada vez que la aplicación se reinicia o se vuelve a publicar. Usuarios, apuestas y ligas vuelven a los datos iniciales. Sirve para enseñarla, no para jugar durante semanas.
+- Usa el perfil `nube`: la consola de H2 está desactivada y, si falta `CREADOR_PASSWORD`, la aplicación no arranca.
 
 ## Funcionalidades disponibles
 
