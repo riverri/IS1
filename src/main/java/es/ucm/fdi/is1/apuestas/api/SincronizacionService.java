@@ -126,7 +126,17 @@ public class SincronizacionService {
         String estado = partido.status() == null ? "" : partido.status();
         switch (estado) {
             case "FINISHED" -> resultado(partido).ifPresent(r -> {
-                if (evento.getEstado() != EstadoEvento.FINALIZADO || evento.getResultado() != r) {
+                PartidoApi.MarcadorApi marcador = partido.score();
+                if (marcador.isMarcadorValido() && evento.getDeporte().isAdmiteEmpate()) {
+                    int local = marcador.fullTime().home();
+                    int visitante = marcador.fullTime().away();
+                    if (evento.getEstado() != EstadoEvento.FINALIZADO
+                            || !Integer.valueOf(local).equals(evento.getGolesLocal())
+                            || !Integer.valueOf(visitante).equals(evento.getGolesVisitante())) {
+                        resolucion.introducirMarcador(evento.getId(), local, visitante);
+                        resumen.resultado();
+                    }
+                } else if (evento.getEstado() != EstadoEvento.FINALIZADO || evento.getResultado() != r) {
                     resolucion.introducirResultado(evento.getId(), r);
                     resumen.resultado();
                 }

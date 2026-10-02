@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 
 /**
@@ -22,6 +23,14 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
  *       resultado al que apuesta casi todo el mundo y sube la de los demás.</li>
  *   <li>Se aplica el margen de la casa y se redondea hacia abajo, así la suma de 1/cuota es siempre mayor que 1.</li>
  * </ol>
+ *
+ * <p>Otros tipos de apuesta en fútbol (HU-52):
+ * <ul>
+ *   <li>Doble oportunidad: suma de las probabilidades de los dos resultados (1X = local + empate).</li>
+ *   <li>Goles: cada equipo marca según una distribución de Poisson con media
+ *       {@value #GOLES_MEDIOS} × e^(±{@value #GOLES_POR_PUNTO} × diferencia). Más de 2,5 = 1 − P(2 goles o menos); ambos marcan = P(local marca) × P(visitante marca).</li>
+ *   <li>Se aplica el mismo margen y los mismos límites; aquí no hay ajuste por volumen.</li>
+ * </ul>
  */
 @Service
 public class CalculadoraCuotas {
@@ -38,6 +47,8 @@ public class CalculadoraCuotas {
     static final double MARGEN_CASA = 1.07;
     static final BigDecimal CUOTA_MINIMA = new BigDecimal("1.01");
     static final BigDecimal CUOTA_MAXIMA = new BigDecimal("50.00");
+    static final double GOLES_MEDIOS = 1.30;
+    static final double GOLES_POR_PUNTO = 0.10;
 
     private final VolumenApostado volumen;
 
@@ -46,9 +57,60 @@ public class CalculadoraCuotas {
     }
 
     public Cuotas calcular(Evento evento) {
-        return calcular(nivel(evento.getLocal().getCalidad(), evento.getLocal().getForma().getValor()),
-                nivel(evento.getVisitante().getCalidad(), evento.getVisitante().getForma().getValor()),
+        return calcular(nivelLocal(evento), nivelVisitante(evento),
                 evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento));
+    }
+
+    /** Cuotas de doble oportunidad, goles y ambos marcan (HU-52). Vacío si el deporte no es fútbol. */
+    public Map<Especial, BigDecimal> especiales(Evento evento) {
+        if (evento.getDeporte() != Deporte.FUTBOL) {
+            return Map.of();
+        }
+        return especiales(nivelLocal(evento), nivelVisitante(evento));
+    }
+
+    /** Cuota de una selección: un resultado (1X2) o un tipo especial. Null si no se puede apostar a eso. */
+    public BigDecimal cuota(Evento evento, Resultado resultado, Especial especial) {
+        if (especial != null) {
+            return especiales(evento).get(especial);
+        }
+        return resultado == null ? null : calcular(evento).de(resultado);
+    }
+
+    public Map<Especial, BigDecimal> especiales(double nivelLocal, double nivelVisitante) {
+        Map<Resultado, Double> p = probabilidades(nivelLocal, nivelVisitante, true);
+        double diferencia = nivelLocal + VENTAJA_LOCAL - nivelVisitante;
+        double golesLocal = GOLES_MEDIOS * Math.exp(GOLES_POR_PUNTO * diferencia);
+        double golesVisitante = GOLES_MEDIOS * Math.exp(-GOLES_POR_PUNTO * diferencia);
+        double total = golesLocal + golesVisitante;
+        double dosOMenos = Math.exp(-total) * (1 + total + total * total / 2);
+        double ambos = (1 - Math.exp(-golesLocal)) * (1 - Math.exp(-golesVisitante));
+
+        Map<Especial, BigDecimal> cuotas = new EnumMap<>(Especial.class);
+        cuotas.put(Especial.DOBLE_1X, cuota(p.get(Resultado.LOCAL) + p.get(Resultado.EMPATE)));
+        cuotas.put(Especial.DOBLE_X2, cuota(p.get(Resultado.EMPATE) + p.get(Resultado.VISITANTE)));
+        cuotas.put(Especial.DOBLE_12, cuota(p.get(Resultado.LOCAL) + p.get(Resultado.VISITANTE)));
+        cuotas.put(Especial.MAS_2_5, cuota(1 - dosOMenos));
+        cuotas.put(Especial.MENOS_2_5, cuota(dosOMenos));
+        cuotas.put(Especial.AMBOS_SI, cuota(ambos));
+        cuotas.put(Especial.AMBOS_NO, cuota(1 - ambos));
+        return cuotas;
+    }
+
+    private static double nivelLocal(Evento evento) {
+        return nivel(evento.getLocal().getCalidad(), evento.getLocal().getForma().getValor());
+    }
+
+    private static double nivelVisitante(Evento evento) {
+        return nivel(evento.getVisitante().getCalidad(), evento.getVisitante().getForma().getValor());
+    }
+
+    /**
+     * Parte de lo apostado que se queda la casa a la larga si las probabilidades son exactas:
+     * 1 − 1/{@value #MARGEN_CASA} (≈ 6,5 %) en una simple (HU-54).
+     */
+    public static double margenTeorico() {
+        return 1 - 1 / MARGEN_CASA;
     }
 
     /** Calificación ajustada con la forma reciente (de −2 a +2). */
@@ -63,8 +125,19 @@ public class CalculadoraCuotas {
 
     public Cuotas calcular(double nivelLocal, double nivelVisitante, boolean admiteEmpate,
                            Map<Resultado, BigDecimal> apostado) {
-        double diferencia = nivelLocal + VENTAJA_LOCAL - nivelVisitante;
+        Map<Resultado, Double> probabilidades = probabilidades(nivelLocal, nivelVisitante, admiteEmpate);
 
+        ajustarPorVolumen(probabilidades, apostado);
+
+        return new Cuotas(
+                cuota(probabilidades.get(Resultado.LOCAL)),
+                admiteEmpate ? cuota(probabilidades.get(Resultado.EMPATE)) : null,
+                cuota(probabilidades.get(Resultado.VISITANTE)));
+    }
+
+    private static Map<Resultado, Double> probabilidades(double nivelLocal, double nivelVisitante,
+                                                         boolean admiteEmpate) {
+        double diferencia = nivelLocal + VENTAJA_LOCAL - nivelVisitante;
         Map<Resultado, Double> probabilidades = new EnumMap<>(Resultado.class);
         double probabilidadEmpate = 0;
         if (admiteEmpate) {
@@ -74,13 +147,7 @@ public class CalculadoraCuotas {
         double repartoLocal = 1 / (1 + Math.exp(-PENDIENTE * diferencia));
         probabilidades.put(Resultado.LOCAL, (1 - probabilidadEmpate) * repartoLocal);
         probabilidades.put(Resultado.VISITANTE, (1 - probabilidadEmpate) * (1 - repartoLocal));
-
-        ajustarPorVolumen(probabilidades, apostado);
-
-        return new Cuotas(
-                cuota(probabilidades.get(Resultado.LOCAL)),
-                admiteEmpate ? cuota(probabilidades.get(Resultado.EMPATE)) : null,
-                cuota(probabilidades.get(Resultado.VISITANTE)));
+        return probabilidades;
     }
 
     /**

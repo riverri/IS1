@@ -17,7 +17,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
 Columna **Estado**: en qué sprints se hizo (S1 = Sprint 1). El detalle está en las actas de [sprints/](sprints/).
 
-**Resumen:** 29 de 32 filas hechas; la 22 a medias (falta recuperar la contraseña, HU-17) y las 25 y 26 descartadas (Won't).
+**Resumen:** 32 de 35 filas hechas; la 22 a medias (falta recuperar la contraseña, HU-17) y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|:-:|:-:|---|
@@ -53,6 +53,9 @@ Columna **Estado**: en qué sprints se hizo (S1 = Sprint 1). El detalle está en
 | 30 | Cambio de nombre y contraseña desde *Mi cuenta* (HU-47) | ¼ sprint | 5 | C | | Hecho (S8) |
 | 31 | Perfil público de cada jugador desde el ranking, solo con sus estadísticas (HU-48). Versión mínima de la parte social | ¼ sprint | 5 | C | | Hecho (S8) |
 | 32 | Plantillas de los equipos: jugadores con nota (0-10) y alineación probable, descargados de la API o gestionados a mano (HU-49, HU-50). *Depende de la fila 13* | ½ sprint | 7 | S | | Hecho (S10) |
+| 33 | Ligas privadas entre amigos con código de invitación y ranking propio (HU-51). *Depende de la fila 31* | ½ sprint | 5 | C | | Hecho (S11) |
+| 34 | Más tipos de apuesta en fútbol: doble oportunidad, más/menos 2,5 goles y ambos marcan (HU-52). *Depende de las filas 6 y 17* | ½ sprint | 7 | S | | Hecho (S11) |
+| 35 | Panel de la casa para el creador: apostado, pagado, beneficio y margen real (HU-54) | ¼ sprint | 5 | S | | Hecho (S11) |
 
 ## Puntos a revisar en equipo
 

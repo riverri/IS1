@@ -30,25 +30,38 @@
             <fieldset class="opciones">
                 <legend>Tu pronóstico</legend>
                 <label class="opcion">
-                    <input type="radio" th:field="*{resultado}" value="LOCAL" th:attr="data-cuota=${cuotas.local}">
+                    <input type="radio" th:field="*{opcion}" value="LOCAL" th:attr="data-cuota=${cuotas.local}">
                     <span class="opcion-simbolo">1</span>
                     <span class="opcion-nombre" th:text="${evento.local.nombre}">Real Madrid</span>
                     <b th:text="${@formato.cuota(cuotas.local)}">1,85</b>
                 </label>
                 <label class="opcion" th:if="${cuotas.empate != null}">
-                    <input type="radio" th:field="*{resultado}" value="EMPATE" th:attr="data-cuota=${cuotas.empate}">
+                    <input type="radio" th:field="*{opcion}" value="EMPATE" th:attr="data-cuota=${cuotas.empate}">
                     <span class="opcion-simbolo">X</span>
                     <span class="opcion-nombre">Empate</span>
                     <b th:text="${@formato.cuota(cuotas.empate)}">3,40</b>
                 </label>
                 <label class="opcion">
-                    <input type="radio" th:field="*{resultado}" value="VISITANTE" th:attr="data-cuota=${cuotas.visitante}">
+                    <input type="radio" th:field="*{opcion}" value="VISITANTE" th:attr="data-cuota=${cuotas.visitante}">
                     <span class="opcion-simbolo">2</span>
                     <span class="opcion-nombre" th:text="${evento.visitante.nombre}">Getafe CF</span>
                     <b th:text="${@formato.cuota(cuotas.visitante)}">4,20</b>
                 </label>
             </fieldset>
-            <span class="error-campo" th:if="${#fields.hasErrors('resultado')}" th:text="${#fields.errors('resultado')[0]}"></span>
+            <fieldset class="opciones opciones-especiales" th:each="grupo : ${ {'Doble oportunidad', 'Goles', 'Ambos marcan'} }"
+                      th:unless="${#maps.isEmpty(especiales)}">
+                <legend th:text="${grupo}">Doble oportunidad</legend>
+                <th:block th:each="e : ${especiales}">
+                <label class="opcion" th:if="${e.key.grupo == grupo}">
+                    <input type="radio" th:field="*{opcion}" th:value="${e.key.name()}" th:attr="data-cuota=${e.value}">
+                    <span class="opcion-simbolo" th:text="${e.key.simbolo}">1X</span>
+                    <span class="opcion-nombre" th:text="${e.key.descripcion}">Local o empate</span>
+                    <b th:text="${@formato.cuota(e.value)}">1,30</b>
+                </label>
+                </th:block>
+            </fieldset>
+            <span class="error-campo" th:if="${#fields.hasErrors('opcion')}" th:text="${#fields.errors('opcion')[0]}"></span>
+            <span class="error-campo" th:if="${#fields.hasErrors('opcionElegida')}" th:text="${#fields.errors('opcionElegida')[0]}"></span>
 
             <label for="importe">Importe</label>
             <input id="importe" type="number" min="0.01" step="0.01" inputmode="decimal" th:field="*{importe}"
@@ -66,7 +79,10 @@
                 <strong id="ganancia">–</strong>
             </div>
 
+            <input type="hidden" name="evento" th:value="${evento.id}">
             <button class="boton boton-bloque" type="submit">Confirmar apuesta</button>
+            <button class="boton boton-secundario boton-bloque" type="submit" th:formaction="@{/boleto/anadir}"
+                    formnovalidate>Añadir al boleto para combinar</button>
         </form>
         <a class="enlace-volver" th:href="@{/eventos}">← Volver al catálogo</a>
     </div>
@@ -114,13 +130,13 @@
         const salida = document.getElementById('ganancia');
         const formato = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         function actualizar() {
-            const elegido = document.querySelector('input[name="resultado"]:checked');
+            const elegido = document.querySelector('input[name="opcion"]:checked');
             const cantidad = parseFloat(importe.value);
             if (!elegido || !(cantidad > 0)) { salida.textContent = '–'; return; }
             const ganancia = Math.floor(cantidad * parseFloat(elegido.dataset.cuota) * 100) / 100;
             salida.textContent = formato.format(ganancia) + ' monedas';
         }
-        document.querySelectorAll('input[name="resultado"]').forEach(r => r.addEventListener('change', actualizar));
+        document.querySelectorAll('input[name="opcion"]').forEach(r => r.addEventListener('change', actualizar));
         importe.addEventListener('input', actualizar);
         actualizar();
     })();

@@ -35,6 +35,14 @@
 
     <div class="tarjeta api-estado">
         <div>
+            <strong>Cuentas de la casa</strong>
+            <p class="aviso">Lo apostado, lo pagado, el beneficio y el margen real frente al teórico, por tipo de apuesta y por deporte.</p>
+        </div>
+        <a class="boton boton-secundario" th:href="@{/gestion/casa}">Ver cuentas</a>
+    </div>
+
+    <div class="tarjeta api-estado">
+        <div>
             <strong>Límites de apuesta</strong>
             <p class="aviso" th:text="'Importe entre ' + ${#numbers.formatDecimal(limites.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' y ' + ${#numbers.formatDecimal(limites.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas · combinadas de hasta ' + ${limites.maxSelecciones} + ' selecciones'">
                 Importe entre 1,00 y 500,00 monedas · combinadas de hasta 10 selecciones</p>
