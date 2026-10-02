@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -38,15 +39,26 @@ public class DatosIniciales implements ApplicationRunner {
     private final MercadoRepository mercados;
     private final UsuarioRepository usuarioRepository;
     private final UsuarioService usuarios;
+    private final String passwordCreador;
+    private final String passwordUsuario;
 
+    /**
+     * Las contraseñas de los usuarios de prueba se pueden cambiar con las variables de entorno
+     * CREADOR_PASSWORD y USUARIO_PASSWORD. En el perfil {@code nube} la del creador es obligatoria
+     * y el usuario de prueba solo se crea si se le da contraseña.
+     */
     public DatosIniciales(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
-                          MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios) {
+                          MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios,
+                          @Value("${apuestas.creador.password}") String passwordCreador,
+                          @Value("${apuestas.usuario.password}") String passwordUsuario) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
         this.mercados = mercados;
         this.usuarioRepository = usuarioRepository;
         this.usuarios = usuarios;
+        this.passwordCreador = passwordCreador;
+        this.passwordUsuario = passwordUsuario;
     }
 
     /** Identificadores de los escudos en el servicio público de football-data.org. */
@@ -75,8 +87,14 @@ public class DatosIniciales implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        usuario("creador@apuestas.es", "Creador de apuestas", "creador123", Rol.CREADOR);
-        usuario("usuario@apuestas.es", "Usuario de prueba", "usuario123", Rol.USUARIO);
+        if (passwordCreador.isBlank()) {
+            throw new IllegalStateException("Falta la contraseña del creador de apuestas: define la variable de entorno "
+                    + "CREADOR_PASSWORD");
+        }
+        usuario("creador@apuestas.es", "Creador de apuestas", passwordCreador, Rol.CREADOR);
+        if (!passwordUsuario.isBlank()) {
+            usuario("usuario@apuestas.es", "Usuario de prueba", passwordUsuario, Rol.USUARIO);
+        }
 
         Competicion laLiga = competicion("LaLiga", Deporte.FUTBOL);
         Competicion champions = competicion("Champions League", Deporte.FUTBOL);
