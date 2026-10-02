@@ -88,6 +88,16 @@ public class Usuario {
         saldo = saldo.add(importe);
     }
 
+    /** HU-47. */
+    public void cambiarNombre(String nuevo) {
+        nombre = nuevo;
+    }
+
+    /** HU-47: recibe la contraseña ya cifrada. */
+    public void cambiarPasswordHash(String nuevoHash) {
+        passwordHash = nuevoHash;
+    }
+
     public LocalDateTime proximaRecarga(Duration periodo) {
         return ultimaRecarga.plus(periodo);
     }
