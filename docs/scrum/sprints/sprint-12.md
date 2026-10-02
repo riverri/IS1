@@ -49,6 +49,17 @@ En el Product Backlog queda [#27](https://github.com/riverri/IS1/issues/27) (HU-
   - Con un PostgreSQL real: registro, apuestas, resolución con marcador, ligas y cuentas de la casa; todas las páginas sin errores y los datos se conservan al reiniciar.
   - Las bases de datos H2 del Sprint 11 siguen arrancando y conservan sus datos.
 
+### Plantillas con la API real
+Es la primera prueba con una clave real de football-data.org; hasta ahora solo se había probado con una API simulada.
+- **Partidos:** se descargan bien.
+- **Resultado de la prueba:**
+  - **Equipos repetidos.** Cuatro equipos tienen otro nombre en la API ("Real Racing Club de Santander", "Como 1907", "PAE AEK", "SK Slavia Praha") y la sincronización los creaba otra vez. Ahora se guarda su identificador de la API desde el primer arranque.
+  - **Champions sin jugadores.** En el plan gratuito la Champions no trae jugadores, así que solo los equipos de LaLiga tenían plantilla. Ahora las plantillas se descargan de la liga de cada equipo (Premier, Bundesliga, Serie A, Ligue 1, Liga Portugal y Eredivisie).
+  - **Plantillas vacías.** Una plantilla vacía ya no borra los jugadores que ya había.
+  - **Ficha del equipo.** Los nombres largos tapaban la nota de cada jugador en la plantilla.
+- **Resultado final:** 40 de los 51 equipos de fútbol tienen plantilla (1.063 jugadores) y ningún equipo repetido. Los otros 11 juegan en ligas que el plan gratuito no incluye; sus jugadores se añaden a mano.
+- El plan gratuito no da dorsales.
+
 ## Dailies
 - **30/10**: issues y tablero, matriz de trazabilidad, tabla de dinero apostado, soporte de PostgreSQL y pruebas.
 

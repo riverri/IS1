@@ -188,6 +188,9 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
    Desde la terminal de Windows: `set FOOTBALL_DATA_TOKEN=tu_clave` y después `mvnw.cmd spring-boot:run`.
 3. Arranca la aplicación. Se sincroniza a los 30 segundos y luego cada 30 minutos; también hay un botón **Sincronizar ahora** en *Gestión*.
 4. Las **plantillas** (jugadores de cada equipo) se descargan a los 2 minutos de arrancar y una vez al día, o con el botón **Descargar plantillas** de *Gestión*. Las notas de los jugadores las pone el creador de apuestas.
+   - En el plan gratuito la Champions no trae jugadores, así que las plantillas salen de la liga de cada equipo (`apuestas.api.competiciones-plantillas`: LaLiga, Premier, Bundesliga, Serie A, Ligue 1, Liga Portugal y Eredivisie).
+   - Los equipos de otras ligas (Turquía, Bélgica, Grecia…) no tienen plantilla en el plan gratuito. Sus jugadores se añaden a mano en *Gestión → Editar equipo*.
+   - El plan gratuito no da dorsales: todos los jugadores entran sin dorsal y con nota 6,0.
 
 - **La clave es personal: no la escribas en ningún archivo del repositorio.**
 - El plan gratuito permite 10 peticiones por minuto. Cada sincronización hace una por competición.

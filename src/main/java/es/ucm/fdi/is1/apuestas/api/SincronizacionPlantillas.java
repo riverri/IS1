@@ -64,11 +64,13 @@ public class SincronizacionPlantillas {
         Set<Long> procesados = new HashSet<>();
         int[] cuenta = new int[3];
         List<String> errores = new ArrayList<>();
-        for (String codigo : propiedades.competiciones()) {
+        for (String codigo : propiedades.ligasDePlantillas()) {
             try {
                 for (PlantillaApi datos : fuente.plantillas(codigo)) {
                     Equipo equipo = buscar(datos);
-                    if (equipo == null || datos.squad() == null || !procesados.add(equipo.getId())) {
+                    // Una plantilla vacía (la Champions en el plan gratuito) no borra la que ya tenemos
+                    if (equipo == null || datos.squad() == null || datos.squad().isEmpty()
+                            || !procesados.add(equipo.getId())) {
                         continue;
                     }
                     actualizar(equipo, datos.squad(), cuenta);
