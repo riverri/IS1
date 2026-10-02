@@ -1,0 +1,10 @@
+target/
+datos/
+docs/
+.git/
+.github/
+.idea/
+.vscode/
+cloudflared.exe
+compartir.*
+*.md
