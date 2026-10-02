@@ -175,6 +175,27 @@ public class Apuesta {
         usuario.abonar(importe);
     }
 
+    /**
+     * Cambia el importe mientras se pueda cancelar (HU-27): se cobra o se devuelve la diferencia
+     * y se aplican las cuotas actuales, una por selección y en el mismo orden.
+     */
+    public void cambiarImporte(BigDecimal nuevo, List<BigDecimal> cuotasActuales, LocalDateTime ahora) {
+        if (!cancelable(ahora)) {
+            throw new IllegalStateException("La apuesta ya no se puede modificar");
+        }
+        BigDecimal diferencia = nuevo.subtract(importe);
+        if (diferencia.signum() > 0) {
+            usuario.cargar(diferencia);
+        } else if (diferencia.signum() < 0) {
+            usuario.abonar(diferencia.negate());
+        }
+        importe = nuevo;
+        for (int i = 0; i < selecciones.size(); i++) {
+            selecciones.get(i).actualizarCuota(cuotasActuales.get(i));
+        }
+        cuota = producto(selecciones.stream().map(Seleccion::getCuota).toList());
+    }
+
     /** Cuota que se paga: producto de las cuotas, con 1,00 para las selecciones anuladas. */
     public BigDecimal getCuotaEfectiva() {
         return producto(selecciones.stream().map(Seleccion::getCuotaEfectiva).toList());

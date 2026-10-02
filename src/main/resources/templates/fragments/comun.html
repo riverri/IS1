@@ -29,6 +29,10 @@
             <a th:if="${usuarioActual != null}" th:href="@{/boleto}">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>
             <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}">Gestión</a>
+            <a th:if="${usuarioActual != null}" class="campana" th:href="@{/notificaciones}"
+               th:title="${avisosSinLeer > 0} ? ${avisosSinLeer} + ' avisos sin leer' : 'Avisos'">
+                <span aria-hidden="true">🔔</span><span class="solo-lectores">Avisos</span>
+                <span class="contador" th:if="${avisosSinLeer > 0}" th:text="${avisosSinLeer}">2</span></a>
             <th:block th:if="${usuarioActual == null}">
                 <a th:href="@{/login}">Entrar</a>
                 <a class="boton boton-pequeno" th:href="@{/registro}">Registrarse</a>

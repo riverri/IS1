@@ -16,10 +16,13 @@ public class ResolucionMercadosService {
 
     private final MercadoService mercados;
     private final SeleccionRepository selecciones;
+    private final AvisosApuestas avisos;
 
-    public ResolucionMercadosService(MercadoService mercados, SeleccionRepository selecciones) {
+    public ResolucionMercadosService(MercadoService mercados, SeleccionRepository selecciones,
+                                     AvisosApuestas avisos) {
         this.mercados = mercados;
         this.selecciones = selecciones;
+        this.avisos = avisos;
     }
 
     /** Marca (o corrige) el ganador y paga las apuestas acertadas. Devuelve cuántas se han resuelto. */
@@ -32,7 +35,12 @@ public class ResolucionMercadosService {
                 .orElseThrow(() -> new IllegalArgumentException("Ese candidato no es de este mercado"));
         mercado.resolver(ganador);
         List<Seleccion> afectadas = selecciones.findByCandidatoMercado(mercado);
-        afectadas.forEach(s -> s.getApuesta().resolver(mercado, ganador));
+        for (Seleccion seleccion : afectadas) {
+            Apuesta apuesta = seleccion.getApuesta();
+            EstadoApuesta antes = apuesta.getEstado();
+            apuesta.resolver(mercado, ganador);
+            avisos.siCambia(apuesta, antes);
+        }
         return afectadas.size();
     }
 
@@ -42,7 +50,12 @@ public class ResolucionMercadosService {
         Mercado mercado = mercados.mercado(mercadoId);
         mercado.anular();
         List<Seleccion> afectadas = selecciones.findByCandidatoMercado(mercado);
-        afectadas.forEach(s -> s.getApuesta().anular(mercado));
+        for (Seleccion seleccion : afectadas) {
+            Apuesta apuesta = seleccion.getApuesta();
+            EstadoApuesta antes = apuesta.getEstado();
+            apuesta.anular(mercado);
+            avisos.siCambia(apuesta, antes);
+        }
         return afectadas.size();
     }
 

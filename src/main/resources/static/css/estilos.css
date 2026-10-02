@@ -441,6 +441,67 @@ a.cuota:hover b { color: var(--primario-oscuro); }
 .forma-positiva { color: var(--primario-oscuro); }
 .forma-negativa { color: #c2410c; }
 
+/* ---------- Ficha de equipo y cara a cara ---------- */
+
+.ficha-cabecera { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; padding: 22px; margin-top: 12px; }
+.ficha-datos { flex: 1; min-width: 220px; }
+.ficha-datos h1 { margin: 0 0 8px; }
+.ficha-datos p { margin: 6px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ficha-nivel { gap: 10px !important; color: var(--texto-suave); }
+.racha { display: inline-flex; gap: 4px; align-items: center; }
+.racha-titulo { color: var(--texto-suave); font-size: .85rem; margin-right: 4px; }
+.resultado-equipo {
+    display: inline-grid;
+    place-items: center;
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    font-size: .8rem;
+    font-weight: 800;
+    color: #fff;
+}
+.resultado-equipo.victoria { background: #12b76a; }
+.resultado-equipo.empate { background: #98a2b3; }
+.resultado-equipo.derrota { background: #f04438; }
+.cara-a-cara { padding: 20px 22px; margin-top: 20px; }
+.cara-a-cara h2 { margin-top: 0; }
+.cara-a-cara-rachas { display: grid; gap: 10px; }
+.cara-a-cara-rachas > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.cara-a-cara-rachas a { font-weight: 700; }
+.cara-a-cara-balance { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; }
+.enfrentamientos { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.enfrentamientos li { display: flex; gap: 10px; align-items: center; }
+.enfrentamientos li span:nth-child(2) { flex: 1; }
+a.equipo-celda { color: inherit; text-decoration: none; }
+a.equipo-celda:hover span:last-child { text-decoration: underline; }
+
+/* ---------- Cambiar importe ---------- */
+
+.cambiar-importe { margin: 4px 0 10px; }
+.cambiar-importe summary { cursor: pointer; font-weight: 600; color: var(--primario-oscuro); }
+.cambiar-importe .formulario { margin-top: 8px; }
+.cambiar-importe-fila { display: flex; gap: 8px; }
+.cambiar-importe-fila input { flex: 1; min-width: 0; }
+
+/* ---------- Avisos ---------- */
+
+.campana { position: relative; }
+.avisos { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.aviso-item { display: flex; gap: 14px; align-items: center; padding: 14px 18px; }
+.aviso-item > div { flex: 1; }
+.aviso-item p { margin: 0 0 4px; }
+.aviso-item.nuevo { border-color: var(--primario); background: var(--primario-suave); }
+.aviso-icono {
+    display: inline-grid;
+    place-items: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--fondo);
+    font-weight: 800;
+    flex-shrink: 0;
+}
+.aviso-item.ganada .aviso-icono { background: var(--exito-suave); }
+.aviso-item.perdida .aviso-icono { background: var(--error-suave); color: var(--error); }
+
 /* ---------- Boleto ---------- */
 
 .boleto { text-align: left; margin-top: 16px; }

@@ -46,6 +46,9 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 | 26 | Parte social: seguir usuarios, privacidad, feed, copiar apuestas | 1 sprint | 4 (opcional) | W | |
 | 27 | Límites de juego responsable y pausa temporal | ¼ sprint | 3 (opcional) | C | |
 | 28 | Apuestas a largo plazo: mercados con varios candidatos (Balón de Oro, campeón de LaLiga, Pichichi, campeón de F1). El creador crea el mercado, fija las cuotas de cada candidato, lo cierra y marca el ganador. *Depende de la fila 16* | ½–1 sprint | 7 | S | |
+| 29 | Edición y borrado de eventos por el creador (HU-46) | ¼ sprint | 6 | S | |
+| 30 | Cambio de nombre y contraseña desde *Mi cuenta* (HU-47) | ¼ sprint | 5 | C | |
+| 31 | Perfil público de cada jugador desde el ranking, solo con sus estadísticas (HU-48). Versión mínima de la parte social | ¼ sprint | 5 | C | |
 
 ## Puntos a revisar en equipo
 

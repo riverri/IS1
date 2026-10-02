@@ -96,6 +96,11 @@ public class Seleccion {
         estado = EstadoSeleccion.ANULADA;
     }
 
+    /** Al modificar el importe de la apuesta se aplica la cuota actual (HU-27). */
+    void actualizarCuota(BigDecimal nueva) {
+        cuota = nueva;
+    }
+
     /** Cuota que cuenta para el pago: 1,00 si el evento se anuló. */
     BigDecimal getCuotaEfectiva() {
         return estado == EstadoSeleccion.ANULADA ? BigDecimal.ONE : cuota;

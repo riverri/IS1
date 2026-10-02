@@ -88,7 +88,9 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial | HU-03, HU-23 |
 | `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/mercados` | Apuestas a largo plazo: Balón de Oro, campeón de liga… Se elige un candidato y se cobra al conocerse el ganador | HU-44 |
-| `/apuestas` | Mis apuestas activas (con opción de cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-34, HU-35 |
+| `/eventos/{id}/apostar` · cara a cara | Racha de cada equipo y enfrentamientos anteriores entre los dos | HU-33 |
+| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-27, HU-34, HU-35 |
+| `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/cuenta` | Saldo de moneditas y fecha de la próxima recarga gratuita | HU-13, HU-14 |
@@ -96,6 +98,7 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado (resuelve y paga las apuestas); suspender, reactivar o anular | HU-04, HU-05, HU-06, HU-25 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
+| `/equipos/{id}` | Ficha del equipo: últimos resultados, racha, balance, clasificación y próximos partidos | HU-31 |
 
 - **Pruebas:** `./mvnw test`
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
