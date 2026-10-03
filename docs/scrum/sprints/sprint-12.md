@@ -19,9 +19,9 @@ Desde este sprint el Sprint Backlog son los [issues](https://github.com/riverri/
 En el Product Backlog queda [#27](https://github.com/riverri/IS1/issues/27) (HU-17, recuperar la contraseña).
 
 ### Roles
-- El profesor actúa como Product Owner y cliente.
-- De momento los cinco miembros figuran también como Product Owner (provisional).
-- El Scrum Master está por decidir (#28).
+- El profesor es el Product Owner.
+- Los cinco miembros forman el Equipo de Desarrollo.
+- El Scrum Master está por decidir entre ellos (#28).
 
 ### Matriz de trazabilidad (#24)
 - Nuevo documento [docs/requisitos/trazabilidad.md](../../requisitos/trazabilidad.md): 44 historias hechas y 92 criterios de aceptación.

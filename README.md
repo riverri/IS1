@@ -5,15 +5,16 @@ Profesor: Gonzalo Rubén Méndez Pozo.
 
 ## Equipo
 
-| Miembro | Rol Scrum (provisional) |
+| Miembro | Rol Scrum |
 |---|---|
-| Carlos Martín-Salas | Product Owner · Equipo de Desarrollo |
-| Jaime Martín | Product Owner · Equipo de Desarrollo |
-| David Ortega | Product Owner · Equipo de Desarrollo |
-| Jing Li | Product Owner · Equipo de Desarrollo |
-| Carlos Jurado | Product Owner · Equipo de Desarrollo |
+| Gonzalo Rubén Méndez Pozo (profesor) | Product Owner |
+| Carlos Martín-Salas | Equipo de Desarrollo |
+| Jaime Martín | Equipo de Desarrollo |
+| David Ortega | Equipo de Desarrollo |
+| Jing Li | Equipo de Desarrollo |
+| Carlos Jurado | Equipo de Desarrollo |
 
-> El profesor actúa como Product Owner y cliente. De momento los cinco compartimos también ese rol, y el **Scrum Master** está por decidir ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
+> El **Scrum Master** está por decidir entre los cinco miembros del equipo ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
 
 **Tablero del sprint:** las tareas y las historias pendientes están en los [issues](https://github.com/riverri/IS1/issues) y en el tablero de GitHub Projects del repositorio (pestaña *Projects*).
 
