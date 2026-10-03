@@ -5,11 +5,11 @@
 ## Roles
 | Rol | Quién | Responsabilidad |
 |---|---|---|
-| **Product Owner** | El profesor; de momento también los 5 miembros (provisional) | Único responsable del Product Backlog: contenido, orden y claridad. Maximiza el valor del producto. |
+| **Product Owner** | El profesor (Gonzalo Rubén Méndez Pozo) | Único responsable del Product Backlog: contenido, orden y claridad. Maximiza el valor del producto. |
 | **Scrum Master** | _por decidir_ ([issue #28](https://github.com/riverri/IS1/issues/28)) | Vela por que Scrum se aplique bien. Facilita los eventos, controla los tiempos y elimina impedimentos. |
-| **Equipo de Desarrollo** | Los 5 (PO y SM también desarrollan) | Autoorganizado y multifuncional. Decide cuánto trabajo entra en el sprint y cómo hacerlo. |
+| **Equipo de Desarrollo** | Los 5 miembros (el SM también desarrolla) | Autoorganizado y multifuncional. Decide cuánto trabajo entra en el sprint y cómo hacerlo. |
 
-El profesor actúa como interesado o cliente: se le invita a las Sprint Reviews o se le presenta el incremento.
+El profesor, como Product Owner, decide el orden del Product Backlog y acepta en las Sprint Reviews lo que está terminado.
 
 ## Sprint
 - Duración fija de **2 semanas**, que no cambia entre sprints. La teoría pone como máximo 1 mes; ajustar al calendario de entregas.
