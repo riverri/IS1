@@ -38,7 +38,7 @@
   - En Gestión, en los partidos de fútbol se introduce el **marcador final**; el ganador sale de él.
   - Si solo se marca el ganador, la doble oportunidad se resuelve igual, pero las apuestas de goles y de ambos marcan se **anulan** (cuentan con cuota 1,00).
   - Corregir el marcador vuelve a resolver las apuestas y ajusta los saldos, igual que con el resultado.
-  - Con la API, el marcador entra solo si el partido acabó en los 90 minutos. Si hubo prórroga o penaltis, solo se usa el ganador, porque la API suma esos goles.
+  - Con la API, el marcador entra solo si el partido acabó en los 90 minutos. Si hubo prórroga o penaltis, solo se usa el ganador, porque la API suma esos goles. _(Cambiado después: ahora se usa el marcador de los 90 minutos; ver la revisión de fallos.)_
 - **Corrección hecha durante el sprint:** las apuestas de estos tipos no tienen resultado 1X2 y rompían el cálculo del dinero apostado a cada resultado. Ahora no entran en ese cálculo, y hay una prueba que lo comprueba.
 
 ### Cuentas de la casa (HU-54)

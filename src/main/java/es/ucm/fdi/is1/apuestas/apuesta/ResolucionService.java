@@ -76,6 +76,12 @@ public class ResolucionService {
         evento(eventoId).suspender();
     }
 
+    /** Aplazado según la API: solo en ese caso la sincronización lo reactiva sola. */
+    @Transactional
+    public void suspenderPorApi(Long eventoId) {
+        evento(eventoId).suspenderPorApi();
+    }
+
     @Transactional
     public void reactivar(Long eventoId) {
         evento(eventoId).reactivar();

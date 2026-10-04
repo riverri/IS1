@@ -10,7 +10,8 @@
         <p class="subtitulo">Bienvenido de nuevo</p>
 
         <p class="alerta alerta-exito" th:if="${param.registrado}">Cuenta creada. Ya puedes iniciar sesión.</p>
-        <p class="alerta alerta-error" th:if="${param.error}">Email o contraseña incorrectos.</p>
+        <p class="alerta alerta-error" th:if="${param.error}">Email o contraseña incorrectos. Tras 5 intentos fallidos hay que esperar 15 minutos.</p>
+        <p class="alerta alerta-error" th:if="${param.expirada}">Tu sesión se ha cerrado porque la cuenta ha cambiado (contraseña nueva o cuenta eliminada). Vuelve a entrar.</p>
         <p class="alerta alerta-exito" th:if="${param.logout}">Has cerrado sesión.</p>
 
         <form class="formulario" th:action="@{/login}" method="post">

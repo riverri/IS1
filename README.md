@@ -92,6 +92,8 @@ La aplicación se ejecuta en un solo ordenador y los demás entran desde el nave
 2. Abre la aplicación en otra ventana y espera a que arranque (la primera vez tarda un poco).
 3. Saca un enlace del tipo `https://palabras-al-azar.trycloudflare.com`. Ese es el que se comparte.
 
+Antes de arrancar pide una contraseña para `creador@apuestas.es` (o la toma de la variable `CREADOR_PASSWORD`), porque la del README es pública y con el enlace cualquiera podría entrar en *Gestión*.
+
 **macOS / Linux:** `brew install cloudflared` (o el paquete de su web) y después `./compartir.sh`.
 
 - El enlace solo funciona mientras ese ordenador esté encendido y con las dos ventanas abiertas, y **cambia cada vez** que se lanza.
@@ -164,17 +166,25 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 - **Pruebas:** `./mvnw test`
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
 - **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Las tablas las crea y actualiza **Flyway** (ver más abajo), así que al actualizar el proyecto no hace falta borrarla. Para empezar de cero, para la aplicación y borra esa carpeta.
-- **Consola de la base de datos:** http://localhost:8080/h2-console (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
+- **Consola de la base de datos:** http://localhost:8080/h2-console, solo con la sesión del creador de apuestas iniciada (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
+- **Reglas que conviene conocer:**
+  - Tras 5 contraseñas incorrectas seguidas, la cuenta queda bloqueada 15 minutos.
+  - Al cambiar la contraseña o dar de baja la cuenta se cierran las sesiones abiertas en otros dispositivos.
+  - Una combinada no puede pasar de una cuota total de 1.000.
+  - El creador de apuestas no puede apostar.
+  - En el ajuste de cuotas por volumen, cada jugador cuenta como mucho 100 moneditas por resultado (las combinadas se reparten entre sus selecciones), para que nadie mueva las cuotas a su favor.
+  - El % de aciertos del ranking solo cuenta a partir de 5 apuestas resueltas.
+  - Las horas son siempre las de Madrid, esté donde esté el servidor.
 - **IDE recomendado:** IntelliJ IDEA Community. Abrir la carpeta, que detecta el `pom.xml`. También valen Eclipse y VS Code con el "Extension Pack for Java".
 
 ## Base de datos y migraciones (Flyway)
 
 Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar. Hay una carpeta por base de datos:
-- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V8__ligas_y_mas_apuestas.sql`.
-- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente. Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V9__concurrencia_y_suspensiones.sql`.
+- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
-1. Crea un script nuevo con el número siguiente, por ejemplo `V9__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
+1. Crea un script nuevo con el número siguiente, por ejemplo `V10__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
 2. **No modifiques nunca un script que ya esté en `main`**: otros ordenadores ya lo han aplicado.
 3. Arranca y ejecuta `./mvnw test`. Hibernate comprueba (`ddl-auto=validate`) que las entidades coinciden con las tablas; si falta una migración, la aplicación no arranca y dice qué columna o tabla falta.
 
@@ -182,7 +192,7 @@ Si tu carpeta `datos/` es de antes del Sprint 4 (apuestas combinadas), no se pue
 
 ## Datos reales con la API (football-data.org)
 
-La aplicación puede descargar sola los partidos y resultados reales de **LaLiga** y la **Champions League**. Al terminar un partido, su resultado entra automáticamente y las apuestas se pagan.
+La aplicación puede descargar sola los partidos y resultados reales de **LaLiga** y la **Champions League**. Al terminar un partido, su resultado entra automáticamente y las apuestas se pagan. Si hubo prórroga o penaltis, cuenta el marcador de los 90 minutos; si la API no lo da, el partido se queda sin resolver y aparece como error de la sincronización para que el creador lo introduzca a mano. Un partido aplazado se suspende, y vuelve a abrirse solo si lo suspendió la API (no si lo suspendió el creador).
 
 1. Regístrate gratis en https://www.football-data.org/client/register. Te llega por email una clave (*API token*).
 2. En IntelliJ: *Run → Edit Configurations… → ApuestasApplication → Environment variables* y añade `FOOTBALL_DATA_TOKEN=tu_clave`.

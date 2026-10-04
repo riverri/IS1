@@ -66,6 +66,9 @@ public class Mercado {
         if (estado != EstadoMercado.ABIERTO) {
             throw new IllegalStateException("Solo se pueden añadir candidatos a un mercado abierto");
         }
+        if (nombreCandidato == null || nombreCandidato.isBlank() || nombreCandidato.length() > 100) {
+            throw new IllegalArgumentException("El nombre de cada candidato debe tener entre 1 y 100 caracteres");
+        }
         boolean repetido = candidatos.stream().anyMatch(c -> c.getNombre().equalsIgnoreCase(nombreCandidato));
         if (repetido) {
             throw new IllegalArgumentException(nombreCandidato + " ya es candidato");

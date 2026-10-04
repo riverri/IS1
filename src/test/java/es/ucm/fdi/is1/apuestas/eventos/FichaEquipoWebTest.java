@@ -17,6 +17,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -55,7 +56,7 @@ class FichaEquipoWebTest {
         getafe = equipos.findByNombre("Getafe CF").orElseThrow();
         sevilla = equipos.findByNombre("Sevilla FC").orElseThrow();
         elche = equipos.findByNombre("Elche CF").orElseThrow();
-        LocalDateTime antes = LocalDateTime.now().minusDays(30);
+        LocalDateTime antes = Hora.ahora().minusDays(30);
         jugado(getafe, sevilla, antes, Resultado.LOCAL);              // Getafe gana
         jugado(sevilla, getafe, antes.plusDays(7), Resultado.EMPATE); // empate
         jugado(elche, getafe, antes.plusDays(14), Resultado.LOCAL);   // Getafe pierde
@@ -70,7 +71,7 @@ class FichaEquipoWebTest {
 
     @Test
     void resultadoDesdeCadaEquipo() {
-        Evento evento = new Evento(laLiga, getafe, sevilla, LocalDateTime.now());
+        Evento evento = new Evento(laLiga, getafe, sevilla, Hora.ahora());
         evento.finalizar(Resultado.VISITANTE);
 
         assertThat(ResultadoEquipo.de(evento, getafe)).isEqualTo(ResultadoEquipo.DERROTA);
@@ -126,7 +127,7 @@ class FichaEquipoWebTest {
 
     @Test
     void caraACaraEntreLosRivalesDeUnPartido() throws Exception {
-        Evento proximo = eventos.save(new Evento(laLiga, getafe, sevilla, LocalDateTime.now().plusDays(3)));
+        Evento proximo = eventos.save(new Evento(laLiga, getafe, sevilla, Hora.ahora().plusDays(3)));
 
         CaraACara cc = fichas.caraACara(proximo);
         assertThat(cc.anteriores()).hasSize(2);

@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class UsuarioDetailsService implements UserDetailsService {
 
     private final UsuarioService usuarios;
+    private final IntentosLogin intentos;
 
-    public UsuarioDetailsService(UsuarioService usuarios) {
+    public UsuarioDetailsService(UsuarioService usuarios, IntentosLogin intentos) {
         this.usuarios = usuarios;
+        this.intentos = intentos;
     }
 
     @Override
@@ -23,6 +25,7 @@ public class UsuarioDetailsService implements UserDetailsService {
                         .password(u.getPasswordHash())
                         .roles(u.getRol().name())
                         .disabled(u.isEliminado())
+                        .accountLocked(intentos.bloqueado(email))
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }

@@ -69,7 +69,7 @@ public class Jugador {
     }
 
     public void cambiarNota(double nueva) {
-        if (nueva < 0 || nueva > 10) {
+        if (Double.isNaN(nueva) || nueva < 0 || nueva > 10) {
             throw new IllegalArgumentException("La nota debe estar entre 0 y 10");
         }
         nota = Math.round(nueva * 10) / 10.0;

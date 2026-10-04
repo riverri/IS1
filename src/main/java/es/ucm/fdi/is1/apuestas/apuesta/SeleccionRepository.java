@@ -16,11 +16,14 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
 
     List<Seleccion> findByCandidatoMercado(Mercado mercado);
 
-    /** Pares (pronóstico, importe total) de las apuestas activas a un evento, para el ajuste por volumen. */
+    /**
+     * Por cada selección 1X2 de una apuesta activa al evento: [pronóstico, id del usuario, importe de la apuesta,
+     * número de selecciones de la apuesta], para el ajuste por volumen.
+     */
     @Query("""
-            select s.pronostico, sum(s.apuesta.importe) from Seleccion s
+            select s.pronostico, s.apuesta.usuario.id, s.apuesta.importe, size(s.apuesta.selecciones)
+            from Seleccion s
             where s.evento = :evento and s.pronostico is not null
-              and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA
-            group by s.pronostico""")
-    List<Object[]> importesActivosPorPronostico(Evento evento);
+              and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA""")
+    List<Object[]> seleccionesActivasPorPronostico(Evento evento);
 }

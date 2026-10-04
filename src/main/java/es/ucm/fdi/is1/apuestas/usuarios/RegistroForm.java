@@ -12,6 +12,7 @@ public class RegistroForm {
 
     @NotBlank(message = "Introduce tu email")
     @Email(message = "El email no es válido")
+    @Size(max = 255, message = "Máximo 255 caracteres")
     private String email;
 
     @NotBlank(message = "Introduce una contraseña")

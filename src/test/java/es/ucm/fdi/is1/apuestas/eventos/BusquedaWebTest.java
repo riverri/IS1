@@ -16,6 +16,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 
@@ -39,7 +40,7 @@ class BusquedaWebTest {
 
     @BeforeEach
     void crearEventos() {
-        LocalDateTime manana = LocalDateTime.now().plusDays(1);
+        LocalDateTime manana = Hora.ahora().plusDays(1);
         eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Atlético de Madrid").orElseThrow(),
                 equipos.findByNombre("Málaga CF").orElseThrow(), manana));

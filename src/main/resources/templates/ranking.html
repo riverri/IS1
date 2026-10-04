@@ -12,6 +12,7 @@
         <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
            th:href="@{/ranking(orden=${c})}" th:text="${c.nombre}">Saldo</a>
     </nav>
+    <p class="aviso" th:if="${orden.name() == 'ACIERTOS'}">Primero los jugadores con al menos 5 apuestas resueltas: acertar 1 de 1 no cuenta como un 100 % comparable.</p>
 
     <div class="vacio" th:if="${#lists.isEmpty(primeros)}">
         <p>Todavía no hay jugadores.</p>

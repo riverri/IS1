@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.usuarios.PasswordIncorrectaException;
+import es.ucm.fdi.is1.apuestas.usuarios.Sesiones;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,8 +18,11 @@ public class BajaController {
 
     private final BajaService bajas;
 
-    public BajaController(BajaService bajas) {
+    private final Sesiones sesiones;
+
+    public BajaController(BajaService bajas, Sesiones sesiones) {
         this.bajas = bajas;
+        this.sesiones = sesiones;
     }
 
     @PostMapping("/cuenta/eliminar")
@@ -33,6 +37,7 @@ public class BajaController {
             redireccion.addFlashAttribute("errorBaja", e.getMessage());
             return "redirect:/cuenta#eliminar-cuenta";
         }
+        sesiones.cerrarOtras(principal.getName(), peticion.getSession(false));
         peticion.logout();
         return "redirect:/?cuentaEliminada";
     }

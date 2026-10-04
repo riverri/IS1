@@ -58,6 +58,9 @@ public class Evento {
     /** Jornada, ronda o gran premio ("Jornada 8", "Cuartos de final"…). Opcional. */
     private String fase;
 
+    /** Lo suspendió la sincronización con la API (aplazado); si lo suspendió el creador, la API no lo reactiva. */
+    private boolean suspendidoPorApi;
+
     protected Evento() {
         // requerido por JPA
     }
@@ -107,6 +110,17 @@ public class Evento {
             throw new IllegalStateException("Solo se puede suspender un evento programado");
         }
         estado = EstadoEvento.SUSPENDIDO;
+        suspendidoPorApi = false;
+    }
+
+    /** Aplazado según la API: la propia sincronización lo reactivará cuando vuelva a tener fecha. */
+    public void suspenderPorApi() {
+        suspender();
+        suspendidoPorApi = true;
+    }
+
+    public boolean isSuspendidoPorApi() {
+        return suspendidoPorApi;
     }
 
     public void reactivar() {
@@ -114,6 +128,7 @@ public class Evento {
             throw new IllegalStateException("Solo se puede reactivar un evento suspendido");
         }
         estado = EstadoEvento.PROGRAMADO;
+        suspendidoPorApi = false;
     }
 
     /** Anula el evento; las apuestas se devuelven desde el servicio (HU-05). */

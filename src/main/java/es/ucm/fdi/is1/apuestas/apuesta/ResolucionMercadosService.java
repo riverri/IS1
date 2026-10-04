@@ -64,7 +64,9 @@ public class ResolucionMercadosService {
     public List<VolumenCandidato> volumen(Long mercadoId) {
         Mercado mercado = mercados.mercado(mercadoId);
         List<Seleccion> delMercado = selecciones.findByCandidatoMercado(mercado).stream()
-                .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA)
+                // Mismo criterio que en los eventos: ni canceladas ni anuladas (se devolvió el importe)
+                .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA
+                        && s.getApuesta().getEstado() != EstadoApuesta.ANULADA)
                 .toList();
         return mercado.getCandidatos().stream().map(candidato -> {
             List<Seleccion> aEste = delMercado.stream()

@@ -22,6 +22,13 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
         return new Estadisticas(resueltas.size(), ganadas, apostado, beneficio);
     }
 
+    /** A partir de los totales de la base de datos: beneficio = pagado − apostado. */
+    static Estadisticas de(long resueltas, long ganadas, BigDecimal apostado, BigDecimal pagado) {
+        return new Estadisticas((int) resueltas, (int) ganadas, apostado, pagado.subtract(apostado));
+    }
+
+    static final Estadisticas VACIAS = new Estadisticas(0, 0, BigDecimal.ZERO, BigDecimal.ZERO);
+
     /** Porcentaje de apuestas acertadas (0 si no hay ninguna resuelta). */
     public BigDecimal getPorcentajeAciertos() {
         if (resueltas == 0) {
