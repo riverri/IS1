@@ -41,6 +41,14 @@ public class DatosIniciales implements ApplicationRunner {
     private final UsuarioService usuarios;
     private final String passwordCreador;
     private final String passwordUsuario;
+    private final boolean passwordCreadorFija;
+    /**
+     * Los partidos y los mercados de ejemplo solo se cargan en una base de datos vacía. Si se buscaran cada vez
+     * por equipos y fecha, un partido al que la API o el creador cambian la hora (o que el creador borra)
+     * volvería a crearse en el siguiente arranque, y nadie lo resolvería nunca.
+     */
+    private boolean cargarPartidos;
+    private boolean cargarMercados;
 
     /**
      * Las contraseñas de los usuarios de prueba se pueden cambiar con las variables de entorno
@@ -50,7 +58,8 @@ public class DatosIniciales implements ApplicationRunner {
     public DatosIniciales(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
                           MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios,
                           @Value("${apuestas.creador.password}") String passwordCreador,
-                          @Value("${apuestas.usuario.password}") String passwordUsuario) {
+                          @Value("${apuestas.usuario.password}") String passwordUsuario,
+                          @Value("${apuestas.creador.password-fija:false}") boolean passwordCreadorFija) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
@@ -59,6 +68,7 @@ public class DatosIniciales implements ApplicationRunner {
         this.usuarios = usuarios;
         this.passwordCreador = passwordCreador;
         this.passwordUsuario = passwordUsuario;
+        this.passwordCreadorFija = passwordCreadorFija;
     }
 
     /** Identificadores de los escudos en el servicio público de football-data.org. */
@@ -100,9 +110,16 @@ public class DatosIniciales implements ApplicationRunner {
                     + "CREADOR_PASSWORD");
         }
         usuario("creador@apuestas.es", "Creador de apuestas", passwordCreador, Rol.CREADOR);
+        if (passwordCreadorFija) {
+            // Perfiles públicos (compartir, nube): manda la contraseña de la variable, no la que ya hubiera
+            usuarios.fijarPassword("creador@apuestas.es", passwordCreador);
+        }
         if (!passwordUsuario.isBlank()) {
             usuario("usuario@apuestas.es", "Usuario de prueba", passwordUsuario, Rol.USUARIO);
         }
+
+        cargarPartidos = eventos.count() == 0;
+        cargarMercados = mercados.count() == 0;
 
         Competicion laLiga = competicion("LaLiga", Deporte.FUTBOL);
         Competicion champions = competicion("Champions League", Deporte.FUTBOL);
@@ -300,6 +317,9 @@ public class DatosIniciales implements ApplicationRunner {
      * en Gestión. El mercado de F1 es de ejemplo, como el resto de eventos de otros deportes.
      */
     private void mercadosALargoPlazo() {
+        if (!cargarMercados) {
+            return;
+        }
         mercado("Campeón de la Champions 2026/27", Deporte.FUTBOL, LocalDateTime.of(2027, 2, 15, 23, 59),
                 "FC Barcelona;5.50", "Paris Saint-Germain;6.00", "Arsenal;6.00", "Bayern de Múnich;7.00",
                 "Real Madrid;8.00", "Manchester City;8.00", "Liverpool;9.00", "Inter de Milán;15.00",
@@ -354,6 +374,9 @@ public class DatosIniciales implements ApplicationRunner {
 
     private void partido(Competicion competicion, String fase, String local, String visitante,
                          int anio, int mes, int dia, int hora, int minuto) {
+        if (!cargarPartidos) {
+            return;
+        }
         Equipo equipoLocal = equipos.findByNombre(local).orElseThrow();
         Equipo equipoVisitante = equipos.findByNombre(visitante).orElseThrow();
         LocalDateTime fechaHora = LocalDateTime.of(anio, mes, dia, hora, minuto);

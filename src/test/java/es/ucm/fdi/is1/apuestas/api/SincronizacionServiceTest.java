@@ -17,9 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.Apuesta;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
 import es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta;
+import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.apuesta.SeleccionPedida;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
@@ -48,6 +50,9 @@ class SincronizacionServiceTest {
     @Autowired
     private ApuestaService apuestas;
 
+    @Autowired
+    private ResolucionService resolucion;
+
     private static String utc(LocalDateTime madrid) {
         return madrid.atZone(ZoneId.of("Europe/Madrid")).toInstant().toString();
     }
@@ -68,7 +73,7 @@ class SincronizacionServiceTest {
 
     @Test
     void creaLosPartidosYEquiposQueFaltan() {
-        LocalDateTime fecha = LocalDateTime.now().plusDays(3).withNano(0).withSecond(0);
+        LocalDateTime fecha = Hora.ahora().plusDays(3).withNano(0).withSecond(0);
         devuelve(partido(900001, fecha, "TIMED", null,
                 equipo(745, "CD Leganés", "Leganés"), equipo(250, "Real Valladolid CF", "Valladolid")));
 
@@ -103,7 +108,7 @@ class SincronizacionServiceTest {
     @Test
     void reconoceEquiposConNombresDistintos() {
         equipos.findByNombre("Atlético de Madrid").orElseThrow().setIdExterno(null);
-        devuelve(partido(900003, LocalDateTime.now().plusDays(2), "TIMED", null,
+        devuelve(partido(900003, Hora.ahora().plusDays(2), "TIMED", null,
                 equipo(78, "Club Atlético de Madrid", "Atleti"), equipo(82, "Getafe CF", "Getafe")));
 
         ResumenSincronizacion resumen = sincronizacion.sincronizar();
@@ -114,7 +119,7 @@ class SincronizacionServiceTest {
 
     @Test
     void unPartidoTerminadoResuelveLasApuestas() {
-        LocalDateTime fecha = LocalDateTime.now().plusHours(1).withNano(0).withSecond(0);
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
         PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
         PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
         devuelve(partido(900004, fecha, "TIMED", null, elche, celta));
@@ -137,7 +142,7 @@ class SincronizacionServiceTest {
 
     @Test
     void conElMarcadorSeResuelvenTambienLasApuestasDeGoles() {
-        LocalDateTime fecha = LocalDateTime.now().plusHours(1).withNano(0).withSecond(0);
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
         PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
         PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
         devuelve(partido(900006, fecha, "TIMED", null, elche, celta));
@@ -160,29 +165,98 @@ class SincronizacionServiceTest {
         assertThat(sincronizacion.sincronizar().getResultados()).isZero();
     }
 
+    /** F-07: con prórroga o penaltis, las apuestas se deciden con el marcador de los 90 minutos. */
     @Test
-    void conProrrogaSoloSeUsaElGanador() {
-        LocalDateTime fecha = LocalDateTime.now().plusHours(1).withNano(0).withSecond(0);
+    void conPenaltisCuentaElMarcadorDeLos90Minutos() {
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
         PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
         PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
         devuelve(partido(900007, fecha, "TIMED", null, elche, celta));
         sincronizacion.sincronizar();
         Evento evento = eventos.findByIdExterno(900007L).orElseThrow();
+        Apuesta empate = apuestas.apostar("usuario@apuestas.es", evento.getId(), Resultado.EMPATE, new BigDecimal("10"));
         Apuesta mas = apuestas.apostar("usuario@apuestas.es",
                 List.of(new SeleccionPedida(evento.getId(), null, Especial.MAS_2_5, null)), new BigDecimal("10"));
 
+        // Gana el local en los penaltis, pero a los 90 minutos iban 1-1
         devuelve(new PartidoApi(900007L, utc(fecha), "FINISHED", 10, elche, celta,
-                new PartidoApi.MarcadorApi("HOME_TEAM", "EXTRA_TIME", new PartidoApi.GolesApi(2, 1))));
+                new PartidoApi.MarcadorApi("HOME_TEAM", "PENALTY_SHOOTOUT", new PartidoApi.GolesApi(6, 5),
+                        new PartidoApi.GolesApi(1, 1))));
         sincronizacion.sincronizar();
 
-        assertThat(evento.getResultado()).isEqualTo(Resultado.LOCAL);
-        assertThat(evento.isConMarcador()).isFalse();
-        assertThat(mas.getEstado()).isEqualTo(EstadoApuesta.ANULADA);
+        assertThat(evento.getResultado()).isEqualTo(Resultado.EMPATE);
+        assertThat(evento.getGolesLocal()).isEqualTo(1);
+        assertThat(empate.getEstado()).isEqualTo(EstadoApuesta.GANADA);
+        assertThat(mas.getEstado()).isEqualTo(EstadoApuesta.PERDIDA);
+    }
+
+    @Test
+    void conProrrogaYSinMarcadorDeLos90MinutosSeAvisaYNoSeResuelve() {
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        devuelve(partido(900008, fecha, "TIMED", null, elche, celta));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900008L).orElseThrow();
+
+        devuelve(new PartidoApi(900008L, utc(fecha), "FINISHED", 10, elche, celta,
+                new PartidoApi.MarcadorApi("HOME_TEAM", "EXTRA_TIME", new PartidoApi.GolesApi(2, 1))));
+        ResumenSincronizacion resumen = sincronizacion.sincronizar();
+
+        assertThat(evento.getEstado()).isNotEqualTo(EstadoEvento.FINALIZADO);
+        assertThat(resumen.getErrores()).anyMatch(e -> e.contains("introdúcelo a mano"));
+    }
+
+    /** N-02: un partido que anuló el creador no rompe la sincronización ni se le pone resultado. */
+    @Test
+    void unPartidoAnuladoNoBloqueaLosDemas() {
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        PartidoApi.EquipoApi levante = equipo(88, "Levante UD", "Levante");
+        PartidoApi.EquipoApi sevilla = equipo(559, "Sevilla FC", "Sevilla");
+        devuelve(partido(900009, fecha, "TIMED", null, elche, celta),
+                partido(900010, fecha, "TIMED", null, levante, sevilla));
+        sincronizacion.sincronizar();
+        Evento anulado = eventos.findByIdExterno(900009L).orElseThrow();
+        Evento otro = eventos.findByIdExterno(900010L).orElseThrow();
+        resolucion.anular(anulado.getId());
+
+        devuelve(partido(900009, fecha, "FINISHED", "HOME_TEAM", elche, celta),
+                partido(900010, fecha, "FINISHED", "AWAY_TEAM", levante, sevilla));
+        ResumenSincronizacion resumen = sincronizacion.sincronizar();
+
+        assertThat(anulado.getEstado()).isEqualTo(EstadoEvento.ANULADO);
+        assertThat(otro.getResultado()).isEqualTo(Resultado.VISITANTE);
+        assertThat(resumen.getErrores()).isEmpty();
+    }
+
+    /** N-06: lo que suspende el creador no lo reactiva la API; lo que aplaza la API, sí. */
+    @Test
+    void laApiSoloReactivaLoQueEllaSuspendio() {
+        LocalDateTime fecha = Hora.ahora().plusDays(2).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        PartidoApi.EquipoApi levante = equipo(88, "Levante UD", "Levante");
+        PartidoApi.EquipoApi sevilla = equipo(559, "Sevilla FC", "Sevilla");
+        devuelve(partido(900011, fecha, "TIMED", null, elche, celta),
+                partido(900012, fecha, "POSTPONED", null, levante, sevilla));
+        sincronizacion.sincronizar();
+        Evento manual = eventos.findByIdExterno(900011L).orElseThrow();
+        Evento aplazado = eventos.findByIdExterno(900012L).orElseThrow();
+        resolucion.suspender(manual.getId());
+
+        devuelve(partido(900011, fecha, "TIMED", null, elche, celta),
+                partido(900012, fecha, "TIMED", null, levante, sevilla));
+        sincronizacion.sincronizar();
+
+        assertThat(manual.getEstado()).isEqualTo(EstadoEvento.SUSPENDIDO);
+        assertThat(aplazado.getEstado()).isEqualTo(EstadoEvento.PROGRAMADO);
     }
 
     @Test
     void aplazadoSeSuspendeYCanceladoSeAnula() {
-        LocalDateTime fecha = LocalDateTime.now().plusDays(4).withNano(0).withSecond(0);
+        LocalDateTime fecha = Hora.ahora().plusDays(4).withNano(0).withSecond(0);
         PartidoApi.EquipoApi sevilla = equipo(559, "Sevilla FC", "Sevilla");
         PartidoApi.EquipoApi betis = equipo(90, "Real Betis Balompié", "Betis");
         devuelve(partido(900005, fecha, "POSTPONED", null, sevilla, betis));
@@ -201,7 +275,7 @@ class SincronizacionServiceTest {
 
     @Test
     void sincronizarDosVecesNoDuplica() {
-        LocalDateTime fecha = LocalDateTime.now().plusDays(5).withNano(0).withSecond(0);
+        LocalDateTime fecha = Hora.ahora().plusDays(5).withNano(0).withSecond(0);
         devuelve(partido(900006, fecha, "SCHEDULED", null,
                 equipo(745, "CD Leganés", "Leganés"), equipo(250, "Real Valladolid CF", "Valladolid")));
 
@@ -217,7 +291,7 @@ class SincronizacionServiceTest {
 
     @Test
     void cambiaLaFechaSiLaApiLaMueve() {
-        LocalDateTime fecha = LocalDateTime.now().plusDays(6).withNano(0).withSecond(0);
+        LocalDateTime fecha = Hora.ahora().plusDays(6).withNano(0).withSecond(0);
         PartidoApi.EquipoApi a = equipo(745, "CD Leganés", "Leganés");
         PartidoApi.EquipoApi b = equipo(250, "Real Valladolid CF", "Valladolid");
         devuelve(partido(900007, fecha, "TIMED", null, a, b));

@@ -49,6 +49,9 @@ public class BoletoService {
         if (boleto.getTamano() >= maximo) {
             throw new IllegalArgumentException("El boleto admite como máximo " + maximo + " selecciones");
         }
+        List<BigDecimal> conLaNueva = new ArrayList<>(boleto.getLineas().stream().map(Boleto.Linea::cuotaVista).toList());
+        conLaNueva.add(cuota);
+        ApuestaService.comprobarCuotaTotal(Apuesta.producto(conLaNueva));
         if (especial != null) {
             boleto.anadir(eventoId, especial, cuota);
         } else {
@@ -66,12 +69,27 @@ public class BoletoService {
      */
     @Transactional(readOnly = true)
     public BoletoVista vista(Boleto boleto) {
+        return vista(boleto, true);
+    }
+
+    /**
+     * Para la barra del boleto que sale en todas las páginas: no quita nada del boleto. Si lo hiciera, al confirmar
+     * una combinada con un partido que acaba de empezar se apostaría en silencio una apuesta con menos selecciones.
+     */
+    @Transactional(readOnly = true)
+    public BoletoVista resumen(Boleto boleto) {
+        return vista(boleto, false);
+    }
+
+    private BoletoVista vista(Boleto boleto, boolean quitarNoDisponibles) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         List<BoletoVista.LineaVista> lineas = new ArrayList<>();
         for (Boleto.Linea linea : List.copyOf(boleto.getLineas())) {
             Evento evento = eventos.findById(linea.eventoId()).filter(e -> e.admiteApuestas(ahora)).orElse(null);
             if (evento == null) {
-                boleto.quitar(linea.eventoId());
+                if (quitarNoDisponibles) {
+                    boleto.quitar(linea.eventoId());
+                }
                 continue;
             }
             BigDecimal cuota = calculadora.cuota(evento, linea.resultado(), linea.especial());
@@ -98,6 +116,18 @@ public class BoletoService {
         } catch (CuotasCambiadasException e) {
             aceptarCuotasActuales(boleto);
             throw e;
+        }
+    }
+
+    /** Las cuotas que el usuario tenía delante al confirmar, como "evento:cuota". Las mal escritas se ignoran. */
+    public void fijarCuotasVistas(Boleto boleto, List<String> cuotas) {
+        for (String vista : cuotas) {
+            String[] partes = vista.split(":");
+            try {
+                boleto.actualizarCuota(Long.valueOf(partes[0]), new BigDecimal(partes[1]));
+            } catch (RuntimeException e) {
+                // valor manipulado o incompleto: se queda la cuota que ya tenía la línea
+            }
         }
     }
 

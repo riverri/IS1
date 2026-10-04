@@ -210,7 +210,12 @@ public class GestionController {
         if (errores.hasErrors()) {
             return "gestion/competicion";
         }
-        gestion.crearCompeticion(form);
+        try {
+            gestion.crearCompeticion(form);
+        } catch (DatosInvalidosException e) {
+            errores.rejectValue(e.getCampo(), "invalido", e.getMessage());
+            return "gestion/competicion";
+        }
         redireccion.addFlashAttribute("mensaje", "Competición creada: " + form.getNombre());
         return "redirect:/gestion";
     }
@@ -359,6 +364,14 @@ public class GestionController {
             String guardado;
             int resueltas;
             if (golesLocal != null && golesVisitante != null) {
+                Resultado delMarcador = golesLocal > golesVisitante ? Resultado.LOCAL
+                        : golesLocal < golesVisitante ? Resultado.VISITANTE : Resultado.EMPATE;
+                if (resultado != null && resultado != delMarcador) {
+                    // Al corregir, el marcador viene relleno con el anterior: no se ignora en silencio el ganador marcado
+                    throw new IllegalArgumentException("El marcador " + golesLocal + "-" + golesVisitante
+                            + " no coincide con el resultado marcado (" + resultado.getDescripcion()
+                            + "). Corrige el marcador o deja marcado solo uno de los dos.");
+                }
                 resueltas = resolucion.introducirMarcador(id, golesLocal, golesVisitante);
                 guardado = golesLocal + "-" + golesVisitante;
             } else if (resultado != null) {

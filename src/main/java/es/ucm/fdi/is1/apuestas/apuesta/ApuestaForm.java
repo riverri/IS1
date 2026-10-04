@@ -19,6 +19,9 @@ public class ApuestaForm {
 
     private Especial especial;
 
+    /** Cuota que tenía delante el usuario (la rellena la página); si ha cambiado, se le avisa en lugar de apostar. */
+    private BigDecimal cuotaVista;
+
     @NotNull(message = "Introduce un importe")
     @DecimalMin(value = "0.01", message = "El importe tiene que ser mayor que 0")
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
@@ -71,6 +74,14 @@ public class ApuestaForm {
 
     public void setEspecial(Especial especial) {
         this.especial = especial;
+    }
+
+    public BigDecimal getCuotaVista() {
+        return cuotaVista;
+    }
+
+    public void setCuotaVista(BigDecimal cuotaVista) {
+        this.cuotaVista = cuotaVista;
     }
 
     public BigDecimal getImporte() {

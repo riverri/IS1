@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
@@ -80,10 +81,10 @@ class EliminarCuentaWebTest {
         ana = usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         Evento jugado = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
-                equipos.findByNombre("Sevilla FC").orElseThrow(), LocalDateTime.now().plusDays(1)));
+                equipos.findByNombre("Sevilla FC").orElseThrow(), Hora.ahora().plusDays(1)));
         Evento futuro = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Elche CF").orElseThrow(),
-                equipos.findByNombre("Levante UD").orElseThrow(), LocalDateTime.now().plusDays(2)));
+                equipos.findByNombre("Levante UD").orElseThrow(), Hora.ahora().plusDays(2)));
         apuestas.apostar(ANA, jugado.getId(), Resultado.LOCAL, BigDecimal.TEN);
         resolucion.introducirResultado(jugado.getId(), Resultado.LOCAL);
         pendiente = apuestas.apostar(ANA, futuro.getId(), Resultado.LOCAL, BigDecimal.TEN);

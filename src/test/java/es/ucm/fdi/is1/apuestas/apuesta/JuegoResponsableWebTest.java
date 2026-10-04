@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
@@ -72,7 +73,7 @@ class JuegoResponsableWebTest {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         partido = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
-                equipos.findByNombre("Sevilla FC").orElseThrow(), LocalDateTime.now().plusDays(1)));
+                equipos.findByNombre("Sevilla FC").orElseThrow(), Hora.ahora().plusDays(1)));
     }
 
     private Usuario ana() {
@@ -131,7 +132,7 @@ class JuegoResponsableWebTest {
 
         mvc.perform(post("/cuenta/pausa").with(COMO_ANA).with(csrf()).param("dias", "7"))
                 .andExpect(flash().attribute("mensaje", containsString("Apuestas en pausa hasta el")));
-        assertThat(ana().enPausa(LocalDateTime.now())).isTrue();
+        assertThat(ana().enPausa(Hora.ahora())).isTrue();
 
         assertThatThrownBy(() -> apostar("5")).hasMessageContaining("Has pausado tus apuestas");
         assertThatThrownBy(() -> apuestas.modificarImporte(ANA, antes.getId(), new BigDecimal("20")))

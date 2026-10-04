@@ -39,7 +39,8 @@ public class UsuarioService {
     @Transactional
     public Usuario crear(String email, String nombre, String password, Rol rol) {
         String emailNormalizado = normalizar(email);
-        if (usuarios.existsByEmail(emailNormalizado)) {
+        // El dominio de las cuentas eliminadas está reservado: si alguien lo ocupara, impediría eliminar esa cuenta
+        if (usuarios.existsByEmail(emailNormalizado) || emailNormalizado.endsWith(Usuario.DOMINIO_ELIMINADOS)) {
             throw new EmailYaRegistradoException(emailNormalizado);
         }
         Usuario usuario = new Usuario(emailNormalizado, nombre.trim(), passwordEncoder.encode(password), rol,
@@ -69,6 +70,14 @@ public class UsuarioService {
             throw new PasswordIncorrectaException();
         }
         usuario.cambiarPasswordHash(passwordEncoder.encode(nueva));
+    }
+
+    /** Pone esta contraseña si no es ya la actual (contraseña del creador en los perfiles públicos). */
+    @Transactional
+    public void fijarPassword(String email, String password) {
+        usuarios.findByEmail(normalizar(email))
+                .filter(u -> !passwordEncoder.matches(password, u.getPasswordHash()))
+                .ifPresent(u -> u.cambiarPasswordHash(passwordEncoder.encode(password)));
     }
 
     /** Límites diario y semanal que se pone el usuario; null quita el límite (HU-10). */

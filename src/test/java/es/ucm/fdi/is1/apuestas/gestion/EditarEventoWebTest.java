@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -67,8 +68,8 @@ class EditarEventoWebTest {
         sevilla = equipos.findByNombre("Sevilla FC").orElseThrow();
         elche = equipos.findByNombre("Elche CF").orElseThrow();
         evento = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(), getafe, sevilla,
-                LocalDateTime.now().plusDays(2)));
-        nuevaFecha = LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.MINUTES);
+                Hora.ahora().plusDays(2)));
+        nuevaFecha = Hora.ahora().plusDays(5).truncatedTo(ChronoUnit.MINUTES);
     }
 
     private org.springframework.test.web.servlet.ResultActions editar(Equipo local, Equipo visitante) throws Exception {
@@ -120,7 +121,7 @@ class EditarEventoWebTest {
     @Test
     void unEventoEmpezadoNoSeEdita() throws Exception {
         Evento empezado = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(), elche, getafe,
-                LocalDateTime.now().minusMinutes(10)));
+                Hora.ahora().minusMinutes(10)));
 
         mvc.perform(post("/gestion/eventos/{id}/editar", empezado.getId()).with(CREADOR).with(csrf())
                         .param("localId", elche.getId().toString())
@@ -128,7 +129,7 @@ class EditarEventoWebTest {
                         .param("fechaHora", nuevaFecha.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("no se puede editar")));
-        assertThat(empezado.getFechaHora()).isBefore(LocalDateTime.now());
+        assertThat(empezado.getFechaHora()).isBefore(Hora.ahora());
     }
 
     @Test

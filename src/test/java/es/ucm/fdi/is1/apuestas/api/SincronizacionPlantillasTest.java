@@ -121,4 +121,14 @@ class SincronizacionPlantillasTest {
         assertThat(resumen.retirados()).isZero();
         assertThat(jugadores.findByIdExterno(9001)).isPresent();
     }
+
+    /** N-18: un equipo de la API que se llama como uno nuestro ya enlazado con otro identificador no es el nuestro. */
+    @Test
+    void noSeMezclaConUnEquipoYaEnlazadoAOtroDeLaApi() {
+        devuelve(new PlantillaApi(999999, "Getafe CF", "Getafe", List.of(jugador(9301, "Impostor", "Goalkeeper", 1))));
+
+        sincronizacion.sincronizar();
+
+        assertThat(jugadores.findByIdExterno(9301)).isEmpty();
+    }
 }

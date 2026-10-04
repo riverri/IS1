@@ -122,6 +122,8 @@ public class SincronizacionPlantillas {
         String clave = Nombres.clave(datos.name());
         String claveCorta = Nombres.clave(datos.shortName());
         return equipos.findByIdExterno(datos.id()).orElseGet(() -> equipos.findByDeporte(Deporte.FUTBOL).stream()
+                // Un equipo ya enlazado con otro de la API no es este, aunque el nombre se parezca
+                .filter(e -> e.getIdExterno() == null)
                 .filter(e -> {
                     String nuestra = Nombres.clave(e.getNombre());
                     return nuestra.equals(clave) || nuestra.equals(claveCorta);

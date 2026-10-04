@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
@@ -22,11 +23,13 @@ public class UsuariosController {
     private final UsuarioService usuarios;
     private final SaldoProperties saldo;
     private final Clock reloj;
+    private final Sesiones sesiones;
 
-    public UsuariosController(UsuarioService usuarios, SaldoProperties saldo, Clock reloj) {
+    public UsuariosController(UsuarioService usuarios, SaldoProperties saldo, Clock reloj, Sesiones sesiones) {
         this.usuarios = usuarios;
         this.saldo = saldo;
         this.reloj = reloj;
+        this.sesiones = sesiones;
     }
 
     @GetMapping("/login")
@@ -45,6 +48,9 @@ public class UsuariosController {
     public String registrar(@Valid @ModelAttribute("registro") RegistroForm form, BindingResult errores, Model model) {
         if (form.getPassword() != null && !form.getPassword().equals(form.getConfirmacion())) {
             errores.rejectValue("confirmacion", "noCoincide", "Las contraseñas no coinciden");
+        }
+        if (!Contrasenas.cabe(form.getPassword())) {
+            errores.rejectValue("password", "larga", Contrasenas.DEMASIADO_LARGA);
         }
         if (!errores.hasErrors()) {
             try {
@@ -108,13 +114,18 @@ public class UsuariosController {
     /** HU-47. */
     @PostMapping("/cuenta/password")
     public String cambiarPassword(@Valid @ModelAttribute("datosPassword") PasswordForm form, BindingResult errores,
-                                  Principal principal, Model model, RedirectAttributes redireccion) {
+                                  Principal principal, Model model, RedirectAttributes redireccion,
+                                  HttpServletRequest peticion) {
         if (form.getNueva() != null && !form.getNueva().equals(form.getConfirmacion())) {
             errores.rejectValue("confirmacion", "noCoincide", "Las contraseñas no coinciden");
+        }
+        if (!Contrasenas.cabe(form.getNueva())) {
+            errores.rejectValue("nueva", "larga", Contrasenas.DEMASIADO_LARGA);
         }
         if (!errores.hasErrors()) {
             try {
                 usuarios.cambiarPassword(principal.getName(), form.getActual(), form.getNueva());
+                sesiones.cerrarOtras(principal.getName(), peticion.getSession(false));
                 redireccion.addFlashAttribute("mensaje", "Contraseña cambiada. Úsala la próxima vez que entres.");
                 return "redirect:/cuenta";
             } catch (PasswordIncorrectaException e) {

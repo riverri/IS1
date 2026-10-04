@@ -4,10 +4,12 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
+import es.ucm.fdi.is1.apuestas.usuarios.CuentaEliminada;
 import es.ucm.fdi.is1.apuestas.usuarios.PasswordIncorrectaException;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -26,14 +28,16 @@ public class BajaService {
     private final ApuestaRepository apuestas;
     private final NotificacionService notificaciones;
     private final Clock reloj;
+    private final ApplicationEventPublisher eventos;
 
     public BajaService(UsuarioService usuarioService, UsuarioRepository usuarios, ApuestaRepository apuestas,
-                       NotificacionService notificaciones, Clock reloj) {
+                       NotificacionService notificaciones, Clock reloj, ApplicationEventPublisher eventos) {
         this.usuarioService = usuarioService;
         this.usuarios = usuarios;
         this.apuestas = apuestas;
         this.notificaciones = notificaciones;
         this.reloj = reloj;
+        this.eventos = eventos;
     }
 
     @Transactional
@@ -50,6 +54,7 @@ public class BajaService {
                 .filter(a -> a.cancelable(ahora))
                 .forEach(a -> a.cancelar(ahora));
         notificaciones.borrarDe(usuario);
+        eventos.publishEvent(new CuentaEliminada(usuario.getId()));
         usuarioService.anonimizar(usuario);
     }
 }

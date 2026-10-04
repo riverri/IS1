@@ -6,12 +6,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.apuesta.CriterioRanking;
 import es.ucm.fdi.is1.apuestas.apuesta.PuestoRanking;
 import es.ucm.fdi.is1.apuestas.apuesta.RankingService;
+import es.ucm.fdi.is1.apuestas.usuarios.CuentaEliminada;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -108,6 +110,21 @@ public class LigaService {
         }
         ligas.delete(liga);
         return liga;
+    }
+
+    /**
+     * Al eliminar una cuenta: se borran las ligas que creó (nadie más podría borrarlas) y sale de las demás.
+     */
+    @EventListener
+    public void alEliminarCuenta(CuentaEliminada cuenta) {
+        Usuario usuario = usuarios.findById(cuenta.usuarioId()).orElseThrow();
+        for (Liga liga : ligas.deMiembro(usuario)) {
+            if (liga.esCreador(usuario)) {
+                ligas.delete(liga);
+            } else {
+                liga.salir(usuario);
+            }
+        }
     }
 
     private String codigoNuevo() {

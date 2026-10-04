@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.EstadoMercado;
@@ -67,7 +68,7 @@ class LargoPlazoWebTest {
     void preparar() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         usuarioService.crear(LUIS, "Luis", "secreta123", Rol.USUARIO);
-        pichichi = new Mercado("Pichichi de prueba", Deporte.FUTBOL, LocalDateTime.now().plusDays(30));
+        pichichi = new Mercado("Pichichi de prueba", Deporte.FUTBOL, Hora.ahora().plusDays(30));
         mbappe = pichichi.anadirCandidato("Kylian Mbappé", new BigDecimal("2.20"));
         ferran = pichichi.anadirCandidato("Ferran Torres", new BigDecimal("8.00"));
         pichichi = mercados.saveAndFlush(pichichi);
@@ -216,7 +217,7 @@ class LargoPlazoWebTest {
         mvc.perform(post("/gestion/mercados/nuevo").with(CREADOR).with(csrf())
                         .param("nombre", "MVP de la ACB 2026/27")
                         .param("deporte", "BALONCESTO")
-                        .param("cierre", LocalDateTime.now().plusMonths(3).withNano(0).withSecond(0).toString())
+                        .param("cierre", Hora.ahora().plusMonths(3).withNano(0).withSecond(0).toString())
                         .param("candidatos", "Mario Hezonja; 4,50\nEdy Tavares; 6\n\nUnicaja; 12"))
                 .andExpect(status().is3xxRedirection());
 
@@ -233,7 +234,7 @@ class LargoPlazoWebTest {
         mvc.perform(post("/gestion/mercados/nuevo").with(CREADOR).with(csrf())
                         .param("nombre", "Mercado roto")
                         .param("deporte", "FUTBOL")
-                        .param("cierre", LocalDateTime.now().plusMonths(3).withNano(0).withSecond(0).toString())
+                        .param("cierre", Hora.ahora().plusMonths(3).withNano(0).withSecond(0).toString())
                         .param("candidatos", "Mbappé 2,5\nKane; 4"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("El formato es: Nombre; cuota")));

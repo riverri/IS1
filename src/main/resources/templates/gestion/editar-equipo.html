@@ -65,7 +65,8 @@
                     </td>
                     <td>
                         <form class="en-linea" th:action="@{/gestion/jugadores/{id}/borrar(id=${j.id})}" method="post"
-                              th:attr="onsubmit='return confirm(\'¿Quitar a ' + ${j.nombre} + ' de la plantilla?\');'">
+                              th:data-nombre="${j.nombre}"
+                              onsubmit="return confirm('¿Quitar a ' + this.dataset.nombre + ' de la plantilla?');">
                             <button class="quitar" type="submit" th:attr="aria-label='Quitar a ' + ${j.nombre}">✕</button>
                         </form>
                     </td>

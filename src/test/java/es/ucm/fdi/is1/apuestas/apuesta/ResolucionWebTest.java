@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
@@ -78,7 +79,7 @@ class ResolucionWebTest {
         usuarioService.crear(LUIS, "Luis", "secreta123", Rol.USUARIO);
         futbol = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
-                equipos.findByNombre("Sevilla FC").orElseThrow(), LocalDateTime.now().plusHours(2)));
+                equipos.findByNombre("Sevilla FC").orElseThrow(), Hora.ahora().plusHours(2)));
         deAna = apuestaService.apostar(ANA, futbol.getId(), Resultado.LOCAL, new BigDecimal("100"));
         deLuis = apuestaService.apostar(LUIS, futbol.getId(), Resultado.VISITANTE, new BigDecimal("50"));
     }
@@ -128,7 +129,7 @@ class ResolucionWebTest {
     void noHayEmpateEnBaloncesto() throws Exception {
         Evento basket = eventos.save(new Evento(competiciones.findByNombre("Liga ACB").orElseThrow(),
                 equipos.findByNombre("Unicaja").orElseThrow(),
-                equipos.findByNombre("Baskonia").orElseThrow(), LocalDateTime.now().minusHours(2)));
+                equipos.findByNombre("Baskonia").orElseThrow(), Hora.ahora().minusHours(2)));
 
         mvc.perform(post("/gestion/eventos/{id}/resultado", basket.getId()).with(CREADOR).with(csrf())
                         .param("resultado", "EMPATE"))
