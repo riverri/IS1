@@ -21,7 +21,7 @@ public class SeguridadConfig {
         http
                 .authorizeHttpRequests(peticiones -> peticiones
                         // Páginas públicas: cualquier visitante puede ver el catálogo (HU-08)
-                        .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login",
+                        .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login", "/recuperar", "/recuperar/nueva",
                                 "/css/**", "/error").permitAll()
                         // Consola de la base de datos (solo existe en local): únicamente para el creador
                         .requestMatchers("/h2-console/**").hasRole("CREADOR")

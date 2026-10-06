@@ -145,6 +145,18 @@ class JuegoResponsableWebTest {
     }
 
     @Test
+    void conPausaSePuedeConsultarLaCuenta() throws Exception {
+        usuarioService.pausar(ANA, 7);
+
+        mvc.perform(get("/cuenta").with(COMO_ANA))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Tienes las apuestas en pausa hasta el")))
+                .andExpect(content().string(containsString("Mi cuenta")));
+        mvc.perform(get("/apuestas").with(COMO_ANA))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void unaPausaNoSePuedeAcortar() {
         usuarioService.pausar(ANA, 30);
         LocalDateTime hasta = ana().getPausaHasta();

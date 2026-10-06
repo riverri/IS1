@@ -45,6 +45,8 @@ El punto de entrada es `ApuestasApplication.java`, con el `main` que arranca Spr
 | `Sesiones` | Cierra las sesiones de otros navegadores al cambiar la contraseña o darse de baja |
 | `Contrasenas` | Comprueba el límite de 72 bytes de BCrypt |
 | `CuentaEliminada` | Evento que se publica al dar de baja una cuenta |
+| `RecuperacionService`, `RecuperacionController`, `TokenRecuperacion` | Recuperar la contraseña con un enlace que caduca y sirve una vez |
+| `EnvioCorreo`, `CorreoRecuperacion` | Envía el enlace por correo, o lo escribe en la consola si no hay servidor de correo |
 
 ## equipos
 | Clase | Qué hace |

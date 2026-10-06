@@ -74,6 +74,12 @@
             <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
 
+        <!-- Correo: enlace para recuperar la contraseña (HU-17) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- Validación (@NotBlank, @DecimalMin…) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

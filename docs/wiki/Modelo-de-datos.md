@@ -15,6 +15,7 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **Candidato** | nombre, cuota | Un mercado; opcionalmente un equipo |
 | **Liga** | nombre, codigo, creada | Un creador y muchos miembros (`liga_miembro`) |
 | **Notificacion** | texto, tipo, fecha, leida | Un usuario |
+| **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 
 ## Estados

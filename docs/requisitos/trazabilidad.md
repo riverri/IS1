@@ -11,16 +11,12 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 | Historias hechas | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 44 | 92 | 88 (96 %) | 3 | 1 |
+| 45 | 94 | 91 (97 %) | 3 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
-- HU-17 (recuperar la contraseña) está pendiente.
 
-**Huecos conocidos, candidatos a una prueba nueva:**
-- HU-33: el mensaje cuando no hay enfrentamientos previos.
-- HU-10: consultar la cuenta durante una pausa.
-- HU-19: el orden por fecha del catálogo.
+Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -89,7 +85,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
 | CA-10.1 | Con el límite diario alcanzado no se puede apostar más | Automática | [`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.elLimiteDiarioCuentaLoYaApostado`<br>[`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.lasCanceladasNoCuentan` |
-| CA-10.2 | Con una pausa no se puede apostar, pero sí consultar la cuenta | Automática | [`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.conPausaNoSePuedeApostarNiSubirElImporte`<br>[`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.unaPausaNoSePuedeAcortar`<br>La consulta de la cuenta durante la pausa no tiene prueba propia. |
+| CA-10.2 | Con una pausa no se puede apostar, pero sí consultar la cuenta | Automática | [`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.conPausaNoSePuedeApostarNiSubirElImporte`<br>[`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.unaPausaNoSePuedeAcortar`<br>[`JuegoResponsableWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/JuegoResponsableWebTest.java)`.conPausaSePuedeConsultarLaCuenta` |
 
 ## HU-11 · Registro
 
@@ -119,6 +115,13 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-14.1 | Al registrarse se recibe el saldo de bienvenida | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroCreaLaCuentaConElSaldoDeBienvenida`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.empiezaConElSaldoDeBienvenida` |
 | CA-14.2 | Pasado el periodo se recibe una recarga, una sola vez | Automática | [`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.noRecargaAntesDeQuePaseElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.recargaCuandoHaPasadoElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.soloRecargaUnaVezPorPeriodo` |
 
+## HU-17 · Recuperar la contraseña
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-17.1 | Al pedirlo con el email se recibe un enlace para crear una contraseña nueva | Automática | [`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.conElEnlaceSeCreaUnaContrasenaNueva`<br>[`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.elLoginEnlazaARecuperarLaContrasena`<br>[`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.unEmailSinCuentaRecibeLaMismaRespuestaYNoSeEnviaNada`<br>[`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.laContrasenaNuevaTieneLasMismasReglasQueElRegistro` |
+| CA-17.2 | Un enlace caducado o ya usado no permite cambiar la contraseña | Automática | [`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.elEnlaceSoloSirveUnaVez`<br>[`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.unEnlaceCaducadoNoSirve`<br>[`RecuperacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/RecuperacionWebTest.java)`.pedirOtroEnlaceAnulaElAnterior` |
+
 ## HU-18 · Eliminar la cuenta
 
 | ID | Criterio de aceptación | Estado | Pruebas |
@@ -130,7 +133,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-19.1 | Los eventos aparecen agrupados por deporte y ordenados por fecha | Automática | [`CatalogoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/CatalogoWebTest.java)`.unVisitanteVeElCatalogoAgrupadoPorDeporte`<br>El orden por fecha lo da la consulta del repositorio; no tiene prueba propia. |
+| CA-19.1 | Los eventos aparecen agrupados por deporte y ordenados por fecha | Automática | [`CatalogoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/CatalogoWebTest.java)`.unVisitanteVeElCatalogoAgrupadoPorDeporte`<br>[`CatalogoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/CatalogoWebTest.java)`.losEventosSalenOrdenadosPorFecha` |
 | CA-19.2 | Un evento empezado o terminado ya no se puede apostar | Automática | [`CatalogoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/CatalogoWebTest.java)`.losEventosYaJugadosNoAparecen`<br>[`EventoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/EventoTest.java)`.noAdmiteApuestasSiYaHaEmpezado`<br>[`ApuestaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ApuestaWebTest.java)`.noSePuedeApostarAUnEventoQueYaHaEmpezado` |
 
 ## HU-20 · Cuotas de cada resultado
@@ -232,7 +235,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
 | CA-33.1 | Se ve el historial de enfrentamientos y las rachas de los dos | Automática | [`FichaEquipoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/FichaEquipoWebTest.java)`.caraACaraEntreLosRivalesDeUnPartido` |
-| CA-33.2 | Sin enfrentamientos previos se indica | Sin prueba | La página lo muestra ("No hay enfrentamientos anteriores registrados"), pero no hay prueba automática. |
+| CA-33.2 | Sin enfrentamientos previos se indica | Automática | [`FichaEquipoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/eventos/FichaEquipoWebTest.java)`.sinEnfrentamientosPreviosSeIndica` |
 
 ## HU-34 · Historial
 

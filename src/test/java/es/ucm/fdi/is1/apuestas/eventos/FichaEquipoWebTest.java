@@ -141,6 +141,18 @@ class FichaEquipoWebTest {
     }
 
     @Test
+    void sinEnfrentamientosPreviosSeIndica() throws Exception {
+        // Sevilla y Elche no se han enfrentado en los partidos de la prueba
+        Evento proximo = eventos.save(new Evento(laLiga, sevilla, elche, Hora.ahora().plusDays(3)));
+
+        assertThat(fichas.caraACara(proximo).anteriores()).isEmpty();
+        mvc.perform(get("/eventos/{id}/apostar", proximo.getId()).with(user("usuario@apuestas.es")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Cara a cara")))
+                .andExpect(content().string(containsString("No hay enfrentamientos anteriores registrados.")));
+    }
+
+    @Test
     void elGraficoDeEvolucionAcumulaLosPuntos() throws Exception {
         GraficoEvolucion grafico = fichas.ficha(getafe.getId()).evolucion();
 

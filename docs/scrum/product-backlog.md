@@ -17,7 +17,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
 Columna **Estado**: en qué sprints se hizo (S1 = Sprint 1). El detalle está en las actas de [sprints/](sprints/).
 
-**Resumen:** 32 de 35 filas hechas; la 22 a medias (falta recuperar la contraseña, HU-17) y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 35 filas hechas y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|:-:|:-:|---|
@@ -42,7 +42,7 @@ Columna **Estado**: en qué sprints se hizo (S1 = Sprint 1). El detalle está en
 | 19 | Historial de apuestas y estadísticas personales (% de aciertos, rentabilidad) | ½ sprint | 8 | S | | Hecho (S3) |
 | 20 | Banco de estadísticas de equipos: ficha, últimos resultados, evolución, cara a cara. *Depende de las filas 2 y 13* | 1 sprint | 8 | S | | Hecho (S7, S9) |
 | 21 | Búsqueda y filtros en el catálogo (deporte, competición, fecha, equipo) | ¼ sprint | 7 | S | | Hecho (S2) |
-| 22 | Recuperación de contraseña y eliminación de cuenta | ¼ sprint | 7 | S | | Parcial: falta HU-17 |
+| 22 | Recuperación de contraseña y eliminación de cuenta | ¼ sprint | 7 | S | | Hecho (S9, HU-17 después) |
 | 23 | Notificaciones al resolverse una apuesta | ½ sprint | 6 (opcional) | C | | Hecho (S7) |
 | 24 | Ranking de usuarios (ganancias, aciertos, saldo) | ¼ sprint | 6 (opcional) | C | | Hecho (S2–S3) |
 | 25 | Vinculación de cuenta bancaria y retiradas de saldo | ½ sprint | 4 (opcional) | W | | No se hará |
