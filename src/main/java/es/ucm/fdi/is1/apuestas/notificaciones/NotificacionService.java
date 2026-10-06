@@ -38,10 +38,12 @@ public class NotificacionService {
     @Transactional
     public List<Aviso> leer(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
-        List<Aviso> avisos = notificaciones.findTop50ByUsuarioOrderByFechaDescIdDesc(usuario).stream()
+        List<Notificacion> mostradas = notificaciones.findTop50ByUsuarioOrderByFechaDescIdDesc(usuario);
+        List<Aviso> avisos = mostradas.stream()
                 .map(n -> new Aviso(n.getTipo(), n.getTexto(), n.getFecha(), !n.isLeida()))
                 .toList();
-        notificaciones.findByUsuarioAndLeidaFalse(usuario).forEach(Notificacion::marcarLeida);
+        // Solo se marcan como leídos los que se ven: los más antiguos siguen contando en la campana
+        mostradas.forEach(Notificacion::marcarLeida);
         return avisos;
     }
 

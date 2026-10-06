@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -77,7 +78,7 @@ class CombinadaWebTest {
     void preparar() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         sesion = new MockHttpSession();
-        LocalDateTime manana = LocalDateTime.now().plusDays(1);
+        LocalDateTime manana = Hora.ahora().plusDays(1);
         futbol = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
                 equipos.findByNombre("Sevilla FC").orElseThrow(), manana));
@@ -87,7 +88,7 @@ class CombinadaWebTest {
     }
 
     private void anadir(Evento evento, String resultado) throws Exception {
-        mvc.perform(get("/boleto/anadir").session(sesion).with(COMO_ANA)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                         .param("evento", evento.getId().toString()).param("resultado", resultado))
                 .andExpect(status().is3xxRedirection());
     }
@@ -129,7 +130,7 @@ class CombinadaWebTest {
     @Test
     void noSePuedenCombinarDosSeleccionesDelMismoEvento() throws Exception {
         anadir(futbol, "LOCAL");
-        mvc.perform(get("/boleto/anadir").session(sesion).with(COMO_ANA)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                         .param("evento", futbol.getId().toString()).param("resultado", "EMPATE"))
                 .andExpect(flash().attribute("errorBoleto", containsString("Ya tienes una selección de ese partido")));
     }
@@ -238,17 +239,17 @@ class CombinadaWebTest {
 
     @Test
     void unVisitanteQueAnadeAlBoletoVaAlLogin() throws Exception {
-        mvc.perform(get("/boleto/anadir").param("evento", futbol.getId().toString()).param("resultado", "LOCAL"))
+        mvc.perform(post("/boleto/anadir").with(csrf()).param("evento", futbol.getId().toString()).param("resultado", "LOCAL"))
                 .andExpect(redirectedUrl("/login"));
     }
 
     @Test
     void soloVuelveAPaginasDeEstaWeb() throws Exception {
-        mvc.perform(get("/boleto/anadir").session(sesion).with(COMO_ANA)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                         .header("Referer", "https://otra-web.com/robar")
                         .param("evento", futbol.getId().toString()).param("resultado", "LOCAL"))
                 .andExpect(redirectedUrl("/robar"));
-        mvc.perform(get("/boleto/anadir").session(sesion).with(COMO_ANA)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                         .header("Referer", "http://localhost/eventos?deporte=FUTBOL")
                         .param("evento", basket.getId().toString()).param("resultado", "LOCAL"))
                 .andExpect(redirectedUrl("/eventos?deporte=FUTBOL"));

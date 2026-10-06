@@ -18,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
@@ -74,7 +75,7 @@ class CancelacionWebTest {
     @WithMockUser(username = USUARIO)
     void cancelarDevuelveElImporte() throws Exception {
         BigDecimal antes = saldo(USUARIO);
-        Apuesta apuesta = apuestaService.apostar(USUARIO, evento(LocalDateTime.now().plusDays(1)).getId(),
+        Apuesta apuesta = apuestaService.apostar(USUARIO, evento(Hora.ahora().plusDays(1)).getId(),
                 Resultado.LOCAL, new BigDecimal("40"));
 
         mvc.perform(post("/apuestas/{id}/cancelar", apuesta.getId()).with(csrf()))
@@ -90,8 +91,8 @@ class CancelacionWebTest {
     @WithMockUser(username = USUARIO)
     void noSePuedeCancelarSiElEventoYaHaEmpezado() throws Exception {
         Usuario usuario = usuarios.findByEmail(USUARIO).orElseThrow();
-        Apuesta apuesta = new Apuesta(usuario, new BigDecimal("10"), LocalDateTime.now().minusDays(1));
-        apuesta.anadir(evento(LocalDateTime.now().minusMinutes(10)), Resultado.LOCAL, new BigDecimal("2.00"));
+        Apuesta apuesta = new Apuesta(usuario, new BigDecimal("10"), Hora.ahora().minusDays(1));
+        apuesta.anadir(evento(Hora.ahora().minusMinutes(10)), Resultado.LOCAL, new BigDecimal("2.00"));
         apuestas.save(apuesta);
         BigDecimal antes = saldo(USUARIO);
 
@@ -107,7 +108,7 @@ class CancelacionWebTest {
     @WithMockUser(username = USUARIO)
     void noSePuedeCancelarLaApuestaDeOtro() throws Exception {
         usuarioService.crear("otro@ucm.es", "Otro", "secreta123", Rol.USUARIO);
-        Apuesta ajena = apuestaService.apostar("otro@ucm.es", evento(LocalDateTime.now().plusDays(1)).getId(),
+        Apuesta ajena = apuestaService.apostar("otro@ucm.es", evento(Hora.ahora().plusDays(1)).getId(),
                 Resultado.VISITANTE, new BigDecimal("20"));
 
         mvc.perform(post("/apuestas/{id}/cancelar", ajena.getId()).with(csrf()))

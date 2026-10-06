@@ -80,9 +80,13 @@
             </div>
 
             <input type="hidden" name="evento" th:value="${evento.id}">
+            <input type="hidden" th:field="*{cuotaVista}" id="cuota-vista">
+            <p class="aviso" th:if="${usuarioActual != null and usuarioActual.creador}">El creador de apuestas no puede apostar.</p>
+            <th:block th:unless="${usuarioActual != null and usuarioActual.creador}">
             <button class="boton boton-bloque" type="submit">Confirmar apuesta</button>
             <button class="boton boton-secundario boton-bloque" type="submit" th:formaction="@{/boleto/anadir}"
                     formnovalidate>Añadir al boleto para combinar</button>
+            </th:block>
         </form>
         <a class="enlace-volver" th:href="@{/eventos}">← Volver al catálogo</a>
     </div>
@@ -131,6 +135,7 @@
         const formato = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         function actualizar() {
             const elegido = document.querySelector('input[name="opcion"]:checked');
+            document.getElementById('cuota-vista').value = elegido ? elegido.dataset.cuota : '';
             const cantidad = parseFloat(importe.value);
             if (!elegido || !(cantidad > 0)) { salida.textContent = '–'; return; }
             const ganancia = Math.floor(cantidad * parseFloat(elegido.dataset.cuota) * 100) / 100;

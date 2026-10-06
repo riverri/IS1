@@ -12,6 +12,8 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=compilacion /app/target/apuestas-0.1.0-SNAPSHOT.jar app.jar
 ENV SPRING_PROFILES_ACTIVE=nube
+# La aplicación ya fija su zona horaria; esto evita sorpresas en los registros del servidor
+ENV TZ=Europe/Madrid
 # El plan gratuito tiene 512 MB de memoria
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k"
 EXPOSE 8080

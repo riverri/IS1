@@ -9,6 +9,16 @@ if not errorlevel 1 (
   exit /b 1
 )
 
+if not defined CREADOR_PASSWORD (
+  echo La aplicacion va a ser publica: elige una contrasena para el creador de apuestas ^(creador@apuestas.es^).
+  set /p CREADOR_PASSWORD=Contrasena del creador: 
+)
+if not defined CREADOR_PASSWORD (
+  echo Hace falta una contrasena para el creador.
+  pause
+  exit /b 1
+)
+
 if not exist cloudflared.exe (
   echo Descargando cloudflared...
   curl -L -o cloudflared.exe https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe

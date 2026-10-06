@@ -2,6 +2,8 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.matchesRegex;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,6 +24,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -69,7 +72,7 @@ class ApuestaWebTest {
 
     @BeforeEach
     void crearEventos() {
-        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime ahora = Hora.ahora();
         futbol = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
                 equipos.findByNombre("Sevilla FC").orElseThrow(), ahora.plusDays(1)));
@@ -91,7 +94,21 @@ class ApuestaWebTest {
         mvc.perform(get("/eventos"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(cuotaLocal)))
-                .andExpect(content().string(containsString("/boleto/anadir?evento=" + futbol.getId() + "&amp;resultado=EMPATE")));
+                // Un visitante va a la página del partido (y de ahí a iniciar sesión)
+                .andExpect(content().string(containsString("/eventos/" + futbol.getId() + "/apostar?resultado=EMPATE")));
+    }
+
+    /** F-11: añadir al boleto cambia el boleto, así que es un formulario POST y no un enlace. */
+    @Test
+    void elJugadorAnadeAlBoletoConUnFormularioYElCreadorNo() throws Exception {
+        mvc.perform(get("/eventos").with(user("usuario@apuestas.es")))
+                .andExpect(content().string(containsString("action=\"/boleto/anadir\" method=\"post\"")))
+                .andExpect(content().string(not(containsString("/boleto/anadir?"))));
+        mvc.perform(get("/eventos").with(user("creador@apuestas.es").roles("CREADOR")))
+                .andExpect(content().string(not(containsString("action=\"/boleto/anadir\""))));
+        mvc.perform(get("/boleto/anadir").with(user("usuario@apuestas.es")).param("evento", futbol.getId().toString())
+                        .param("resultado", "LOCAL"))
+                .andExpect(redirectedUrl("/eventos/" + futbol.getId() + "/apostar"));
     }
 
     @Test

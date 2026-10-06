@@ -77,4 +77,18 @@ class DatosInicialesTest {
     void losEventosTienenSuJornada() {
         assertThat(eventos.findAll()).allMatch(e -> e.getFase() != null);
     }
+
+    /** N-04: un partido al que se le cambia la hora (o que se borra) no vuelve a crearse al arrancar. */
+    @Test
+    void unPartidoMovidoOBorradoNoReapareceAlArrancar() throws Exception {
+        long antes = eventos.count();
+        java.util.List<es.ucm.fdi.is1.apuestas.eventos.Evento> todos = eventos.findAll();
+        es.ucm.fdi.is1.apuestas.eventos.Evento movido = todos.get(0);
+        movido.cambiarFecha(movido.getFechaHora().minusHours(3));
+        eventos.delete(todos.get(1));
+
+        datosIniciales.run(new DefaultApplicationArguments());
+
+        assertThat(eventos.count()).isEqualTo(antes - 1);
+    }
 }

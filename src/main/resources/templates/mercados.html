@@ -38,7 +38,8 @@
                     </label>
                 </fieldset>
                 <input type="hidden" name="cuota" class="cuota-vista">
-                <th:block th:if="${usuarioActual != null}">
+                <p class="aviso" th:if="${usuarioActual != null and usuarioActual.creador}">El creador de apuestas no puede apostar.</p>
+                <th:block th:if="${usuarioActual != null and !usuarioActual.creador}">
                     <div class="mercado-importe">
                         <div>
                             <label th:for="'importe-' + ${m.id}">Importe</label>

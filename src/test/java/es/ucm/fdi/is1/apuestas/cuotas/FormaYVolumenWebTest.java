@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
@@ -67,7 +68,7 @@ class FormaYVolumenWebTest {
     void crearPartido() {
         getafe = equipos.findByNombre("Getafe CF").orElseThrow();
         partido = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(), getafe,
-                equipos.findByNombre("Sevilla FC").orElseThrow(), LocalDateTime.now().plusDays(1)));
+                equipos.findByNombre("Sevilla FC").orElseThrow(), Hora.ahora().plusDays(1)));
     }
 
     @Test

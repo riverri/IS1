@@ -20,6 +20,20 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
 
     long countByUsuarioAndEstado(Usuario usuario, EstadoApuesta estado);
 
+    /**
+     * Por usuario: [id, apuestas resueltas, ganadas, apostado, pagado] de las apuestas ganadas y perdidas.
+     * Se calcula en la base de datos para no cargar todas las apuestas al pintar el ranking.
+     */
+    @Query("""
+            select a.usuario.id, count(a),
+                   sum(case when a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA then 1 else 0 end),
+                   sum(a.importe), sum(a.pagado)
+            from Apuesta a
+            where a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA)
+            group by a.usuario.id""")
+    List<Object[]> resumenResueltasPorUsuario();
+
     /** Importe apostado desde una fecha, sin contar las apuestas canceladas (HU-10). */
     @Query("""
             select coalesce(sum(a.importe), 0) from Apuesta a where a.usuario = :usuario and a.fecha >= :desde

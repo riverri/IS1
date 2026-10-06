@@ -34,6 +34,8 @@
         </ul>
 
         <form class="tarjeta tarjeta-formulario formulario boleto-confirmar" th:action="@{/boleto/confirmar}" method="post">
+            <!-- Las cuotas que se ven ahora: si cambian antes de confirmar, se avisa en lugar de apostar (HU-29) -->
+            <input type="hidden" name="cuotaVista" th:each="l : ${vista.lineas}" th:value="${l.evento.id} + ':' + ${l.cuota}">
             <div class="multiplicador">
                 <span>Multiplicador total</span>
                 <strong id="cuota-total" th:attr="data-cuota=${vista.cuotaTotal}" th:text="'× ' + ${@formato.cuota(vista.cuotaTotal)}">× 4,52</strong>

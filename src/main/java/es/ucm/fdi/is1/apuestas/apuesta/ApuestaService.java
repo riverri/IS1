@@ -72,6 +72,7 @@ public class ApuestaService {
         limitesActuales.comprobarImporte(importe);
         LocalDateTime ahora = LocalDateTime.now(reloj);
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        comprobarQueJuega(usuario);
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
         List<Long> cambiadas = new ArrayList<>();
         for (SeleccionPedida pedida : pedidas) {
@@ -91,6 +92,7 @@ public class ApuestaService {
         if (!cambiadas.isEmpty()) {
             throw new CuotasCambiadasException(cambiadas);
         }
+        comprobarCuotaTotal(apuesta.getCuota());
         comprobarJuegoResponsable(usuario, importe, ahora);
         usuario.cargar(importe);
         return apuestas.save(apuesta);
@@ -113,6 +115,7 @@ public class ApuestaService {
             throw new CuotasCambiadasException(List.of());
         }
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        comprobarQueJuega(usuario);
         comprobarJuegoResponsable(usuario, importe, ahora);
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
         apuesta.anadir(candidato, candidato.getCuota());
@@ -150,8 +153,22 @@ public class ApuestaService {
             comprobarJuegoResponsable(apuesta.getUsuario(), aumento, ahora);
         }
         List<BigDecimal> cuotas = apuesta.getSelecciones().stream().map(this::cuotaActual).toList();
+        comprobarCuotaTotal(Apuesta.producto(cuotas));
         apuesta.cambiarImporte(nuevo, cuotas, ahora);
         return apuesta;
+    }
+
+    /** El creador de apuestas introduce los resultados: no puede apostar a ellos. */
+    private static void comprobarQueJuega(Usuario usuario) {
+        if (usuario.isCreador()) {
+            throw new IllegalArgumentException("El creador de apuestas no puede apostar");
+        }
+    }
+
+    static void comprobarCuotaTotal(BigDecimal cuota) {
+        if (cuota.compareTo(Apuesta.CUOTA_TOTAL_MAXIMA) > 0) {
+            throw new IllegalArgumentException("La cuota total no puede pasar de 1.000: quita alguna selección");
+        }
     }
 
     /**

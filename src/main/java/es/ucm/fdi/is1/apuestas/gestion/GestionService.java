@@ -12,6 +12,7 @@ import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
+import es.ucm.fdi.is1.apuestas.eventos.EquipoNoEncontradoException;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
@@ -37,12 +38,22 @@ public class GestionService {
 
     @Transactional
     public Competicion crearCompeticion(CompeticionForm form) {
-        return competiciones.save(new Competicion(form.getNombre().trim(), form.getDeporte()));
+        String nombre = form.getNombre().trim();
+        if (competiciones.existsByNombreIgnoreCase(nombre)) {
+            throw new DatosInvalidosException("nombre", "Ya hay una competición que se llama " + nombre);
+        }
+        return competiciones.save(new Competicion(nombre, form.getDeporte()));
     }
 
     @Transactional
     public Equipo crearEquipo(EquipoForm form) {
-        Equipo equipo = new Equipo(form.getNombre().trim(), form.getDeporte(), form.getCalidad());
+        String nombre = form.getNombre().trim();
+        if (equipos.existsByNombreIgnoreCase(nombre)) {
+            // Los nombres identifican a los equipos (datos iniciales, API, mercados): no puede haber dos iguales
+            throw new DatosInvalidosException("nombre", "Ya hay un equipo o deportista que se llama " + nombre
+                    + ". Si es de otro deporte, añade algo que lo distinga (por ejemplo, \"" + nombre + " Baloncesto\").");
+        }
+        Equipo equipo = new Equipo(nombre, form.getDeporte(), form.getCalidad());
         for (Competicion competicion : competiciones.findAllById(form.getCompeticionIds())) {
             if (competicion.getDeporte() != form.getDeporte()) {
                 throw new DatosInvalidosException("competicionIds",
@@ -55,7 +66,7 @@ public class GestionService {
 
     @Transactional(readOnly = true)
     public Equipo equipo(Long id) {
-        return equipos.findById(id).orElseThrow(() -> new DatosInvalidosException("id", "El equipo no existe"));
+        return equipos.findById(id).orElseThrow(() -> new EquipoNoEncontradoException(id));
     }
 
     @Transactional

@@ -8,7 +8,7 @@
         <h1>Eventos disponibles</h1>
         <form class="buscador" th:action="@{/eventos}" method="get" role="search">
             <input type="hidden" name="deporte" th:if="${deporteElegido != null}" th:value="${deporteElegido}">
-            <input type="search" name="q" th:value="${q}" placeholder="Buscar equipo, jugador o competición"
+            <input type="search" name="q" th:value="${q}" placeholder="Buscar equipo, deportista o competición"
                    aria-label="Buscar">
             <button class="boton" type="submit">Buscar</button>
         </form>

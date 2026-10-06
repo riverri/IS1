@@ -63,15 +63,39 @@ class GestionWebTest {
     @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
     void altaDeEquipoLoDejaDisponible() throws Exception {
         mvc.perform(post("/gestion/equipos/nuevo").with(csrf())
-                        .param("nombre", "Rayo Vallecano")
+                        .param("nombre", "Granada CF")
                         .param("deporte", "FUTBOL")
                         .param("calidad", "6.5")
                         .param("competicionIds", competicion("LaLiga").getId().toString()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gestion"));
 
-        Equipo rayo = equipo("Rayo Vallecano");
-        assertThat(rayo.participaEn(competicion("LaLiga").getId())).isTrue();
+        Equipo granada = equipo("Granada CF");
+        assertThat(granada.participaEn(competicion("LaLiga").getId())).isTrue();
+    }
+
+    /** N-01: con dos equipos con el mismo nombre, la aplicación no llegaba a arrancar. */
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void noSePuedeRepetirElNombreDeUnEquipoNiDeUnaCompeticion() throws Exception {
+        mvc.perform(post("/gestion/equipos/nuevo").with(csrf())
+                        .param("nombre", "real madrid")
+                        .param("deporte", "BALONCESTO")
+                        .param("calidad", "8"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Ya hay un equipo o deportista que se llama real madrid")));
+        mvc.perform(post("/gestion/competiciones/nueva").with(csrf())
+                        .param("nombre", "LaLiga")
+                        .param("deporte", "BALONCESTO"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Ya hay una competición que se llama LaLiga")));
+        assertThat(equipos.findAll()).filteredOn(e -> e.getNombre().equalsIgnoreCase("Real Madrid")).hasSize(1);
+    }
+
+    @Test
+    @WithMockUser(username = "creador@apuestas.es", roles = "CREADOR")
+    void unEquipoQueNoExisteDa404() throws Exception {
+        mvc.perform(get("/gestion/equipos/999999/editar")).andExpect(status().isNotFound());
     }
 
     @Test

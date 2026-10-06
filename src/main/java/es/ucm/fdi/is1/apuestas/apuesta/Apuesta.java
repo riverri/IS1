@@ -33,6 +33,12 @@ import jakarta.persistence.OrderBy;
 @Entity
 public class Apuesta {
 
+    /**
+     * Cuota total máxima de una combinada. Sin tope, 10 selecciones de cuota 50 darían una cuota de 50^10:
+     * no cabe en la base de datos y un acierto improbable descuadraría el ranking.
+     */
+    public static final BigDecimal CUOTA_TOTAL_MAXIMA = new BigDecimal("1000");
+
     @Id
     @GeneratedValue
     private Long id;
