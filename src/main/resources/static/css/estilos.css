@@ -491,9 +491,11 @@ main { padding-bottom: 96px; }
 .cuota b { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 .cuota small { font-size: .72rem; font-weight: 600; }
 .cuota b { color: var(--texto); }
-a.cuota { text-decoration: none; transition: background .15s, border-color .15s, transform .15s; }
-a.cuota:hover { background: var(--primario-suave); border-color: var(--primario); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 163, 107, .18); }
-a.cuota:hover b { color: var(--primario-oscuro); }
+.cuota-form { display: flex; flex: 1; margin: 0; }
+.cuota-form .cuota { width: 100%; font: inherit; cursor: pointer; }
+a.cuota, button.cuota { text-decoration: none; transition: background .15s, border-color .15s, transform .15s; }
+a.cuota:hover, button.cuota:hover { background: var(--primario-suave); border-color: var(--primario); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 163, 107, .18); }
+a.cuota:hover b, button.cuota:hover b { color: var(--primario-oscuro); }
 
 .competicion { scroll-margin-top: 80px; }
 .competicion h3 {
@@ -701,8 +703,8 @@ a.equipo-celda:hover span:last-child { text-decoration: underline; }
 
 /* ---------- Boleto ---------- */
 
-a.cuota.en-boleto { background: var(--primario); border-color: var(--primario); color: #fff; }
-a.cuota.en-boleto b, a.cuota.en-boleto small { color: #fff; }
+.cuota.en-boleto { background: var(--primario); border-color: var(--primario); color: #fff; }
+.cuota.en-boleto b, .cuota.en-boleto small { color: #fff; }
 a.partido-cuerpo { color: inherit; text-decoration: none; }
 a.partido-cuerpo:hover .rival-nombre { text-decoration: underline; }
 

@@ -75,17 +75,17 @@
             <fieldset class="opciones">
                 <legend th:text="${evento.deporte.admiteEmpate} ? 'O solo el ganador' : 'Resultado final'">Resultado final</legend>
                 <label class="opcion">
-                    <input type="radio" name="resultado" value="LOCAL" th:required="${!evento.deporte.admiteEmpate}" th:checked="${evento.resultado != null and evento.resultado.name() == 'LOCAL'}">
+                    <input type="radio" name="resultado" value="LOCAL" th:required="${!evento.deporte.admiteEmpate}" th:checked="${evento.resultado != null and !evento.conMarcador and evento.resultado.name() == 'LOCAL'}">
                     <span class="opcion-simbolo">1</span>
                     <span class="opcion-nombre" th:text="'Gana ' + ${evento.local.nombre}">Gana Real Madrid</span>
                 </label>
                 <label class="opcion" th:if="${evento.deporte.admiteEmpate}">
-                    <input type="radio" name="resultado" value="EMPATE" th:checked="${evento.resultado != null and evento.resultado.name() == 'EMPATE'}">
+                    <input type="radio" name="resultado" value="EMPATE" th:checked="${evento.resultado != null and !evento.conMarcador and evento.resultado.name() == 'EMPATE'}">
                     <span class="opcion-simbolo">X</span>
                     <span class="opcion-nombre">Empate</span>
                 </label>
                 <label class="opcion">
-                    <input type="radio" name="resultado" value="VISITANTE" th:checked="${evento.resultado != null and evento.resultado.name() == 'VISITANTE'}">
+                    <input type="radio" name="resultado" value="VISITANTE" th:checked="${evento.resultado != null and !evento.conMarcador and evento.resultado.name() == 'VISITANTE'}">
                     <span class="opcion-simbolo">2</span>
                     <span class="opcion-nombre" th:text="'Gana ' + ${evento.visitante.nombre}">Gana Getafe CF</span>
                 </label>

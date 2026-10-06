@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -75,7 +76,7 @@ class OtrasApuestasWebTest {
     @BeforeEach
     void preparar() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
-        LocalDateTime manana = LocalDateTime.now().plusDays(1);
+        LocalDateTime manana = Hora.ahora().plusDays(1);
         futbol = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
                 equipos.findByNombre("Sevilla FC").orElseThrow(), manana));
@@ -168,7 +169,7 @@ class OtrasApuestasWebTest {
                         .header("Referer", "http://localhost/eventos/" + futbol.getId() + "/apostar"))
                 .andExpect(redirectedUrl("/eventos/" + futbol.getId() + "/apostar"))
                 .andExpect(flash().attribute("mensajeBoleto", "Añadido al boleto"));
-        mvc.perform(get("/boleto/anadir").session(sesion).with(COMO_ANA)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                 .param("evento", basket.getId().toString()).param("resultado", "LOCAL"));
 
         mvc.perform(get("/boleto").session(sesion).with(COMO_ANA))
@@ -185,7 +186,7 @@ class OtrasApuestasWebTest {
     @Test
     void enBaloncestoNoSePuedenHacer() throws Exception {
         MockHttpSession sesion = new MockHttpSession();
-        mvc.perform(get("/boleto/anadir").session(sesion).with(COMO_ANA)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                         .param("evento", basket.getId().toString()).param("especial", "MAS_2_5"))
                 .andExpect(flash().attribute("errorBoleto", containsString("solo está disponible en los partidos de fútbol")));
         mvc.perform(post("/eventos/{id}/apostar", basket.getId()).with(COMO_ANA).with(csrf())

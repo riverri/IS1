@@ -12,7 +12,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestClientException;
 
 import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
@@ -56,10 +57,12 @@ public class SincronizacionService {
     private final EventoRepository eventos;
     private final ResolucionService resolucion;
     private final Clock reloj;
+    private final TransactionTemplate transacciones;
 
     public SincronizacionService(FuenteDatosDeportivos fuente, ApiProperties propiedades,
                                  CompeticionRepository competiciones, EquipoRepository equipos,
-                                 EventoRepository eventos, ResolucionService resolucion, Clock reloj) {
+                                 EventoRepository eventos, ResolucionService resolucion, Clock reloj,
+                                 PlatformTransactionManager transacciones) {
         this.fuente = fuente;
         this.propiedades = propiedades;
         this.competiciones = competiciones;
@@ -67,9 +70,13 @@ public class SincronizacionService {
         this.eventos = eventos;
         this.resolucion = resolucion;
         this.reloj = reloj;
+        this.transacciones = new TransactionTemplate(transacciones);
     }
 
-    @Transactional
+    /**
+     * Cada partido se guarda en su propia transacción: si uno falla, se apunta el error y los demás
+     * se sincronizan (y se pagan) igual.
+     */
     public ResumenSincronizacion sincronizar() {
         if (!propiedades.configurada()) {
             throw new IllegalStateException(
@@ -81,9 +88,13 @@ public class SincronizacionService {
             try {
                 List<PartidoApi> partidos = fuente.partidos(codigo, hoy.minusDays(propiedades.diasAtras()),
                         hoy.plusDays(propiedades.diasAdelante()));
-                Competicion competicion = competicion(codigo);
                 for (PartidoApi partido : partidos) {
-                    procesar(partido, competicion, resumen);
+                    try {
+                        transacciones.executeWithoutResult(t -> procesar(partido, competicion(codigo), resumen));
+                    } catch (RuntimeException e) {
+                        LOG.warn("No se pudo sincronizar el partido {}: {}", partido.id(), e.getMessage());
+                        resumen.error("Partido " + partido.id() + ": " + e.getMessage());
+                    }
                 }
             } catch (RestClientException e) {
                 LOG.warn("No se pudo sincronizar {}: {}", codigo, e.getMessage());
@@ -123,13 +134,22 @@ public class SincronizacionService {
     }
 
     private void aplicarEstado(PartidoApi partido, Evento evento, ResumenSincronizacion resumen) {
+        if (evento.getEstado() == EstadoEvento.ANULADO) {
+            return; // lo anuló el creador: la API no lo resucita ni le pone resultado
+        }
         String estado = partido.status() == null ? "" : partido.status();
         switch (estado) {
             case "FINISHED" -> resultado(partido).ifPresent(r -> {
                 PartidoApi.MarcadorApi marcador = partido.score();
-                if (marcador.isMarcadorValido() && evento.getDeporte().isAdmiteEmpate()) {
-                    int local = marcador.fullTime().home();
-                    int visitante = marcador.fullTime().away();
+                PartidoApi.GolesApi goles = marcador.marcador90();
+                if (marcador.isProrroga() && goles == null) {
+                    // El ganador sería el de la prórroga o los penaltis, no el de los 90 minutos
+                    resumen.error("Partido " + partido.id() + " (" + evento.getLocal().getNombre() + " – "
+                            + evento.getVisitante().getNombre() + "): hubo prórroga y la API no da el marcador de "
+                            + "los 90 minutos; introdúcelo a mano en Gestión");
+                } else if (goles != null && evento.getDeporte().isAdmiteEmpate()) {
+                    int local = goles.home();
+                    int visitante = goles.away();
                     if (evento.getEstado() != EstadoEvento.FINALIZADO
                             || !Integer.valueOf(local).equals(evento.getGolesLocal())
                             || !Integer.valueOf(visitante).equals(evento.getGolesVisitante())) {
@@ -143,7 +163,7 @@ public class SincronizacionService {
             });
             case "POSTPONED", "SUSPENDED" -> {
                 if (evento.getEstado() == EstadoEvento.PROGRAMADO) {
-                    resolucion.suspender(evento.getId());
+                    resolucion.suspenderPorApi(evento.getId());
                 }
             }
             case "CANCELLED" -> {
@@ -152,7 +172,8 @@ public class SincronizacionService {
                 }
             }
             case "SCHEDULED", "TIMED" -> {
-                if (evento.getEstado() == EstadoEvento.SUSPENDIDO) {
+                // Solo los que suspendió la propia API: los que suspendió el creador siguen suspendidos
+                if (evento.getEstado() == EstadoEvento.SUSPENDIDO && evento.isSuspendidoPorApi()) {
                     resolucion.reactivar(evento.getId());
                 }
             }
@@ -187,7 +208,11 @@ public class SincronizacionService {
     private Equipo equipo(PartidoApi.EquipoApi datos, Competicion competicion, ResumenSincronizacion resumen) {
         Equipo equipo = equipos.findByIdExterno(datos.id()).orElseGet(() -> porNombre(datos));
         if (equipo == null) {
-            equipo = equipos.save(new Equipo(nombreVisible(datos), Deporte.FUTBOL, CALIDAD_INICIAL));
+            String nombre = nombreVisible(datos);
+            if (equipos.existsByNombreIgnoreCase(nombre)) {
+                nombre = nombre + " (" + Deporte.FUTBOL.getNombre() + ")"; // ya hay uno de otro deporte con ese nombre
+            }
+            equipo = equipos.save(new Equipo(nombre, Deporte.FUTBOL, CALIDAD_INICIAL));
             resumen.equipoNuevo();
         }
         if (equipo.getIdExterno() == null) {

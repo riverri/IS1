@@ -47,6 +47,9 @@ public class PlantillaService {
         if (nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("Escribe el nombre del jugador");
         }
+        if (nombre.trim().length() > 100 || (nacionalidad != null && nacionalidad.trim().length() > 100)) {
+            throw new IllegalArgumentException("El nombre y la nacionalidad pueden tener como mucho 100 caracteres");
+        }
         if (posicion == null) {
             throw new IllegalArgumentException("Elige la posición");
         }

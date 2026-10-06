@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -60,7 +61,7 @@ class LimitesWebTest {
     void crearPartido() {
         partido = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
-                equipos.findByNombre("Sevilla FC").orElseThrow(), LocalDateTime.now().plusDays(1)));
+                equipos.findByNombre("Sevilla FC").orElseThrow(), Hora.ahora().plusDays(1)));
     }
 
     private void cambiarLimites(String minimo, String maximo, String selecciones) throws Exception {
@@ -134,16 +135,16 @@ class LimitesWebTest {
         MockHttpSession sesion = new MockHttpSession();
         Evento otro = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Elche CF").orElseThrow(),
-                equipos.findByNombre("Levante UD").orElseThrow(), LocalDateTime.now().plusDays(2)));
+                equipos.findByNombre("Levante UD").orElseThrow(), Hora.ahora().plusDays(2)));
         Evento tercero = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Málaga CF").orElseThrow(),
-                equipos.findByNombre("Celta de Vigo").orElseThrow(), LocalDateTime.now().plusDays(2)));
+                equipos.findByNombre("Celta de Vigo").orElseThrow(), Hora.ahora().plusDays(2)));
 
         for (Evento evento : new Evento[] {partido, otro}) {
-            mvc.perform(get("/boleto/anadir").session(sesion).with(USUARIO)
+            mvc.perform(post("/boleto/anadir").session(sesion).with(USUARIO).with(csrf())
                     .param("evento", evento.getId().toString()).param("resultado", "LOCAL"));
         }
-        mvc.perform(get("/boleto/anadir").session(sesion).with(USUARIO)
+        mvc.perform(post("/boleto/anadir").session(sesion).with(USUARIO).with(csrf())
                         .param("evento", tercero.getId().toString()).param("resultado", "LOCAL"))
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash()
                         .attribute("errorBoleto", containsString("como máximo 2 selecciones")));

@@ -82,7 +82,7 @@ public class UsuarioActualAdvice {
         if (principal == null || boleto.isVacio()) {
             return null;
         }
-        return boletos.vista(boleto);
+        return boletos.resumen(boleto);
     }
 
     @ModelAttribute("usuarioActual")

@@ -158,21 +158,32 @@
     </a>
     <div class="partido-pie" th:with="c=${@calculadoraCuotas.calcular(ev)}">
         <div class="cuotas">
-            <a class="cuota" th:href="@{/boleto/anadir(evento=${ev.id},resultado='LOCAL')}"
-               th:classappend="${boleto != null and boleto.contiene(ev.id, 'LOCAL')} ? 'en-boleto'"
-               th:title="'Añadir al boleto: gana ' + ${ev.local.nombre}">
-                <small>1</small><b th:text="${@formato.cuota(c.local)}">1,85</b>
+            <th:block th:each="op : ${ {'LOCAL', 'EMPATE', 'VISITANTE'} }"
+                      th:with="cuota=${op == 'LOCAL' ? c.local : (op == 'EMPATE' ? c.empate : c.visitante)},
+                               simbolo=${op == 'LOCAL' ? '1' : (op == 'EMPATE' ? 'X' : '2')},
+                               titulo=${op == 'LOCAL' ? 'gana ' + ev.local.nombre : (op == 'EMPATE' ? 'empate' : 'gana ' + ev.visitante.nombre)}">
+            <th:block th:if="${cuota != null}">
+            <!-- Jugador con sesión: añade al boleto con un POST (cambia el boleto, así que no puede ser un enlace) -->
+            <form class="cuota-form" th:if="${usuarioActual != null and !usuarioActual.creador}"
+                  th:action="@{/boleto/anadir}" method="post">
+                <input type="hidden" name="evento" th:value="${ev.id}">
+                <input type="hidden" name="resultado" th:value="${op}">
+                <button type="submit" class="cuota" th:classappend="${boleto != null and boleto.contiene(ev.id, op)} ? 'en-boleto'"
+                        th:title="'Añadir al boleto: ' + ${titulo}">
+                    <small th:text="${simbolo}">1</small><b th:text="${@formato.cuota(cuota)}">1,85</b>
+                </button>
+            </form>
+            <!-- Visitante: va al partido (y de ahí al inicio de sesión) sin crear sesión al pintar la página -->
+            <a class="cuota" th:if="${usuarioActual == null}" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado=${op})}"
+               th:title="'Apostar: ' + ${titulo}">
+                <small th:text="${simbolo}">1</small><b th:text="${@formato.cuota(cuota)}">1,85</b>
             </a>
-            <a class="cuota" th:if="${c.empate != null}" th:href="@{/boleto/anadir(evento=${ev.id},resultado='EMPATE')}"
-               th:classappend="${boleto != null and boleto.contiene(ev.id, 'EMPATE')} ? 'en-boleto'"
-               title="Añadir al boleto: empate">
-                <small>X</small><b th:text="${@formato.cuota(c.empate)}">3,40</b>
-            </a>
-            <a class="cuota" th:href="@{/boleto/anadir(evento=${ev.id},resultado='VISITANTE')}"
-               th:classappend="${boleto != null and boleto.contiene(ev.id, 'VISITANTE')} ? 'en-boleto'"
-               th:title="'Añadir al boleto: gana ' + ${ev.visitante.nombre}">
-                <small>2</small><b th:text="${@formato.cuota(c.visitante)}">4,20</b>
-            </a>
+            <!-- El creador de apuestas no apuesta: solo ve la cuota -->
+            <span class="cuota" th:if="${usuarioActual != null and usuarioActual.creador}" th:title="${titulo}">
+                <small th:text="${simbolo}">1</small><b th:text="${@formato.cuota(cuota)}">1,85</b>
+            </span>
+            </th:block>
+            </th:block>
         </div>
     </div>
 </article>

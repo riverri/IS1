@@ -18,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
@@ -53,7 +54,7 @@ class CatalogoWebTest {
 
     @BeforeEach
     void crearEventos() {
-        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime ahora = Hora.ahora();
         eventoFuturo = eventos.save(new Evento(competicion("LaLiga"),
                 equipo("Real Madrid"), equipo("Getafe CF"), ahora.plusDays(1)));
         eventos.save(new Evento(competicion("Liga ACB"),

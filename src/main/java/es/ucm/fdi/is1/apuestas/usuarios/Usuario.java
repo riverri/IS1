@@ -10,10 +10,21 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 
 /** Cuenta de usuario con su saldo de moneditas virtuales (HU-11, HU-13, HU-14). */
 @Entity
 public class Usuario {
+
+    /** Dominio de los emails de las cuentas eliminadas; nadie puede registrarse con él. */
+    public static final String DOMINIO_ELIMINADOS = "@apuestas.invalid";
+
+    /**
+     * Control de concurrencia: si dos operaciones cambian el saldo a la vez (doble clic, dos pestañas,
+     * una apuesta mientras se paga otra), la segunda falla en lugar de pisar a la primera.
+     */
+    @Version
+    private long version;
 
     @Id
     @GeneratedValue
@@ -94,12 +105,19 @@ public class Usuario {
      * Ajuste por corrección de un resultado: puede restar una ganancia ya pagada.
      * A diferencia de {@link #cargar}, permite que el saldo quede negativo.
      */
+    /** Una cuenta eliminada no recibe dinero: sus apuestas se resuelven igual, pero sin abonarle nada. */
     public void ajustar(BigDecimal diferencia) {
+        if (eliminado) {
+            return;
+        }
         saldo = saldo.add(diferencia);
     }
 
     /** Devuelve o abona un importe al saldo (cancelaciones y ganancias). */
     public void abonar(BigDecimal importe) {
+        if (eliminado) {
+            return;
+        }
         saldo = saldo.add(importe);
     }
 
@@ -142,7 +160,7 @@ public class Usuario {
      * las apuestas ya hechas y su historial sigan cuadrando.
      */
     public void eliminar(String hashInutilizable) {
-        email = "eliminado-" + id + "@apuestas.invalid";
+        email = "eliminado-" + id + DOMINIO_ELIMINADOS;
         nombre = "Usuario eliminado";
         passwordHash = hashInutilizable;
         saldo = BigDecimal.ZERO;

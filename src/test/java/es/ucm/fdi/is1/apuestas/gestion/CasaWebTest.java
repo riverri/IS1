@@ -19,6 +19,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.Apuesta;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
 import es.ucm.fdi.is1.apuestas.apuesta.CuentasCasa;
@@ -70,7 +71,7 @@ class CasaWebTest {
     void preparar() {
         usuarioService.crear("ana@ucm.es", "Ana", "secreta123", Rol.USUARIO);
         usuarioService.crear("luis@ucm.es", "Luis", "secreta123", Rol.USUARIO);
-        LocalDateTime manana = LocalDateTime.now().plusDays(1);
+        LocalDateTime manana = Hora.ahora().plusDays(1);
         futbol = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
                 equipos.findByNombre("Getafe CF").orElseThrow(),
                 equipos.findByNombre("Sevilla FC").orElseThrow(), manana));

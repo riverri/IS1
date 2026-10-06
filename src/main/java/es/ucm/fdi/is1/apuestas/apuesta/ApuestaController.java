@@ -68,7 +68,8 @@ public class ApuestaController {
         if (!errores.hasErrors()) {
             try {
                 Apuesta apuesta = apuestas.apostar(principal.getName(), List.of(
-                        new SeleccionPedida(id, form.getResultado(), form.getEspecial(), null)), form.getImporte());
+                        new SeleccionPedida(id, form.getResultado(), form.getEspecial(), form.getCuotaVista())),
+                        form.getImporte());
                 redireccion.addFlashAttribute("mensaje", "Apuesta registrada. Si aciertas cobras "
                         + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
                 return "redirect:/apuestas";
@@ -77,6 +78,13 @@ public class ApuestaController {
             } catch (ImporteFueraDeLimitesException | JuegoResponsableException e) {
                 errores.rejectValue("importe", "limites", e.getMessage());
             } catch (ResultadoNoValidoException e) {
+                errores.rejectValue("opcion", "invalido", e.getMessage());
+            } catch (CuotasCambiadasException e) {
+                // HU-29: la cuota ha cambiado desde que la vio; se le enseña la nueva y decide
+                form.setCuotaVista(null);
+                errores.rejectValue("opcion", "cuotaCambiada",
+                        "La cuota ha cambiado mientras decidías. Revisa la nueva y confirma otra vez.");
+            } catch (IllegalArgumentException e) {
                 errores.rejectValue("opcion", "invalido", e.getMessage());
             }
         }

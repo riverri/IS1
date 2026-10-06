@@ -11,6 +11,13 @@ if curl -s -o /dev/null http://localhost:8080/; then
 fi
 command -v cloudflared >/dev/null || { echo "Falta cloudflared (brew install cloudflared)"; exit 1; }
 
+if [ -z "${CREADOR_PASSWORD:-}" ]; then
+  echo "La aplicación va a ser pública: elige una contraseña para el creador de apuestas (creador@apuestas.es)."
+  read -r -s -p "Contraseña del creador: " CREADOR_PASSWORD; echo
+  [ -n "$CREADOR_PASSWORD" ] || { echo "Hace falta una contraseña para el creador."; exit 1; }
+  export CREADOR_PASSWORD
+fi
+
 ./mvnw -q spring-boot:run -Dspring-boot.run.profiles=compartir > compartir.log 2>&1 &
 APP=$!
 trap 'kill $APP 2>/dev/null' EXIT
