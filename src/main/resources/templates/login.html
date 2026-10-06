@@ -13,6 +13,7 @@
         <p class="alerta alerta-error" th:if="${param.error}">Email o contraseña incorrectos. Tras 5 intentos fallidos hay que esperar 15 minutos.</p>
         <p class="alerta alerta-error" th:if="${param.expirada}">Tu sesión se ha cerrado porque la cuenta ha cambiado (contraseña nueva o cuenta eliminada). Vuelve a entrar.</p>
         <p class="alerta alerta-exito" th:if="${param.logout}">Has cerrado sesión.</p>
+        <p class="alerta alerta-exito" th:if="${param.recuperada}">Contraseña cambiada. Ya puedes entrar con la nueva.</p>
 
         <form class="formulario" th:action="@{/login}" method="post">
             <label for="email">Email</label>
@@ -23,6 +24,7 @@
 
             <button class="boton boton-bloque" type="submit">Entrar</button>
         </form>
+        <p class="pie-formulario"><a th:href="@{/recuperar}">¿Has olvidado tu contraseña?</a></p>
         <p class="pie-formulario">¿No tienes cuenta? <a th:href="@{/registro}">Regístrate</a></p>
     </div>
 </main>

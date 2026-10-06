@@ -126,6 +126,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | `SPRING_DATASOURCE_PASSWORD` | la `CONTRASEÑA` de Neon |
 | `USUARIO_PASSWORD` | Opcional: crea también `usuario@apuestas.es` con esta contraseña. |
 | `FOOTBALL_DATA_TOKEN` | Opcional: la clave de la API para los partidos reales. |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: servidor de correo para enviar el enlace de recuperar la contraseña (ver abajo). |
 
 3. Despliega. La primera vez tarda unos minutos. Las tablas las crea Flyway solo, y queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
 
@@ -157,6 +158,7 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
 | `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros | HU-51 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
+| `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-54 |
@@ -180,11 +182,11 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 ## Base de datos y migraciones (Flyway)
 
 Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar. Hay una carpeta por base de datos:
-- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V9__concurrencia_y_suspensiones.sql`.
-- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V10__recuperar_contrasena.sql`.
+- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`, `V10__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
-1. Crea un script nuevo con el número siguiente, por ejemplo `V10__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
+1. Crea un script nuevo con el número siguiente, por ejemplo `V11__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
 2. **No modifiques nunca un script que ya esté en `main`**: otros ordenadores ya lo han aplicado.
 3. Arranca y ejecuta `./mvnw test`. Hibernate comprueba (`ddl-auto=validate`) que las entidades coinciden con las tablas; si falta una migración, la aplicación no arranca y dice qué columna o tabla falta.
 
@@ -207,6 +209,16 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
 - El plan gratuito permite 10 peticiones por minuto. Cada sincronización hace una por competición.
 - Las competiciones se configuran en `application.properties` (`apuestas.api.competiciones`): `PD` es LaLiga, `CL` la Champions, `PL` la Premier, `SA` la Serie A, `BL1` la Bundesliga y `FL1` la Ligue 1.
 - Los equipos nuevos que llegan por la API reciben una calificación de 6,0. El creador de apuestas la ajusta en *Gestión → Editar*.
+
+## Correo para recuperar la contraseña
+
+En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para crear una contraseña nueva. Caduca a los 30 minutos y solo sirve una vez.
+
+- **Sin servidor de correo** (lo normal en tu ordenador), el enlace se escribe en la consola de la aplicación: busca la línea `Enlace para recuperar la contraseña de …` y ábrelo en el navegador.
+- **Con servidor de correo**, se envía de verdad. Por ejemplo, con una cuenta de Gmail con verificación en dos pasos:
+  1. Crea una *contraseña de aplicación* en https://myaccount.google.com/apppasswords.
+  2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación` (en IntelliJ o en Render).
+- La respuesta al pedir el enlace es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
 
 ## Cómo empezar
 

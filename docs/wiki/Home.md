@@ -41,11 +41,11 @@ El Scrum Master está por decidir ([issue #28](https://github.com/riverri/IS1/is
 
 | | |
 |---|---|
-| Historias de usuario | 53 escritas, 44 hechas, 1 pendiente (HU-17) y 8 descartadas |
-| Criterios de aceptación | 107 (92 de historias hechas, 88 con prueba automática) |
+| Historias de usuario | 53 escritas: 45 hechas y 8 descartadas |
+| Criterios de aceptación | 107 (94 de historias hechas: 91 con prueba automática y 3 que se comprueban a mano) |
 | Código | 136 clases Java en 12 paquetes, 30 plantillas HTML |
-| Pruebas | 266 pruebas automáticas en 43 clases, con H2 y con PostgreSQL |
-| Base de datos | 9 migraciones Flyway (V1–V9) |
+| Pruebas | 276 pruebas automáticas en 44 clases, con H2 y con PostgreSQL |
+| Base de datos | 10 migraciones Flyway (V1–V10) |
 
 ## Por dónde empezar
 
