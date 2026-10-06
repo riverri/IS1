@@ -11,26 +11,26 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 | Paquete | Clases de prueba (número de pruebas) |
 |---|---|
 | `api` | FootballDataClienteTest (2), SincronizacionServiceTest (13), SincronizacionPlantillasTest (5) |
-| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (1), EliminarCuentaWebTest (5), EstadisticasTest (2), JuegoResponsableWebTest (9), LargoPlazoWebTest (12), LimitesWebTest (6), ModificarImporteWebTest (6), NotificacionesWebTest (5), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), ResolucionWebTest (10), RevisionFallosWebTest (23) |
+| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (1), EliminarCuentaWebTest (5), EstadisticasTest (2), JuegoResponsableWebTest (10), LargoPlazoWebTest (12), LimitesWebTest (6), ModificarImporteWebTest (6), NotificacionesWebTest (5), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), ResolucionWebTest (10), RevisionFallosWebTest (23) |
 | `config` | ContrasenasPruebaTest (1), DatosInicialesTest (7), PasswordCreadorFijaTest (1) |
 | `cuotas` | CalculadoraCuotasTest (12), EspecialTest (5), FormaYVolumenWebTest (4) |
 | `equipos` | AlineacionTest (5), EquipoTest (3), EquiposWebTest (4), PlantillaWebTest (8) |
-| `eventos` | BusquedaWebTest (5), CatalogoWebTest (4), EventoTest (2), FichaEquipoWebTest (9) |
+| `eventos` | BusquedaWebTest (5), CatalogoWebTest (5), EventoTest (2), FichaEquipoWebTest (10) |
 | `gestion` | CasaWebTest (2), EditarEventoWebTest (8), GestionWebTest (15) |
 | `ligas` | LigasWebTest (7), LigasSinTransaccionTest (1) |
-| `usuarios` | CuentaWebTest (6), RankingWebTest (2), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (7) |
+| `usuarios` | CuentaWebTest (6), RankingWebTest (2), RecuperacionWebTest (7), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (7) |
 | `web` | FormatoTest (5) |
 
-**Total: 266 pruebas en 43 clases.**
+**Total: 276 pruebas en 44 clases.**
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
 
 | Historias hechas | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 44 | 92 | 88 (96 %) | 3 | 1 |
+| 45 | 94 | 91 (97 %) | 3 | 0 |
 
-Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al escribir el importe y la confirmación al eliminar la cuenta. Sin prueba: el mensaje de "no hay enfrentamientos previos".
+Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al escribir el importe y la confirmación al eliminar la cuenta.
 
 ## Integración continua
 `.github/workflows/ci.yml` se ejecuta en cada pull request y en cada cambio de `main`:

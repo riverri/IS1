@@ -19,11 +19,10 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 
 | Estado | Historias |
 |---|---|
-| **Hechas (44)** | HU-01 a HU-14, HU-18 a HU-37, HU-44 a HU-52 y HU-54 |
-| **Pendiente (1)** | HU-17, recuperar la contraseña ([#27](https://github.com/riverri/IS1/issues/27)) |
+| **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-52 y HU-54 |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
 
-En total hay **107 criterios de aceptación**; 92 son de historias hechas.
+En total hay **107 criterios de aceptación**; 94 son de historias hechas.
 
 ## Por tema
 

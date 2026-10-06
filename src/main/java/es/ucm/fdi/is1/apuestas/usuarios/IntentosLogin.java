@@ -44,6 +44,11 @@ public class IntentosLogin {
         fallos.remove(clave(evento.getAuthentication().getName()));
     }
 
+    /** Tras recuperar la contraseña (HU-17) se olvidan los fallos: si no, seguiría bloqueado con la nueva. */
+    public void olvidar(String email) {
+        fallos.remove(clave(email));
+    }
+
     public boolean bloqueado(String email) {
         Fallos f = fallos.get(clave(email));
         return f != null && f.seguidos() >= MAXIMO_FALLOS && !caducado(f, reloj.instant());

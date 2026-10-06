@@ -48,4 +48,4 @@ Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a
 | N-19 · API colgada | Baja | Sin tiempo máximo | 5 s / 20 s | [#66](https://github.com/riverri/IS1/issues/66) |
 | N-20 · Avisos leídos | Baja | Se marcaban los no vistos | Solo los mostrados | [#67](https://github.com/riverri/IS1/issues/67) |
 
-Se dejaron como están a propósito: avisar en el registro de que un email ya existe (lo pide HU-11) y recuperar la contraseña, que es una funcionalidad pendiente (HU-17, [#27](https://github.com/riverri/IS1/issues/27)).
+Se dejaron como están a propósito: avisar en el registro de que un email ya existe (lo pide HU-11) y recuperar la contraseña, que no era un fallo sino una funcionalidad nueva (HU-17, hecha después).

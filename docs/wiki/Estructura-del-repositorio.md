@@ -42,6 +42,7 @@ Hay dos carpetas que se crean solas y **no se suben a GitHub**: `target/` (progr
 | `/mercados` | Apuestas a largo plazo | Todos (apostar: jugador) |
 | `/ranking`, `/jugadores/{id}` | Ranking y perfil público | Todos |
 | `/registro`, `/login` | Crear cuenta e iniciar sesión | Todos |
+| `/recuperar` | Recuperar la contraseña | Todos |
 | `/boleto` | El boleto de la combinada | Jugador |
 | `/apuestas` | Mis apuestas: activas, historial y estadísticas | Jugador |
 | `/notificaciones` | Mis avisos | Con sesión |
