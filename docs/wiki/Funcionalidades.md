@@ -19,6 +19,13 @@ Spring Security con el formulario `/login`. Tras 5 contraseñas incorrectas, la 
 - El saldo cambia con `cargar` (al apostar; si no hay saldo, `SaldoInsuficienteException`), `abonar` (cancelar, cobrar) y `ajustar` (resolver o corregir).
 - Si dos operaciones cambian el mismo saldo a la vez, la segunda se rechaza con un aviso (bloqueo optimista).
 
+### Recuperar la contraseña (HU-17)
+1. En el login, *¿Has olvidado tu contraseña?* lleva a `/recuperar`, donde se escribe el email.
+2. Si existe la cuenta, `RecuperacionService` crea un código aleatorio, guarda solo su resumen SHA-256 en la tabla `token_recuperacion` (caduca a los **30 minutos**) y envía el enlace `/recuperar/nueva?token=…`. Pedir otro enlace anula el anterior.
+3. La respuesta es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
+4. Con el enlace se pone la contraseña nueva (mismas reglas que en el registro). El enlace queda gastado, se cierran las sesiones abiertas y se olvida el bloqueo por intentos fallidos.
+5. Sin servidor de correo (lo normal en tu ordenador), el enlace se escribe en la consola de la aplicación. Para enviarlo de verdad, ver [Ejecutar y desplegar](Ejecutar-y-desplegar).
+
 ### Mi cuenta (HU-47)
 Cambiar nombre y contraseña (pidiendo la actual). Al cambiar la contraseña se cierran las sesiones abiertas en otros navegadores.
 

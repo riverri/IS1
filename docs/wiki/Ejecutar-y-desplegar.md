@@ -44,7 +44,13 @@ Solo funciona con tu ordenador encendido y las dos ventanas abiertas, y el enlac
 | `SPRING_DATASOURCE_USERNAME` | Usuario de Neon |
 | `SPRING_DATASOURCE_PASSWORD` | Contraseña de Neon |
 | `FOOTBALL_DATA_TOKEN` | Opcional |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: correo para el enlace de recuperar la contraseña |
 
 3. **UptimeRobot:** monitor HTTP(s) con el enlace de Render cada 5 minutos.
+
+## Correo para recuperar la contraseña
+Sin servidor de correo, el enlace de *¿Has olvidado tu contraseña?* se escribe en la consola de la aplicación (línea `Enlace para recuperar la contraseña de …`). Para enviarlo de verdad, por ejemplo con Gmail:
+1. Activa la verificación en dos pasos y crea una *contraseña de aplicación* en https://myaccount.google.com/apppasswords.
+2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación`.
 
 Cada fusión en `main` se publica sola. No uses la base de datos gratuita de Render: se borra a los 30 días.

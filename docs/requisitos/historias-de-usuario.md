@@ -36,7 +36,7 @@
 | HU-14 | Saldo de bienvenida y recargas | Hecha | 2 |
 | HU-15 | Cuenta bancaria | Descartada (Won't) | 2 |
 | HU-16 | Retirar el saldo | Descartada (Won't) | 3 |
-| HU-17 | Recuperar la contraseña | Pendiente (issue #27) | 2 |
+| HU-17 | Recuperar la contraseña | Hecha | 2 |
 | HU-18 | Eliminar la cuenta | Hecha | 2 |
 | HU-19 | Catálogo por deporte y fecha | Hecha | 2 |
 | HU-20 | Cuotas de cada resultado | Hecha | 2 |
@@ -74,7 +74,7 @@
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 |
 | HU-54 | Cuentas de la casa | Hecha | 2 |
 
-**53 historias**: 44 hechas, 1 pendiente y 8 descartadas. **107 criterios de aceptación** en total; 92 de ellos son de historias hechas.
+**53 historias**: 45 hechas y 8 descartadas. **107 criterios de aceptación** en total; 94 de ellos son de historias hechas.
 
 ---
 
@@ -362,7 +362,7 @@
 
 | Fila del backlog | Prioridad | Sprint | Estado |
 |---|---|---|---|
-| 22 | Should | — | Pendiente (issue #27) |
+| 22 | Should | — | Hecha |
 
 **Criterios de aceptación**
 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Recuperar la contraseña')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="acceso">
+    <section th:replace="~{fragments/comun :: panelAcceso}"></section>
+    <div class="tarjeta tarjeta-formulario">
+        <h1>Recuperar la contraseña</h1>
+        <p class="subtitulo">Te enviamos un enlace para crear una contraseña nueva.</p>
+
+        <p class="alerta alerta-exito" th:if="${param.enviado}">Si hay una cuenta con ese email, te hemos enviado
+            un enlace. Caduca en 30 minutos y solo sirve una vez. Revisa también la carpeta de spam.</p>
+
+        <form class="formulario" th:action="@{/recuperar}" method="post">
+            <label for="email">Email de tu cuenta</label>
+            <input id="email" name="email" type="email" autocomplete="email" required autofocus>
+
+            <button class="boton boton-bloque" type="submit">Enviar el enlace</button>
+        </form>
+        <p class="pie-formulario"><a th:href="@{/login}">Volver a iniciar sesión</a></p>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

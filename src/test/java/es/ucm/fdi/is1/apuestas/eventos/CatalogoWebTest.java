@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.eventos;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -71,6 +72,22 @@ class CatalogoWebTest {
                 .andExpect(content().string(containsString("Baloncesto")))
                 .andExpect(content().string(containsString("Real Madrid – Getafe CF")))
                 .andExpect(content().string(containsString("Unicaja – Barça Basket")));
+    }
+
+    @Test
+    void losEventosSalenOrdenadosPorFecha() throws Exception {
+        // Se guarda primero el más lejano para que el orden no dependa del orden de alta
+        eventos.save(new Evento(competicion("Liga ACB"), equipo("Unicaja"), equipo("Barça Basket"),
+                Hora.ahora().plusDays(9)));
+        eventos.save(new Evento(competicion("Liga ACB"), equipo("Barça Basket"), equipo("Unicaja"),
+                Hora.ahora().plusDays(8)));
+
+        String html = mvc.perform(get("/eventos")).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        int antes = html.indexOf("Barça Basket – Unicaja");
+        int despues = html.lastIndexOf("Unicaja – Barça Basket");
+        assertThat(antes).isPositive();
+        assertThat(antes).isLessThan(despues);
     }
 
     @Test
