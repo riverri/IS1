@@ -6,7 +6,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 public class ResultadoNoValidoException extends RuntimeException {
 
     public ResultadoNoValidoException(Resultado resultado) {
-        super("El resultado " + resultado.getDescripcion() + " no es posible en este evento");
+        super("El resultado " + resultado.getDescripcion() + " no es uno de los resultados posibles en este evento");
     }
 
     public ResultadoNoValidoException(Especial especial) {
@@ -15,7 +15,7 @@ public class ResultadoNoValidoException extends RuntimeException {
 
     /** Ni resultado ni tipo especial, o los dos a la vez. */
     public ResultadoNoValidoException() {
-        super("Elige un pronóstico");
+        super("Elige un pronóstico:");
     }
 
     static ResultadoNoValidoException de(Resultado resultado, Especial especial) {
