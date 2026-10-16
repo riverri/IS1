@@ -13,9 +13,9 @@ Es una **web de apuestas deportivas con moneditas virtuales**: no se usa dinero 
 | Jaime Martín | Equipo de Desarrollo |
 | David Ortega | Equipo de Desarrollo |
 | Jing Li | Equipo de Desarrollo |
-| Carlos Jurado | Equipo de Desarrollo |
+| Carlos Jurado | Scrum Master y Equipo de Desarrollo |
 
-El Scrum Master está por decidir ([issue #28](https://github.com/riverri/IS1/issues/28)).
+El Scrum Master es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/issues/28)).
 
 ## Quién usa la aplicación
 

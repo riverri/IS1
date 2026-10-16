@@ -12,9 +12,9 @@ Profesor: Gonzalo Rubén Méndez Pozo.
 | Jaime Martín | Equipo de Desarrollo |
 | David Ortega | Equipo de Desarrollo |
 | Jing Li | Equipo de Desarrollo |
-| Carlos Jurado | Equipo de Desarrollo |
+| Carlos Jurado | Scrum Master y Equipo de Desarrollo |
 
-> El **Scrum Master** está por decidir entre los cinco miembros del equipo ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
+> El **Scrum Master** es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
 
 **Tablero del sprint:** las tareas y las historias pendientes están en los [issues](https://github.com/riverri/IS1/issues) y en el tablero de GitHub Projects del repositorio (pestaña *Projects*).
 

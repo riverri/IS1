@@ -20,7 +20,7 @@ Se sigue una **estrategia proactiva**: los riesgos se identifican y valoran ante
 | | Monitorización | Sección 8 |
 
 **Contexto:**
-- Equipo de cinco estudiantes. El profesor actúa como Product Owner y el Scrum Master está por decidir.
+- Equipo de cinco estudiantes. El profesor actúa como Product Owner y el Scrum Master es Carlos Jurado.
 - Scrum con sprints de dos semanas. Quedan los sprints 3 a 6 y un Sprint 7 corto.
 - La aplicación actual tiene 45 historias hechas y 276 pruebas automáticas. El Product Owner ha pedido una ampliación grande.
 - La nota es individual: proyecto (40 %), defensa sobre lo aprendido en el proyecto (30 %) y examen (30 %).
@@ -272,7 +272,7 @@ Para cada riesgo por encima de la línea de corte:
 
 | Sprint | Acciones | Riesgos |
 |---|---|---|
-| **2** · 5/10 – 16/10 | Aprobar este plan. Confirmar por escrito el uso de herramientas autorizado. Elegir Scrum Master y responsables de épica. Presentar las épicas al Product Owner. Corregir actas y rellenar retrospectivas. Planning Poker de las Must. | R07, R01, R17, R06, R03, R05 |
+| **2** · 5/10 – 16/10 | Aprobar este plan. Confirmar por escrito el uso de herramientas autorizado. Elegir los responsables de épica (el Scrum Master ya está elegido: Carlos Jurado). Presentar las épicas al Product Owner. Corregir actas y rellenar retrospectivas. Planning Poker de las Must. | R07, R01, R17, R06, R03, R05 |
 | **3** · 19/10 – 30/10 | Capacidad con las horas reales. Reservar números de migración. Simulador de partidos (HU-67). Medir la velocidad real. | R03, R09, R11, R10 |
 | **4** · 2/11 – 13/11 | Recalcular el plan con la velocidad real y recortar si hace falta. Primer simulacro de defensa. Revisión completa de este plan. | R03, R04, R08 |
 | **5** · 16/11 – 27/11 | Investigación previa del cash-out. Calendarios de exámenes de diciembre. Revisión de seguridad de comentarios y moderación. | R11, R02, R14 |
