@@ -9,7 +9,7 @@ La documentación de cada sprint está en la sección **Sprints** de esta wiki.
 | Rol | Quién | Qué hace |
 |---|---|---|
 | **Product Owner** | El profesor (también hace de cliente) | Decide qué se construye y en qué orden |
-| **Scrum Master** | Por decidir ([#28](https://github.com/riverri/IS1/issues/28)) | Vela por que se siga Scrum, organiza los eventos y quita obstáculos |
+| **Scrum Master** | Carlos Jurado ([#28](https://github.com/riverri/IS1/issues/28)) | Vela por que se siga Scrum, organiza los eventos y quita obstáculos |
 | **Equipo de desarrollo** | Los cinco miembros | Decide cuánto trabajo cabe en el sprint y cómo hacerlo |
 
 ## Eventos

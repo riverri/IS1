@@ -169,7 +169,7 @@ class ApuestaWebTest {
                         .param("resultado", "EMPATE")
                         .param("importe", "10"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("no es posible en este evento")));
+                .andExpect(content().string(containsString("no es uno de los resultados posibles en este evento")));
 
         assertThat(apuestas.count()).isZero();
     }

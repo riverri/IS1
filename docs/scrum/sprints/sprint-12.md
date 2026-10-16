@@ -13,7 +13,7 @@ Desde este sprint el Sprint Backlog son los [issues](https://github.com/riverri/
 | [#24](https://github.com/riverri/IS1/issues/24) | Matriz de trazabilidad: criterios de aceptación → pruebas | 3 | Jing Li | Hecho |
 | [#25](https://github.com/riverri/IS1/issues/25) | Gestión: dinero apostado a todos los tipos de apuesta de un partido | 2 | Jing Li | Hecho |
 | [#26](https://github.com/riverri/IS1/issues/26) | Servidor permanente: base de datos PostgreSQL | 5 | Jing Li | Hecho |
-| [#28](https://github.com/riverri/IS1/issues/28) | Decidir el Scrum Master | — | Equipo | Pendiente |
+| [#28](https://github.com/riverri/IS1/issues/28) | Decidir el Scrum Master | — | Equipo | Hecho: Carlos Jurado |
 | [#29](https://github.com/riverri/IS1/issues/29) | Rellenar las retrospectivas de los sprints 1–11 | — | Equipo | Pendiente |
 
 En el Product Backlog queda [#27](https://github.com/riverri/IS1/issues/27) (HU-17, recuperar la contraseña).
@@ -21,7 +21,7 @@ En el Product Backlog queda [#27](https://github.com/riverri/IS1/issues/27) (HU-
 ### Roles
 - El profesor es el Product Owner.
 - Los cinco miembros forman el Equipo de Desarrollo.
-- El Scrum Master está por decidir entre ellos (#28).
+- El Scrum Master es Carlos Jurado (#28).
 
 ### Matriz de trazabilidad (#24)
 - Nuevo documento [docs/requisitos/trazabilidad.md](../../requisitos/trazabilidad.md): 44 historias hechas y 92 criterios de aceptación.
