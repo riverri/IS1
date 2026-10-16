@@ -20,11 +20,13 @@
 **Proceso**
 - [Proceso Scrum](Proceso-Scrum)
 - [Historias de usuario](Historias-de-usuario)
+- [Gestión de riesgos](Gestión-de-riesgos)
 - [Revisión de fallos](Revisión-de-fallos)
 - [Cómo contribuir](Cómo-contribuir)
 
 **Sprints**
 - [Primer Sprint](Primer-Sprint)
+- [Segundo Sprint](Segundo-Sprint)
 
 **Ayuda**
 - [Preguntas frecuentes](Preguntas-frecuentes)
