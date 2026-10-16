@@ -6,7 +6,7 @@
 | Rol | Quién | Responsabilidad |
 |---|---|---|
 | **Product Owner** | El profesor (Gonzalo Rubén Méndez Pozo) | Único responsable del Product Backlog: contenido, orden y claridad. Maximiza el valor del producto. |
-| **Scrum Master** | _por decidir_ ([issue #28](https://github.com/riverri/IS1/issues/28)) | Vela por que Scrum se aplique bien. Facilita los eventos, controla los tiempos y elimina impedimentos. |
+| **Scrum Master** | Carlos Jurado ([issue #28](https://github.com/riverri/IS1/issues/28)) | Vela por que Scrum se aplique bien. Facilita los eventos, controla los tiempos y elimina impedimentos. |
 | **Equipo de Desarrollo** | Los 5 miembros (el SM también desarrolla) | Autoorganizado y multifuncional. Decide cuánto trabajo entra en el sprint y cómo hacerlo. |
 
 El profesor, como Product Owner, decide el orden del Product Backlog y acepta en las Sprint Reviews lo que está terminado.
