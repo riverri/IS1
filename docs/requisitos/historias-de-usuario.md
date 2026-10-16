@@ -20,19 +20,19 @@
 
 | Historia | Título | Estado | Criterios |
 |---|---|---|---:|
-| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 |
+| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 1 |
 | HU-02 | Forma reciente de un equipo | Hecha | 1 |
 | HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 |
 | HU-04 | Introducir el resultado | Hecha | 2 |
 | HU-05 | Suspender o anular un evento | Hecha | 2 |
 | HU-06 | Dinero apostado a cada resultado | Hecha | 1 |
 | HU-07 | Límites de apuesta del creador | Hecha | 1 |
-| HU-08 | Catálogo sin registrarse | Hecha | 2 |
+| HU-08 | Catálogo sin registrarse | Hecha | 1 |
 | HU-09 | Web adaptada a móvil | Hecha | 1 |
 | HU-10 | Juego responsable | Hecha | 2 |
-| HU-11 | Registro | Hecha | 2 |
-| HU-12 | Inicio de sesión | Hecha | 2 |
-| HU-13 | Consultar el saldo | Hecha | 2 |
+| HU-11 | Registro | Hecha | 1 |
+| HU-12 | Inicio de sesión | Hecha | 1 |
+| HU-13 | Consultar el saldo | Hecha | 1 |
 | HU-14 | Saldo de bienvenida y recargas | Hecha | 2 |
 | HU-15 | Cuenta bancaria | Descartada (Won't) | 2 |
 | HU-16 | Retirar el saldo | Descartada (Won't) | 3 |
@@ -42,16 +42,16 @@
 | HU-20 | Cuotas de cada resultado | Hecha | 2 |
 | HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 |
 | HU-22 | Búsqueda y filtros | Hecha | 3 |
-| HU-23 | Apuesta simple | Hecha | 2 |
+| HU-23 | Apuesta simple | Hecha | 1 |
 | HU-24 | Apuestas activas | Hecha | 1 |
 | HU-25 | Resolución automática | Hecha | 3 |
-| HU-26 | Cancelar una apuesta | Hecha | 2 |
+| HU-26 | Cancelar una apuesta | Hecha | 1 |
 | HU-27 | Cambiar el importe | Hecha | 2 |
 | HU-28 | Boleto de combinadas | Hecha | 3 |
 | HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 |
 | HU-30 | Resolución de combinadas | Hecha | 3 |
-| HU-31 | Ficha del equipo | Hecha | 2 |
-| HU-32 | Gráfico de evolución | Hecha | 1 |
+| HU-31 | Ficha del equipo | Hecha | 1 |
+| HU-32 | Gráfico de evolución | Hecha | 2 |
 | HU-33 | Cara a cara | Hecha | 2 |
 | HU-34 | Historial | Hecha | 1 |
 | HU-35 | Estadísticas personales | Hecha | 1 |
@@ -65,9 +65,9 @@
 | HU-43 | Copiar una apuesta | Descartada (Won't) | 2 |
 | HU-44 | Apuestas a largo plazo | Hecha | 3 |
 | HU-45 | Gestión de mercados | Hecha | 3 |
-| HU-46 | Editar o borrar un evento | Hecha | 2 |
+| HU-46 | Editar o borrar un evento | Hecha | 1 |
 | HU-47 | Cambiar nombre y contraseña | Hecha | 2 |
-| HU-48 | Perfil público de un jugador | Hecha | 1 |
+| HU-48 | Perfil público de un jugador | Hecha | 2 |
 | HU-49 | Plantilla y alineación probable | Hecha | 2 |
 | HU-50 | Plantillas desde la API y a mano | Hecha | 2 |
 | HU-51 | Ligas privadas | Hecha | 3 |
