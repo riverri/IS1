@@ -19,10 +19,10 @@
 ## Resumen
 
 | Historia | Título | Estado | Criterios | Prioridad |
-|---|---|---|---:|
-| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | |
+|---|---|---|---|---:|
+| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 |
 | HU-02 | Forma reciente de un equipo | Hecha | 2 | |
-| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | |
+| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 1 |
 | HU-04 | Introducir el resultado | Hecha | 2 | |
 | HU-05 | Suspender o anular un evento | Hecha | 2 | |
 | HU-06 | Dinero apostado a cada resultado | Hecha | 1 | |
