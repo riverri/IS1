@@ -20,59 +20,59 @@
 
 | Historia | Título | Estado | Criterios | Prioridad |
 |---|---|---|---|---:|
-| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 |
-| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 |
-| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 |  |
-| HU-04 | Introducir el resultado | Hecha | 2 | |
-| HU-05 | Suspender o anular un evento | Hecha | 2 | |
-| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | |
-| HU-07 | Límites de apuesta del creador | Hecha | 1 | |
-| HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 |
-| HU-09 | Web adaptada a móvil | Hecha | 1 | |
-| HU-10 | Juego responsable | Hecha | 2 | |
-| HU-11 | Registro | Hecha | 2 | 1 |
-| HU-12 | Inicio de sesión | Hecha | 2 | 1 |
-| HU-13 | Consultar el saldo | Hecha | 2 | 1 |
-| HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | |
-| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | |
-| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | |
-| HU-17 | Recuperar la contraseña | Hecha | 2 | |
-| HU-18 | Eliminar la cuenta | Hecha | 2 | 1 |
-| HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 |
-| HU-20 | Cuotas de cada resultado | Hecha | 2 | |
-| HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 | |
-| HU-22 | Búsqueda y filtros | Hecha | 3 | |
-| HU-23 | Apuesta simple | Hecha | 2 | |
-| HU-24 | Apuestas activas | Hecha | 1 | |
-| HU-25 | Resolución automática | Hecha | 3 | |
-| HU-26 | Cancelar una apuesta | Hecha | 1 | |
-| HU-27 | Cambiar el importe | Hecha | 2 | |
-| HU-28 | Boleto de combinadas | Hecha | 3 | |
+| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) |
+| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 (Muy alta) |
+| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 3 (Media) |
+| HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy Alta) |
+| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) |
+| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 3 (Media) |
+| HU-07 | Límites de apuesta del creador | Hecha | 1 | 3 (Media) |
+| HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) |
+| HU-09 | Web adaptada a móvil | Hecha | 1 | 3 (Media) |
+| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) |
+| HU-11 | Registro | Hecha | 2 | 1 (Muy alta) |
+| HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) |
+| HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) |
+| HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) |
+| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy Baja) |
+| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy Baja) |
+| HU-17 | Recuperar la contraseña | Hecha | 2 | 3 (Media) |
+| HU-18 | Eliminar la cuenta | Hecha | 2 | 1 (Muy alta)|
+| HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 (Muy alta) |
+| HU-20 | Cuotas de cada resultado | Hecha | 2 | 3 (Media) |
+| HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 | 2 (Alta) |
+| HU-22 | Búsqueda y filtros | Hecha | 3 | 3 (Media) |
+| HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) |
+| HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) |
+| HU-25 | Resolución automática | Hecha | 3 | 3 (Media) |
+| HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) |
+| HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) |
+| HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) |
 | HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | |
-| HU-30 | Resolución de combinadas | Hecha | 3 | |
-| HU-31 | Ficha del equipo | Hecha | 2 | |
-| HU-32 | Gráfico de evolución | Hecha | 1 | |
-| HU-33 | Cara a cara | Hecha | 2 | |
-| HU-34 | Historial | Hecha | 1 | |
-| HU-35 | Estadísticas personales | Hecha | 1 | |
-| HU-36 | Ranking | Hecha | 4 | |
-| HU-37 | Avisos | Hecha | 3 | |
-| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | |
-| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 | |
-| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | |
-| HU-41 | Feed de actividad | Descartada (Won't) | 1 | |
-| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | |
-| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | |
-| HU-44 | Apuestas a largo plazo | Hecha | 3 | |
+| HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) |
+| HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) |
+| HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) |
+| HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) |
+| HU-34 | Historial | Hecha | 1 | 2 (Alta) |
+| HU-35 | Estadísticas personales | Hecha | 1 | 4 (Baja) |
+| HU-36 | Ranking | Hecha | 4 | 3 (Media) |
+| HU-37 | Avisos | Hecha | 3 | 2 (Alta) |
+| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 3 (Media) |
+| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 |  3 (Media) |
+| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy Baja) |
+| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy Baja) |
+| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 3 (Media) |
+| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 4 (Baja) |
+| HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) |
 | HU-45 | Gestión de mercados | Hecha | 3 | |
-| HU-46 | Editar o borrar un evento | Hecha | 2 | 1 |
-| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | |
-| HU-48 | Perfil público de un jugador | Hecha | 1 | |
-| HU-49 | Plantilla y alineación probable | Hecha | 2 | |
-| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | |
-| HU-51 | Ligas privadas | Hecha | 3 | |
-| HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | |
-| HU-54 | Cuentas de la casa | Hecha | 2 | |
+| HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) |
+| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) |
+| HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) |
+| HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) |
+| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) |
+| HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) |
+| HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) |
+| HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) |
 
 **53 historias**: 45 hechas y 8 descartadas. **107 criterios de aceptación** en total; 94 de ellos son de historias hechas.
 
