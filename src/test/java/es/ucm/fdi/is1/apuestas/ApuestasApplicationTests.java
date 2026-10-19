@@ -22,7 +22,7 @@ class ApuestasApplicationTests {
     void laPaginaDeInicioCarga() throws Exception {
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Apuestas IS1")));
+                .andExpect(content().string(containsString("Better")));
     }
 
     @Test

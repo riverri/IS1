@@ -3,7 +3,7 @@
 <head th:fragment="cabeza(titulo)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${titulo} + ' · Apuestas IS1'">Apuestas IS1</title>
+    <title th:text="${titulo} + ' · Better'">Better</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -16,9 +16,9 @@
             <svg class="marca-logo" viewBox="0 0 32 32" aria-hidden="true">
                 <circle cx="16" cy="16" r="15" fill="#f5b301"/>
                 <circle cx="16" cy="16" r="11" fill="none" stroke="#a87700" stroke-width="2"/>
-                <text x="16" y="21" text-anchor="middle" font-size="13" font-weight="800" fill="#7a5600">IS</text>
+                <text x="16" y="21" text-anchor="middle" font-size="16" font-weight="800" fill="#7a5600">B</text>
             </svg>
-            <span>Apuestas IS1</span>
+            <span>Better</span>
         </a>
         <nav class="menu" aria-label="Principal">
             <a th:href="@{/eventos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'activo'">Eventos</a>
@@ -99,9 +99,9 @@
                 <svg class="marca-logo" viewBox="0 0 32 32" aria-hidden="true">
                     <circle cx="16" cy="16" r="15" fill="#f5b301"/>
                     <circle cx="16" cy="16" r="11" fill="none" stroke="#a87700" stroke-width="2"/>
-                    <text x="16" y="21" text-anchor="middle" font-size="13" font-weight="800" fill="#7a5600">IS</text>
+                    <text x="16" y="21" text-anchor="middle" font-size="16" font-weight="800" fill="#7a5600">B</text>
                 </svg>
-                <span>Apuestas IS1</span>
+                <span>Better</span>
             </a>
             <p>Apuestas deportivas con moneditas virtuales. Sin dinero real: solo para divertirse y demostrar quién sabe más.</p>
         </div>
