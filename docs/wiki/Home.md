@@ -1,4 +1,4 @@
-# Web de apuestas deportivas · IS1
+# Better · Web de apuestas deportivas (IS1)
 
 Proyecto de **Ingeniería del Software I** (doble grado Informática–Matemáticas, UCM, curso 2026/27).
 
