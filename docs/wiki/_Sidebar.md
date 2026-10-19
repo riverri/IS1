@@ -5,6 +5,7 @@
 - [Estructura del repositorio](Estructura-del-repositorio)
 - [Paquetes y clases](Paquetes-y-clases)
 - [Modelo de datos](Modelo-de-datos)
+- [Diagramas UML](Diagramas-UML)
 
 **Cómo funciona**
 - [Funcionalidades](Funcionalidades)
