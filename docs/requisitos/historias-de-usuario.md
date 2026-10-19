@@ -48,7 +48,7 @@
 | HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) |
 | HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) |
 | HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) |
-| HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | |
+| HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | 2 (Alta) |
 | HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) |
 | HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) |
 | HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) |
@@ -64,7 +64,7 @@
 | HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 3 (Media) |
 | HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 4 (Baja) |
 | HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) |
-| HU-45 | Gestión de mercados | Hecha | 3 | |
+| HU-45 | Gestión de mercados | Hecha | 3 | 4 (Baja) |
 | HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) |
 | HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) |
 | HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) |
