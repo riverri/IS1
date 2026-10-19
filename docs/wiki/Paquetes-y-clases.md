@@ -2,6 +2,8 @@
 
 El punto de entrada es `ApuestasApplication.java`, con el `main` que arranca Spring Boot. El código está en `src/main/java/es/ucm/fdi/is1/apuestas/`, repartido en 12 paquetes.
 
+> **Diagramas:** la arquitectura por capas, el diagrama de clases y las secuencias de apostar y resolver un partido están en [Diagramas UML](Diagramas-UML).
+
 | Paquete | Qué contiene |
 |---|---|
 | `usuarios` | Cuentas, roles, registro, inicio de sesión, saldo y recargas, límites personales, sesiones |

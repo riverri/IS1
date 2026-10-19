@@ -2,6 +2,8 @@
 
 Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla intermedia.
 
+> **Diagramas:** el modelo de datos (entidad-relación), el de clases y los de estados están dibujados en [Diagramas UML](Diagramas-UML).
+
 | Entidad | Campos principales | Relaciones |
 |---|---|---|
 | **Usuario** | email, nombre, passwordHash, rol, saldo, ultimaRecarga, limiteDiario, limiteSemanal, pausaHasta, eliminado, version | Muchas apuestas, notificaciones y ligas |

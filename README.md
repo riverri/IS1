@@ -48,6 +48,9 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   │   ├── metricas.md                # Velocidad y progreso
 │   │   └── graficas/                  # Gráficas de las métricas y el script que las genera
 │   ├── diseno/uml.md                  # Diagramas UML (casos de uso, clases, estados, secuencia, datos)
+│   ├── wiki/                          # Páginas de la wiki (se publican solas al fusionar en main)
+│   ├── presentaciones/                # Presentaciones del proyecto (PowerPoint y PDF)
+│   ├── Better_Guia_del_proyecto.pdf   # Guía completa del proyecto, para leerla de corrido
 │   ├── decisiones/                    # Decisiones técnicas (stack, arquitectura…)
 │   └── recursos.md                    # Enlaces de teoría y de Git
 ├── src/main/java/                     # Código Java (Spring Boot), un paquete por parte del dominio
@@ -221,6 +224,8 @@ En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para c
 - La respuesta al pedir el enlace es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
 
 ## Cómo empezar
+
+Para una visión general, lo más rápido es la [guía completa del proyecto](docs/Better_Guia_del_proyecto.pdf) (PDF) o la [wiki](https://github.com/riverri/IS1/wiki). Después:
 
 1. Leer [CONTRIBUTING.md](CONTRIBUTING.md) (flujo Git, ramas y pull requests).
 2. Leer [docs/scrum/proceso.md](docs/scrum/proceso.md) (cómo aplicamos Scrum).

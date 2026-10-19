@@ -1,11 +1,12 @@
 name: Wiki
 
-# Publica en la wiki de GitHub las páginas de docs/wiki cada vez que cambian en main.
+# Publica en la wiki de GitHub las páginas de docs/wiki cada vez que cambian en main,
+# y los diagramas de docs/diseno/uml.md como la página "Diagramas UML".
 # Solo añade o actualiza páginas: las que se escriben a mano en la wiki (por ejemplo, las de los sprints) no se tocan.
 on:
   push:
     branches: [main]
-    paths: ['docs/wiki/**']
+    paths: ['docs/wiki/**', 'docs/diseno/uml.md']
   workflow_dispatch:
 
 permissions:
@@ -22,6 +23,7 @@ jobs:
         run: |
           git clone "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
           cp docs/wiki/*.md wiki/
+          cp docs/diseno/uml.md wiki/Diagramas-UML.md
           cd wiki
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
