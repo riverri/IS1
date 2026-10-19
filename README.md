@@ -1,4 +1,4 @@
-# IS1 · Web de apuestas deportivas
+# Better · Web de apuestas deportivas (IS1)
 
 Proyecto de **Ingeniería del Software I** (doble grado Informática–Matemáticas, UCM, curso 2026/27).
 Profesor: Gonzalo Rubén Méndez Pozo.
