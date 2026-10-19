@@ -43,16 +43,19 @@ El Scrum Master es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/iss
 |---|---|
 | Historias de usuario | 53 escritas: 45 hechas y 8 descartadas |
 | Criterios de aceptación | 107 (94 de historias hechas: 91 con prueba automática y 3 que se comprueban a mano) |
-| Código | 136 clases Java en 12 paquetes, 30 plantillas HTML |
-| Pruebas | 276 pruebas automáticas en 44 clases, con H2 y con PostgreSQL |
+| Código | 144 clases Java en 12 paquetes, 32 plantillas HTML |
+| Pruebas | 276 pruebas automáticas en 45 clases, con H2 y con PostgreSQL |
 | Base de datos | 10 migraciones Flyway (V1–V10) |
 
 ## Por dónde empezar
 
 1. [Conceptos básicos](Conceptos-básicos): cómo funciona una web y qué hace cada tecnología.
 2. [Estructura del repositorio](Estructura-del-repositorio) y [Paquetes y clases](Paquetes-y-clases): dónde está cada cosa.
-3. [Funcionalidades](Funcionalidades): cómo funciona cada parte por dentro.
-4. [Ejecutar y desplegar](Ejecutar-y-desplegar): arrancarla en tu ordenador.
-5. [Cómo contribuir](Cómo-contribuir): ramas, commits y pull requests.
+3. [Diagramas UML](Diagramas-UML): casos de uso, arquitectura, clases, estados, secuencias y modelo de datos.
+4. [Funcionalidades](Funcionalidades): cómo funciona cada parte por dentro.
+5. [Ejecutar y desplegar](Ejecutar-y-desplegar): arrancarla en tu ordenador.
+6. [Cómo contribuir](Cómo-contribuir): ramas, commits y pull requests.
+
+Para leerlo todo de corrido está la [guía completa del proyecto en PDF](https://github.com/riverri/IS1/blob/main/docs/Better_Guia_del_proyecto.pdf) (43 páginas): qué se ha hecho, cómo está organizado y por qué.
 
 Las palabras técnicas están explicadas en el [Glosario](Glosario).

@@ -1,6 +1,6 @@
 # Diseño: diagramas UML
 
-Diagramas del sistema tal como está implementado al final del Sprint 11. Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
+Diagramas del sistema tal como está implementado (actualizados en octubre de 2026, con la revisión de fallos y la recuperación de contraseña). Están escritos en [Mermaid](https://mermaid.js.org/), que GitHub dibuja directamente al abrir este archivo. Para editarlos se puede usar el editor de <https://mermaid.live>.
 
 1. [Casos de uso](#1-casos-de-uso)
 2. [Arquitectura por capas](#2-arquitectura-por-capas)
@@ -26,7 +26,7 @@ flowchart LR
         cu1(["Consultar catálogo y cuotas (HU-08, HU-19, HU-20, HU-22)"])
         cu2(["Consultar ficha, evolución, plantilla y cara a cara (HU-31, HU-32, HU-33, HU-49)"])
         cu3(["Ver ranking y perfil de jugadores (HU-36, HU-48)"])
-        cu4(["Registrarse e iniciar sesión (HU-11, HU-12)"])
+        cu4(["Registrarse, iniciar sesión y recuperar la contraseña (HU-11, HU-12, HU-17)"])
         cu5(["Apostar simple o combinada: 1X2, doble oportunidad, goles y ambos marcan (HU-23, HU-28, HU-29, HU-52)"])
         cu6(["Apostar a largo plazo (HU-44)"])
         cu7(["Cancelar o cambiar el importe (HU-26, HU-27)"])
@@ -114,6 +114,7 @@ classDiagram
     direction LR
 
     class Usuario {
+        -long version
         -String email
         -String nombre
         -String passwordHash
@@ -178,10 +179,12 @@ classDiagram
         -Integer golesVisitante
         -String fase
         -Long idExterno
+        -boolean suspendidoPorApi
         +admiteApuestas(ahora) bool
         +finalizar(resultado)
         +finalizarConMarcador(local, visitante)
         +suspender()
+        +suspenderPorApi()
         +reactivar()
         +anular()
         +modificar(local, visitante, fecha, fase, ahora)
@@ -240,6 +243,14 @@ classDiagram
         +comprobarSelecciones(n)
     }
 
+    class TokenRecuperacion {
+        -String hash
+        -LocalDateTime caduca
+        -boolean usado
+        +valido(ahora) bool
+        +usar()
+    }
+
     class Notificacion {
         -String texto
         -String tipo
@@ -289,6 +300,7 @@ classDiagram
 
     Usuario "1" --> "*" Apuesta : hace
     Usuario "1" --> "*" Notificacion : recibe
+    TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
     Seleccion "*" --> "0..1" Especial : tipo
@@ -456,6 +468,7 @@ Tablas que crean las migraciones de `src/main/resources/db/migration`.
 erDiagram
     USUARIO ||--o{ APUESTA : hace
     USUARIO ||--o{ NOTIFICACION : recibe
+    USUARIO ||--o{ TOKEN_RECUPERACION : "recupera la contraseña"
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -471,6 +484,7 @@ erDiagram
 
     USUARIO {
         bigint id PK
+        bigint version "bloqueo optimista"
         varchar email UK
         varchar nombre
         varchar password_hash
@@ -513,6 +527,7 @@ erDiagram
         integer goles_visitante
         varchar fase
         bigint id_externo UK
+        boolean suspendido_por_api
     }
     EQUIPO {
         bigint id PK
@@ -572,6 +587,13 @@ erDiagram
         varchar tipo
         timestamp fecha
         boolean leida
+    }
+    TOKEN_RECUPERACION {
+        bigint id PK
+        bigint usuario_id FK
+        varchar hash UK "SHA-256 del código"
+        timestamp caduca
+        boolean usado
     }
     LIMITES {
         bigint id PK
