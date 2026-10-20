@@ -7,38 +7,81 @@
 ## Cómo leer cada historia
 
 - **Historia:** quién la pide, qué quiere y para qué.
-- **Ficha:** fila del Product Backlog, prioridad MoSCoW de esa fila, sprint en que se hizo, estado y estimación: puntos de historia, tipo de trabajo y horas sin IA y con IA (ver [Estimación](#estimación)).
+- **Ficha:** fila del Product Backlog, prioridad MoSCoW de esa fila, sprint en que se hizo, estado y estimación: puntos de historia, líneas de código, horas sin IA y con IA y coste de la IA (ver [Estimación](#estimación)).
 - **Criterios de aceptación:** las condiciones que se tienen que cumplir para dar la historia por terminada (Definition of Done). Cada uno se lee como *Dado* (situación de partida), *Cuando* (lo que hace el usuario o el sistema) y *Entonces* (el resultado que se espera). 
 
 ## Estimación
 
-Cada historia tiene un **tamaño en puntos de historia** y una **estimación de horas**, sin IA y con IA.
+Cada historia tiene un **tamaño** (puntos y líneas de código), las **horas** que llevaría sin IA y con IA, y el **coste de la IA** (tokens y dinero). Lo que se puede medir en el repositorio se ha medido; lo que no, sale de valores de referencia publicados y se da con un intervalo.
 
-**Puntos de historia.** Escala de Fibonacci (1, 2, 3, 5, 8…): miden el tamaño relativo de una historia (cuánto trabajo, cuánta complejidad y cuánta incertidumbre) y no dependen de quién la haga. En las historias hechas son los puntos que figuran en las actas de los sprints; si una historia se hizo en dos sprints, se suman (por ejemplo, HU-03: 8 + 3). Las [métricas](../scrum/metricas.md) suman además el trabajo que no es una historia, como las migraciones con Flyway; HU-17 se estimó al hacerla, después del Sprint 12. En las que no se han hecho (HU-15, HU-16 y HU-38 a HU-43) son una estimación por comparación con historias parecidas, la misma que usa el plan de la ampliación.
+### 1. Tamaño
 
-**Horas sin IA.** Horas ideales de trabajo de una persona del equipo, programando sin ayuda de IA: 4 horas por punto. Incluyen diseñar, programar, escribir las pruebas, revisar el pull request y actualizar la documentación. La cifra tiene en cuenta que el equipo está aprendiendo Spring Boot. Es coherente con la velocidad media de los sprints (unos 18,5 puntos, es decir, unas 74 horas) si cada una de las cinco personas dedica unas 7 horas por semana.
+- **Puntos de historia** (Fibonacci): tamaño relativo, decidido al planificar cada sprint. En las historias hechas son los de las actas; si se hizo en dos sprints, se suman (HU-03: 8 + 3). En las descartadas, una estimación por comparación con historias parecidas.
+- **Líneas de código**: se han contado las líneas reales del repositorio, sin comentarios ni líneas en blanco: 15.103 en total (Java de la aplicación, pruebas, vistas HTML, CSS y JavaScript y migraciones SQL). Repartidas entre los 185 puntos hechos, salen **82 líneas por punto**. Las líneas de cada historia son sus puntos × 82.
 
-**Horas con IA.** Con un asistente de IA, escribir el código cuesta poco, pero no desaparece el resto del trabajo: explicar bien lo que se quiere, leer y entender lo que propone, comprobar que cumple los criterios de aceptación, probarlo, corregir sus errores e integrarlo con lo que ya existe. Por eso el ahorro no es igual en todas las historias:
+### 2. Horas sin IA
 
-| Tipo | Qué incluye | Horas con IA | Por qué |
-|---|---|---:|---|
-| **Interfaz y datos** | Formularios, listados, páginas, consultas sencillas | 30 % de las horas sin IA | Código repetitivo que la IA escribe bien; casi todo el tiempo es revisarlo y probarlo |
-| **Reglas del negocio** | Cuotas, apuestas, resolución, saldos, límites | 45 % | Hay que comprobar a mano los casos límite y entender las reglas para poder defenderlas |
-| **Integración y seguridad** | API externa, correo, inicio de sesión, contraseñas | 55 % | La IA se equivoca más con servicios externos y con la seguridad; hay que probar con el servicio real y revisar con más cuidado |
+Horas de una persona del equipo que programa la historia sin IA: diseñarla, escribir el código y las pruebas, depurarla y dejarla revisada. Dependen de la **productividad** (líneas terminadas por hora), que no se puede medir en este proyecto porque se hizo con IA. Se toman valores de referencia y se combinan con la fórmula de **tres valores (PERT)**: (optimista + 4 × probable + pesimista) / 6.
+
+| | Optimista | Probable | Pesimista | Resultado |
+|---|---:|---:|---:|---:|
+| Líneas por hora | 25 | 15 | 8 | 13,9 líneas/h |
+
+- **Optimista, 25:** el orden de magnitud que se mide en los cursos del Personal Software Process con programas pequeños e individuales.
+- **Probable, 15:** en un proyecto en equipo con un framework que se está aprendiendo (Spring Boot), con pruebas automáticas y coordinación, se produce menos.
+- **Pesimista, 8:** cuando hay que aprender la tecnología sobre la marcha.
+
+Con 13,9 líneas por hora, **un punto (82 líneas) son unas 5,9 horas sin IA**.
+
+*Comprobación:* el modelo COCOMO básico (proyecto pequeño, equipo con experiencia en el dominio) da para 15,1 mil líneas unos 42 meses-persona. Eso incluye gestión y documentación de un proyecto profesional, así que es un techo, no la estimación.
+
+### 3. Horas con IA
+
+Con IA la persona no escribe el código, pero tiene que dirigir a la IA y responder de lo que entrega. Se separa en cuatro partes:
+
+| Parte | Cómo se calcula | En qué se basa |
+|---|---|---|
+| **Dirigir a la IA** | 0,95 h por cada mil líneas | **Medido:** el código de los sprints 1 a 12 (13.625 líneas) se generó en unas 13 horas de reloj de trabajo con la IA |
+| **Revisar el código** | Leerlo y entenderlo a 138 líneas/h | Tres valores: 300, 150 y 75 líneas/h. Los estudios de revisión de código recomiendan no pasar de 200–400 líneas/h para encontrar fallos; quien aprende Spring necesita ir más despacio |
+| **Comprobar los criterios** | 10 minutos por criterio de aceptación | Probar a mano en el navegador el *Dado / Cuando / Entonces* de cada criterio de la historia |
+| **Corregir fallos** | 2,5 fallos por cada mil líneas × 1 h | **Medido:** la revisión encontró 34 fallos en 13.625 líneas (issues #34–#67). Cada uno: entenderlo, corregirlo con ayuda y comprobarlo |
+
+Para un punto (82 líneas): 0,1 h de dirigir + 0,6 h de revisar + 0,2 h de corregir, más los criterios de la historia. **La parte que más pesa es revisar**: con IA, el trabajo pasa de escribir código a leerlo y entenderlo.
+
+### 4. Coste de la IA
+
+Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los tokens de cada respuesta, y las tarifas de la API de Anthropic del modelo usado (octubre de 2026): 4 $ por millón de tokens de entrada, 20 $ por millón de salida, 0,20 $ por millón leídos de la caché y 5–8 $ por millón escritos en ella.
+
+| Fase | Tokens generados | Tokens de contexto leídos | Coste |
+|---|---:|---:|---:|
+| Programar la app (sprints 1–12, 13.625 líneas) | 1,0 millones | 372 millones | 114 $ |
+| Revisar y corregir los 34 fallos | 0,3 millones | 107 millones | 47 $ |
+| **Por cada mil líneas** | **92 mil** | **35 millones** | **11,8 $** |
+
+- **Por punto (82 líneas)** salen unos 1,0 $.
+- **Casi todo el coste es contexto:** en cada paso la IA vuelve a leer la conversación y los archivos (la caché lo abarata). Lo que escribe es una parte pequeña.
+- **Son precios de la API.** Con una suscripción mensual a Claude se paga una cuota fija, no por token.
+- **No incluye** el coste de los documentos, las presentaciones ni la wiki, que no son código.
 
 ### Totales
 
-| | Puntos | Horas sin IA | Horas con IA |
-|---|---:|---:|---:|
-| Historias hechas · Interfaz y datos | 54 | 216 | 66 |
-| Historias hechas · Reglas del negocio | 105 | 420 | 188 |
-| Historias hechas · Integración y seguridad | 26 | 104 | 58 |
-| **Historias hechas (45)** | **185** | **740** | **312** |
-| Historias descartadas (8) | 29 | 116 | 49 |
+| | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
+|---|---:|---:|---:|---:|---:|---:|
+| **Historias hechas (45)** | 185 | 15.170 | 1.091 | 177 | 1,4 millones | 179 $ |
+| Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
-**Lectura.** Las 45 historias hechas suman unas 740 horas sin IA, unas 148 por persona: más de lo que cinco estudiantes pueden dedicar al proyecto en un cuatrimestre. Con IA bajan a unas 312 horas, unas 62 por persona, que sí caben. Aun así, con IA el tiempo sigue siendo, sobre todo, entender y revisar: si se salta esa parte, se pierde lo que se evalúa en la defensa.
+**Cómo se reparten las 177 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
 
-> Son estimaciones, no mediciones. Para afinarlas, a partir de ahora conviene apuntar en el acta de cada sprint las horas reales y compararlas con estas: si no cuadran, se ajustan las horas por punto o los porcentajes con IA para los siguientes sprints.
+**Lectura:**
+- **Sin IA,** las historias hechas suman unas 1.091 horas, unas 218 por persona. Con lo que cinco estudiantes dedican a una asignatura en un cuatrimestre no cabe.
+- **Con IA,** bajan a unas 177 horas, unas 35 por persona, y el coste es de unos 179 $.
+- **El ahorro solo es real si la revisión se hace.** Si se salta, el tiempo baja todavía más, pero nadie del equipo conoce el código, y eso es lo que se evalúa en la defensa.
+
+**Límites de la estimación:**
+- **Líneas de cada historia:** salen de sus puntos; las que realmente ocupa cada una pueden variar.
+- **Fallos:** solo se cuentan los que encontró la revisión.
+- **Productividad sin IA y ritmo de revisión:** son valores de referencia, no medidos aquí.
+- **Para afinarla:** conviene apuntar en cada acta las horas reales de revisión y compararlas con estas.
 
 ## Actores
 
@@ -48,61 +91,61 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 ## Resumen
 
-| Historia | Título | Estado | Criterios | Prioridad | Puntos | Horas sin IA | Horas con IA |
-|---|---|---|---|---:|---:|---:|---:|
-| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) | 8 | 32 | 10 |
-| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 (Muy alta) | 2 | 8 | 4 |
-| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 3 (Media) | 11 | 44 | 20 |
-| HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy Alta) | 5 | 20 | 9 |
-| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) | 4 | 16 | 7 |
-| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 3 (Media) | 2 | 8 | 2 |
-| HU-07 | Límites de apuesta del creador | Hecha | 1 | 3 (Media) | 3 | 12 | 5 |
-| HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 8 | 2 |
-| HU-09 | Web adaptada a móvil | Hecha | 1 | 3 (Media) | 3 | 12 | 4 |
-| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 6 | 24 | 11 |
-| HU-11 | Registro | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 7 |
-| HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 7 |
-| HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 8 | 2 |
-| HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) | 2 | 8 | 4 |
-| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy Baja) | 5 | 20 | 11 |
-| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy Baja) | 3 | 12 | 5 |
-| HU-17 | Recuperar la contraseña | Hecha | 2 | 3 (Media) | 5 | 20 | 11 |
-| HU-18 | Eliminar la cuenta | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 5 |
-| HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 4 |
-| HU-20 | Cuotas de cada resultado | Hecha | 2 | 3 (Media) | 3 | 12 | 4 |
-| HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 | 2 (Alta) | 8 | 32 | 18 |
-| HU-22 | Búsqueda y filtros | Hecha | 3 | 3 (Media) | 3 | 12 | 4 |
-| HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) | 5 | 20 | 9 |
-| HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) | 3 | 12 | 4 |
-| HU-25 | Resolución automática | Hecha | 3 | 3 (Media) | 8 | 32 | 14 |
-| HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) | 2 | 8 | 4 |
-| HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) | 2 | 8 | 4 |
-| HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
-| HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | 2 (Alta) | 5 | 20 | 6 |
-| HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
-| HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) | 5 | 20 | 6 |
-| HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) | 3 | 12 | 4 |
-| HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) | 3 | 12 | 4 |
-| HU-34 | Historial | Hecha | 1 | 2 (Alta) | 2 | 8 | 2 |
-| HU-35 | Estadísticas personales | Hecha | 1 | 4 (Baja) | 3 | 12 | 5 |
-| HU-36 | Ranking | Hecha | 4 | 3 (Media) | 5 | 20 | 9 |
-| HU-37 | Avisos | Hecha | 3 | 2 (Alta) | 5 | 20 | 9 |
-| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 3 (Media) | 3 | 12 | 4 |
-| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 |  3 (Media) | 2 | 8 | 2 |
-| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy Baja) | 3 | 12 | 4 |
-| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy Baja) | 5 | 20 | 9 |
-| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 3 (Media) | 3 | 12 | 5 |
-| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 4 (Baja) | 5 | 20 | 9 |
-| HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
-| HU-45 | Gestión de mercados | Hecha | 3 | 4 (Baja) | 5 | 20 | 6 |
-| HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) | 3 | 12 | 5 |
-| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) | 2 | 8 | 4 |
-| HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) | 2 | 8 | 2 |
-| HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) | 5 | 20 | 9 |
-| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) | 5 | 20 | 11 |
-| HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
-| HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 32 | 14 |
-| HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 12 | 5 |
+| Historia | Título | Estado | Criterios | Prioridad | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|---:|
+| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) | 8 | 656 | 47 | 7,3 | 7,8 $ |
+| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 (Muy alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 3 (Media) | 11 | 902 | 65 | 10 | 10,7 $ |
+| HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy Alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) | 4 | 328 | 24 | 3,8 | 3,9 $ |
+| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-07 | Límites de apuesta del creador | Hecha | 1 | 3 (Media) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-09 | Web adaptada a móvil | Hecha | 1 | 3 (Media) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 6 | 492 | 35 | 5,6 | 5,8 $ |
+| HU-11 | Registro | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-17 | Recuperar la contraseña | Hecha | 2 | 3 (Media) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-18 | Eliminar la cuenta | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-20 | Cuotas de cada resultado | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 | 2 (Alta) | 8 | 656 | 47 | 7,3 | 7,8 $ |
+| HU-22 | Búsqueda y filtros | Hecha | 3 | 3 (Media) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-25 | Resolución automática | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
+| HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | 2 (Alta) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-34 | Historial | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-35 | Estadísticas personales | Hecha | 1 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-36 | Ranking | Hecha | 4 | 3 (Media) | 5 | 410 | 29 | 5,0 | 4,8 $ |
+| HU-37 | Avisos | Hecha | 3 | 2 (Alta) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 3 (Media) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy Baja) | 5 | 410 | 29 | 4,5 | 4,8 $ |
+| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-45 | Gestión de mercados | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
+| HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **53 historias**: 45 hechas y 8 descartadas. **107 criterios de aceptación** en total; 94 de ellos son de historias hechas.
 
@@ -114,9 +157,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** dar de alta competiciones, equipos y deportistas con su calificación de calidad (0–10), **para** que el sistema tenga la base con la que calcular las cuotas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 1, 2 | Must | 1 | Hecha | 8 | Interfaz y datos | 32 → 10 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 1, 2 | Must | 1 | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -129,9 +172,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** ajustar manualmente el factor de forma reciente de un equipo (rachas, moral, lesiones…), **para** que las cuotas reflejen su momento actual y no solo su calidad general.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 3 | Must | 6 | Hecha | 2 | Reglas del negocio | 8 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 3 | Must | 6 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -143,9 +186,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** que las cuotas iniciales (G/E/P) de cada evento se generen automáticamente con un margen para la casa, **para** no tener que fijarlas a mano.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 3 | Must | 2, 6 | Hecha | 11 (8 + 3) | Reglas del negocio | 44 → 20 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 3 | Must | 2, 6 | Hecha | 11 (8 + 3) | 902 | 65 | 10 | 10,7 $ |
 
 **Criterios de aceptación**
 
@@ -159,9 +202,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** introducir el resultado final de un evento, **para** que se resuelvan todas las apuestas asociadas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 16, 17 | Must | 3 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 16, 17 | Must | 3 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -174,9 +217,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** suspender o anular un evento (aplazamiento, error en las cuotas…), **para** que nadie apueste en condiciones incorrectas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 17 | Must | 3, 5 | Hecha | 4 (3 + 1) | Reglas del negocio | 16 → 7 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 17 | Must | 3, 5 | Hecha | 4 (3 + 1) | 328 | 24 | 3,8 | 3,9 $ |
 
 **Criterios de aceptación**
 
@@ -189,9 +232,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** ver cuánto se ha apostado en cada resultado de un evento, **para** comprobar que el ajuste de cuotas funciona y detectar desequilibrios.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 17 | Must | 3 | Hecha | 2 | Interfaz y datos | 8 → 2 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 17 | Must | 3 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -203,9 +246,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** fijar límites de apuesta (importe mínimo y máximo, número máximo de selecciones en una combinada), **para** controlar el riesgo de la casa.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 17 | Must | 4, 6 | Hecha | 3 (1 + 2) | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 17 | Must | 4, 6 | Hecha | 3 (1 + 2) | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -217,9 +260,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** editar o borrar un evento que he creado mal (fecha, equipos, fase), **para** corregir errores sin tener que anularlo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 29 | Should | 8 | Hecha | 3 | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 29 | Should | 8 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -232,9 +275,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** ver un panel con lo que se ha apostado, lo que se ha pagado y el beneficio de la casa, **para** comprobar si las cuotas están bien ajustadas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 35 | Should | 11 | Hecha | 3 | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 35 | Should | 11 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -251,9 +294,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** visitante, **quiero** consultar el catálogo de eventos y sus cuotas sin estar registrado, **para** decidir si me interesa crear una cuenta.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 9 | Must | 1 | Hecha | 2 | Interfaz y datos | 8 → 2 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 9 | Must | 1 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -266,9 +309,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** que la web se adapte a móvil y a ordenador, **para** poder apostar desde cualquier dispositivo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| Requisito no funcional | — | 9 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| Requisito no funcional | — | 9 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -280,9 +323,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** poder fijarme límites de apuesta (diarios o semanales) o una pausa temporal, **para** jugar de forma responsable.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 27 | Could | 9 | Hecha | 6 (5 + 1) | Reglas del negocio | 24 → 11 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 27 | Could | 9 | Hecha | 6 (5 + 1) | 492 | 35 | 5,6 | 5,8 $ |
 
 **Criterios de aceptación**
 
@@ -299,9 +342,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** registrarme y crear un perfil, **para** poder acceder a la aplicación con una cuenta propia.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 5 | Must | 1 | Hecha | 3 | Integración y seguridad | 12 → 7 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 5 | Must | 1 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -314,9 +357,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** iniciar sesión de forma segura, **para** proteger el acceso a mi cuenta y a mi saldo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 5, 8 | Must | 1 | Hecha | 3 | Integración y seguridad | 12 → 7 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 5, 8 | Must | 1 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -329,9 +372,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** consultar mi saldo de moneditas virtuales en cualquier momento, **para** tener control de cuánto tengo disponible para apostar.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 4, 12 | Must | 1 | Hecha | 2 | Interfaz y datos | 8 → 2 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 4, 12 | Must | 1 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -344,9 +387,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** recibir una recarga inicial de moneditas al registrarme (y recargas periódicas gratuitas), **para** poder seguir jugando sin aportar dinero real.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 4 | Must | 1 | Hecha | 2 | Reglas del negocio | 8 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 4 | Must | 1 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -359,9 +402,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** añadir y gestionar los datos de una cuenta bancaria (real o ficticia), **para** poder retirar mi saldo cuando lo desee.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 25 | Won't | — | Descartada (Won't) | 5 | Integración y seguridad | 20 → 11 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 25 | Won't | — | Descartada (Won't) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -374,9 +417,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** retirar mi saldo disponible a mi cuenta bancaria vinculada, **para** poder disponer de mis ganancias fuera de la aplicación.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 25 | Won't | — | Descartada (Won't) | 3 | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 25 | Won't | — | Descartada (Won't) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -390,9 +433,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** recuperar el acceso si olvido mi contraseña, **para** no perder mi cuenta ni mi saldo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 22 | Should | — | Hecha | 5 | Integración y seguridad | 20 → 11 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 22 | Should | — | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -405,9 +448,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** eliminar mi cuenta, **para** que se borren mis datos personales si dejo de usar la aplicación.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 22 | Should | 9 | Hecha | 3 | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 22 | Should | 9 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -420,9 +463,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** cambiar mi nombre y mi contraseña desde *Mi cuenta*, **para** mantener mis datos al día.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 30 | Could | 8 | Hecha | 2 | Integración y seguridad | 8 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 30 | Could | 8 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -439,9 +482,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver una lista de eventos deportivos disponibles organizados por deporte y fecha, **para** poder apostar a tiempo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 9 | Must | 1 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 9 | Must | 1 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -454,9 +497,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver las cuotas asociadas a cada resultado posible de un evento, **para** apostar cuando el riesgo-recompensa compense.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 3, 9 | Must | 2 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 3, 9 | Must | 2 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -469,9 +512,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** administrador, **quiero** cargar o actualizar eventos y cuotas manualmente o desde una fuente externa, **para** corregir errores y mantener los datos al día.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 2, 13, 17 | Could, Must | 5 | Hecha | 8 | Integración y seguridad | 32 → 18 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 2, 13, 17 | Could, Must | 5 | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -484,9 +527,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** buscar un equipo o una competición y filtrar el catálogo, **para** encontrar rápido el evento que me interesa.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 21 | Should | 2 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 21 | Should | 2 | Hecha | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -504,9 +547,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** seleccionar un evento y una cuota y confirmar una apuesta con parte de mi saldo, **para** intentar ganar más moneditas si acierto el resultado.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 6 | Must | 2 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 6 | Must | 2 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -519,9 +562,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver el estado de mis apuestas activas, **para** saber en todo momento cuánto tengo comprometido y en qué apuestas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 10, 11 | Must | 2 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 10, 11 | Must | 2 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -533,9 +576,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** que mis apuestas se resuelvan automáticamente en cuanto termina el evento, **para** recibir mis ganancias (o ver la pérdida) sin tener que reclamarlo yo mismo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 16 | Must | 3, 5 | Hecha | 8 (5 + 3) | Reglas del negocio | 32 → 14 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 16 | Must | 3, 5 | Hecha | 8 (5 + 3) | 656 | 47 | 7,5 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -549,9 +592,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** cancelar una apuesta activa antes de que empiece el evento, **para** recuperar el importe si cambio de opinión.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 14 | Could | 2 | Hecha | 2 | Reglas del negocio | 8 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 14 | Could | 2 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -564,9 +607,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** modificar el importe de una apuesta activa antes de que empiece el evento, **para** ajustar lo que arriesgo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 14 | Could | 7 | Hecha | 2 | Reglas del negocio | 8 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 14 | Could | 7 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -579,9 +622,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** apostar a más cosas de un partido de fútbol (doble oportunidad, más o menos de 2,5 goles y ambos marcan), **para** tener más opciones que el 1X2.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 34 | Should | 11 | Hecha | 8 | Reglas del negocio | 32 → 14 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 34 | Should | 11 | Hecha | 8 | 656 | 47 | 7,5 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -599,9 +642,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** añadir a un mismo boleto selecciones de varios eventos, **para** crear mi propia apuesta combinada.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 15, 18 | Must | 4 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 15, 18 | Must | 4 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -615,9 +658,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** que el sistema calcule el multiplicador total del boleto y la ganancia potencial, **para** saber cuánto puedo ganar antes de confirmar.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 15, 18 | Must | 4 | Hecha | 5 | Interfaz y datos | 20 → 6 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 15, 18 | Must | 4 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -631,9 +674,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** que mi combinada se resuelva según el resultado de todas sus selecciones, **para** cobrar solo si acierto todas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 16 | Must | 4 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 16 | Must | 4 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -651,9 +694,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** consultar la ficha de un equipo o deportista con sus últimos resultados y su posición en la clasificación, **para** valorar su forma antes de apostar.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 20 | Should | 7 | Hecha | 5 | Interfaz y datos | 20 → 6 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 20 | Should | 7 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -666,9 +709,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver la evolución de un equipo a lo largo de la temporada en un gráfico, **para** detectar tendencias (rachas, mejora o bajón).
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 20 | Should | 9 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 20 | Should | 9 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -680,9 +723,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver la plantilla de cada equipo con la nota de cada jugador y su alineación probable, **para** saber con quién juega antes de apostar.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 32 | Should | 10 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 32 | Should | 10 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -695,9 +738,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** descargar las plantillas reales desde la API y añadir, puntuar o quitar jugadores a mano, **para** mantenerlas al día.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 32 | Should | 10 | Hecha | 5 | Integración y seguridad | 20 → 11 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 32 | Should | 10 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -710,9 +753,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** comparar cara a cara a los dos rivales de un evento, **para** decidir mi apuesta con más información.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 20 | Should | 7 | Hecha | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 20 | Should | 7 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -729,9 +772,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver mi historial completo de apuestas con sus resultados, **para** poder repasar mis decisiones pasadas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 19 | Should | 3 | Hecha | 2 | Interfaz y datos | 8 → 2 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 19 | Should | 3 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -743,9 +786,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver estadísticas básicas de mi actividad (porcentaje de aciertos, rentabilidad), **para** saber si mi balance global es positivo o negativo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 19 | Should | 3 | Hecha | 3 | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 19 | Should | 3 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -761,9 +804,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver un ranking de usuarios ordenado por ganancias o por porcentaje de aciertos, **para** poder compararme con mis compañeros.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 24 | Could | 2, 3 | Hecha | 5 (3 + 2) | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 24 | Could | 2, 3 | Hecha | 5 (3 + 2) | 410 | 29 | 5,0 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -778,9 +821,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** recibir una notificación cuando se resuelve una de mis apuestas, **para** saber si he ganado o perdido sin tener que revisar la aplicación constantemente.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 23 | Could | 7 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 23 | Could | 7 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -794,9 +837,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** buscar y seguir a otro usuario desde su perfil, **para** poder ver después su actividad.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 26 | Won't | — | Descartada (Won't) | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 26 | Won't | — | Descartada (Won't) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -808,9 +851,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver una lista de a quién sigo y quién me sigue, **para** gestionar mis conexiones dentro de la app.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 26 | Won't | — | Descartada (Won't) | 2 | Interfaz y datos | 8 → 2 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 26 | Won't | — | Descartada (Won't) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -822,9 +865,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** consultar el historial de apuestas públicas y las estadísticas generales de los usuarios que sigo, **para** comparar mis resultados con los suyos.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 26 | Won't | — | Descartada (Won't) | 3 | Interfaz y datos | 12 → 4 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 26 | Won't | — | Descartada (Won't) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -836,9 +879,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver un feed de actividad con las últimas apuestas resueltas de los usuarios que sigo, **para** estar al tanto sin visitar cada perfil.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 26 | Won't | — | Descartada (Won't) | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 26 | Won't | — | Descartada (Won't) | 5 | 410 | 29 | 4,5 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -850,9 +893,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** elegir el nivel de privacidad de mi perfil (público, solo seguidores o privado), **para** decidir quién ve mis apuestas y mis estadísticas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 26 | Won't | — | Descartada (Won't) | 3 | Reglas del negocio | 12 → 5 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 26 | Won't | — | Descartada (Won't) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -865,9 +908,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** copiar a mi boleto una apuesta pendiente de un usuario al que sigo, **para** apostar lo mismo que él.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 26 | Won't | — | Descartada (Won't) | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 26 | Won't | — | Descartada (Won't) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -880,9 +923,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** ver el perfil público de otro jugador desde el ranking, con su porcentaje de aciertos y su balance, **para** compararme con él sin tener que seguirlo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 31 | Could | 8 | Hecha | 2 | Interfaz y datos | 8 → 2 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 31 | Could | 8 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -894,9 +937,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** crear una liga privada con mis amigos y unirme con un código de invitación, **para** competir en un ranking solo entre nosotros.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 33 | Could | 11 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 | Could | 11 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -914,9 +957,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** usuario, **quiero** apostar a quién ganará un premio o una competición (Balón de Oro, campeón de LaLiga, Pichichi…), **para** predecir resultados a largo plazo.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 28 | Should | 6 | Hecha | 5 | Reglas del negocio | 20 → 9 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 28 | Should | 6 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -930,9 +973,9 @@ Cada historia tiene un **tamaño en puntos de historia** y una **estimación de 
 
 **Como** creador de apuestas, **quiero** crear un mercado a largo plazo con sus candidatos y cuotas, cerrarlo y marcar el ganador, **para** gestionar este tipo de apuestas.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
-|---|---|---|---|---:|---|---:|
-| 28 | Should | 6 | Hecha | 5 | Interfaz y datos | 20 → 6 |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 28 | Should | 6 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
