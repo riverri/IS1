@@ -3,7 +3,10 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/** Cambio de contraseña (HU-47). Mismas reglas que en el registro. */
+/**
+ * Formulario de cambio de contraseña en Mi cuenta (HU-47). Mismas reglas que en el registro.
+ * La actual se comprueba en {@link UsuarioService#cambiarPassword}.
+ */
 public class PasswordForm {
 
     @NotBlank(message = "Introduce tu contraseña actual")
@@ -13,6 +16,7 @@ public class PasswordForm {
     @Size(min = 8, max = 72, message = "La contraseña debe tener entre 8 y 72 caracteres")
     private String nueva;
 
+    /** La contraseña nueva repetida; el controlador comprueba que coincide. */
     private String confirmacion;
 
     public String getActual() {

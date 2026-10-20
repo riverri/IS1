@@ -3,7 +3,7 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/** Cambio del nombre visible (HU-47). Mismas reglas que en el registro. */
+/** Formulario de cambio del nombre visible en Mi cuenta (HU-47). Mismas reglas que en el registro. */
 public class NombreForm {
 
     @NotBlank(message = "Introduce tu nombre")

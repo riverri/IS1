@@ -25,6 +25,10 @@ public class BajaController {
         this.sesiones = sesiones;
     }
 
+    /**
+     * POST /cuenta/eliminar: pide la contraseña para confirmar. Si es correcta, elimina la cuenta, cierra
+     * todas las sesiones del usuario y lleva a la portada; si no, vuelve a Mi cuenta con el error.
+     */
     @PostMapping("/cuenta/eliminar")
     public String eliminar(@RequestParam(required = false) String password, Principal principal,
                            HttpServletRequest peticion, RedirectAttributes redireccion) throws ServletException {
@@ -37,6 +41,7 @@ public class BajaController {
             redireccion.addFlashAttribute("errorBaja", e.getMessage());
             return "redirect:/cuenta#eliminar-cuenta";
         }
+        // Se cierran las sesiones abiertas en otros navegadores y después la actual (CA-18.2)
         sesiones.cerrarOtras(principal.getName(), peticion.getSession(false));
         peticion.logout();
         return "redirect:/?cuentaEliminada";

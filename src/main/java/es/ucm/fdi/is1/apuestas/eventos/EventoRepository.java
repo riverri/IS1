@@ -10,8 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 
+/**
+ * Repositorio Spring Data de {@link Evento}. Spring genera la implementación: las consultas salen del
+ * nombre de cada método o de su {@code @Query} (JPQL).
+ */
 public interface EventoRepository extends JpaRepository<Evento, Long> {
 
+    /** Eventos en un estado que empiezan después de una fecha, del más próximo al más lejano (catálogo, HU-19). */
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha);
 
     List<Evento> findAllByOrderByFechaHoraAsc();
@@ -39,5 +44,6 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
             order by e.fechaHora desc""")
     List<Evento> enfrentamientos(Equipo uno, Equipo otro);
 
+    /** Eventos de una competición en un estado; con FINALIZADO sirve para calcular la clasificación (HU-31). */
     List<Evento> findByCompeticionAndEstado(Competicion competicion, EstadoEvento estado);
 }

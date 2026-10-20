@@ -4,6 +4,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Formulario de registro (HU-11). Las anotaciones las comprueba {@code @Valid} en
+ * {@link UsuariosController}; que la confirmación coincida y que la contraseña quepa en BCrypt
+ * se comprueba allí a mano.
+ */
 public class RegistroForm {
 
     @NotBlank(message = "Introduce tu nombre")
@@ -16,9 +21,11 @@ public class RegistroForm {
     private String email;
 
     @NotBlank(message = "Introduce una contraseña")
+    // 72: el máximo de BCrypt (en bytes, ver Contrasenas)
     @Size(min = 8, max = 72, message = "La contraseña debe tener entre 8 y 72 caracteres")
     private String password;
 
+    /** La contraseña repetida, para evitar erratas. */
     private String confirmacion;
 
     public String getNombre() {

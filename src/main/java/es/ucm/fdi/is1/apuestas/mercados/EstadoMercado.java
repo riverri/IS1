@@ -2,7 +2,7 @@ package es.ucm.fdi.is1.apuestas.mercados;
 
 /** Ciclo de vida de un mercado a largo plazo (HU-45). */
 public enum EstadoMercado {
-    /** Admite apuestas hasta la fecha de cierre. */
+    /** Admite apuestas hasta la fecha de cierre; pasada esa fecha sigue en este estado, pero ya no las admite. */
     ABIERTO,
     /** El creador lo ha cerrado antes de tiempo; espera al ganador. */
     CERRADO,

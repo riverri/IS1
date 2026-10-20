@@ -7,7 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-/** Datos editables de un equipo ya existente: calificación (HU-01), forma reciente (HU-02) y escudo. */
+/**
+ * Formulario con los datos editables de un equipo ya existente: calificación (HU-01), forma reciente (HU-02)
+ * y escudo. El nombre y el deporte no se editan.
+ */
 public class EdicionEquipoForm {
 
     @NotNull(message = "Introduce la calificación")
@@ -18,7 +21,10 @@ public class EdicionEquipoForm {
     @NotNull(message = "Elige la forma reciente")
     private Forma forma = Forma.NORMAL;
 
-    /** Vacío para quitar el escudo y volver a mostrar las iniciales. */
+    /**
+     * Vacío para quitar el escudo y volver a mostrar las iniciales. Si no, tiene que ser una dirección
+     * http o https sin espacios.
+     */
     @Size(max = 500, message = "Máximo 500 caracteres")
     @Pattern(regexp = "^$|^https?://\\S+$", message = "Debe ser una dirección que empiece por http:// o https://")
     private String escudoUrl;

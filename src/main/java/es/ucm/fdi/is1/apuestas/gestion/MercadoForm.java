@@ -10,7 +10,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/** Alta de un mercado a largo plazo con sus candidatos (HU-45). */
+/**
+ * Formulario de alta de un mercado a largo plazo con sus candidatos (HU-45). Las anotaciones solo
+ * comprueban que los campos estén rellenos; {@code MercadoService#crear} lee los candidatos y comprueba
+ * que haya al menos 2 y que sus cuotas sean válidas.
+ */
 public class MercadoForm {
 
     @NotBlank(message = "Escribe el nombre del mercado")
@@ -20,12 +24,13 @@ public class MercadoForm {
     @NotNull(message = "Elige un deporte")
     private Deporte deporte;
 
+    /** Último momento para apostar; formato del campo datetime-local de HTML. */
     @NotNull(message = "Introduce la fecha de cierre")
     @Future(message = "La fecha de cierre tiene que ser futura")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime cierre;
 
-    /** Un candidato por línea: "Nombre; cuota". */
+    /** Un candidato por línea: "Nombre; cuota". Se escribe en un área de texto y se lee en el servicio. */
     @NotBlank(message = "Añade los candidatos")
     private String candidatos;
 

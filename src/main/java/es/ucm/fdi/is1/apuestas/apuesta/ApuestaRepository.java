@@ -10,14 +10,19 @@ import org.springframework.data.jpa.repository.Query;
 
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
+/** Repositorio de {@link Apuesta}: consultas para Mis apuestas, el ranking, el juego responsable y el panel de la casa. */
 public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
 
+    /** Apuestas del usuario en un estado, de la más reciente a la más antigua (activas, HU-24). */
     List<Apuesta> findByUsuarioAndEstadoOrderByFechaDesc(Usuario usuario, EstadoApuesta estado);
 
+    /** Igual, pero con varios estados a la vez (historial, HU-34). */
     List<Apuesta> findByUsuarioAndEstadoInOrderByFechaDesc(Usuario usuario, Collection<EstadoApuesta> estados);
 
+    /** Apuestas de todos los usuarios en esos estados (panel de la casa, HU-54). */
     List<Apuesta> findByEstadoIn(Collection<EstadoApuesta> estados);
 
+    /** Cuántas apuestas tiene el usuario en ese estado (apuestas en juego del perfil público, HU-48). */
     long countByUsuarioAndEstado(Usuario usuario, EstadoApuesta estado);
 
     /**

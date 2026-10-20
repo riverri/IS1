@@ -6,7 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-/** Página de avisos del usuario (HU-37). Al abrirla, los avisos quedan leídos. */
+/**
+ * Controlador de la página de avisos del usuario (HU-37). Al abrirla, los avisos que se ven quedan leídos.
+ * Exige haber iniciado sesión ({@code SeguridadConfig}).
+ */
 @Controller
 public class NotificacionesController {
 
@@ -16,10 +19,11 @@ public class NotificacionesController {
         this.notificaciones = notificaciones;
     }
 
+    /** GET /notificaciones: los últimos avisos del usuario, con los nuevos destacados. */
     @GetMapping("/notificaciones")
     public String notificaciones(Principal principal, Model model) {
         model.addAttribute("avisos", notificaciones.leer(principal.getName()));
-        // La cabecera ya no tiene avisos pendientes
+        // La cabecera ya no tiene avisos pendientes: el recuento de UsuarioActualAdvice se hizo antes de leerlos
         model.addAttribute("avisosSinLeer", 0L);
         return "notificaciones";
     }

@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Size;
 /** Contraseña nueva desde el enlace de recuperación (HU-17). Mismas reglas que en el registro. */
 public class NuevaPasswordForm {
 
+    /** Código del enlace del correo; viaja en un campo oculto del formulario. */
     private String token;
 
     @NotBlank(message = "Introduce la contraseña nueva")
     @Size(min = 8, max = 72, message = "La contraseña debe tener entre 8 y 72 caracteres")
     private String nueva;
 
+    /** La contraseña nueva repetida; el controlador comprueba que coincide. */
     private String confirmacion;
 
     public String getToken() {

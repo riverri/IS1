@@ -16,7 +16,11 @@ import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
-/** Ranking de jugadores por saldo, ganancias o porcentaje de aciertos (HU-36). */
+/**
+ * Ranking de jugadores por saldo, ganancias o porcentaje de aciertos (HU-36). También da el perfil público
+ * (HU-48) y el ranking de una liga privada (HU-51, desde {@code LigaService}). Solo aparecen los usuarios con
+ * rol de jugador y sin cuenta eliminada. Se calcula en cada consulta, así siempre está al día (CA-36.3).
+ */
 @Service
 public class RankingService {
 
@@ -31,6 +35,7 @@ public class RankingService {
         this.apuestas = apuestas;
     }
 
+    /** Ranking de todos los jugadores; {@code emailActual} (null sin sesión) marca la fila propia. */
     @Transactional(readOnly = true)
     public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio) {
         return ranking(emailActual, criterio, null);
@@ -39,15 +44,19 @@ public class RankingService {
     /** Ranking solo entre algunos jugadores, como los miembros de una liga privada (HU-51). Null = todos. */
     @Transactional(readOnly = true)
     public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio, Set<Long> soloUsuarios) {
+        // Los emails se guardan en minúsculas: se normaliza para compararlo
         String yo = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
+        // Una sola consulta agregada para todos: fila = [id, resueltas, ganadas, apostado, pagado]
         Map<Long, Estadisticas> porUsuario = new HashMap<>();
         for (Object[] fila : apuestas.resumenResueltasPorUsuario()) {
+            // El tipo exacto de count y sum (Long, Integer…) depende de la consulta: se leen como Number
             porUsuario.put((Long) fila[0], Estadisticas.de(((Number) fila[1]).longValue(),
                     ((Number) fila[2]).longValue(), (BigDecimal) fila[3], (BigDecimal) fila[4]));
         }
 
         record Fila(Usuario usuario, Estadisticas estadisticas) {
         }
+        // Los jugadores sin apuestas resueltas también salen, con estadísticas vacías
         List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
                 .filter(u -> !u.isEliminado())
                 .filter(u -> soloUsuarios == null || soloUsuarios.contains(u.getId()))
@@ -63,8 +72,10 @@ public class RankingService {
                     .thenComparing(Comparator.comparing((Fila f) -> f.estadisticas().isTieneDatos()).reversed())
                     .thenComparing(Comparator.comparing((Fila f) -> f.estadisticas().getPorcentajeAciertos()).reversed());
         };
+        // A igualdad, por nombre, para que el orden sea siempre el mismo
         filas.sort(orden.thenComparing(f -> f.usuario().getNombre()));
 
+        // La posición es el índice + 1: no hay puestos compartidos aunque haya empates
         List<PuestoRanking> puestos = new ArrayList<>();
         for (int i = 0; i < filas.size(); i++) {
             Fila f = filas.get(i);
@@ -77,6 +88,8 @@ public class RankingService {
     /**
      * Perfil público de un jugador (HU-48): su puesto en el ranking por saldo y sus estadísticas,
      * sin sus apuestas. El creador de apuestas no juega y no tiene perfil.
+     *
+     * @throws JugadorNoEncontradoException si no es un jugador del ranking
      */
     @Transactional(readOnly = true)
     public PerfilJugador perfil(Long usuarioId, String emailActual) {

@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/** Repositorio Spring Data de {@link Equipo}; las consultas salen del nombre de cada método. */
 public interface EquipoRepository extends JpaRepository<Equipo, Long> {
 
+    /** Todos, agrupados por deporte (en el orden del enum) y por nombre dentro de cada deporte. */
     List<Equipo> findAllByOrderByDeporteAscNombreAsc();
 
     /**
@@ -17,10 +19,13 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
         return findFirstByNombreOrderByIdAsc(nombre);
     }
 
+    /** El de menor id (el más antiguo) con ese nombre exacto. */
     Optional<Equipo> findFirstByNombreOrderByIdAsc(String nombre);
 
+    /** Para no dar de alta dos equipos con el mismo nombre escrito con otras mayúsculas. */
     boolean existsByNombreIgnoreCase(String nombre);
 
+    /** Por su identificador en football-data.org, al sincronizar con la API. */
     Optional<Equipo> findByIdExterno(Integer idExterno);
 
     List<Equipo> findByDeporte(Deporte deporte);

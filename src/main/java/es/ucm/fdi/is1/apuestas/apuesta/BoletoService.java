@@ -16,7 +16,11 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 
-/** Operaciones sobre el boleto del usuario: añadir, quitar, ver y confirmar (HU-28, HU-29). */
+/**
+ * Operaciones sobre el boleto del usuario: añadir, quitar, ver y confirmar (HU-28, HU-29).
+ * El {@link Boleto} vive en la sesión; este servicio consulta eventos y cuotas y, al confirmar,
+ * delega en {@link ApuestaService}, que es quien registra la apuesta y cobra.
+ */
 @Service
 public class BoletoService {
 
@@ -35,12 +39,21 @@ public class BoletoService {
         this.reloj = reloj;
     }
 
+    /** Añade un resultado 1X2 al boleto. */
     @Transactional(readOnly = true)
     public void anadir(Boleto boleto, Long eventoId, Resultado resultado) {
         anadir(boleto, eventoId, resultado, null);
     }
 
-    /** Añade un resultado (1X2) o un tipo especial (HU-52): exactamente uno de los dos. */
+    /**
+     * Añade un resultado (1X2) o un tipo especial (HU-52): exactamente uno de los dos. Guarda la cuota
+     * actual como la que ha visto el usuario. Se comprueban ya aquí el máximo de selecciones (HU-07) y la
+     * cuota total máxima, para avisar antes de llegar a confirmar.
+     *
+     * @throws EventoNoDisponibleException si el evento no existe o ya no admite apuestas
+     * @throws ResultadoNoValidoException  si ese pronóstico no se puede apostar en el evento
+     * @throws IllegalArgumentException    si se supera un límite o el partido ya está en el boleto
+     */
     @Transactional(readOnly = true)
     public void anadir(Boleto boleto, Long eventoId, Resultado resultado, Especial especial) {
         Evento evento = disponible(eventoId);
@@ -49,6 +62,7 @@ public class BoletoService {
         if (boleto.getTamano() >= maximo) {
             throw new IllegalArgumentException("El boleto admite como máximo " + maximo + " selecciones");
         }
+        // Multiplicador que tendría el boleto con la nueva selección
         List<BigDecimal> conLaNueva = new ArrayList<>(boleto.getLineas().stream().map(Boleto.Linea::cuotaVista).toList());
         conLaNueva.add(cuota);
         ApuestaService.comprobarCuotaTotal(Apuesta.producto(conLaNueva));
@@ -59,6 +73,7 @@ public class BoletoService {
         }
     }
 
+    /** Quita la selección de ese partido; si queda una sola, el boleto pasa a ser una simple (CA-28.3). */
     public void quitar(Boleto boleto, Long eventoId) {
         boleto.quitar(eventoId);
     }
@@ -84,6 +99,7 @@ public class BoletoService {
     private BoletoVista vista(Boleto boleto, boolean quitarNoDisponibles) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         List<BoletoVista.LineaVista> lineas = new ArrayList<>();
+        // Se recorre una copia porque el bucle puede quitar líneas del boleto
         for (Boleto.Linea linea : List.copyOf(boleto.getLineas())) {
             Evento evento = eventos.findById(linea.eventoId()).filter(e -> e.admiteApuestas(ahora)).orElse(null);
             if (evento == null) {
@@ -92,10 +108,12 @@ public class BoletoService {
                 }
                 continue;
             }
+            // La cuota puede haber cambiado desde que se añadió (por ejemplo, por el ajuste por volumen)
             BigDecimal cuota = calculadora.cuota(evento, linea.resultado(), linea.especial());
             lineas.add(new BoletoVista.LineaVista(evento, linea.resultado(), linea.especial(), cuota,
                     cuota.compareTo(linea.cuotaVista()) != 0));
         }
+        // Multiplicador total con las cuotas actuales (CA-29.1)
         BigDecimal total = Apuesta.producto(lineas.stream().map(BoletoVista.LineaVista::cuota).toList());
         return new BoletoVista(lineas, total);
     }
@@ -103,6 +121,8 @@ public class BoletoService {
     /**
      * Confirma el boleto como apuesta simple o combinada. Si alguna cuota ha cambiado, actualiza las
      * cuotas vistas y relanza la excepción para que el usuario acepte las nuevas (HU-29).
+     * Si sale bien, vacía el boleto. Las demás excepciones de {@link ApuestaService#apostar} llegan
+     * tal cual al controlador.
      */
     @Transactional
     public Apuesta confirmar(String email, Boleto boleto, BigDecimal importe) {
@@ -114,6 +134,8 @@ public class BoletoService {
             boleto.vaciar();
             return apuesta;
         } catch (CuotasCambiadasException e) {
+            // La transacción se deshace (no se cobra nada), pero el boleto está en la sesión, no en la base
+            // de datos: las cuotas nuevas se quedan guardadas para el siguiente intento
             aceptarCuotasActuales(boleto);
             throw e;
         }
@@ -131,12 +153,14 @@ public class BoletoService {
         }
     }
 
+    /** Pone como cuota vista la actual en cada línea (y quita las que ya no admiten apuestas). */
     private void aceptarCuotasActuales(Boleto boleto) {
         for (BoletoVista.LineaVista linea : vista(boleto).lineas()) {
             boleto.actualizarCuota(linea.evento().getId(), linea.cuota());
         }
     }
 
+    /** El evento si existe y admite apuestas; si no, EventoNoDisponibleException. */
     private Evento disponible(Long eventoId) {
         return eventos.findById(eventoId)
                 .filter(e -> e.admiteApuestas(LocalDateTime.now(reloj)))

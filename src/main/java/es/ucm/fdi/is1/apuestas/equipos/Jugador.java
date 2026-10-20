@@ -14,10 +14,14 @@ import jakarta.persistence.ManyToOne;
 /**
  * Jugador de la plantilla de un equipo. Llega de la API (con su identificador) o lo da de alta el creador.
  * La nota (0-10) la pone el creador y decide quién sale en la alineación probable.
+ *
+ * <p>Entidad JPA de las plantillas (HU-49, HU-50). La gestiona {@link PlantillaService}; la
+ * sincronización con la API crea y actualiza los que tienen {@code idExterno} sin tocar su nota.
  */
 @Entity
 public class Jugador {
 
+    /** Nota con la que empieza todo jugador nuevo, hasta que el creador la cambie. */
     public static final double NOTA_INICIAL = 6.0;
 
     @Id
@@ -40,6 +44,7 @@ public class Jugador {
 
     private LocalDate fechaNacimiento;
 
+    /** De 0 a 10, con un decimal. */
     @Column(nullable = false)
     private double nota = NOTA_INICIAL;
 
@@ -57,7 +62,10 @@ public class Jugador {
         this.posicion = posicion;
     }
 
-    /** Datos que vienen de la API; la nota no se toca, es del creador. */
+    /**
+     * Datos que vienen de la API; la nota no se toca, es del creador.
+     * Cambia también el equipo, por si el jugador ha fichado por otro.
+     */
     public void actualizar(Equipo nuevoEquipo, String nuevoNombre, Posicion nuevaPosicion, Integer nuevoDorsal,
                            String nuevaNacionalidad, LocalDate nuevaFecha) {
         equipo = nuevoEquipo;
@@ -68,7 +76,13 @@ public class Jugador {
         fechaNacimiento = nuevaFecha;
     }
 
+    /**
+     * El creador puntúa al jugador (HU-50). La nota se redondea a un decimal.
+     *
+     * @throws IllegalArgumentException si no está entre 0 y 10
+     */
     public void cambiarNota(double nueva) {
+        // NaN no cumple ninguna comparación, así que se comprueba aparte
         if (Double.isNaN(nueva) || nueva < 0 || nueva > 10) {
             throw new IllegalArgumentException("La nota debe estar entre 0 y 10");
         }
@@ -80,6 +94,7 @@ public class Jugador {
         return fechaNacimiento == null ? null : Period.between(fechaNacimiento, LocalDate.now()).getYears();
     }
 
+    /** True si viene de la API; los añadidos a mano no los borra la sincronización (CA-50.2). */
     public boolean isDeLaApi() {
         return idExterno != null;
     }

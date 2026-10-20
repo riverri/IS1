@@ -9,10 +9,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
-/** Uno de los posibles ganadores de un mercado, con la cuota que fija el creador (HU-45). */
+/**
+ * Entidad JPA: uno de los posibles ganadores de un mercado, con la cuota que fija el creador (HU-45).
+ * Las apuestas a largo plazo apuntan a un candidato (HU-44). Se crea solo desde
+ * {@link Mercado#anadirCandidato}, por eso el constructor no es público.
+ */
 @Entity
 public class Candidato {
 
+    /** Cuotas admitidas para un candidato: con 1,00 el que acierta no ganaría nada. */
     static final BigDecimal CUOTA_MINIMA = new BigDecimal("1.01");
     static final BigDecimal CUOTA_MAXIMA = new BigDecimal("1000.00");
 
@@ -43,14 +48,20 @@ public class Candidato {
         cambiarCuota(cuota);
     }
 
-    /** Las apuestas ya hechas conservan la cuota con la que se hicieron. */
+    /**
+     * Cambia la cuota para las apuestas nuevas. Las apuestas ya hechas conservan la cuota con la que se hicieron.
+     *
+     * @throws IllegalArgumentException si falta, no está entre 1,01 y 1000 o tiene más de 2 decimales
+     */
     public void cambiarCuota(BigDecimal nueva) {
         if (nueva == null || nueva.compareTo(CUOTA_MINIMA) < 0 || nueva.compareTo(CUOTA_MAXIMA) > 0) {
             throw new IllegalArgumentException("La cuota debe estar entre 1,01 y 1000");
         }
+        // stripTrailingZeros hace que "2.500" cuente como 2,5 y se acepte
         if (nueva.stripTrailingZeros().scale() > 2) {
             throw new IllegalArgumentException("La cuota admite como mucho 2 decimales");
         }
+        // Siempre con 2 decimales, como la columna (scale = 2)
         cuota = nueva.setScale(2);
     }
 

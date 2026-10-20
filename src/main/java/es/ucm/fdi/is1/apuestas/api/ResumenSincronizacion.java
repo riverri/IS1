@@ -3,7 +3,11 @@ package es.ucm.fdi.is1.apuestas.api;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Lo que ha cambiado en una sincronización, para mostrarlo al creador de apuestas. */
+/**
+ * Lo que ha cambiado en una sincronización, para mostrarlo al creador de apuestas.
+ * La rellena {@link SincronizacionService} mientras sincroniza: los métodos que cuentan son de paquete para que
+ * solo pueda hacerlo él. En Gestión se muestra como mensaje y los errores aparte (HU-21).
+ */
 public class ResumenSincronizacion {
 
     private int eventosNuevos;
@@ -28,6 +32,7 @@ public class ResumenSincronizacion {
         equiposNuevos++;
     }
 
+    /** Fallo en un partido o en una competición; la sincronización sigue con el resto. */
     void error(String mensaje) {
         errores.add(mensaje);
     }
@@ -52,6 +57,7 @@ public class ResumenSincronizacion {
         return errores;
     }
 
+    /** Texto del mensaje de Gestión y del registro: "2 eventos nuevos, 1 actualizados, …". */
     @Override
     public String toString() {
         return eventosNuevos + " eventos nuevos, " + eventosActualizados + " actualizados, " + resultados

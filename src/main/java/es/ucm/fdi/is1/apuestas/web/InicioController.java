@@ -14,6 +14,10 @@ import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoProperties;
 
+/**
+ * Controlador de las páginas públicas generales: la portada y el listado y la ficha de los equipos.
+ * Se ven sin haber iniciado sesión (HU-08; las rutas públicas están en {@code SeguridadConfig}).
+ */
 @Controller
 public class InicioController {
 
@@ -30,6 +34,10 @@ public class InicioController {
         this.saldo = saldo;
     }
 
+    /**
+     * GET /: portada con los 6 próximos partidos, el partido destacado, los eventos disponibles de cada deporte
+     * y el saldo de bienvenida que se recibe al registrarse (HU-08, HU-14).
+     */
     @GetMapping("/")
     public String inicio(Model model) {
         model.addAttribute("proximos", catalogo.proximos(6));
@@ -39,6 +47,10 @@ public class InicioController {
         return "index";
     }
 
+    /**
+     * GET /equipos: equipos y deportistas agrupados por deporte. Filtros opcionales: deporte, competición
+     * y texto {@code q} en el nombre.
+     */
     @GetMapping("/equipos")
     public String equipos(@RequestParam(required = false) Deporte deporte,
                           @RequestParam(required = false) Long competicion,
@@ -47,12 +59,13 @@ public class InicioController {
         model.addAttribute("recuento", equipos.recuentoPorDeporte());
         model.addAttribute("deporteElegido", deporte);
         model.addAttribute("competicionElegida", competicion);
+        // El desplegable de competiciones solo aparece con un deporte elegido
         model.addAttribute("competiciones", deporte == null ? List.of() : equipos.competiciones(deporte));
         model.addAttribute("q", q == null ? "" : q.trim());
         return "equipos";
     }
 
-    /** Ficha pública de un equipo o deportista (HU-31). */
+    /** GET /equipos/{id}: ficha pública de un equipo o deportista (HU-31). */
     @GetMapping("/equipos/{id}")
     public String ficha(@PathVariable Long id, Model model) {
         model.addAttribute("ficha", fichas.ficha(id));
