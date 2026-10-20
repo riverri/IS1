@@ -24,6 +24,18 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 
 En total hay **107 criterios de aceptación**; 94 son de historias hechas.
 
+## Estimación
+
+Cada historia tiene su tamaño en **puntos de historia** (Fibonacci) y una estimación de **horas sin IA y con IA**, según el tipo de trabajo. El método y la ficha de cada historia están en el [documento de historias](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-de-usuario.md#estimación).
+
+| | Puntos | Horas sin IA | Horas con IA |
+|---|---:|---:|---:|
+| Historias hechas (45) | 185 | 740 | 312 |
+| Historias descartadas (8) | 29 | 116 | 49 |
+
+- **Sin IA:** 4 horas por punto (diseñar, programar, probar, revisar y documentar).
+- **Con IA:** el 30 % en interfaz y datos, el 45 % en reglas del negocio y el 55 % en integración y seguridad. Lo que más tiempo sigue llevando es entender, revisar y probar lo que propone la IA.
+
 ## Por tema
 
 | Tema | Historias |
