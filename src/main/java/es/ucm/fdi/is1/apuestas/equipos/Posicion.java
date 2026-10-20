@@ -2,7 +2,12 @@ package es.ucm.fdi.is1.apuestas.equipos;
 
 import java.util.Locale;
 
-/** Demarcación de un jugador de fútbol, de la portería a la delantera. */
+/**
+ * Demarcación de un jugador de fútbol, de la portería a la delantera.
+ * El orden de los valores es el de los grupos de la plantilla (HU-49). Cada valor lleva su nombre,
+ * el plural para el título del grupo y la abreviatura que lleva en la camiseta de la alineación si no
+ * tiene dorsal.
+ */
 public enum Posicion {
 
     PORTERO("Portero", "Porteros", "POR"),
@@ -29,6 +34,7 @@ public enum Posicion {
             return null;
         }
         String texto = posicion.toLowerCase(Locale.ROOT);
+        // Se busca por trozos de palabra, así valen tanto la posición general como la detallada
         if (texto.contains("goalkeeper")) {
             return PORTERO;
         }

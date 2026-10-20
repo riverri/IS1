@@ -12,7 +12,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Version;
 
-/** Cuenta de usuario con su saldo de moneditas virtuales (HU-11, HU-13, HU-14). */
+/**
+ * Entidad JPA: cuenta de usuario con su saldo de moneditas virtuales (HU-11, HU-13, HU-14).
+ * Sirve tanto para los jugadores como para el creador de apuestas (ver {@link Rol}).
+ * Aquí están las reglas del saldo (cargar, abonar, recargas gratuitas), los límites del juego
+ * responsable (HU-10), el cambio de nombre y contraseña (HU-47) y la baja (HU-18).
+ * {@link UsuarioService} llama a estos métodos dentro de una transacción.
+ */
 @Entity
 public class Usuario {
 
@@ -30,12 +36,14 @@ public class Usuario {
     @GeneratedValue
     private Long id;
 
+    /** Se guarda normalizado (sin espacios y en minúsculas) y es único. */
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String nombre;
 
+    /** Resumen BCrypt de la contraseña. La contraseña en claro no se guarda nunca. */
     @Column(nullable = false)
     private String passwordHash;
 
@@ -43,6 +51,7 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
+    /** Moneditas disponibles. BigDecimal con 2 decimales: sin los errores de redondeo de double. */
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal saldo;
 
@@ -69,6 +78,11 @@ public class Usuario {
         // requerido por JPA
     }
 
+    /**
+     * Cuenta nueva con el saldo de bienvenida (HU-14). La fecha de alta cuenta como la primera recarga.
+     *
+     * @param passwordHash la contraseña ya cifrada con BCrypt
+     */
     public Usuario(String email, String nombre, String passwordHash, Rol rol,
                    BigDecimal saldoBienvenida, LocalDateTime fechaAlta) {
         this.email = email;
@@ -80,7 +94,7 @@ public class Usuario {
     }
 
     /**
-     * Si ha pasado el periodo desde la última recarga gratuita, suma el importe al saldo.
+     * Si ha pasado el periodo desde la última recarga gratuita, suma el importe al saldo (HU-14, CA-14.2).
      *
      * @return true si se ha aplicado la recarga
      */
@@ -89,11 +103,16 @@ public class Usuario {
             return false;
         }
         saldo = saldo.add(importe);
+        // El periodo vuelve a contar desde hoy: si pasa varias semanas sin entrar, recibe una sola recarga
         ultimaRecarga = ahora;
         return true;
     }
 
-    /** Descuenta el importe de una apuesta (HU-23). */
+    /**
+     * Descuenta el importe de una apuesta (HU-23). El saldo nunca queda negativo por apostar.
+     *
+     * @throws SaldoInsuficienteException si el saldo no llega al importe
+     */
     public void cargar(BigDecimal importe) {
         if (saldo.compareTo(importe) < 0) {
             throw new SaldoInsuficienteException(saldo, importe);
@@ -104,8 +123,8 @@ public class Usuario {
     /**
      * Ajuste por corrección de un resultado: puede restar una ganancia ya pagada.
      * A diferencia de {@link #cargar}, permite que el saldo quede negativo.
+     * Una cuenta eliminada no recibe dinero: sus apuestas se resuelven igual, pero sin abonarle nada.
      */
-    /** Una cuenta eliminada no recibe dinero: sus apuestas se resuelven igual, pero sin abonarle nada. */
     public void ajustar(BigDecimal diferencia) {
         if (eliminado) {
             return;
@@ -113,7 +132,7 @@ public class Usuario {
         saldo = saldo.add(diferencia);
     }
 
-    /** Devuelve o abona un importe al saldo (cancelaciones y ganancias). */
+    /** Devuelve o abona un importe al saldo (cancelaciones y ganancias). Si la cuenta está eliminada, nada. */
     public void abonar(BigDecimal importe) {
         if (eliminado) {
             return;
@@ -121,7 +140,7 @@ public class Usuario {
         saldo = saldo.add(importe);
     }
 
-    /** HU-47. */
+    /** Cambia el nombre visible (HU-47). */
     public void cambiarNombre(String nuevo) {
         nombre = nuevo;
     }
@@ -131,6 +150,7 @@ public class Usuario {
         passwordHash = nuevoHash;
     }
 
+    /** Fecha a partir de la cual toca la siguiente recarga gratuita (HU-14). */
     public LocalDateTime proximaRecarga(Duration periodo) {
         return ultimaRecarga.plus(periodo);
     }
@@ -151,6 +171,7 @@ public class Usuario {
         }
     }
 
+    /** HU-10: si tiene una pausa que aún no ha terminado. */
     public boolean enPausa(LocalDateTime ahora) {
         return pausaHasta != null && pausaHasta.isAfter(ahora);
     }
@@ -158,8 +179,11 @@ public class Usuario {
     /**
      * HU-18: borra los datos personales y deja la cuenta inutilizable. Se conserva la fila para que
      * las apuestas ya hechas y su historial sigan cuadrando.
+     *
+     * @param hashInutilizable resumen BCrypt de una contraseña aleatoria que nadie conoce
      */
     public void eliminar(String hashInutilizable) {
+        // El id hace que el email siga siendo único (la columna lo exige)
         email = "eliminado-" + id + DOMINIO_ELIMINADOS;
         nombre = "Usuario eliminado";
         passwordHash = hashInutilizable;

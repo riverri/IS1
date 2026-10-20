@@ -9,7 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
-/** Aviso a un usuario, por ejemplo cuando se resuelve una de sus apuestas (HU-37). */
+/**
+ * Entidad JPA: aviso a un usuario, por ejemplo cuando se resuelve una de sus apuestas (HU-37).
+ * Las crea {@link NotificacionService#avisar}; los textos de las apuestas los compone {@code AvisosApuestas}.
+ */
 @Entity
 public class Notificacion {
 
@@ -30,6 +33,7 @@ public class Notificacion {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
+    /** Si ya se ha visto en la página de avisos; los no leídos cuentan en la campana de la cabecera. */
     @Column(nullable = false)
     private boolean leida;
 
@@ -37,9 +41,11 @@ public class Notificacion {
         // requerido por JPA
     }
 
+    /** Aviso nuevo, sin leer. */
     public Notificacion(Usuario usuario, String tipo, String texto, LocalDateTime fecha) {
         this.usuario = usuario;
         this.tipo = tipo;
+        // La columna admite 500 caracteres: un texto más largo se corta y termina en "…"
         this.texto = texto.length() > 500 ? texto.substring(0, 497) + "…" : texto;
         this.fecha = fecha;
     }

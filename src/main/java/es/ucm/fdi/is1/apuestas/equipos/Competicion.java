@@ -8,7 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-/** Competición (LaLiga, Champions, ACB…) en la que participan equipos (HU-01). */
+/**
+ * Competición (LaLiga, Champions, ACB…) en la que participan equipos (HU-01).
+ * Entidad JPA: cada {@code Evento} pertenece a una y toma de ella su deporte. La relación con los equipos
+ * se guarda en {@link Equipo#getCompeticiones()}.
+ */
 @Entity
 public class Competicion {
 

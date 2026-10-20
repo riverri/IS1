@@ -3,7 +3,12 @@ package es.ucm.fdi.is1.apuestas.eventos;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 
-/** Resultado de un partido visto desde uno de los dos equipos (HU-31). */
+/**
+ * Resultado de un partido visto desde uno de los dos equipos (HU-31).
+ * A diferencia de {@link Resultado} (local, empate, visitante), aquí importa quién mira:
+ * un {@code LOCAL} es victoria para el local y derrota para el visitante.
+ * Cada valor lleva la letra de la racha (V/E/D) y su descripción.
+ */
 public enum ResultadoEquipo {
 
     VICTORIA("V", "Victoria"),
@@ -23,6 +28,7 @@ public enum ResultadoEquipo {
         if (evento.getResultado() == Resultado.EMPATE) {
             return EMPATE;
         }
+        // Gana si es local y ganó el local, o si es visitante y ganó el visitante
         boolean ganaLocal = evento.getResultado() == Resultado.LOCAL;
         boolean esLocal = evento.getLocal().getId().equals(equipo.getId());
         return ganaLocal == esLocal ? VICTORIA : DERROTA;

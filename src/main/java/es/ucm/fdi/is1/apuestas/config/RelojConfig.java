@@ -15,6 +15,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RelojConfig {
 
+    /**
+     * Reloj del sistema en la zona de apuestas.zona-horaria (Europe/Madrid si no se indica).
+     * Los servicios piden la fecha con {@code LocalDateTime.now(reloj)} en vez de {@code LocalDateTime.now()}.
+     */
     @Bean
     public Clock reloj(@Value("${apuestas.zona-horaria:Europe/Madrid}") String zonaHoraria) {
         return Clock.system(ZoneId.of(zonaHoraria));

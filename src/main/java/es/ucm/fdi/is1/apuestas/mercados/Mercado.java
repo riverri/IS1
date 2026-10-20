@@ -20,8 +20,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 
 /**
- * Apuesta a largo plazo con varios candidatos: Balón de Oro, campeón de liga… (HU-44, HU-45).
- * El creador fija la cuota de cada candidato, lo cierra y marca el ganador.
+ * Entidad JPA: mercado de apuesta a largo plazo con varios candidatos: Balón de Oro, campeón de liga…
+ * (HU-44, HU-45). El creador fija la cuota de cada candidato, lo cierra y marca el ganador.
+ * Sus estados están en {@link EstadoMercado}. El mercado guarda sus reglas (qué se puede hacer en cada
+ * estado); el pago de las apuestas lo hace {@code ResolucionMercadosService}.
  */
 @Entity
 public class Mercado {
@@ -45,10 +47,15 @@ public class Mercado {
     @Enumerated(EnumType.STRING)
     private EstadoMercado estado = EstadoMercado.ABIERTO;
 
+    /**
+     * Los candidatos se guardan y se borran junto con el mercado (cascada). Se cargan siempre con él (EAGER),
+     * ordenados de la cuota más baja (el favorito) a la más alta.
+     */
     @OneToMany(mappedBy = "mercado", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("cuota, nombre")
     private List<Candidato> candidatos = new ArrayList<>();
 
+    /** Candidato ganador; null hasta que el creador lo marca. */
     @ManyToOne
     private Candidato ganador;
 
@@ -62,6 +69,14 @@ public class Mercado {
         this.cierre = cierre;
     }
 
+    /**
+     * Añade un candidato con su cuota. Solo con el mercado abierto: si estuviera cerrado, nadie podría
+     * apostarle.
+     *
+     * @throws IllegalStateException    si el mercado no está abierto
+     * @throws IllegalArgumentException si el nombre está vacío, pasa de 100 caracteres, ya es candidato
+     *                                  (sin distinguir mayúsculas) o la cuota no es válida
+     */
     public Candidato anadirCandidato(String nombreCandidato, BigDecimal cuota) {
         if (estado != EstadoMercado.ABIERTO) {
             throw new IllegalStateException("Solo se pueden añadir candidatos a un mercado abierto");
@@ -78,11 +93,19 @@ public class Mercado {
         return candidato;
     }
 
+    /**
+     * Se puede apostar si está abierto y no ha llegado la fecha de cierre. Al llegar esa fecha deja de admitir
+     * apuestas aunque su estado siga siendo ABIERTO: no hace falta que nadie lo cierre a mano (CA-44.3).
+     */
     public boolean admiteApuestas(LocalDateTime ahora) {
         return estado == EstadoMercado.ABIERTO && cierre.isAfter(ahora);
     }
 
-    /** Deja de admitir apuestas antes de la fecha de cierre. */
+    /**
+     * Deja de admitir apuestas antes de la fecha de cierre (CA-45.2).
+     *
+     * @throws IllegalStateException si no está abierto
+     */
     public void cerrar() {
         if (estado != EstadoMercado.ABIERTO) {
             throw new IllegalStateException("Solo se puede cerrar un mercado abierto");
@@ -90,11 +113,19 @@ public class Mercado {
         estado = EstadoMercado.CERRADO;
     }
 
-    /** Marca (o corrige) el ganador; las apuestas se pagan desde el servicio. */
+    /**
+     * Marca (o corrige) el ganador; las apuestas se pagan desde el servicio (CA-45.3).
+     * Se admite en cualquier estado salvo anulado: también con el mercado abierto y, para corregir un error,
+     * con el mercado ya resuelto.
+     *
+     * @throws IllegalStateException    si el mercado está anulado
+     * @throws IllegalArgumentException si el candidato no es de este mercado
+     */
     public void resolver(Candidato candidato) {
         if (estado == EstadoMercado.ANULADO) {
             throw new IllegalStateException("Un mercado anulado no puede tener ganador");
         }
+        // Candidato no redefine equals: se busca el mismo objeto, cargado en la misma transacción
         if (!candidatos.contains(candidato)) {
             throw new IllegalArgumentException(candidato.getNombre() + " no es candidato de " + nombre);
         }
@@ -102,6 +133,12 @@ public class Mercado {
         estado = EstadoMercado.RESUELTO;
     }
 
+    /**
+     * Anula el mercado; el importe de sus apuestas se devuelve desde el servicio. Uno resuelto ya no se anula
+     * porque sus apuestas están pagadas: si el ganador estaba mal, se corrige con {@link #resolver}.
+     *
+     * @throws IllegalStateException si ya está resuelto o anulado
+     */
     public void anular() {
         if (estado == EstadoMercado.RESUELTO || estado == EstadoMercado.ANULADO) {
             throw new IllegalStateException("No se puede anular un mercado resuelto o ya anulado");
@@ -129,6 +166,7 @@ public class Mercado {
         return estado;
     }
 
+    /** Lista de solo lectura: los candidatos se añaden con {@link #anadirCandidato}, que aplica las reglas. */
     public List<Candidato> getCandidatos() {
         return Collections.unmodifiableList(candidatos);
     }

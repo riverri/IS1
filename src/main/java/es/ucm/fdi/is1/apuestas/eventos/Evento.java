@@ -15,7 +15,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 
-/** Partido entre dos equipos de una competición, sobre el que se apuesta (G/E/P). */
+/**
+ * Partido entre dos equipos de una competición, sobre el que se apuesta (G/E/P).
+ *
+ * <p>Entidad JPA y pieza central del dominio: las apuestas, las cuotas y las estadísticas de equipos
+ * se calculan a partir de ella. Lo crea el creador de apuestas a mano o la sincronización con la API
+ * (HU-21).
+ *
+ * <p>Guarda su {@link EstadoEvento} y solo permite las transiciones válidas; los métodos que cambian
+ * el estado lanzan {@link IllegalStateException} si no se puede. El efecto sobre las apuestas
+ * (resolverlas, devolver el dinero) no se hace aquí, sino en {@code ResolucionService}.
+ */
 @Entity
 public class Evento {
 
@@ -65,6 +75,7 @@ public class Evento {
         // requerido por JPA
     }
 
+    /** Evento nuevo, en estado programado y sin resultado. */
     public Evento(Competicion competicion, Equipo local, Equipo visitante, LocalDateTime fechaHora) {
         this.competicion = competicion;
         this.local = local;
@@ -77,7 +88,14 @@ public class Evento {
         return estado == EstadoEvento.PROGRAMADO && fechaHora.isAfter(ahora);
     }
 
-    /** Fija (o corrige) el resultado final y marca el evento como finalizado (HU-04). */
+    /**
+     * Fija (o corrige) el resultado final y marca el evento como finalizado (HU-04).
+     * Vale desde programado, suspendido o finalizado (para corregir). Borra el marcador: con un resultado
+     * sin goles, las apuestas de goles se anulan.
+     *
+     * @throws IllegalStateException    si el evento está anulado
+     * @throws IllegalArgumentException si es empate en un deporte que no lo admite
+     */
     public void finalizar(Resultado resultadoFinal) {
         if (estado == EstadoEvento.ANULADO) {
             throw new IllegalStateException("Un evento anulado no puede tener resultado");
@@ -91,20 +109,32 @@ public class Evento {
         estado = EstadoEvento.FINALIZADO;
     }
 
-    /** Fija (o corrige) el marcador final; el resultado sale de él (HU-52). Solo en fútbol. */
+    /**
+     * Fija (o corrige) el marcador final; el resultado sale de él (HU-52). Solo en fútbol.
+     *
+     * @throws IllegalArgumentException si algún marcador es negativo o el deporte no admite empate
+     * @throws IllegalStateException    si el evento está anulado
+     */
     public void finalizarConMarcador(int local, int visitante) {
         if (local < 0 || visitante < 0) {
             throw new IllegalArgumentException("Los goles no pueden ser negativos");
         }
+        // "Admite empate" equivale aquí a "es fútbol": en el resto no hay goles que apuntar
         if (!getDeporte().isAdmiteEmpate()) {
             throw new IllegalArgumentException("En " + getDeporte().getNombre() + " solo se indica el ganador");
         }
+        // finalizar() borra los goles, así que se guardan después
         finalizar(local > visitante ? Resultado.LOCAL : local < visitante ? Resultado.VISITANTE : Resultado.EMPATE);
         golesLocal = local;
         golesVisitante = visitante;
     }
 
-    /** Deja de admitir apuestas nuevas hasta que se reactive (HU-05). */
+    /**
+     * Deja de admitir apuestas nuevas hasta que se reactive (HU-05). Las que ya hay siguen activas.
+     * Suspendido por el creador: la API no lo reactivará sola.
+     *
+     * @throws IllegalStateException si no está programado
+     */
     public void suspender() {
         if (estado != EstadoEvento.PROGRAMADO) {
             throw new IllegalStateException("Solo se puede suspender un evento programado");
@@ -123,6 +153,11 @@ public class Evento {
         return suspendidoPorApi;
     }
 
+    /**
+     * Vuelve a programado y admite apuestas otra vez, si no ha empezado (HU-05).
+     *
+     * @throws IllegalStateException si no está suspendido
+     */
     public void reactivar() {
         if (estado != EstadoEvento.SUSPENDIDO) {
             throw new IllegalStateException("Solo se puede reactivar un evento suspendido");
@@ -131,7 +166,11 @@ public class Evento {
         suspendidoPorApi = false;
     }
 
-    /** Anula el evento; las apuestas se devuelven desde el servicio (HU-05). */
+    /**
+     * Anula el evento; las apuestas se devuelven desde el servicio (HU-05). Es definitivo.
+     *
+     * @throws IllegalStateException si ya está finalizado o anulado
+     */
     public void anular() {
         if (estado == EstadoEvento.FINALIZADO || estado == EstadoEvento.ANULADO) {
             throw new IllegalStateException("No se puede anular un evento finalizado o ya anulado");
@@ -139,6 +178,7 @@ public class Evento {
         estado = EstadoEvento.ANULADO;
     }
 
+    /** True a partir de la hora de inicio, sea cual sea el estado. */
     public boolean haEmpezado(LocalDateTime ahora) {
         return !fechaHora.isAfter(ahora);
     }
@@ -155,10 +195,12 @@ public class Evento {
         return golesVisitante;
     }
 
+    /** True si se finalizó con marcador (HU-52) y no solo con el ganador. */
     public boolean isConMarcador() {
         return golesLocal != null && golesVisitante != null;
     }
 
+    /** El evento no guarda el deporte: es el de su competición. */
     public Deporte getDeporte() {
         return competicion.getDeporte();
     }
@@ -190,6 +232,8 @@ public class Evento {
     /**
      * El creador corrige un evento mal dado de alta (HU-46). Solo antes de que empiece y si no está
      * finalizado ni anulado; las comprobaciones de equipos y apuestas las hace el servicio.
+     *
+     * @throws IllegalStateException si el evento no es {@link #editable(LocalDateTime) editable}
      */
     public void modificar(Equipo nuevoLocal, Equipo nuevoVisitante, LocalDateTime nuevaFecha, String nuevaFase,
                           LocalDateTime ahora) {
@@ -207,7 +251,10 @@ public class Evento {
         return (estado == EstadoEvento.PROGRAMADO || estado == EstadoEvento.SUSPENDIDO) && fechaHora.isAfter(ahora);
     }
 
-    /** La fuente de datos ha cambiado la fecha del partido (solo si aún no se ha jugado). */
+    /**
+     * La fuente de datos ha cambiado la fecha del partido (solo si aún no se ha jugado).
+     * En un evento finalizado o anulado no hace nada, sin lanzar excepción.
+     */
     public void cambiarFecha(LocalDateTime nuevaFecha) {
         if (estado == EstadoEvento.PROGRAMADO || estado == EstadoEvento.SUSPENDIDO) {
             fechaHora = nuevaFecha;
