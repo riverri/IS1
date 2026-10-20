@@ -10,7 +10,11 @@ import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.Mercado;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoService;
 
-/** Ganador y anulación de los mercados a largo plazo, y pago de sus apuestas (HU-45). */
+/**
+ * Ganador y anulación de los mercados a largo plazo, y pago de sus apuestas (HU-45). Lo usa el panel de
+ * gestión del creador. El {@link Mercado} cambia de estado y cada {@link Apuesta} afectada se recalcula y
+ * ajusta el saldo de su usuario; todo en la misma transacción.
+ */
 @Service
 public class ResolucionMercadosService {
 
@@ -25,7 +29,13 @@ public class ResolucionMercadosService {
         this.avisos = avisos;
     }
 
-    /** Marca (o corrige) el ganador y paga las apuestas acertadas. Devuelve cuántas se han resuelto. */
+    /**
+     * Marca (o corrige) el ganador y paga las apuestas acertadas; el resto pasan a perdidas (CA-45.3).
+     * Si se corrige, la apuesta solo abona o retira la diferencia con lo ya pagado. Devuelve cuántas se han resuelto.
+     *
+     * @throws IllegalArgumentException si el candidato no es de este mercado
+     * @throws IllegalStateException    si el mercado está anulado
+     */
     @Transactional
     public int resolver(Long mercadoId, Long candidatoId) {
         Mercado mercado = mercados.mercado(mercadoId);
@@ -37,6 +47,7 @@ public class ResolucionMercadosService {
         List<Seleccion> afectadas = selecciones.findByCandidatoMercado(mercado);
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
+            // Se guarda el estado anterior para avisar solo si cambia (HU-37)
             EstadoApuesta antes = apuesta.getEstado();
             apuesta.resolver(mercado, ganador);
             avisos.siCambia(apuesta, antes);
@@ -44,7 +55,11 @@ public class ResolucionMercadosService {
         return afectadas.size();
     }
 
-    /** Anula el mercado y devuelve el importe de todas sus apuestas. */
+    /**
+     * Anula el mercado y devuelve el importe de todas sus apuestas (las canceladas ya lo recuperaron).
+     *
+     * @throws IllegalStateException si el mercado ya estaba resuelto o anulado
+     */
     @Transactional
     public int anular(Long mercadoId) {
         Mercado mercado = mercados.mercado(mercadoId);
@@ -59,7 +74,7 @@ public class ResolucionMercadosService {
         return afectadas.size();
     }
 
-    /** Número de apuestas e importe apostado a cada candidato, sin contar las canceladas. */
+    /** Número de apuestas e importe apostado a cada candidato, sin contar las canceladas ni las anuladas. */
     @Transactional(readOnly = true)
     public List<VolumenCandidato> volumen(Long mercadoId) {
         Mercado mercado = mercados.mercado(mercadoId);
@@ -78,6 +93,7 @@ public class ResolucionMercadosService {
         }).toList();
     }
 
+    /** Una fila del volumen de un mercado: el candidato, lo apostado a él y en cuántas apuestas. */
     public record VolumenCandidato(Candidato candidato, BigDecimal importe, int apuestas) {
     }
 }

@@ -21,12 +21,17 @@ import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 import es.ucm.fdi.is1.apuestas.web.RutaSegura;
 import jakarta.servlet.http.HttpServletRequest;
 
-/** Boleto de apuestas: añadir selecciones desde el catálogo, revisarlas y confirmar (HU-28, HU-29). */
+/**
+ * Boleto de apuestas: añadir selecciones desde el catálogo, revisarlas y confirmar (HU-28, HU-29).
+ * Todas las rutas cuelgan de {@code /boleto} y exigen sesión. La lógica está en {@link BoletoService};
+ * aquí se traducen las excepciones a mensajes flash y se redirige.
+ */
 @Controller
 @RequestMapping("/boleto")
 public class BoletoController {
 
     private final BoletoService boletos;
+    /** Proxy al boleto de la sesión actual (ver {@link Boleto}). */
     private final Boleto boleto;
     private final LimitesService limites;
 
@@ -36,6 +41,10 @@ public class BoletoController {
         this.limites = limites;
     }
 
+    /**
+     * GET /boleto: las selecciones con su cuota actual, el multiplicador y los límites de importe.
+     * Quita las que ya no admiten apuestas y oculta la barra del boleto, que aquí sobra.
+     */
     @GetMapping
     public String ver(Model model) {
         model.addAttribute("vista", boletos.vista(boleto));
@@ -48,6 +57,7 @@ public class BoletoController {
      * Se llega pulsando una cuota del catálogo, o con el botón "Añadir al boleto" de la página del partido,
      * que envía la opción elegida ({@code opcion}); vuelve a la página de la que se venía.
      * Es un POST porque cambia el boleto.
+     * POST /boleto/anadir. El creador de apuestas no puede añadir nada.
      */
     @PostMapping("/anadir")
     public String anadir(@RequestParam("evento") Long eventoId, @RequestParam(required = false) Resultado resultado,
@@ -59,6 +69,7 @@ public class BoletoController {
             redireccion.addFlashAttribute("errorBoleto", "El creador de apuestas no puede apostar");
             return "redirect:" + RutaSegura.de(referer, "/eventos");
         }
+        // "opcion" llega del grupo de opciones de la página del partido; se traduce igual que en ApuestaForm
         if (opcion != null) {
             ApuestaForm elegida = new ApuestaForm();
             elegida.setOpcion(opcion);
@@ -73,15 +84,17 @@ public class BoletoController {
         } catch (EventoNoDisponibleException e) {
             redireccion.addFlashAttribute("errorBoleto", "Ese partido ya no admite apuestas");
         }
+        // Solo se vuelve al Referer si es una ruta de esta web (evita redirecciones a otros sitios)
         return "redirect:" + RutaSegura.de(referer, "/boleto");
     }
 
-    /** Un enlace antiguo (o volver tras iniciar sesión) no añade nada: lleva a la página del partido. */
+    /** GET /boleto/anadir: un enlace antiguo (o volver tras iniciar sesión) no añade nada: lleva a la página del partido. */
     @GetMapping("/anadir")
     public String anadirDesdeEnlace(@RequestParam("evento") Long eventoId) {
         return "redirect:/eventos/" + eventoId + "/apostar";
     }
 
+    /** POST /boleto/quitar/{eventoId}: quita la selección de ese partido (CA-28.3). */
     @PostMapping("/quitar/{eventoId}")
     public String quitar(@PathVariable Long eventoId) {
         boletos.quitar(boleto, eventoId);
@@ -89,14 +102,17 @@ public class BoletoController {
     }
 
     /**
+     * POST /boleto/confirmar: convierte el boleto en una apuesta simple o combinada y lleva a Mis apuestas.
      * {@code cuotaVista}: las cuotas que el usuario tenía delante al confirmar ("evento:cuota"). Si alguna ha
      * cambiado desde entonces, no se apuesta y se le enseñan las nuevas (HU-29). Así el botón
      * "Aceptar nuevas cuotas" apuesta a la primera con las cuotas que acaba de ver.
+     * Si algo falla, vuelve al boleto con el error y el importe que había escrito.
      */
     @PostMapping("/confirmar")
     public String confirmar(@RequestParam(required = false) BigDecimal importe,
                             @RequestParam(required = false) List<String> cuotaVista, Principal principal,
                             RedirectAttributes redireccion) {
+        // Positivo y con 2 decimales como mucho; los límites del creador se comprueban en el servicio
         if (importe == null || importe.signum() <= 0 || importe.stripTrailingZeros().scale() > 2) {
             redireccion.addFlashAttribute("error", "Introduce un importe válido, con 2 decimales como mucho");
             return "redirect:/boleto";
@@ -118,6 +134,7 @@ public class BoletoController {
         } catch (IllegalArgumentException | ResultadoNoValidoException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         } catch (EventoNoDisponibleException e) {
+            // Se quita del boleto al volver a GET /boleto, que llama a BoletoService.vista
             redireccion.addFlashAttribute("error",
                     "Uno de los partidos ya no admite apuestas (ha empezado o se ha suspendido) y se ha quitado del boleto.");
         }

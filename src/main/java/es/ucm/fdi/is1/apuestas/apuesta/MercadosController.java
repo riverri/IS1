@@ -15,7 +15,10 @@ import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 
-/** Apuestas a largo plazo: Balón de Oro, campeón de liga… (HU-44). La página es pública; apostar exige sesión. */
+/**
+ * Apuestas a largo plazo: Balón de Oro, campeón de liga… (HU-44). La página es pública; apostar exige sesión.
+ * Los mercados los gestiona el creador desde otro controlador del paquete de gestión (HU-45).
+ */
 @Controller
 public class MercadosController {
 
@@ -29,6 +32,7 @@ public class MercadosController {
         this.limites = limites;
     }
 
+    /** GET /mercados: los mercados abiertos con sus candidatos y cuotas (CA-44.1) y los ya terminados. */
     @GetMapping("/mercados")
     public String mercados(Model model) {
         model.addAttribute("abiertos", mercados.abiertos());
@@ -37,11 +41,17 @@ public class MercadosController {
         return "mercados";
     }
 
+    /**
+     * POST /mercados/{id}/apostar: apuesta a un candidato (CA-44.2). {@code cuota} es la que veía el usuario;
+     * si el creador la ha cambiado, no se apuesta. Si sale bien lleva a Mis apuestas; si no, vuelve al
+     * mercado con el error.
+     */
     @PostMapping("/mercados/{id}/apostar")
     public String apostar(@PathVariable Long id, @RequestParam(required = false) Long candidato,
                           @RequestParam(required = false) BigDecimal cuota,
                           @RequestParam(required = false) BigDecimal importe, Principal principal,
                           RedirectAttributes redireccion) {
+        // El ancla lleva de vuelta al mercado en el que se estaba
         String volver = "redirect:/mercados#mercado-" + id;
         if (candidato == null) {
             redireccion.addFlashAttribute("error", "Elige un candidato");
@@ -62,6 +72,7 @@ public class MercadosController {
         } catch (SaldoInsuficienteException e) {
             redireccion.addFlashAttribute("error", "No tienes saldo suficiente para esta apuesta");
         } catch (MercadoNoDisponibleException | IllegalArgumentException e) {
+            // Mercado cerrado (CA-44.3), límites de importe, juego responsable o creador que intenta apostar
             redireccion.addFlashAttribute("error", e.getMessage());
         }
         return volver;
