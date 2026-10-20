@@ -8,6 +8,10 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Formulario de alta de un evento a mano (HU-21). {@link GestionService#crearEvento} comprueba además
+ * que local y visitante sean distintos y que los dos jueguen la competición elegida.
+ */
 public class EventoForm {
 
     @NotNull(message = "Elige una competición")
@@ -19,11 +23,13 @@ public class EventoForm {
     @NotNull(message = "Elige el equipo visitante")
     private Long visitanteId;
 
+    // No se puede crear un evento en el pasado. El patrón es el formato del campo datetime-local de HTML
     @NotNull(message = "Introduce la fecha y hora")
     @Future(message = "La fecha debe ser futura")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime fechaHora;
 
+    /** Opcional (jornada, semifinal...). */
     @Size(max = 80, message = "Máximo 80 caracteres")
     private String fase;
 

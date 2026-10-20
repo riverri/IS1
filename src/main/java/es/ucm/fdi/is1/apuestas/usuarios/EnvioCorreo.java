@@ -1,7 +1,11 @@
 package es.ucm.fdi.is1.apuestas.usuarios;
 
-/** Envía el enlace para recuperar la contraseña (HU-17). Interfaz para poder cambiarla en las pruebas. */
+/**
+ * Envía el enlace para recuperar la contraseña (HU-17). Interfaz para poder cambiarla en las pruebas.
+ * La implementación de la aplicación es {@link CorreoRecuperacion}.
+ */
 public interface EnvioCorreo {
 
+    /** @param enlace dirección completa, con el código, para crear la contraseña nueva */
     void enviarRecuperacion(String email, String nombre, String enlace);
 }

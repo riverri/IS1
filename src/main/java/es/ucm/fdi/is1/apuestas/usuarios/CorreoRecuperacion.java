@@ -12,12 +12,14 @@ import org.springframework.stereotype.Component;
 /**
  * Envía el enlace por correo si hay un servidor configurado (spring.mail.host, ver README). Si no lo hay,
  * por ejemplo en el ordenador de cada uno, el enlace se escribe en la consola de la aplicación.
+ * Implementación de {@link EnvioCorreo} que usa {@link RecuperacionService} (HU-17).
  */
 @Component
 public class CorreoRecuperacion implements EnvioCorreo {
 
     private static final Logger LOG = LoggerFactory.getLogger(CorreoRecuperacion.class);
 
+    // ObjectProvider: Spring Boot solo crea el JavaMailSender si hay servidor de correo configurado
     private final ObjectProvider<JavaMailSender> correo;
     private final String servidorCorreo;
     private final String remitente;
@@ -30,6 +32,7 @@ public class CorreoRecuperacion implements EnvioCorreo {
         this.remitente = remitente;
     }
 
+    /** Manda el correo con el enlace o, si no hay servidor, lo escribe en el registro de la aplicación. */
     @Override
     public void enviarRecuperacion(String email, String nombre, String enlace) {
         JavaMailSender servidor = servidorCorreo.isBlank() ? null : correo.getIfAvailable();

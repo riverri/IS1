@@ -3,6 +3,8 @@ package es.ucm.fdi.is1.apuestas.cuotas;
 /**
  * Otros tipos de apuesta de un partido de fútbol, además del 1X2 (HU-52):
  * doble oportunidad, más/menos de 2,5 goles y ambos marcan.
+ * Cada uno tiene un símbolo corto, una descripción y el grupo en el que se muestra en la página del partido.
+ * Sus cuotas las calcula {@link CalculadoraCuotas#especiales(double, double)}.
  */
 public enum Especial {
 
@@ -35,9 +37,11 @@ public enum Especial {
      */
     public Boolean acierta(Resultado resultado, Integer golesLocal, Integer golesVisitante) {
         if (!isNecesitaMarcador()) {
+            // Doble oportunidad: se acierta si no sale el único resultado que no cubre
             return switch (this) {
                 case DOBLE_1X -> resultado != Resultado.VISITANTE;
                 case DOBLE_X2 -> resultado != Resultado.LOCAL;
+                // DOBLE_12
                 default -> resultado != Resultado.EMPATE;
             };
         }
@@ -46,10 +50,12 @@ public enum Especial {
         }
         int total = golesLocal + golesVisitante;
         boolean ambos = golesLocal > 0 && golesVisitante > 0;
+        // Los goles son enteros: más de 2,5 es 3 o más y menos de 2,5 es 2 o menos
         return switch (this) {
             case MAS_2_5 -> total > 2;
             case MENOS_2_5 -> total < 3;
             case AMBOS_SI -> ambos;
+            // AMBOS_NO
             default -> !ambos;
         };
     }

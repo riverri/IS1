@@ -5,6 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Formulario de alta de una competición (HU-01). Que no se repita el nombre lo comprueba
+ * {@link GestionService#crearCompeticion}, porque necesita consultar la base de datos.
+ */
 public class CompeticionForm {
 
     @NotBlank(message = "Introduce el nombre")

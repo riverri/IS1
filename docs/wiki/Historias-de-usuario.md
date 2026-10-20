@@ -26,15 +26,23 @@ En total hay **107 criterios de aceptación**; 94 son de historias hechas.
 
 ## Estimación
 
-Cada historia tiene su tamaño en **puntos de historia** (Fibonacci) y una estimación de **horas sin IA y con IA**, según el tipo de trabajo. El método y la ficha de cada historia están en el [documento de historias](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-de-usuario.md#estimación).
+Cada historia tiene su **tamaño** (puntos de historia y líneas de código), las **horas sin IA y con IA** y el **coste de la IA**. El método completo y la ficha de cada historia están en el [documento de historias](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-de-usuario.md#estimación).
 
-| | Puntos | Horas sin IA | Horas con IA |
-|---|---:|---:|---:|
-| Historias hechas (45) | 185 | 740 | 312 |
-| Historias descartadas (8) | 29 | 116 | 49 |
+| | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---:|---:|---:|---:|---:|
+| Historias hechas (45) | 185 | 15.170 | 1.091 | 177 | 179 $ |
+| Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 28 $ |
 
-- **Sin IA:** 4 horas por punto (diseñar, programar, probar, revisar y documentar).
-- **Con IA:** el 30 % en interfaz y datos, el 45 % en reglas del negocio y el 55 % en integración y seguridad. Lo que más tiempo sigue llevando es entender, revisar y probar lo que propone la IA.
+- **Tamaño:** medido en el repositorio. Son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.
+- **Sin IA:** unas 14 líneas terminadas por hora. Sale de valores de referencia en tres puntos (25, 15 y 8 líneas/h).
+- **Con IA:** se suman cuatro partes.
+  - **Dirigir a la IA:** medido.
+  - **Revisar el código:** unas 138 líneas/h.
+  - **Comprobar cada criterio:** 10 minutos por criterio.
+  - **Corregir fallos:** 2,5 fallos por cada mil líneas, medido en la revisión de los 34 fallos.
+  
+  Revisar es lo que más tiempo lleva.
+- **Coste de la IA:** medido con los tokens de la sesión de trabajo y las tarifas de la API. Son unos 11,8 $ por cada mil líneas, casi todo por volver a leer el contexto.
 
 ## Por tema
 

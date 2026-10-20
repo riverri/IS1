@@ -6,9 +6,12 @@ import java.util.List;
 
 /**
  * Lo que se ha apostado, pagado y ganado la casa (HU-54), en total y desglosado.
+ * Lo construye {@link CuentasCasaService} y lo pinta el panel de la casa.
  *
- * @param porTipo    simples, combinadas y a largo plazo
- * @param porDeporte solo las simples de partidos, por deporte
+ * @param porTipo       simples 1X2, simples de doble oportunidad y goles, combinadas y a largo plazo
+ * @param porDeporte    solo las simples de partidos, por deporte
+ * @param jugadores     usuarios distintos que han apostado
+ * @param margenTeorico margen que debería quedarse la casa según la fórmula de cuotas, en %
  */
 public record CuentasCasa(Fila total, List<Fila> porTipo, List<Fila> porDeporte, long jugadores,
                           BigDecimal margenTeorico) {
@@ -19,11 +22,13 @@ public record CuentasCasa(Fila total, List<Fila> porTipo, List<Fila> porDeporte,
      */
     public record Fila(String nombre, int apuestas, BigDecimal enJuego, BigDecimal apostado, BigDecimal pagado) {
 
+        /** Suma las apuestas de una fila; las activas van aparte porque aún no se sabe qué se pagará. */
         static Fila de(String nombre, List<Apuesta> apuestas) {
             BigDecimal enJuego = BigDecimal.ZERO;
             BigDecimal apostado = BigDecimal.ZERO;
             BigDecimal pagado = BigDecimal.ZERO;
             for (Apuesta a : apuestas) {
+                // pagado incluye el importe devuelto en las anuladas: en ellas la casa ni gana ni pierde
                 if (a.getEstado() == EstadoApuesta.ACTIVA) {
                     enJuego = enJuego.add(a.getImporte());
                 } else {
@@ -39,7 +44,10 @@ public record CuentasCasa(Fila total, List<Fila> porTipo, List<Fila> porDeporte,
             return apostado.subtract(pagado);
         }
 
-        /** Beneficio / apostado, en tanto por ciento con un decimal. Null si aún no hay nada cerrado. */
+        /**
+         * Margen real: beneficio / apostado, en tanto por ciento con un decimal. Se compara con el margen
+         * teórico (CA-54.1). Null si aún no hay nada cerrado.
+         */
         public BigDecimal getMargen() {
             if (apostado.signum() == 0) {
                 return null;

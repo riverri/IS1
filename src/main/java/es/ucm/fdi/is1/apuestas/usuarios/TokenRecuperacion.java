@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 /**
  * Enlace para crear una contraseña nueva (HU-17). Solo se guarda el resumen SHA-256 del código del enlace:
  * quien lea la base de datos no puede usarlo. Caduca y sirve una sola vez.
+ * Entidad JPA; la crea y la consulta {@link RecuperacionService}.
  */
 @Entity
 public class TokenRecuperacion {
@@ -22,9 +23,11 @@ public class TokenRecuperacion {
     @ManyToOne(optional = false)
     private Usuario usuario;
 
+    /** Resumen SHA-256 del código, en hexadecimal (64 caracteres). */
     @Column(nullable = false, unique = true, length = 64)
     private String hash;
 
+    /** Momento hasta el que sirve ({@link RecuperacionService#VALIDEZ} desde que se pidió). */
     @Column(nullable = false)
     private LocalDateTime caduca;
 
@@ -41,10 +44,12 @@ public class TokenRecuperacion {
         this.caduca = caduca;
     }
 
+    /** Sirve si no se ha usado, no ha caducado y la cuenta no se ha eliminado (CA-17.2). */
     public boolean valido(LocalDateTime ahora) {
         return !usado && ahora.isBefore(caduca) && !usuario.isEliminado();
     }
 
+    /** Gasta el enlace: ya no vale para otra vez. */
     public void usar() {
         usado = true;
     }

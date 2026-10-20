@@ -5,7 +5,8 @@ import java.math.RoundingMode;
 import java.util.List;
 
 /**
- * Estadísticas de un conjunto de apuestas resueltas (HU-35).
+ * Estadísticas de un conjunto de apuestas resueltas (HU-35). Se usan en Mis apuestas, en el ranking
+ * (HU-36) y en el perfil público (HU-48). Las anuladas y canceladas no cuentan.
  *
  * @param resueltas número de apuestas ganadas o perdidas
  * @param ganadas   número de apuestas ganadas
@@ -14,6 +15,7 @@ import java.util.List;
  */
 public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigDecimal beneficio) {
 
+    /** A partir de las apuestas de un usuario; se queda solo con las ganadas y perdidas. */
     public static Estadisticas de(List<Apuesta> apuestas) {
         List<Apuesta> resueltas = apuestas.stream().filter(Apuesta::isResuelta).toList();
         int ganadas = (int) resueltas.stream().filter(a -> a.getEstado() == EstadoApuesta.GANADA).count();
@@ -22,11 +24,15 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
         return new Estadisticas(resueltas.size(), ganadas, apostado, beneficio);
     }
 
-    /** A partir de los totales de la base de datos: beneficio = pagado − apostado. */
+    /**
+     * A partir de los totales de la base de datos ({@link ApuestaRepository#resumenResueltasPorUsuario}):
+     * beneficio = pagado − apostado. Da lo mismo que sumar {@link Apuesta#getBeneficio} una a una.
+     */
     static Estadisticas de(long resueltas, long ganadas, BigDecimal apostado, BigDecimal pagado) {
         return new Estadisticas((int) resueltas, (int) ganadas, apostado, pagado.subtract(apostado));
     }
 
+    /** Para los jugadores sin ninguna apuesta resuelta. */
     static final Estadisticas VACIAS = new Estadisticas(0, 0, BigDecimal.ZERO, BigDecimal.ZERO);
 
     /** Porcentaje de apuestas acertadas (0 si no hay ninguna resuelta). */
@@ -34,10 +40,14 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
         if (resueltas == 0) {
             return BigDecimal.ZERO;
         }
+        // ganadas × 100 / resueltas, con un decimal
         return BigDecimal.valueOf(ganadas * 100L).divide(BigDecimal.valueOf(resueltas), 1, RoundingMode.HALF_UP);
     }
 
-    /** Rentabilidad: beneficio / apostado, en porcentaje (0 si no hay nada apostado). */
+    /**
+     * Rentabilidad: beneficio / apostado, en porcentaje con un decimal (0 si no hay nada apostado).
+     * Negativa si el balance es de pérdidas; −100 % si se ha perdido todo lo apostado.
+     */
     public BigDecimal getRentabilidad() {
         if (apostado.signum() == 0) {
             return BigDecimal.ZERO;

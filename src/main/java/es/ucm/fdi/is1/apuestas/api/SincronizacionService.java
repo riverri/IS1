@@ -32,6 +32,10 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
  * Sincroniza eventos y resultados con la API de datos deportivos (fila 13 del backlog, HU-21):
  * crea los partidos que faltan, actualiza fechas, introduce resultados (lo que resuelve las apuestas),
  * suspende los aplazados y anula los cancelados.
+ *
+ * <p>La lanzan {@link SincronizacionProgramada} (cada 30 minutos) y el botón <i>Sincronizar</i> de Gestión.
+ * Los partidos llegan de {@link FuenteDatosDeportivos}; los cambios de estado de los eventos y el pago de las
+ * apuestas los hace {@link ResolucionService}, igual que cuando los hace el creador a mano (HU-04, HU-05, HU-25).
  */
 @Service
 public class SincronizacionService {
@@ -70,12 +74,22 @@ public class SincronizacionService {
         this.eventos = eventos;
         this.resolucion = resolucion;
         this.reloj = reloj;
+        // TransactionTemplate en vez de @Transactional: permite abrir una transacción por partido dentro del bucle
         this.transacciones = new TransactionTemplate(transacciones);
     }
 
     /**
      * Cada partido se guarda en su propia transacción: si uno falla, se apunta el error y los demás
      * se sincronizan (y se pagan) igual.
+     *
+     * <p>Con una sola transacción para todo, el fallo de un partido desharía también los demás. Además, así
+     * no queda ninguna transacción abierta mientras se espera la respuesta de la API.
+     *
+     * <p>Busca los partidos de cada competición configurada desde hace {@code diasAtras} días (para recoger
+     * resultados) hasta dentro de {@code diasAdelante} días (para dar de alta los próximos).
+     *
+     * @return lo que ha cambiado y los errores, para mostrarlo al creador
+     * @throws IllegalStateException si no está la clave de la API
      */
     public ResumenSincronizacion sincronizar() {
         if (!propiedades.configurada()) {
@@ -83,7 +97,9 @@ public class SincronizacionService {
                     "Falta la clave de la API: define la variable de entorno FOOTBALL_DATA_TOKEN");
         }
         ResumenSincronizacion resumen = new ResumenSincronizacion();
+        // "Hoy" según el reloj de la aplicación (hora de Madrid), no el del servidor
         LocalDate hoy = LocalDate.now(reloj);
+        // Una petición por competición (PD y CL por defecto)
         for (String codigo : propiedades.competiciones()) {
             try {
                 List<PartidoApi> partidos = fuente.partidos(codigo, hoy.minusDays(propiedades.diasAtras()),
@@ -92,11 +108,13 @@ public class SincronizacionService {
                     try {
                         transacciones.executeWithoutResult(t -> procesar(partido, competicion(codigo), resumen));
                     } catch (RuntimeException e) {
+                        // Se deshacen solo los cambios de este partido y se sigue con el siguiente
                         LOG.warn("No se pudo sincronizar el partido {}: {}", partido.id(), e.getMessage());
                         resumen.error("Partido " + partido.id() + ": " + e.getMessage());
                     }
                 }
             } catch (RestClientException e) {
+                // La API dio error o no respondió para esta competición: se pasa a la siguiente
                 LOG.warn("No se pudo sincronizar {}: {}", codigo, e.getMessage());
                 resumen.error(codigo + ": " + e.getMessage());
             }
@@ -105,6 +123,7 @@ public class SincronizacionService {
         return resumen;
     }
 
+    /** Busca o crea el evento de un partido de la API, actualiza su fecha y le aplica el estado del partido. */
     private void procesar(PartidoApi partido, Competicion competicion, ResumenSincronizacion resumen) {
         if (partido.homeTeam() == null || partido.homeTeam().id() == null
                 || partido.awayTeam() == null || partido.awayTeam().id() == null) {
@@ -112,9 +131,12 @@ public class SincronizacionService {
         }
         Equipo local = equipo(partido.homeTeam(), competicion, resumen);
         Equipo visitante = equipo(partido.awayTeam(), competicion, resumen);
+        // La API da la hora en UTC; los eventos se guardan en la zona de la aplicación (Madrid)
         LocalDateTime fecha = LocalDateTime.ofInstant(Instant.parse(partido.utcDate()),
                 ZoneId.of(propiedades.zonaHoraria()));
 
+        // Emparejamiento: primero por el identificador de la API; si no, un evento con los mismos equipos
+        // dentro de ±2 días (uno creado a mano o por DatosIniciales, quizá con otra hora)
         Evento evento = eventos.findByIdExterno(partido.id())
                 .or(() -> eventos.findByLocalAndVisitanteAndFechaHoraBetween(local, visitante,
                         fecha.minusDays(2), fecha.plusDays(2)).stream().findFirst())
@@ -123,22 +145,30 @@ public class SincronizacionService {
             evento = eventos.save(new Evento(competicion, local, visitante, fecha));
             resumen.eventoNuevo();
         } else if (!fecha.equals(evento.getFechaHora()) || evento.getIdExterno() == null) {
+            // Ha cambiado la hora o es la primera vez que se enlaza. Evento solo cambia la fecha si aún no se ha jugado
             evento.cambiarFecha(fecha);
             resumen.eventoActualizado();
         }
+        // Enlazado: en las siguientes sincronizaciones se encuentra directamente por el identificador
         evento.setIdExterno(partido.id());
+        // La jornada solo se pone si no tiene fase: no pisa la que haya puesto el creador
         if (evento.getFase() == null && partido.matchday() != null) {
             evento.setFase("Jornada " + partido.matchday());
         }
         aplicarEstado(partido, evento, resumen);
     }
 
+    /**
+     * Traduce el estado del partido en la API a un cambio en el evento, a través de {@link ResolucionService}.
+     * Solo actúa si el evento no está ya así, para no repetir el mismo cambio en cada sincronización.
+     */
     private void aplicarEstado(PartidoApi partido, Evento evento, ResumenSincronizacion resumen) {
         if (evento.getEstado() == EstadoEvento.ANULADO) {
             return; // lo anuló el creador: la API no lo resucita ni le pone resultado
         }
         String estado = partido.status() == null ? "" : partido.status();
         switch (estado) {
+            // Terminado: las apuestas se deciden con el resultado de los 90 minutos
             case "FINISHED" -> resultado(partido).ifPresent(r -> {
                 PartidoApi.MarcadorApi marcador = partido.score();
                 PartidoApi.GolesApi goles = marcador.marcador90();
@@ -148,6 +178,8 @@ public class SincronizacionService {
                             + evento.getVisitante().getNombre() + "): hubo prórroga y la API no da el marcador de "
                             + "los 90 minutos; introdúcelo a mano en Gestión");
                 } else if (goles != null && evento.getDeporte().isAdmiteEmpate()) {
+                    // Con marcador se resuelven el 1X2, los goles y ambos marcan (HU-52).
+                    // Solo si es nuevo o distinto del guardado (una corrección vuelve a resolver las apuestas)
                     int local = goles.home();
                     int visitante = goles.away();
                     if (evento.getEstado() != EstadoEvento.FINALIZADO
@@ -157,16 +189,20 @@ public class SincronizacionService {
                         resumen.resultado();
                     }
                 } else if (evento.getEstado() != EstadoEvento.FINALIZADO || evento.getResultado() != r) {
+                    // Solo se sabe el ganador: se resuelve el 1X2 y las de goles y ambos marcan se anulan
                     resolucion.introducirResultado(evento.getId(), r);
                     resumen.resultado();
                 }
             });
             case "POSTPONED", "SUSPENDED" -> {
+                // Aplazado: deja de admitir apuestas. Queda marcado como suspendido por la API para que la
+                // sincronización lo reactive sola cuando vuelva a tener fecha
                 if (evento.getEstado() == EstadoEvento.PROGRAMADO) {
                     resolucion.suspenderPorApi(evento.getId());
                 }
             }
             case "CANCELLED" -> {
+                // Cancelado: se anula y se devuelve lo apostado (HU-05)
                 if (evento.getEstado() == EstadoEvento.PROGRAMADO || evento.getEstado() == EstadoEvento.SUSPENDIDO) {
                     resolucion.anular(evento.getId());
                 }
@@ -183,6 +219,10 @@ public class SincronizacionService {
         }
     }
 
+    /**
+     * Ganador según la API; vacío si aún no lo hay. Si hubo prórroga o penaltis, es el ganador final,
+     * no el de los 90 minutos.
+     */
     private static Optional<Resultado> resultado(PartidoApi partido) {
         if (partido.score() == null || partido.score().winner() == null) {
             return Optional.empty();
@@ -195,6 +235,7 @@ public class SincronizacionService {
         };
     }
 
+    /** Nuestra competición para un código de la API (PD → LaLiga); si no existe, se crea como de fútbol. */
     private Competicion competicion(String codigo) {
         String nombre = COMPETICIONES.getOrDefault(codigo, codigo);
         return competiciones.findByNombre(nombre)
@@ -215,22 +256,30 @@ public class SincronizacionService {
             equipo = equipos.save(new Equipo(nombre, Deporte.FUTBOL, CALIDAD_INICIAL));
             resumen.equipoNuevo();
         }
+        // Enlazado con la API: la próxima vez se encuentra por el identificador
         if (equipo.getIdExterno() == null) {
             equipo.setIdExterno(datos.id());
         }
+        // El escudo solo se pone si no tiene uno (no pisa el de Gestión) y solo con direcciones https://
         if (equipo.getEscudoUrl() == null && datos.crest() != null && datos.crest().startsWith("https://")) {
             equipo.setEscudoUrl(datos.crest());
         }
+        // Se apunta en la competición si aún no estaba (p. ej. un equipo de LaLiga que juega la Champions)
         if (!equipo.participaEn(competicion.getId())) {
             equipo.participaEn(competicion);
         }
         return equipo;
     }
 
+    /**
+     * Equipo de fútbol aún sin enlazar cuyo nombre equivale al largo o al corto de la API.
+     * {@link Nombres#clave(String)} quita tildes, mayúsculas y palabras como "Club" o "FC".
+     */
     private Equipo porNombre(PartidoApi.EquipoApi datos) {
         String clave = Nombres.clave(datos.name());
         String claveCorta = Nombres.clave(datos.shortName());
         return equipos.findByDeporte(Deporte.FUTBOL).stream()
+                // Un equipo ya enlazado con otro de la API no es este, aunque el nombre se parezca
                 .filter(e -> e.getIdExterno() == null)
                 .filter(e -> {
                     String nuestra = Nombres.clave(e.getNombre());
@@ -240,6 +289,7 @@ public class SincronizacionService {
                 .orElse(null);
     }
 
+    /** Nombre de un equipo nuevo: el largo; si no hay, el corto; si tampoco, "Equipo" y su identificador. */
     private static String nombreVisible(PartidoApi.EquipoApi datos) {
         if (datos.name() != null && !datos.name().isBlank()) {
             return datos.name();

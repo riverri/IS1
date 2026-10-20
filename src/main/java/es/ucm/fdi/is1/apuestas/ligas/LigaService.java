@@ -18,19 +18,25 @@ import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
-/** Ligas privadas entre amigos con código de invitación y ranking propio (HU-51). */
+/**
+ * Servicio de las ligas privadas entre amigos, con código de invitación y ranking propio (HU-51).
+ * El ranking de una liga es el general de {@link RankingService} filtrado a sus miembros, así que usa
+ * los mismos criterios (CA-51.2). Los usuarios llegan por su email, el de la sesión iniciada.
+ */
 @Service
 public class LigaService {
 
     /** Sin letras ni números que se confundan al dictarlos (0/O, 1/I/L). */
     static final String ALFABETO = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
     static final int LONGITUD_CODIGO = 6;
+    /** Ligas en las que puede estar un jugador a la vez, contando las que ha creado. */
     static final int MAX_LIGAS = 10;
 
     private final LigaRepository ligas;
     private final UsuarioRepository usuarios;
     private final RankingService rankings;
     private final Clock reloj;
+    /** SecureRandom y no Random: los códigos no se pueden adivinar a partir de otros. */
     private final SecureRandom azar = new SecureRandom();
 
     public LigaService(LigaRepository ligas, UsuarioRepository usuarios, RankingService rankings, Clock reloj) {
@@ -40,12 +46,18 @@ public class LigaService {
         this.reloj = reloj;
     }
 
+    /** Ligas en las que está el usuario, por nombre. */
     @Transactional(readOnly = true)
     public List<Liga> mias(String email) {
         return ligas.deMiembro(usuario(email));
     }
 
-    /** Crea la liga con un código nuevo; quien la crea es su primer miembro. */
+    /**
+     * Crea la liga con un código nuevo; quien la crea es su primer miembro (CA-51.1).
+     *
+     * @throws IllegalArgumentException si es el creador de apuestas, el nombre no tiene entre 1 y 40 caracteres
+     *                                  o el usuario ya está en {@link #MAX_LIGAS} ligas
+     */
     @Transactional
     public Liga crear(String email, String nombre) {
         Usuario usuario = jugador(email);
@@ -59,10 +71,16 @@ public class LigaService {
         return ligas.save(new Liga(limpio, codigoNuevo(), usuario, LocalDateTime.now(reloj)));
     }
 
-    /** Entra en la liga del código (sin distinguir mayúsculas ni espacios). */
+    /**
+     * Entra en la liga del código (sin distinguir mayúsculas ni espacios) (CA-51.2).
+     *
+     * @throws IllegalArgumentException si es el creador de apuestas, el código no existe, ya es miembro
+     *                                  o ya está en {@link #MAX_LIGAS} ligas
+     */
     @Transactional
     public Liga unirse(String email, String codigo) {
         Usuario usuario = jugador(email);
+        // "abc 123" y "ABC123" son el mismo código: se quitan los espacios y se pasa a mayúsculas
         String limpio = codigo == null ? "" : codigo.replaceAll("\\s", "").toUpperCase(Locale.ROOT);
         Liga liga = ligas.findByCodigo(limpio)
                 .orElseThrow(() -> new IllegalArgumentException("No hay ninguna liga con el código " + limpio));
@@ -72,11 +90,16 @@ public class LigaService {
         if (ligas.deMiembro(usuario).size() >= MAX_LIGAS) {
             throw new IllegalArgumentException("Puedes estar como mucho en " + MAX_LIGAS + " ligas");
         }
+        // No hace falta save: la liga está gestionada por JPA y el cambio se guarda al acabar la transacción
         liga.unir(usuario);
         return liga;
     }
 
-    /** Solo la ven sus miembros. */
+    /**
+     * Devuelve la liga si el usuario es miembro. Solo la ven sus miembros.
+     *
+     * @throws LigaNoEncontradaException si no existe o el usuario no es miembro
+     */
     @Transactional(readOnly = true)
     public Liga ver(Long id, String email) {
         Usuario usuario = usuario(email);
@@ -84,12 +107,21 @@ public class LigaService {
                 .orElseThrow(() -> new LigaNoEncontradaException(id));
     }
 
+    /**
+     * Ranking de la liga con el criterio elegido (saldo, ganancias o aciertos), solo con sus miembros.
+     * El email sirve para destacar el puesto de quien lo consulta.
+     */
     @Transactional(readOnly = true)
     public List<PuestoRanking> ranking(Liga liga, String email, CriterioRanking criterio) {
         return rankings.ranking(email, criterio, liga.getIdsMiembros());
     }
 
-    /** Sale de la liga. Quien la creó no puede salir: la borra. */
+    /**
+     * Sale de la liga y deja de aparecer en su ranking (CA-51.3). Quien la creó no puede salir: la borra.
+     *
+     * @throws LigaNoEncontradaException si no existe o no es miembro
+     * @throws IllegalArgumentException  si es quien la creó
+     */
     @Transactional
     public Liga salir(Long id, String email) {
         Liga liga = ver(id, email);
@@ -101,7 +133,12 @@ public class LigaService {
         return liga;
     }
 
-    /** Solo la puede borrar quien la creó. */
+    /**
+     * Borra la liga con todos sus miembros (CA-51.3). Solo la puede borrar quien la creó.
+     *
+     * @throws LigaNoEncontradaException si no existe o no es miembro
+     * @throws IllegalArgumentException  si no es quien la creó
+     */
     @Transactional
     public Liga borrar(Long id, String email) {
         Liga liga = ver(id, email);
@@ -114,6 +151,8 @@ public class LigaService {
 
     /**
      * Al eliminar una cuenta: se borran las ligas que creó (nadie más podría borrarlas) y sale de las demás.
+     * Escucha el evento {@link CuentaEliminada} que publica la baja (HU-18); se ejecuta en el momento,
+     * dentro de la misma transacción.
      */
     @EventListener
     public void alEliminarCuenta(CuentaEliminada cuenta) {
@@ -127,6 +166,7 @@ public class LigaService {
         }
     }
 
+    /** Genera códigos al azar con {@link #ALFABETO} hasta dar con uno que no use otra liga. */
     private String codigoNuevo() {
         String codigo;
         do {
@@ -139,6 +179,7 @@ public class LigaService {
         return codigo;
     }
 
+    /** Usuario de la sesión; siempre existe porque ha iniciado sesión. */
     private Usuario usuario(String email) {
         return usuarios.findByEmail(email).orElseThrow();
     }

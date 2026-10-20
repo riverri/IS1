@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
-/** Avisos dentro de la web (HU-37). */
+/**
+ * Servicio de los avisos dentro de la web (HU-37): crearlos, contarlos para la campana, leerlos y
+ * borrarlos al eliminar la cuenta. No envía correos: los avisos solo se ven en la página de avisos.
+ */
 @Service
 public class NotificacionService {
 
@@ -24,21 +27,32 @@ public class NotificacionService {
         this.reloj = reloj;
     }
 
+    /**
+     * Guarda un aviso nuevo, sin leer, con la fecha de ahora.
+     *
+     * @param tipo para el icono de la vista: "ganada", "perdida", "anulada"…
+     */
     @Transactional
     public Notificacion avisar(Usuario usuario, String tipo, String texto) {
         return notificaciones.save(new Notificacion(usuario, tipo, texto, LocalDateTime.now(reloj)));
     }
 
+    /** Número de avisos sin leer, para la campana de la cabecera. */
     @Transactional(readOnly = true)
     public long sinLeer(String email) {
         return notificaciones.countByUsuarioEmailAndLeidaFalse(email);
     }
 
-    /** Las últimas notificaciones del usuario; las que aún no había leído salen marcadas como nuevas. */
+    /**
+     * Las últimas 50 notificaciones del usuario, de la más reciente a la más antigua; las que aún no
+     * había leído salen marcadas como nuevas y, a partir de ahora, quedan leídas. Se puede volver
+     * a consultar un aviso ya leído (CA-37.3).
+     */
     @Transactional
     public List<Aviso> leer(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         List<Notificacion> mostradas = notificaciones.findTop50ByUsuarioOrderByFechaDescIdDesc(usuario);
+        // Se copian antes de marcarlos: así la vista sabe cuáles eran nuevos
         List<Aviso> avisos = mostradas.stream()
                 .map(n -> new Aviso(n.getTipo(), n.getTexto(), n.getFecha(), !n.isLeida()))
                 .toList();
@@ -53,6 +67,7 @@ public class NotificacionService {
         notificaciones.deleteByUsuario(usuario);
     }
 
+    /** Aviso tal como lo muestra la vista; {@code nuevo} si no se había leído antes de abrir la página. */
     public record Aviso(String tipo, String texto, LocalDateTime fecha, boolean nuevo) {
     }
 }

@@ -19,12 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Recuperar la contraseña (HU-17): se pide un enlace con el email y el enlace permite poner una nueva.
  * La respuesta es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
+ * El código del enlace es aleatorio y en la base de datos solo se guarda su resumen ({@link TokenRecuperacion}).
  */
 @Service
 public class RecuperacionService {
 
+    /** Tiempo que sirve un enlace desde que se pide (CA-17.2). */
     static final Duration VALIDEZ = Duration.ofMinutes(30);
 
+    // Generador criptográfico: con Random los códigos se podrían adivinar
     private static final SecureRandom ALEATORIO = new SecureRandom();
 
     private final UsuarioRepository usuarios;
@@ -55,13 +58,16 @@ public class RecuperacionService {
         String normalizado = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
         Optional<Usuario> cuenta = usuarios.findByEmail(normalizado).filter(u -> !u.isEliminado());
         if (cuenta.isEmpty()) {
+            // Sin cuenta no se envía nada, pero el controlador responde igual que si la hubiera
             return;
         }
         Usuario usuario = cuenta.get();
         tokens.borrarDe(usuario);
+        // 32 bytes aleatorios (256 bits), en Base64 apto para URL: se puede poner tal cual en el enlace
         byte[] bytes = new byte[32];
         ALEATORIO.nextBytes(bytes);
         String codigo = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        // Se guarda el resumen; el código en claro solo viaja en el correo
         tokens.save(new TokenRecuperacion(usuario, resumen(codigo), LocalDateTime.now(reloj).plus(VALIDEZ)));
         correo.enviarRecuperacion(usuario.getEmail(), usuario.getNombre(), base + "/recuperar/nueva?token=" + codigo);
     }
@@ -84,10 +90,12 @@ public class RecuperacionService {
         Usuario usuario = token.getUsuario();
         usuario.cambiarPasswordHash(passwordEncoder.encode(nueva));
         token.usar();
+        // Si estaba bloqueado por fallos de inicio de sesión, ya puede entrar con la nueva
         intentos.olvidar(usuario.getEmail());
         return usuario.getEmail();
     }
 
+    /** Token que corresponde al código, solo si aún sirve. */
     private Optional<TokenRecuperacion> buscar(String codigo) {
         if (codigo == null || codigo.isBlank()) {
             return Optional.empty();
@@ -96,11 +104,17 @@ public class RecuperacionService {
         return tokens.findByHash(resumen(codigo)).filter(t -> t.valido(ahora));
     }
 
+    /**
+     * Resumen SHA-256 del código, en hexadecimal. Siempre da el mismo resultado para el mismo código,
+     * y por eso se puede buscar en la base de datos (con BCrypt, que usa sal aleatoria, no se podría).
+     * Como el código ya es aleatorio y largo, no hace falta un algoritmo lento como BCrypt.
+     */
     static String resumen(String codigo) {
         try {
             byte[] hash = MessageDigest.getInstance("SHA-256").digest(codigo.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(hash);
         } catch (NoSuchAlgorithmException e) {
+            // No pasa: todas las versiones de Java incluyen SHA-256
             throw new IllegalStateException(e);
         }
     }

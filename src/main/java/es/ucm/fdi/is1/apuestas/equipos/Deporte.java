@@ -1,11 +1,19 @@
 package es.ucm.fdi.is1.apuestas.equipos;
 
+/**
+ * Deportes de la web, con el nombre y el icono que se muestran y dos propiedades que cambian las reglas:
+ * si hay empate (mercado 1X2 o solo 1/2) y si compiten deportistas individuales en lugar de equipos.
+ * El orden de los valores es el de las pestañas del catálogo y del listado de equipos.
+ */
 public enum Deporte {
 
+    /** El único con empate; también el único con alineación probable (HU-49) y apuestas de goles (HU-52). */
     FUTBOL("Fútbol", "⚽", true, false),
     BALONCESTO("Baloncesto", "🏀", false, false),
     TENIS("Tenis", "🎾", false, true),
+    /** Fórmula 1: cada evento enfrenta a dos pilotos. */
     AUTOMOVILISMO("Fórmula 1", "🏎️", false, true),
+    /** MotoGP: cada evento enfrenta a dos pilotos. */
     MOTOCICLISMO("MotoGP", "🏍️", false, true);
 
     private final String nombre;
@@ -28,7 +36,7 @@ public enum Deporte {
         return icono;
     }
 
-    /** En baloncesto o tenis no hay empate: solo se apuesta a 1 o 2. */
+    /** Solo el fútbol admite empate; en baloncesto, tenis o motor solo se apuesta a 1 o 2. */
     public boolean isAdmiteEmpate() {
         return admiteEmpate;
     }

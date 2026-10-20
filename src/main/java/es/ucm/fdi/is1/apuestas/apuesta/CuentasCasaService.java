@@ -27,10 +27,13 @@ public class CuentasCasaService {
         this.apuestas = apuestas;
     }
 
+    /** Calcula el panel completo: total, desglose por tipo (CA-54.2) y por deporte, y los márgenes. */
     @Transactional(readOnly = true)
     public CuentasCasa cuentas() {
+        // Todos los estados menos CANCELADA
         List<Apuesta> todas = apuestas.findByEstadoIn(EnumSet.complementOf(EnumSet.of(EstadoApuesta.CANCELADA)));
 
+        // Tres grupos sin solapes: largo plazo, combinadas de partidos y simples de partidos
         List<Apuesta> largoPlazo = todas.stream().filter(Apuesta::isLargoPlazo).toList();
         List<Apuesta> combinadas = todas.stream().filter(a -> !a.isLargoPlazo() && a.isCombinada()).toList();
         List<Apuesta> simples = todas.stream().filter(a -> !a.isLargoPlazo() && !a.isCombinada()).toList();
@@ -43,6 +46,7 @@ public class CuentasCasaService {
                 CuentasCasa.Fila.de("Combinadas", combinadas),
                 CuentasCasa.Fila.de("Largo plazo", largoPlazo));
 
+        // Solo las simples: una combinada puede mezclar deportes. TreeMap ordena por el orden del enum Deporte
         Map<Deporte, List<Apuesta>> deportes = new TreeMap<>();
         for (Apuesta a : simples) {
             deportes.computeIfAbsent(a.getSelecciones().get(0).getEvento().getDeporte(), d -> new ArrayList<>()).add(a);
@@ -52,6 +56,7 @@ public class CuentasCasaService {
                 .toList();
 
         long jugadores = todas.stream().map(a -> a.getUsuario().getId()).distinct().count();
+        // Margen teórico de una simple (1 − 1/margen de la casa), en % con un decimal
         BigDecimal margenTeorico = BigDecimal.valueOf(CalculadoraCuotas.margenTeorico() * 100)
                 .setScale(1, RoundingMode.HALF_UP);
         return new CuentasCasa(CuentasCasa.Fila.de("Total", todas), porTipo, porDeporte, jugadores, margenTeorico);

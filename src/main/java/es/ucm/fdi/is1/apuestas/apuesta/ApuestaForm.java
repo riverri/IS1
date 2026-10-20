@@ -12,6 +12,9 @@ import jakarta.validation.constraints.NotNull;
 /**
  * Pronóstico e importe de una apuesta simple. El pronóstico es un resultado (1X2) o un tipo especial (HU-52);
  * en la página se eligen con un único grupo de opciones ({@code opcion}).
+ *
+ * <p>Formulario de la página del partido ({@link ApuestaController}). Las anotaciones de validación se
+ * comprueban con {@code @Valid}; los límites del creador y el saldo, después, en {@link ApuestaService}.
  */
 public class ApuestaForm {
 
@@ -27,6 +30,7 @@ public class ApuestaForm {
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal importe;
 
+    /** Validación: hay que elegir un resultado o un tipo especial. */
     @AssertTrue(message = "Elige un pronóstico")
     public boolean isOpcionElegida() {
         return resultado != null || especial != null;
@@ -40,12 +44,17 @@ public class ApuestaForm {
         return resultado != null ? resultado.name() : null;
     }
 
+    /**
+     * Traduce la opción elegida al resultado o al tipo especial que le corresponde. Un valor desconocido
+     * deja los dos a null y lo rechaza {@link #isOpcionElegida()}.
+     */
     public void setOpcion(String opcion) {
         resultado = null;
         especial = null;
         if (opcion == null || opcion.isBlank()) {
             return;
         }
+        // Se busca a mano en vez de valueOf para no lanzar excepción con un valor manipulado
         for (Resultado r : Resultado.values()) {
             if (r.name().equals(opcion)) {
                 resultado = r;

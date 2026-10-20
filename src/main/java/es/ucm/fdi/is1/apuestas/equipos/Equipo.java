@@ -19,6 +19,10 @@ import jakarta.validation.constraints.NotNull;
 /**
  * Equipo o deportista sobre el que se puede apostar (HU-01).
  * La calificación de calidad (0-10) es la base del cálculo de cuotas.
+ *
+ * <p>Entidad JPA. Participa en varias {@link Competicion}es, juega como local o visitante en los
+ * {@code Evento}s y puede tener una plantilla de {@link Jugador}es (HU-49). Su ficha pública la
+ * monta {@code FichaEquipoService} (HU-31).
  */
 @Entity
 public class Equipo {
@@ -34,11 +38,13 @@ public class Equipo {
     @Enumerated(EnumType.STRING)
     private Deporte deporte;
 
+    /** Calificación de calidad de 0 a 10 (CA-01.2: fuera de rango se rechaza al validar). */
     @NotNull
     @DecimalMin("0.0")
     @DecimalMax("10.0")
     private Double calidad;
 
+    /** Se cargan siempre junto con el equipo (EAGER). */
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Competicion> competiciones = new HashSet<>();
 
@@ -65,10 +71,12 @@ public class Equipo {
         this.calidad = calidad;
     }
 
+    /** Lo apunta a una competición; si ya estaba, no cambia nada (es un conjunto). */
     public void participaEn(Competicion competicion) {
         competiciones.add(competicion);
     }
 
+    /** True si juega en la competición con ese id; lo usa el filtro del listado de equipos. */
     public boolean participaEn(Long competicionId) {
         return competiciones.stream().anyMatch(c -> c.getId().equals(competicionId));
     }
