@@ -7,8 +7,38 @@
 ## Cómo leer cada historia
 
 - **Historia:** quién la pide, qué quiere y para qué.
-- **Ficha:** fila del Product Backlog, prioridad MoSCoW de esa fila, sprint en que se hizo y estado.
+- **Ficha:** fila del Product Backlog, prioridad MoSCoW de esa fila, sprint en que se hizo, estado y estimación: puntos de historia, tipo de trabajo y horas sin IA y con IA (ver [Estimación](#estimación)).
 - **Criterios de aceptación:** las condiciones que se tienen que cumplir para dar la historia por terminada (Definition of Done). Cada uno se lee como *Dado* (situación de partida), *Cuando* (lo que hace el usuario o el sistema) y *Entonces* (el resultado que se espera). 
+
+## Estimación
+
+Cada historia tiene un **tamaño en puntos de historia** y una **estimación de horas**, sin IA y con IA.
+
+**Puntos de historia.** Escala de Fibonacci (1, 2, 3, 5, 8…): miden el tamaño relativo de una historia (cuánto trabajo, cuánta complejidad y cuánta incertidumbre) y no dependen de quién la haga. En las historias hechas son los puntos que figuran en las actas de los sprints; si una historia se hizo en dos sprints, se suman (por ejemplo, HU-03: 8 + 3). Las [métricas](../scrum/metricas.md) suman además el trabajo que no es una historia, como las migraciones con Flyway; HU-17 se estimó al hacerla, después del Sprint 12. En las que no se han hecho (HU-15, HU-16 y HU-38 a HU-43) son una estimación por comparación con historias parecidas, la misma que usa el plan de la ampliación.
+
+**Horas sin IA.** Horas ideales de trabajo de una persona del equipo, programando sin ayuda de IA: 4 horas por punto. Incluyen diseñar, programar, escribir las pruebas, revisar el pull request y actualizar la documentación. La cifra tiene en cuenta que el equipo está aprendiendo Spring Boot. Es coherente con la velocidad media de los sprints (unos 18,5 puntos, es decir, unas 74 horas) si cada una de las cinco personas dedica unas 7 horas por semana.
+
+**Horas con IA.** Con un asistente de IA, escribir el código cuesta poco, pero no desaparece el resto del trabajo: explicar bien lo que se quiere, leer y entender lo que propone, comprobar que cumple los criterios de aceptación, probarlo, corregir sus errores e integrarlo con lo que ya existe. Por eso el ahorro no es igual en todas las historias:
+
+| Tipo | Qué incluye | Horas con IA | Por qué |
+|---|---|---:|---|
+| **Interfaz y datos** | Formularios, listados, páginas, consultas sencillas | 30 % de las horas sin IA | Código repetitivo que la IA escribe bien; casi todo el tiempo es revisarlo y probarlo |
+| **Reglas del negocio** | Cuotas, apuestas, resolución, saldos, límites | 45 % | Hay que comprobar a mano los casos límite y entender las reglas para poder defenderlas |
+| **Integración y seguridad** | API externa, correo, inicio de sesión, contraseñas | 55 % | La IA se equivoca más con servicios externos y con la seguridad; hay que probar con el servicio real y revisar con más cuidado |
+
+### Totales
+
+| | Puntos | Horas sin IA | Horas con IA |
+|---|---:|---:|---:|
+| Historias hechas · Interfaz y datos | 54 | 216 | 66 |
+| Historias hechas · Reglas del negocio | 105 | 420 | 188 |
+| Historias hechas · Integración y seguridad | 26 | 104 | 58 |
+| **Historias hechas (45)** | **185** | **740** | **312** |
+| Historias descartadas (8) | 29 | 116 | 49 |
+
+**Lectura.** Las 45 historias hechas suman unas 740 horas sin IA, unas 148 por persona: más de lo que cinco estudiantes pueden dedicar al proyecto en un cuatrimestre. Con IA bajan a unas 312 horas, unas 62 por persona, que sí caben. Aun así, con IA el tiempo sigue siendo, sobre todo, entender y revisar: si se salta esa parte, se pierde lo que se evalúa en la defensa.
+
+> Son estimaciones, no mediciones. Para afinarlas, a partir de ahora conviene apuntar en el acta de cada sprint las horas reales y compararlas con estas: si no cuadran, se ajustan las horas por punto o los porcentajes con IA para los siguientes sprints.
 
 ## Actores
 
@@ -18,61 +48,61 @@
 
 ## Resumen
 
-| Historia | Título | Estado | Criterios | Prioridad |
-|---|---|---|---|---:|
-| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) |
-| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 (Muy alta) |
-| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 3 (Media) |
-| HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy Alta) |
-| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) |
-| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 3 (Media) |
-| HU-07 | Límites de apuesta del creador | Hecha | 1 | 3 (Media) |
-| HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) |
-| HU-09 | Web adaptada a móvil | Hecha | 1 | 3 (Media) |
-| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) |
-| HU-11 | Registro | Hecha | 2 | 1 (Muy alta) |
-| HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) |
-| HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) |
-| HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) |
-| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy Baja) |
-| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy Baja) |
-| HU-17 | Recuperar la contraseña | Hecha | 2 | 3 (Media) |
-| HU-18 | Eliminar la cuenta | Hecha | 2 | 1 (Muy alta)|
-| HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 (Muy alta) |
-| HU-20 | Cuotas de cada resultado | Hecha | 2 | 3 (Media) |
-| HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 | 2 (Alta) |
-| HU-22 | Búsqueda y filtros | Hecha | 3 | 3 (Media) |
-| HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) |
-| HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) |
-| HU-25 | Resolución automática | Hecha | 3 | 3 (Media) |
-| HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) |
-| HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) |
-| HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) |
-| HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | 2 (Alta) |
-| HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) |
-| HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) |
-| HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) |
-| HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) |
-| HU-34 | Historial | Hecha | 1 | 2 (Alta) |
-| HU-35 | Estadísticas personales | Hecha | 1 | 4 (Baja) |
-| HU-36 | Ranking | Hecha | 4 | 3 (Media) |
-| HU-37 | Avisos | Hecha | 3 | 2 (Alta) |
-| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 3 (Media) |
-| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 |  3 (Media) |
-| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy Baja) |
-| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy Baja) |
-| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 3 (Media) |
-| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 4 (Baja) |
-| HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) |
-| HU-45 | Gestión de mercados | Hecha | 3 | 4 (Baja) |
-| HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) |
-| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) |
-| HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) |
-| HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) |
-| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) |
-| HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) |
-| HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) |
-| HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) |
+| Historia | Título | Estado | Criterios | Prioridad | Puntos | Horas sin IA | Horas con IA |
+|---|---|---|---|---:|---:|---:|---:|
+| HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) | 8 | 32 | 10 |
+| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 (Muy alta) | 2 | 8 | 4 |
+| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 3 (Media) | 11 | 44 | 20 |
+| HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy Alta) | 5 | 20 | 9 |
+| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) | 4 | 16 | 7 |
+| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 3 (Media) | 2 | 8 | 2 |
+| HU-07 | Límites de apuesta del creador | Hecha | 1 | 3 (Media) | 3 | 12 | 5 |
+| HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 8 | 2 |
+| HU-09 | Web adaptada a móvil | Hecha | 1 | 3 (Media) | 3 | 12 | 4 |
+| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 6 | 24 | 11 |
+| HU-11 | Registro | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 7 |
+| HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 7 |
+| HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 8 | 2 |
+| HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) | 2 | 8 | 4 |
+| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy Baja) | 5 | 20 | 11 |
+| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy Baja) | 3 | 12 | 5 |
+| HU-17 | Recuperar la contraseña | Hecha | 2 | 3 (Media) | 5 | 20 | 11 |
+| HU-18 | Eliminar la cuenta | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 5 |
+| HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 (Muy alta) | 3 | 12 | 4 |
+| HU-20 | Cuotas de cada resultado | Hecha | 2 | 3 (Media) | 3 | 12 | 4 |
+| HU-21 | Cargar eventos a mano o desde la API | Hecha | 2 | 2 (Alta) | 8 | 32 | 18 |
+| HU-22 | Búsqueda y filtros | Hecha | 3 | 3 (Media) | 3 | 12 | 4 |
+| HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) | 5 | 20 | 9 |
+| HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) | 3 | 12 | 4 |
+| HU-25 | Resolución automática | Hecha | 3 | 3 (Media) | 8 | 32 | 14 |
+| HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) | 2 | 8 | 4 |
+| HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) | 2 | 8 | 4 |
+| HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
+| HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | 2 (Alta) | 5 | 20 | 6 |
+| HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
+| HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) | 5 | 20 | 6 |
+| HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) | 3 | 12 | 4 |
+| HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) | 3 | 12 | 4 |
+| HU-34 | Historial | Hecha | 1 | 2 (Alta) | 2 | 8 | 2 |
+| HU-35 | Estadísticas personales | Hecha | 1 | 4 (Baja) | 3 | 12 | 5 |
+| HU-36 | Ranking | Hecha | 4 | 3 (Media) | 5 | 20 | 9 |
+| HU-37 | Avisos | Hecha | 3 | 2 (Alta) | 5 | 20 | 9 |
+| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 3 (Media) | 3 | 12 | 4 |
+| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 |  3 (Media) | 2 | 8 | 2 |
+| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy Baja) | 3 | 12 | 4 |
+| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy Baja) | 5 | 20 | 9 |
+| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 3 (Media) | 3 | 12 | 5 |
+| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 4 (Baja) | 5 | 20 | 9 |
+| HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
+| HU-45 | Gestión de mercados | Hecha | 3 | 4 (Baja) | 5 | 20 | 6 |
+| HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) | 3 | 12 | 5 |
+| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) | 2 | 8 | 4 |
+| HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) | 2 | 8 | 2 |
+| HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) | 5 | 20 | 9 |
+| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) | 5 | 20 | 11 |
+| HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 20 | 9 |
+| HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 32 | 14 |
+| HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 12 | 5 |
 
 **53 historias**: 45 hechas y 8 descartadas. **107 criterios de aceptación** en total; 94 de ellos son de historias hechas.
 
@@ -84,9 +114,9 @@
 
 **Como** creador de apuestas, **quiero** dar de alta competiciones, equipos y deportistas con su calificación de calidad (0–10), **para** que el sistema tenga la base con la que calcular las cuotas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 1, 2 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 1, 2 | Must | 1 | Hecha | 8 | Interfaz y datos | 32 → 10 |
 
 **Criterios de aceptación**
 
@@ -99,9 +129,9 @@
 
 **Como** creador de apuestas, **quiero** ajustar manualmente el factor de forma reciente de un equipo (rachas, moral, lesiones…), **para** que las cuotas reflejen su momento actual y no solo su calidad general.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 3 | Must | 6 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 3 | Must | 6 | Hecha | 2 | Reglas del negocio | 8 → 4 |
 
 **Criterios de aceptación**
 
@@ -113,9 +143,9 @@
 
 **Como** creador de apuestas, **quiero** que las cuotas iniciales (G/E/P) de cada evento se generen automáticamente con un margen para la casa, **para** no tener que fijarlas a mano.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 3 | Must | 2, 6 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 3 | Must | 2, 6 | Hecha | 11 (8 + 3) | Reglas del negocio | 44 → 20 |
 
 **Criterios de aceptación**
 
@@ -129,9 +159,9 @@
 
 **Como** creador de apuestas, **quiero** introducir el resultado final de un evento, **para** que se resuelvan todas las apuestas asociadas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 16, 17 | Must | 3 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 16, 17 | Must | 3 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -144,9 +174,9 @@
 
 **Como** creador de apuestas, **quiero** suspender o anular un evento (aplazamiento, error en las cuotas…), **para** que nadie apueste en condiciones incorrectas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 17 | Must | 3, 5 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 17 | Must | 3, 5 | Hecha | 4 (3 + 1) | Reglas del negocio | 16 → 7 |
 
 **Criterios de aceptación**
 
@@ -159,9 +189,9 @@
 
 **Como** creador de apuestas, **quiero** ver cuánto se ha apostado en cada resultado de un evento, **para** comprobar que el ajuste de cuotas funciona y detectar desequilibrios.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 17 | Must | 3 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 17 | Must | 3 | Hecha | 2 | Interfaz y datos | 8 → 2 |
 
 **Criterios de aceptación**
 
@@ -173,9 +203,9 @@
 
 **Como** creador de apuestas, **quiero** fijar límites de apuesta (importe mínimo y máximo, número máximo de selecciones en una combinada), **para** controlar el riesgo de la casa.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 17 | Must | 4, 6 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 17 | Must | 4, 6 | Hecha | 3 (1 + 2) | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -187,9 +217,9 @@
 
 **Como** creador de apuestas, **quiero** editar o borrar un evento que he creado mal (fecha, equipos, fase), **para** corregir errores sin tener que anularlo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 29 | Should | 8 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 29 | Should | 8 | Hecha | 3 | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -202,9 +232,9 @@
 
 **Como** creador de apuestas, **quiero** ver un panel con lo que se ha apostado, lo que se ha pagado y el beneficio de la casa, **para** comprobar si las cuotas están bien ajustadas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 35 | Should | 11 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 35 | Should | 11 | Hecha | 3 | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -221,9 +251,9 @@
 
 **Como** visitante, **quiero** consultar el catálogo de eventos y sus cuotas sin estar registrado, **para** decidir si me interesa crear una cuenta.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 9 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 9 | Must | 1 | Hecha | 2 | Interfaz y datos | 8 → 2 |
 
 **Criterios de aceptación**
 
@@ -236,9 +266,9 @@
 
 **Como** usuario, **quiero** que la web se adapte a móvil y a ordenador, **para** poder apostar desde cualquier dispositivo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| Requisito no funcional | — | 9 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| Requisito no funcional | — | 9 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -250,9 +280,9 @@
 
 **Como** usuario, **quiero** poder fijarme límites de apuesta (diarios o semanales) o una pausa temporal, **para** jugar de forma responsable.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 27 | Could | 9 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 27 | Could | 9 | Hecha | 6 (5 + 1) | Reglas del negocio | 24 → 11 |
 
 **Criterios de aceptación**
 
@@ -269,9 +299,9 @@
 
 **Como** usuario, **quiero** registrarme y crear un perfil, **para** poder acceder a la aplicación con una cuenta propia.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 5 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 5 | Must | 1 | Hecha | 3 | Integración y seguridad | 12 → 7 |
 
 **Criterios de aceptación**
 
@@ -284,9 +314,9 @@
 
 **Como** usuario, **quiero** iniciar sesión de forma segura, **para** proteger el acceso a mi cuenta y a mi saldo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 5, 8 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 5, 8 | Must | 1 | Hecha | 3 | Integración y seguridad | 12 → 7 |
 
 **Criterios de aceptación**
 
@@ -299,9 +329,9 @@
 
 **Como** usuario, **quiero** consultar mi saldo de moneditas virtuales en cualquier momento, **para** tener control de cuánto tengo disponible para apostar.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 4, 12 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 4, 12 | Must | 1 | Hecha | 2 | Interfaz y datos | 8 → 2 |
 
 **Criterios de aceptación**
 
@@ -314,9 +344,9 @@
 
 **Como** usuario, **quiero** recibir una recarga inicial de moneditas al registrarme (y recargas periódicas gratuitas), **para** poder seguir jugando sin aportar dinero real.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 4 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 4 | Must | 1 | Hecha | 2 | Reglas del negocio | 8 → 4 |
 
 **Criterios de aceptación**
 
@@ -329,9 +359,9 @@
 
 **Como** usuario, **quiero** añadir y gestionar los datos de una cuenta bancaria (real o ficticia), **para** poder retirar mi saldo cuando lo desee.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 25 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 25 | Won't | — | Descartada (Won't) | 5 | Integración y seguridad | 20 → 11 |
 
 **Criterios de aceptación**
 
@@ -344,9 +374,9 @@
 
 **Como** usuario, **quiero** retirar mi saldo disponible a mi cuenta bancaria vinculada, **para** poder disponer de mis ganancias fuera de la aplicación.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 25 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 25 | Won't | — | Descartada (Won't) | 3 | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -360,9 +390,9 @@
 
 **Como** usuario, **quiero** recuperar el acceso si olvido mi contraseña, **para** no perder mi cuenta ni mi saldo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 22 | Should | — | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 22 | Should | — | Hecha | 5 | Integración y seguridad | 20 → 11 |
 
 **Criterios de aceptación**
 
@@ -375,9 +405,9 @@
 
 **Como** usuario, **quiero** eliminar mi cuenta, **para** que se borren mis datos personales si dejo de usar la aplicación.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 22 | Should | 9 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 22 | Should | 9 | Hecha | 3 | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -390,9 +420,9 @@
 
 **Como** usuario, **quiero** cambiar mi nombre y mi contraseña desde *Mi cuenta*, **para** mantener mis datos al día.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 30 | Could | 8 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 30 | Could | 8 | Hecha | 2 | Integración y seguridad | 8 → 4 |
 
 **Criterios de aceptación**
 
@@ -409,9 +439,9 @@
 
 **Como** usuario, **quiero** ver una lista de eventos deportivos disponibles organizados por deporte y fecha, **para** poder apostar a tiempo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 9 | Must | 1 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 9 | Must | 1 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -424,9 +454,9 @@
 
 **Como** usuario, **quiero** ver las cuotas asociadas a cada resultado posible de un evento, **para** apostar cuando el riesgo-recompensa compense.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 3, 9 | Must | 2 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 3, 9 | Must | 2 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -439,9 +469,9 @@
 
 **Como** administrador, **quiero** cargar o actualizar eventos y cuotas manualmente o desde una fuente externa, **para** corregir errores y mantener los datos al día.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 2, 13, 17 | Could, Must | 5 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 2, 13, 17 | Could, Must | 5 | Hecha | 8 | Integración y seguridad | 32 → 18 |
 
 **Criterios de aceptación**
 
@@ -454,9 +484,9 @@
 
 **Como** usuario, **quiero** buscar un equipo o una competición y filtrar el catálogo, **para** encontrar rápido el evento que me interesa.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 21 | Should | 2 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 21 | Should | 2 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -474,9 +504,9 @@
 
 **Como** usuario, **quiero** seleccionar un evento y una cuota y confirmar una apuesta con parte de mi saldo, **para** intentar ganar más moneditas si acierto el resultado.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 6 | Must | 2 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 6 | Must | 2 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -489,9 +519,9 @@
 
 **Como** usuario, **quiero** ver el estado de mis apuestas activas, **para** saber en todo momento cuánto tengo comprometido y en qué apuestas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 10, 11 | Must | 2 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 10, 11 | Must | 2 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -503,9 +533,9 @@
 
 **Como** usuario, **quiero** que mis apuestas se resuelvan automáticamente en cuanto termina el evento, **para** recibir mis ganancias (o ver la pérdida) sin tener que reclamarlo yo mismo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 16 | Must | 3, 5 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 16 | Must | 3, 5 | Hecha | 8 (5 + 3) | Reglas del negocio | 32 → 14 |
 
 **Criterios de aceptación**
 
@@ -519,9 +549,9 @@
 
 **Como** usuario, **quiero** cancelar una apuesta activa antes de que empiece el evento, **para** recuperar el importe si cambio de opinión.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 14 | Could | 2 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 14 | Could | 2 | Hecha | 2 | Reglas del negocio | 8 → 4 |
 
 **Criterios de aceptación**
 
@@ -534,9 +564,9 @@
 
 **Como** usuario, **quiero** modificar el importe de una apuesta activa antes de que empiece el evento, **para** ajustar lo que arriesgo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 14 | Could | 7 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 14 | Could | 7 | Hecha | 2 | Reglas del negocio | 8 → 4 |
 
 **Criterios de aceptación**
 
@@ -549,9 +579,9 @@
 
 **Como** usuario, **quiero** apostar a más cosas de un partido de fútbol (doble oportunidad, más o menos de 2,5 goles y ambos marcan), **para** tener más opciones que el 1X2.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 34 | Should | 11 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 34 | Should | 11 | Hecha | 8 | Reglas del negocio | 32 → 14 |
 
 **Criterios de aceptación**
 
@@ -569,9 +599,9 @@
 
 **Como** usuario, **quiero** añadir a un mismo boleto selecciones de varios eventos, **para** crear mi propia apuesta combinada.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 15, 18 | Must | 4 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 15, 18 | Must | 4 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -585,9 +615,9 @@
 
 **Como** usuario, **quiero** que el sistema calcule el multiplicador total del boleto y la ganancia potencial, **para** saber cuánto puedo ganar antes de confirmar.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 15, 18 | Must | 4 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 15, 18 | Must | 4 | Hecha | 5 | Interfaz y datos | 20 → 6 |
 
 **Criterios de aceptación**
 
@@ -601,9 +631,9 @@
 
 **Como** usuario, **quiero** que mi combinada se resuelva según el resultado de todas sus selecciones, **para** cobrar solo si acierto todas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 16 | Must | 4 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 16 | Must | 4 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -621,9 +651,9 @@
 
 **Como** usuario, **quiero** consultar la ficha de un equipo o deportista con sus últimos resultados y su posición en la clasificación, **para** valorar su forma antes de apostar.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 20 | Should | 7 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 20 | Should | 7 | Hecha | 5 | Interfaz y datos | 20 → 6 |
 
 **Criterios de aceptación**
 
@@ -636,9 +666,9 @@
 
 **Como** usuario, **quiero** ver la evolución de un equipo a lo largo de la temporada en un gráfico, **para** detectar tendencias (rachas, mejora o bajón).
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 20 | Should | 9 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 20 | Should | 9 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -650,9 +680,9 @@
 
 **Como** usuario, **quiero** ver la plantilla de cada equipo con la nota de cada jugador y su alineación probable, **para** saber con quién juega antes de apostar.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 32 | Should | 10 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 32 | Should | 10 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -665,9 +695,9 @@
 
 **Como** creador de apuestas, **quiero** descargar las plantillas reales desde la API y añadir, puntuar o quitar jugadores a mano, **para** mantenerlas al día.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 32 | Should | 10 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 32 | Should | 10 | Hecha | 5 | Integración y seguridad | 20 → 11 |
 
 **Criterios de aceptación**
 
@@ -680,9 +710,9 @@
 
 **Como** usuario, **quiero** comparar cara a cara a los dos rivales de un evento, **para** decidir mi apuesta con más información.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 20 | Should | 7 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 20 | Should | 7 | Hecha | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -699,9 +729,9 @@
 
 **Como** usuario, **quiero** ver mi historial completo de apuestas con sus resultados, **para** poder repasar mis decisiones pasadas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 19 | Should | 3 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 19 | Should | 3 | Hecha | 2 | Interfaz y datos | 8 → 2 |
 
 **Criterios de aceptación**
 
@@ -713,9 +743,9 @@
 
 **Como** usuario, **quiero** ver estadísticas básicas de mi actividad (porcentaje de aciertos, rentabilidad), **para** saber si mi balance global es positivo o negativo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 19 | Should | 3 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 19 | Should | 3 | Hecha | 3 | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -731,9 +761,9 @@
 
 **Como** usuario, **quiero** ver un ranking de usuarios ordenado por ganancias o por porcentaje de aciertos, **para** poder compararme con mis compañeros.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 24 | Could | 2, 3 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 24 | Could | 2, 3 | Hecha | 5 (3 + 2) | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -748,9 +778,9 @@
 
 **Como** usuario, **quiero** recibir una notificación cuando se resuelve una de mis apuestas, **para** saber si he ganado o perdido sin tener que revisar la aplicación constantemente.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 23 | Could | 7 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 23 | Could | 7 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -764,9 +794,9 @@
 
 **Como** usuario, **quiero** buscar y seguir a otro usuario desde su perfil, **para** poder ver después su actividad.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 26 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 26 | Won't | — | Descartada (Won't) | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -778,9 +808,9 @@
 
 **Como** usuario, **quiero** ver una lista de a quién sigo y quién me sigue, **para** gestionar mis conexiones dentro de la app.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 26 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 26 | Won't | — | Descartada (Won't) | 2 | Interfaz y datos | 8 → 2 |
 
 **Criterios de aceptación**
 
@@ -792,9 +822,9 @@
 
 **Como** usuario, **quiero** consultar el historial de apuestas públicas y las estadísticas generales de los usuarios que sigo, **para** comparar mis resultados con los suyos.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 26 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 26 | Won't | — | Descartada (Won't) | 3 | Interfaz y datos | 12 → 4 |
 
 **Criterios de aceptación**
 
@@ -806,9 +836,9 @@
 
 **Como** usuario, **quiero** ver un feed de actividad con las últimas apuestas resueltas de los usuarios que sigo, **para** estar al tanto sin visitar cada perfil.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 26 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 26 | Won't | — | Descartada (Won't) | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -820,9 +850,9 @@
 
 **Como** usuario, **quiero** elegir el nivel de privacidad de mi perfil (público, solo seguidores o privado), **para** decidir quién ve mis apuestas y mis estadísticas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 26 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 26 | Won't | — | Descartada (Won't) | 3 | Reglas del negocio | 12 → 5 |
 
 **Criterios de aceptación**
 
@@ -835,9 +865,9 @@
 
 **Como** usuario, **quiero** copiar a mi boleto una apuesta pendiente de un usuario al que sigo, **para** apostar lo mismo que él.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 26 | Won't | — | Descartada (Won't) |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 26 | Won't | — | Descartada (Won't) | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -850,9 +880,9 @@
 
 **Como** usuario, **quiero** ver el perfil público de otro jugador desde el ranking, con su porcentaje de aciertos y su balance, **para** compararme con él sin tener que seguirlo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 31 | Could | 8 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 31 | Could | 8 | Hecha | 2 | Interfaz y datos | 8 → 2 |
 
 **Criterios de aceptación**
 
@@ -864,9 +894,9 @@
 
 **Como** usuario, **quiero** crear una liga privada con mis amigos y unirme con un código de invitación, **para** competir en un ranking solo entre nosotros.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 33 | Could | 11 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 33 | Could | 11 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -884,9 +914,9 @@
 
 **Como** usuario, **quiero** apostar a quién ganará un premio o una competición (Balón de Oro, campeón de LaLiga, Pichichi…), **para** predecir resultados a largo plazo.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 28 | Should | 6 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 28 | Should | 6 | Hecha | 5 | Reglas del negocio | 20 → 9 |
 
 **Criterios de aceptación**
 
@@ -900,9 +930,9 @@
 
 **Como** creador de apuestas, **quiero** crear un mercado a largo plazo con sus candidatos y cuotas, cerrarlo y marcar el ganador, **para** gestionar este tipo de apuestas.
 
-| Fila del backlog | Prioridad | Sprint | Estado |
-|---|---|---|---|
-| 28 | Should | 6 | Hecha |
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Tipo | Horas sin IA → con IA |
+|---|---|---|---|---:|---|---:|
+| 28 | Should | 6 | Hecha | 5 | Interfaz y datos | 20 → 6 |
 
 **Criterios de aceptación**
 
