@@ -27,8 +27,11 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 /**
  * Datos iniciales: usuarios de prueba, competiciones, equipos, partidos reales de LaLiga y Champions 2026/27
  * y mercados a largo plazo.
- * Solo se añade lo que falta (por nombre), así que no duplica ni borra lo que el creador
- * de apuestas haya introducido desde el panel de gestión.
+ * De usuarios, competiciones y equipos solo se añade lo que falta (por email o por nombre), así que no duplica
+ * ni borra lo que el creador de apuestas haya introducido desde el panel de gestión. Los partidos y los mercados
+ * solo se cargan si la base de datos no tiene ninguno (ver {@code cargarPartidos}).
+ *
+ * <p>Como {@link ApplicationRunner}, Spring lo ejecuta una vez en cada arranque, cuando la aplicación ya está lista.
  */
 @Component
 public class DatosIniciales implements ApplicationRunner {
@@ -52,8 +55,9 @@ public class DatosIniciales implements ApplicationRunner {
 
     /**
      * Las contraseñas de los usuarios de prueba se pueden cambiar con las variables de entorno
-     * CREADOR_PASSWORD y USUARIO_PASSWORD. En el perfil {@code nube} la del creador es obligatoria
-     * y el usuario de prueba solo se crea si se le da contraseña.
+     * CREADOR_PASSWORD y USUARIO_PASSWORD. En los perfiles {@code compartir} y {@code nube} la del creador es
+     * obligatoria y se le aplica aunque ya exista ({@code passwordCreadorFija}); en {@code nube} el usuario de
+     * prueba solo se crea si se le da contraseña.
      */
     public DatosIniciales(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
                           MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios,
@@ -71,7 +75,10 @@ public class DatosIniciales implements ApplicationRunner {
         this.passwordCreadorFija = passwordCreadorFija;
     }
 
-    /** Identificadores de los escudos en el servicio público de football-data.org. */
+    /**
+     * Identificadores de los escudos en el servicio público de football-data.org. Son los mismos que usa su API,
+     * así que también sirven para enlazar cada equipo con ella ({@code idExterno}).
+     */
     private static final Map<String, Integer> ESCUDOS = Map.ofEntries(
             Map.entry("Real Madrid", 86), Map.entry("FC Barcelona", 81),
             Map.entry("Atlético de Madrid", 78), Map.entry("Athletic Club", 77),
@@ -102,25 +109,35 @@ public class DatosIniciales implements ApplicationRunner {
             Map.entry("Slovan Bratislava", 7509), Map.entry("LASK", 2016),
             Map.entry("Viking FK", 5720), Map.entry("Sabah FK", 10233));
 
+    /**
+     * Carga los datos que falten. Va en una sola transacción: si algo falla, no queda nada a medias.
+     *
+     * @throws IllegalStateException si no hay contraseña para el creador; entonces la aplicación no arranca
+     */
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        // En local tiene valor por defecto; en los perfiles compartir y nube solo existe si se define CREADOR_PASSWORD
         if (passwordCreador.isBlank()) {
             throw new IllegalStateException("Falta la contraseña del creador de apuestas: define la variable de entorno "
                     + "CREADOR_PASSWORD");
         }
+        // Si el usuario ya existe no se crea ni se cambia su contraseña
         usuario("creador@apuestas.es", "Creador de apuestas", passwordCreador, Rol.CREADOR);
         if (passwordCreadorFija) {
             // Perfiles públicos (compartir, nube): manda la contraseña de la variable, no la que ya hubiera
             usuarios.fijarPassword("creador@apuestas.es", passwordCreador);
         }
+        // Sin contraseña (perfil nube sin USUARIO_PASSWORD) no se crea el usuario de prueba
         if (!passwordUsuario.isBlank()) {
             usuario("usuario@apuestas.es", "Usuario de prueba", passwordUsuario, Rol.USUARIO);
         }
 
+        // Se decide antes de crear nada: con la base de datos vacía se cargan partidos y mercados de ejemplo
         cargarPartidos = eventos.count() == 0;
         cargarMercados = mercados.count() == 0;
 
+        // Competiciones (se crean si no existen)
         Competicion laLiga = competicion("LaLiga", Deporte.FUTBOL);
         Competicion champions = competicion("Champions League", Deporte.FUTBOL);
         Competicion acb = competicion("Liga ACB", Deporte.BALONCESTO);
@@ -336,7 +353,10 @@ public class DatosIniciales implements ApplicationRunner {
                 "Charles Leclerc;9.00", "Lewis Hamilton;15.00", "Fernando Alonso;40.00", "Carlos Sainz;50.00");
     }
 
-    /** Candidatos con el formato "Nombre;cuota". Si el nombre es un equipo o deportista, se enlaza con él. */
+    /**
+     * Candidatos con el formato "Nombre;cuota". Si el nombre es un equipo o deportista, se enlaza con él.
+     * Si ya hay un mercado con ese nombre, no se toca.
+     */
     private void mercado(String nombre, Deporte deporte, LocalDateTime cierre, String... candidatos) {
         if (mercados.findByNombre(nombre).isPresent()) {
             return;
@@ -350,6 +370,7 @@ public class DatosIniciales implements ApplicationRunner {
         mercados.save(mercado);
     }
 
+    /** Crea el usuario si no hay ninguno con ese email. */
     private void usuario(String email, String nombre, String password, Rol rol) {
         if (!usuarioRepository.existsByEmail(email)) {
             usuarios.crear(email, nombre, password, rol);
@@ -361,6 +382,7 @@ public class DatosIniciales implements ApplicationRunner {
                 .orElseGet(() -> competiciones.save(new Competicion(nombre, deporte)));
     }
 
+    /** Crea el equipo con su calificación y sus competiciones si no hay ninguno con ese nombre (no pisa cambios de Gestión). */
     private void equipo(String nombre, Deporte deporte, double calidad, Competicion... enCompeticiones) {
         if (equipos.findByNombre(nombre).isPresent()) {
             return;
@@ -372,6 +394,10 @@ public class DatosIniciales implements ApplicationRunner {
         equipos.save(equipo);
     }
 
+    /**
+     * Crea un partido, en hora de Madrid, solo si la base de datos no tenía eventos. Los dos equipos tienen que
+     * existir ya: si no, {@code orElseThrow} lanza una excepción y el arranque falla.
+     */
     private void partido(Competicion competicion, String fase, String local, String visitante,
                          int anio, int mes, int dia, int hora, int minuto) {
         if (!cargarPartidos) {

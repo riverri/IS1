@@ -26,6 +26,9 @@ import es.ucm.fdi.is1.apuestas.equipos.Posicion;
  * Una petición por competición. Crea los jugadores nuevos, actualiza los datos de los que ya estaban
  * (sin tocar su nota, que es del creador) y quita los que han dejado el equipo. Los jugadores dados de
  * alta a mano no se tocan.
+ *
+ * <p>Implementa HU-50. La lanzan {@link SincronizacionProgramada} (una vez al día) y el botón
+ * <i>Descargar plantillas</i> de Gestión.
  */
 @Service
 public class SincronizacionPlantillas {
@@ -55,13 +58,22 @@ public class SincronizacionPlantillas {
         }
     }
 
+    /**
+     * Descarga y aplica las plantillas de cada liga de {@link ApiProperties#ligasDePlantillas()}.
+     * Si una liga falla, se apunta en los errores del resumen y se sigue con las demás.
+     *
+     * @return cuántos equipos se han actualizado y cuántos jugadores han entrado, cambiado o salido
+     * @throws IllegalStateException si no está la clave de la API
+     */
     @Transactional
     public Resumen sincronizar() {
         if (!propiedades.configurada()) {
             throw new IllegalStateException(
                     "Falta la clave de la API: define la variable de entorno FOOTBALL_DATA_TOKEN");
         }
+        // Equipos ya actualizados: si un equipo llega por dos competiciones, solo cuenta la primera
         Set<Long> procesados = new HashSet<>();
+        // Contadores que rellena actualizar(): [nuevos, actualizados, retirados]
         int[] cuenta = new int[3];
         List<String> errores = new ArrayList<>();
         for (String codigo : propiedades.ligasDePlantillas()) {
@@ -76,6 +88,7 @@ public class SincronizacionPlantillas {
                     actualizar(equipo, datos.squad(), cuenta);
                 }
             } catch (RestClientException e) {
+                // Sin conexión, límite de peticiones…: se apunta y se pasa a la liga siguiente
                 LOG.warn("No se pudieron descargar las plantillas de {}: {}", codigo, e.getMessage());
                 errores.add(codigo + ": " + e.getMessage());
             }
@@ -94,6 +107,7 @@ public class SincronizacionPlantillas {
                 continue; // entrenadores y jugadores sin posición conocida
             }
             enLaPlantilla.add(datos.id());
+            // Por el identificador de la API: así se reconoce aunque cambie de nombre o venga de otro equipo
             Jugador jugador = jugadores.findByIdExterno(datos.id()).orElse(null);
             if (jugador == null) {
                 jugador = new Jugador(equipo, datos.name(), posicion);
@@ -102,10 +116,13 @@ public class SincronizacionPlantillas {
             } else {
                 cuenta[1]++;
             }
+            // Solo los datos que da la API; la nota la pone el creador y no se toca (CA-50.1)
             jugador.actualizar(equipo, datos.name(), posicion, datos.shirtNumber(), datos.nationality(),
                     fecha(datos.dateOfBirth()));
             jugadores.save(jugador);
         }
+        // Los de la API que ya no salen en la plantilla han dejado el equipo; los dados de alta a mano
+        // (sin identificador de la API) se quedan (CA-50.2)
         for (Jugador jugador : jugadores.findByEquipo(equipo)) {
             if (jugador.isDeLaApi() && !enLaPlantilla.contains(jugador.getIdExterno())) {
                 jugadores.delete(jugador);
@@ -114,7 +131,10 @@ public class SincronizacionPlantillas {
         }
     }
 
-    /** Por su identificador en la API o por un nombre equivalente. No crea equipos nuevos. */
+    /**
+     * Por su identificador en la API o por un nombre equivalente. No crea equipos nuevos.
+     * El nombre se compara con {@link Nombres#clave(String)}, que quita tildes, mayúsculas y palabras como "FC".
+     */
     private Equipo buscar(PlantillaApi datos) {
         if (datos.id() == null) {
             return null;
@@ -132,6 +152,7 @@ public class SincronizacionPlantillas {
                 .orElse(null));
     }
 
+    /** Fecha de nacimiento a partir de los 10 primeros caracteres (AAAA-MM-DD); null si falta o no es válida. */
     private static LocalDate fecha(String texto) {
         if (texto == null || texto.length() < 10) {
             return null;

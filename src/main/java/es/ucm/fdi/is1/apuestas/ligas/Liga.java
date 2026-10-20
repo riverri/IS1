@@ -19,8 +19,9 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
 /**
- * Liga privada entre amigos (HU-51): tiene un código de invitación para unirse y su propio ranking,
- * calculado solo con sus miembros.
+ * Entidad JPA: liga privada entre amigos (HU-51). Tiene un código de invitación para unirse y su propio
+ * ranking, calculado solo con sus miembros. Las reglas (cuántas ligas, quién sale o borra) están en
+ * {@link LigaService}; por eso unir y salir no son públicos.
  */
 @Entity
 public class Liga {
@@ -32,16 +33,21 @@ public class Liga {
     @Column(nullable = false, length = 40)
     private String nombre;
 
+    /** Código de invitación de 6 caracteres; único, lo genera {@link LigaService}. */
     @Column(nullable = false, unique = true, length = 6)
     private String codigo;
 
+    /** Quien la creó: es el único que puede borrarla y no puede salir de ella. */
     @ManyToOne(optional = false)
     private Usuario creador;
 
     @Column(nullable = false)
     private LocalDateTime creada;
 
-    /** Se cargan con la liga: las páginas los muestran fuera de la transacción (open-in-view desactivado). */
+    /**
+     * Relación muchos a muchos con los usuarios, en la tabla intermedia liga_miembro.
+     * Se cargan con la liga: las páginas los muestran fuera de la transacción (open-in-view desactivado).
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "liga_miembro", joinColumns = @JoinColumn(name = "liga_id"),
             inverseJoinColumns = @JoinColumn(name = "usuario_id"))
@@ -51,6 +57,7 @@ public class Liga {
         // requerido por JPA
     }
 
+    /** Crea la liga con su creador como primer miembro (CA-51.1). */
     public Liga(String nombre, String codigo, Usuario creador, LocalDateTime creada) {
         this.nombre = nombre;
         this.codigo = codigo;
@@ -59,6 +66,10 @@ public class Liga {
         miembros.add(creador);
     }
 
+    /**
+     * Compara por id porque Usuario no redefine equals: el mismo usuario cargado dos veces serían dos
+     * objetos distintos. Lo mismo en {@link #esCreador} y {@link #salir}.
+     */
     public boolean esMiembro(Usuario usuario) {
         return miembros.stream().anyMatch(m -> m.getId().equals(usuario.getId()));
     }
@@ -67,6 +78,7 @@ public class Liga {
         return creador.getId().equals(usuario.getId());
     }
 
+    /** Lo llama {@link LigaService#unirse}, que antes comprueba que no sea ya miembro. */
     void unir(Usuario usuario) {
         miembros.add(usuario);
     }
@@ -75,6 +87,7 @@ public class Liga {
         miembros.removeIf(m -> m.getId().equals(usuario.getId()));
     }
 
+    /** Ids de los miembros, para filtrar el ranking general y quedarse solo con la liga. */
     public Set<Long> getIdsMiembros() {
         return miembros.stream().map(Usuario::getId).collect(Collectors.toSet());
     }

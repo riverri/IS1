@@ -16,11 +16,17 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 
-/** Datos comunes a todas las vistas: usuario con sesión iniciada (cabecera, saldo) y su boleto. */
+/**
+ * Datos comunes a todas las vistas: usuario con sesión iniciada (cabecera, saldo) y su boleto.
+ * {@code @ControllerAdvice}: cada método {@code @ModelAttribute} se ejecuta antes de cualquier controlador
+ * y deja su resultado en el modelo con ese nombre, así las plantillas lo tienen siempre a mano.
+ * Para los visitantes ({@code principal} null) se devuelven valores vacíos.
+ */
 @ControllerAdvice
 public class UsuarioActualAdvice {
 
     private final UsuarioService usuarios;
+    // Boleto es de sesión: Spring inyecta un intermediario que lleva al boleto de la sesión de cada petición
     private final Boleto boleto;
     private final BoletoService boletos;
     private final NotificacionService notificaciones;
@@ -61,7 +67,7 @@ public class UsuarioActualAdvice {
                 .orElse(null);
     }
 
-    /** Número de avisos sin leer, para la campana de la cabecera (HU-37). */
+    /** Número de avisos sin leer, para la campana de la cabecera (HU-37). 0 para los visitantes. */
     @ModelAttribute("avisosSinLeer")
     public Long avisosSinLeer(Principal principal) {
         return principal == null ? 0L : notificaciones.sinLeer(principal.getName());
@@ -85,6 +91,10 @@ public class UsuarioActualAdvice {
         return boletos.resumen(boleto);
     }
 
+    /**
+     * Usuario con sesión iniciada, para la cabecera (nombre, saldo); null para los visitantes.
+     * No aplica la recarga gratuita: eso se hace al entrar y en Mi cuenta.
+     */
     @ModelAttribute("usuarioActual")
     public Usuario usuarioActual(Principal principal) {
         if (principal == null) {

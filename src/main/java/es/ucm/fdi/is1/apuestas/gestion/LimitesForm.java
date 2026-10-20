@@ -8,9 +8,14 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-/** Límites de apuesta que fija el creador (HU-07). */
+/**
+ * Formulario de los límites de apuesta que fija el creador (HU-07). Lo usa {@link GestionController};
+ * los valores se guardan en la entidad {@code Limites}, que comprueba además que el máximo no sea menor
+ * que el mínimo.
+ */
 public class LimitesForm {
 
+    // Importes en moneditas con céntimos: positivos y con 2 decimales como mucho
     @NotNull(message = "Introduce el importe mínimo")
     @DecimalMin(value = "0.01", message = "Tiene que ser mayor que 0")
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
@@ -21,6 +26,7 @@ public class LimitesForm {
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal importeMaximo;
 
+    /** Máximo de selecciones de una combinada: una combinada necesita al menos 2. */
     @NotNull(message = "Introduce el número máximo de selecciones")
     @Min(value = 2, message = "Al menos 2")
     @Max(value = 30, message = "Como mucho 30")

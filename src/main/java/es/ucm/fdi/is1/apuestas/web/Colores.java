@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Colores de cada club para dibujar su escudo cuando no hay imagen: {fondo, borde}.
  * Los equipos que no aparecen reciben un color calculado a partir del nombre.
+ * Solo la usa {@link Formato#colores}; la clave es el nombre exacto del equipo.
  */
 final class Colores {
 
@@ -108,6 +109,7 @@ final class Colores {
             Map.entry("Pedro Acosta", new String[] {"#ff6600", "#000000"}),
             Map.entry("Marco Bezzecchi", new String[] {"#008c45", "#000000"}));
 
+    // Clase de constantes: no se crean objetos de ella
     private Colores() {
     }
 }

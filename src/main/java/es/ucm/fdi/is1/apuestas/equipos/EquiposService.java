@@ -9,7 +9,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Listado público de equipos y deportistas, por deporte y competición, con buscador. */
+/**
+ * Listado público de equipos y deportistas, por deporte y competición, con buscador.
+ * Servicio de solo lectura que usa {@code InicioController} en {@code GET /equipos}; desde cada equipo
+ * se entra en su ficha (HU-31).
+ */
 @Service
 public class EquiposService {
 
@@ -21,7 +25,13 @@ public class EquiposService {
         this.competiciones = competiciones;
     }
 
-    /** Equipos agrupados por deporte y ordenados por nombre; los filtros son opcionales. */
+    /**
+     * Equipos agrupados por deporte y ordenados por nombre; los filtros son opcionales.
+     *
+     * @param deporte       null para todos los deportes
+     * @param competicionId null para todas las competiciones
+     * @param texto         parte del nombre, sin distinguir mayúsculas ni tildes; null o vacío para no filtrar
+     */
     @Transactional(readOnly = true)
     public Map<Deporte, List<Equipo>> buscar(Deporte deporte, Long competicionId, String texto) {
         String buscado = Nombres.normalizar(texto);
@@ -29,7 +39,9 @@ public class EquiposService {
                 .filter(e -> deporte == null || e.getDeporte() == deporte)
                 .filter(e -> competicionId == null || e.participaEn(competicionId))
                 .filter(e -> buscado.isEmpty() || Nombres.normalizar(e.getNombre()).contains(buscado))
+                // Por el nombre normalizado, para que una inicial con tilde ("Á") no quede detrás de la "Z"
                 .sorted(Comparator.comparing(e -> Nombres.normalizar(e.getNombre())))
+                // EnumMap: los deportes salen en el orden del enum
                 .collect(Collectors.groupingBy(Equipo::getDeporte, () -> new EnumMap<>(Deporte.class),
                         Collectors.toList()));
     }

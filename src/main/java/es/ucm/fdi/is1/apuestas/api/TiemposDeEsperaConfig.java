@@ -14,9 +14,16 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 @Configuration
 public class TiemposDeEsperaConfig {
 
+    /** Máximo para conectar con el servidor de la API. */
     static final Duration ESPERA_CONEXION = Duration.ofSeconds(5);
+    /** Máximo esperando la respuesta, una vez conectados. */
     static final Duration ESPERA_RESPUESTA = Duration.ofSeconds(20);
 
+    /**
+     * Spring aplica este ajuste a los {@code RestClient.Builder} que crea, como el que recibe
+     * {@link FootballDataCliente}. Si se pasa el tiempo, la llamada lanza una {@code RestClientException}
+     * y la sincronización la apunta como un error más.
+     */
     @Bean
     public RestClientCustomizer tiemposDeEspera() {
         return builder -> {

@@ -5,7 +5,10 @@ import java.math.BigDecimal;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 
-/** Límites que se pone el propio usuario (HU-10). Vacío = sin límite. */
+/**
+ * Formulario de los límites que se pone el propio usuario en Mi cuenta (HU-10). Vacío = sin límite.
+ * Que el diario no supere al semanal lo comprueba {@link UsuarioService#fijarLimites}.
+ */
 public class LimitesPersonalesForm {
 
     @DecimalMin(value = "1", message = "Como mínimo 1 moneda")

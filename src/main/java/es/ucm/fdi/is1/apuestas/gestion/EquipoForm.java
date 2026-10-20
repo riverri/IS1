@@ -10,6 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Formulario de alta de un equipo o deportista con su calificación (HU-01). {@link GestionService#crearEquipo}
+ * comprueba además que el nombre no exista y que las competiciones sean de su deporte.
+ */
 public class EquipoForm {
 
     @NotBlank(message = "Introduce el nombre")
@@ -19,11 +23,13 @@ public class EquipoForm {
     @NotNull(message = "Elige un deporte")
     private Deporte deporte;
 
+    /** Calificación de calidad de 0 a 10, con la que se calculan las cuotas (CA-01.2). */
     @NotNull(message = "Introduce la calificación")
     @DecimalMin(value = "0.0", message = "La calificación debe estar entre 0 y 10")
     @DecimalMax(value = "10.0", message = "La calificación debe estar entre 0 y 10")
     private Double calidad;
 
+    /** Ids de las competiciones marcadas; puede quedar vacío. */
     private Set<Long> competicionIds = new HashSet<>();
 
     public String getNombre() {

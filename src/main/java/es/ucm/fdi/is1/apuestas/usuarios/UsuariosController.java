@@ -17,6 +17,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
+/**
+ * Controlador de las cuentas: inicio de sesión, registro y Mi cuenta (saldo y recargas, juego responsable,
+ * nombre y contraseña). HU-10, HU-11, HU-12, HU-13, HU-14 y HU-47. La baja (HU-18) está en
+ * {@code BajaController}. La lógica está en {@link UsuarioService}.
+ * Cuando un formulario tiene errores no se redirige: se vuelve a pintar la página para que se vean los mensajes.
+ */
 @Controller
 public class UsuariosController {
 
@@ -32,11 +38,16 @@ public class UsuariosController {
         this.sesiones = sesiones;
     }
 
+    /**
+     * GET /login: formulario de inicio de sesión (HU-12). El envío (POST /login) no llega aquí:
+     * lo procesa Spring Security, configurado en {@code SeguridadConfig}.
+     */
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
+    /** GET /registro: formulario de registro, con el saldo de bienvenida que se recibirá (HU-11, HU-14). */
     @GetMapping("/registro")
     public String registro(Model model) {
         model.addAttribute("registro", new RegistroForm());
@@ -44,6 +55,11 @@ public class UsuariosController {
         return "registro";
     }
 
+    /**
+     * POST /registro: crea la cuenta y lleva a /login?registrado (CA-11.1). Además de las reglas de
+     * {@link RegistroForm}, comprueba que las contraseñas coinciden y caben en BCrypt.
+     * Si el email ya está registrado, lo marca como error del campo (CA-11.2).
+     */
     @PostMapping("/registro")
     public String registrar(@Valid @ModelAttribute("registro") RegistroForm form, BindingResult errores, Model model) {
         if (form.getPassword() != null && !form.getPassword().equals(form.getConfirmacion())) {
@@ -64,12 +80,16 @@ public class UsuariosController {
         return "registro";
     }
 
+    /** GET /cuenta: Mi cuenta. Antes aplica la recarga gratuita si toca, así el saldo está al día (HU-13, HU-14). */
     @GetMapping("/cuenta")
     public String cuenta(Principal principal, Model model) {
         return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
     }
 
-    /** Límites diario y semanal que se pone el usuario (HU-10). */
+    /**
+     * POST /cuenta/limites: límites diario y semanal que se pone el usuario (HU-10). Vuelve a la sección
+     * de juego responsable de Mi cuenta. Si el diario supera al semanal, lo muestra como error del campo.
+     */
     @PostMapping("/cuenta/limites")
     public String limites(@Valid @ModelAttribute("limitesPersonales") LimitesPersonalesForm form,
                           BindingResult errores, Principal principal, Model model, RedirectAttributes redireccion) {
@@ -85,10 +105,11 @@ public class UsuariosController {
         return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
     }
 
-    /** Pausa temporal de las apuestas (HU-10). */
+    /** POST /cuenta/pausa: pausa temporal de las apuestas (HU-10); los días deben ser 1, 7 o 30. */
     @PostMapping("/cuenta/pausa")
     public String pausa(@RequestParam(defaultValue = "0") int dias, Principal principal,
                         RedirectAttributes redireccion) {
+        // Sin elegir duración llega 0, y el servicio lo rechaza con un mensaje
         try {
             LocalDateTime hasta = usuarios.pausar(principal.getName(), dias);
             redireccion.addFlashAttribute("mensaje", "Apuestas en pausa hasta el "
@@ -99,7 +120,7 @@ public class UsuariosController {
         return "redirect:/cuenta#juego-responsable";
     }
 
-    /** HU-47. */
+    /** POST /cuenta/nombre: cambia el nombre visible (HU-47). */
     @PostMapping("/cuenta/nombre")
     public String cambiarNombre(@Valid @ModelAttribute("datosNombre") NombreForm form, BindingResult errores,
                                 Principal principal, Model model, RedirectAttributes redireccion) {
@@ -111,7 +132,10 @@ public class UsuariosController {
         return "redirect:/cuenta";
     }
 
-    /** HU-47. */
+    /**
+     * POST /cuenta/password: cambia la contraseña si la actual es correcta (HU-47) y cierra las sesiones
+     * de la cuenta en otros navegadores; la de este sigue abierta.
+     */
     @PostMapping("/cuenta/password")
     public String cambiarPassword(@Valid @ModelAttribute("datosPassword") PasswordForm form, BindingResult errores,
                                   Principal principal, Model model, RedirectAttributes redireccion,
@@ -125,6 +149,7 @@ public class UsuariosController {
         if (!errores.hasErrors()) {
             try {
                 usuarios.cambiarPassword(principal.getName(), form.getActual(), form.getNueva());
+                // getSession(false): la sesión actual, sin crear una nueva
                 sesiones.cerrarOtras(principal.getName(), peticion.getSession(false));
                 redireccion.addFlashAttribute("mensaje", "Contraseña cambiada. Úsala la próxima vez que entres.");
                 return "redirect:/cuenta";
@@ -153,6 +178,7 @@ public class UsuariosController {
         }
         model.addAttribute("enPausa", usuario.enPausa(LocalDateTime.now(reloj)));
         model.addAttribute("usuario", usuario);
+        // Cuándo llega la próxima recarga gratuita y de cuánto es (HU-14)
         model.addAttribute("proximaRecarga", usuario.proximaRecarga(saldo.recargaPeriodo()));
         model.addAttribute("importeRecarga", saldo.recargaImporte());
         return "cuenta";
