@@ -9,7 +9,11 @@ import org.springframework.stereotype.Component;
 
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 
-/** Avisa al usuario cuando una de sus apuestas se gana, se pierde o se anula (HU-37). */
+/**
+ * Avisa al usuario cuando una de sus apuestas se gana, se pierde o se anula (HU-37). La usan
+ * {@link ResolucionService} y {@link ResolucionMercadosService} después de resolver cada apuesta;
+ * el aviso se guarda con {@link NotificacionService}. Solo es visible dentro del paquete.
+ */
 @Component
 class AvisosApuestas {
 
@@ -25,6 +29,7 @@ class AvisosApuestas {
         if (ahora == antes || ahora == EstadoApuesta.ACTIVA || ahora == EstadoApuesta.CANCELADA) {
             return;
         }
+        // Si ya estaba resuelta, es una corrección del resultado (HU-04) y se dice así
         String correccion = antes == EstadoApuesta.ACTIVA ? "" : "Resultado corregido. ";
         String texto = switch (ahora) {
             case GANADA -> correccion + "¡Has acertado " + descripcion(apuesta) + "! Cobras "
@@ -33,6 +38,7 @@ class AvisosApuestas {
             default -> correccion + "Se ha anulado " + descripcion(apuesta) + ". Te hemos devuelto "
                     + monedas(apuesta.getImporte()) + " monedas.";
         };
+        // El tipo del aviso es el estado en minúsculas: "ganada", "perdida" o "anulada"
         notificaciones.avisar(apuesta.getUsuario(), ahora.name().toLowerCase(Locale.ROOT), texto);
     }
 
@@ -45,6 +51,7 @@ class AvisosApuestas {
         return "tu apuesta a " + seleccion.getDescripcionPronostico() + " (" + seleccion.getTitulo() + ")";
     }
 
+    /** Importe en formato español: "1.234,50". */
     private static String monedas(BigDecimal cantidad) {
         DecimalFormat formato = new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.forLanguageTag("es-ES")));
         formato.setGroupingSize(3);

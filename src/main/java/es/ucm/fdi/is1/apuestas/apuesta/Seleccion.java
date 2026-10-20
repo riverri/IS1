@@ -21,6 +21,9 @@ import jakarta.persistence.ManyToOne;
  * Un pronóstico dentro de una apuesta, con la cuota fijada al apostar: el resultado de un evento (1/X/2),
  * otro tipo de apuesta del partido (doble oportunidad, goles o ambos marcan, HU-52) o el ganador de un mercado
  * a largo plazo (HU-44). Tiene evento y pronóstico, evento y especial, o candidato.
+ *
+ * <p>Entidad JPA. Solo la crea su {@link Apuesta} (los constructores no son públicos), que decide su
+ * propio estado a partir del de sus selecciones.
  */
 @Entity
 public class Seleccion {
@@ -32,21 +35,27 @@ public class Seleccion {
     @ManyToOne(optional = false)
     private Apuesta apuesta;
 
+    /** Partido al que se apuesta; null en las apuestas a largo plazo. */
     @ManyToOne
     private Evento evento;
 
+    /** Resultado 1X2 elegido; null si es de un tipo especial o a largo plazo. */
     @Enumerated(EnumType.STRING)
     private Resultado pronostico;
 
+    /** Doble oportunidad, goles o ambos marcan (HU-52); null en las demás. */
     @Enumerated(EnumType.STRING)
     private Especial especial;
 
+    /** Candidato elegido de un mercado; solo en las apuestas a largo plazo. */
     @ManyToOne
     private Candidato candidato;
 
+    /** Cuota fijada al apostar; solo cambia si se modifica el importe (HU-27). */
     @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal cuota;
 
+    /** Pendiente hasta que se conoce el resultado del evento o el ganador del mercado. */
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EstadoSeleccion estado = EstadoSeleccion.PENDIENTE;
@@ -80,10 +89,12 @@ public class Seleccion {
         return candidato != null;
     }
 
+    /** Se compara por id porque {@link Evento} no redefine {@code equals}. */
     boolean esDe(Evento otro) {
         return evento != null && evento.getId().equals(otro.getId());
     }
 
+    /** Si es una apuesta a largo plazo a un candidato de ese mercado. */
     boolean esDe(Mercado mercado) {
         return candidato != null && candidato.getMercado().getId().equals(mercado.getId());
     }
@@ -96,21 +107,26 @@ public class Seleccion {
         return evento.getEstado() == EstadoEvento.PROGRAMADO && evento.getFechaHora().isAfter(ahora);
     }
 
+    /** Acertada si el candidato elegido es el ganador del mercado; fallada si no. */
     void resolver(Candidato ganador) {
         estado = candidato.getId().equals(ganador.getId()) ? EstadoSeleccion.ACERTADA : EstadoSeleccion.FALLADA;
     }
 
     /** Con el resultado del evento y, si se conoce, su marcador (las de goles se anulan sin él). */
     void resolver(Resultado resultado, Integer golesLocal, Integer golesVisitante) {
+        // Una 1X2 se acierta si coincide el resultado; una especial lo decide Especial.acierta,
+        // que devuelve null si hace falta el marcador y solo se conoce el ganador
         Boolean acierto = especial != null ? especial.acierta(resultado, golesLocal, golesVisitante)
                 : Boolean.valueOf(pronostico == resultado);
         if (acierto == null) {
+            // No se puede decidir: se anula y cuenta con cuota 1,00 (CA-52.3)
             estado = EstadoSeleccion.ANULADA;
         } else {
             estado = acierto ? EstadoSeleccion.ACERTADA : EstadoSeleccion.FALLADA;
         }
     }
 
+    /** El evento o el mercado se ha anulado: la selección cuenta con cuota 1,00 (HU-05, HU-30). */
     void anular() {
         estado = EstadoSeleccion.ANULADA;
     }
@@ -120,7 +136,7 @@ public class Seleccion {
         cuota = nueva;
     }
 
-    /** Cuota que cuenta para el pago: 1,00 si el evento se anuló. */
+    /** Cuota que cuenta para el pago: 1,00 si la selección está anulada (evento o mercado anulado, o goles sin marcador). */
     BigDecimal getCuotaEfectiva() {
         return estado == EstadoSeleccion.ANULADA ? BigDecimal.ONE : cuota;
     }

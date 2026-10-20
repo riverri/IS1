@@ -16,7 +16,12 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 
-/** Acciones del creador de apuestas sobre un evento y sus apuestas (HU-04, HU-05, HU-06, HU-25). */
+/**
+ * Acciones del creador de apuestas sobre un evento y sus apuestas (HU-04, HU-05, HU-06, HU-25).
+ * Lo usan el panel de gestión y la sincronización con la API de resultados. El {@link Evento} cambia de
+ * estado y cada {@link Apuesta} afectada se recalcula y paga; {@link AvisosApuestas} avisa al usuario (HU-37).
+ * Cada método es una transacción: o se resuelven todas las apuestas o ninguna.
+ */
 @Service
 public class ResolucionService {
 
@@ -33,6 +38,7 @@ public class ResolucionService {
         this.calculadora = calculadora;
     }
 
+    /** El evento en cualquier estado; EventoNoDisponibleException si no existe. */
     @Transactional(readOnly = true)
     public Evento evento(Long id) {
         return eventos.findById(id).orElseThrow(() -> new EventoNoDisponibleException(id));
@@ -41,6 +47,10 @@ public class ResolucionService {
     /**
      * Introduce o corrige el resultado: el evento pasa a finalizado y todas sus apuestas
      * se resuelven y se pagan. Si se corrige, los saldos se reajustan (HU-04, HU-25).
+     * Devuelve cuántas selecciones se han resuelto.
+     *
+     * @throws IllegalStateException    si el evento está anulado
+     * @throws IllegalArgumentException si es un empate en un deporte sin empate
      */
     @Transactional
     public int introducirResultado(Long eventoId, Resultado resultado) {
@@ -51,7 +61,9 @@ public class ResolucionService {
 
     /**
      * Igual, pero con el marcador final de un partido de fútbol: además del 1X2 se resuelven las apuestas
-     * de goles y de ambos marcan (HU-52). Sin marcador, esas se anulan.
+     * de goles y de ambos marcan (HU-52). Con {@link #introducirResultado} no hay marcador y esas se anulan.
+     *
+     * @throws IllegalArgumentException si los goles son negativos o el deporte no es fútbol
      */
     @Transactional
     public int introducirMarcador(Long eventoId, int golesLocal, int golesVisitante) {
@@ -60,10 +72,16 @@ public class ResolucionService {
         return resolverApuestas(evento);
     }
 
+    /**
+     * Resuelve todas las selecciones del evento. Una combinada solo cambia de estado cuando falla una
+     * selección o se conocen todas (HU-30); mientras tanto sigue activa.
+     */
     private int resolverApuestas(Evento evento) {
+        // Por selección y no por apuesta: así salen también las combinadas que incluyen este evento
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
+            // Se guarda el estado anterior para avisar solo si cambia (HU-37)
             EstadoApuesta antes = apuesta.getEstado();
             apuesta.resolver(evento, evento.getResultado());
             avisos.siCambia(apuesta, antes);
@@ -71,6 +89,7 @@ public class ResolucionService {
         return afectadas.size();
     }
 
+    /** Deja de admitir apuestas nuevas hasta que se reactive; las ya hechas siguen igual (HU-05). */
     @Transactional
     public void suspender(Long eventoId) {
         evento(eventoId).suspender();
@@ -82,17 +101,24 @@ public class ResolucionService {
         evento(eventoId).suspenderPorApi();
     }
 
+    /** Vuelve a admitir apuestas un evento suspendido (HU-05). */
     @Transactional
     public void reactivar(Long eventoId) {
         evento(eventoId).reactivar();
     }
 
-    /** Anula el evento y devuelve el importe de todas sus apuestas activas (HU-05). */
+    /**
+     * Anula el evento y devuelve el importe de sus apuestas simples activas (HU-05). En una combinada, la
+     * selección cuenta con cuota 1,00 y el resto sigue en juego (CA-30.3).
+     *
+     * @throws IllegalStateException si el evento ya estaba finalizado o anulado
+     */
     @Transactional
     public int anular(Long eventoId) {
         Evento evento = evento(eventoId);
         evento.anular();
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
+        // Cada apuesta decide: devuelve el importe si es simple, o sigue con cuota 1,00 si es combinada
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             EstadoApuesta antes = apuesta.getEstado();
@@ -110,6 +136,7 @@ public class ResolucionService {
     @Transactional(readOnly = true)
     public List<VolumenResultado> volumen(Long eventoId) {
         Evento evento = evento(eventoId);
+        // Las canceladas y las anuladas no cuentan: se devolvió el importe
         List<Seleccion> delEvento = selecciones.findByEvento(evento).stream()
                 .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA
                         && s.getApuesta().getEstado() != EstadoApuesta.ANULADA)
@@ -123,9 +150,11 @@ public class ResolucionService {
             volumen.add(fila(resultado.getSimbolo(), resultado.getDescripcion(), cuotas.de(resultado),
                     delEvento.stream().filter(s -> s.getPronostico() == resultado).toList()));
         }
+        // Vacío si no es fútbol
         Map<Especial, BigDecimal> especiales = calculadora.especiales(evento);
         for (Especial especial : Especial.values()) {
             List<Seleccion> aEste = delEvento.stream().filter(s -> s.getEspecial() == especial).toList();
+            // Se muestra si se ofrece o si alguien le ha apostado (entonces puede ir sin cuota)
             if (especiales.containsKey(especial) || !aEste.isEmpty()) {
                 volumen.add(fila(especial.getSimbolo(), especial.getDescripcion(), especiales.get(especial), aEste));
             }
@@ -133,6 +162,7 @@ public class ResolucionService {
         return volumen;
     }
 
+    /** Suma el importe completo de las apuestas con esas selecciones y las cuenta. */
     private static VolumenResultado fila(String simbolo, String descripcion, BigDecimal cuota,
                                          List<Seleccion> aEsta) {
         BigDecimal total = aEsta.stream().map(s -> s.getApuesta().getImporte())

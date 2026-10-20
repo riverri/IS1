@@ -16,6 +16,11 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 /**
  * Boleto en construcción del usuario (HU-28): las selecciones que va eligiendo en el catálogo
  * antes de confirmar. Vive en la sesión; no se guarda en la base de datos hasta confirmar.
+ *
+ * <p>Con {@code @SessionScope} Spring crea un boleto por sesión HTTP. En {@link BoletoController} se inyecta
+ * un proxy que, en cada petición, apunta al boleto de la sesión actual. Es {@link Serializable} para poder guardarse
+ * con la sesión. Las reglas (límites, cuotas, eventos disponibles) se aplican en {@link BoletoService};
+ * aquí solo se impide repetir partido (CA-28.2).
  */
 @Component
 @SessionScope
@@ -31,6 +36,7 @@ public class Boleto implements Serializable {
     public record Linea(Long eventoId, Resultado resultado, Especial especial, BigDecimal cuotaVista)
             implements Serializable {
 
+        /** Línea 1X2. */
         public Linea(Long eventoId, Resultado resultado, BigDecimal cuotaVista) {
             this(eventoId, resultado, null, cuotaVista);
         }
@@ -51,6 +57,7 @@ public class Boleto implements Serializable {
         anadir(new Linea(eventoId, null, especial, cuotaVista));
     }
 
+    /** Lanza IllegalArgumentException si ya hay una selección de ese partido (CA-28.2). */
     private void anadir(Linea linea) {
         if (contiene(linea.eventoId())) {
             throw new IllegalArgumentException("Ya tienes una selección de ese partido en el boleto");
@@ -62,6 +69,7 @@ public class Boleto implements Serializable {
         lineas.removeIf(l -> l.eventoId().equals(eventoId));
     }
 
+    /** Cambia la cuota vista de la línea de ese evento; como Linea es un record, se sustituye por otra. */
     void actualizarCuota(Long eventoId, BigDecimal cuota) {
         lineas.replaceAll(l -> l.eventoId().equals(eventoId) ? new Linea(eventoId, l.resultado(), l.especial(), cuota) : l);
     }

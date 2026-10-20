@@ -8,12 +8,19 @@ import org.springframework.data.jpa.repository.Query;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.mercados.Mercado;
 
+/**
+ * Repositorio de {@link Seleccion}. Se busca por selección y no por apuesta porque al resolver un evento
+ * o un mercado hay que encontrar todas las apuestas que lo incluyen, sean simples o combinadas.
+ */
 public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
 
+    /** Todas las selecciones de un evento, de apuestas en cualquier estado. */
     List<Seleccion> findByEvento(Evento evento);
 
+    /** Si alguien ha apostado alguna vez al evento: entonces no se puede borrar ni cambiar de equipos (HU-46). */
     boolean existsByEvento(Evento evento);
 
+    /** Selecciones a cualquier candidato del mercado (navega {@code candidato.mercado}). */
     List<Seleccion> findByCandidatoMercado(Mercado mercado);
 
     /**

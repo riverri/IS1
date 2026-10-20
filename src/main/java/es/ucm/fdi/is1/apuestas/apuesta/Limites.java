@@ -7,11 +7,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 /**
- * Límites de apuesta que fija el creador (HU-07). Hay una sola fila, creada por la migración V3.
+ * Límites de apuesta que fija el creador (HU-07). Hay una sola fila, creada por la migración
+ * (V3 en H2, V8 en PostgreSQL); no se crean ni se borran filas desde el código.
+ *
+ * <p>Entidad JPA. La leen {@link ApuestaService} y {@link BoletoService} antes de apostar, y la cambia
+ * el creador desde Gestión a través de {@link LimitesService}.
  */
 @Entity
 public class Limites {
 
+    /** Id de la única fila. */
     static final Long ID = 1L;
 
     @Id
@@ -38,6 +43,12 @@ public class Limites {
         // requerido por JPA
     }
 
+    /**
+     * Fija los nuevos límites.
+     *
+     * @throws IllegalArgumentException si el mínimo no es positivo, el máximo es menor que el mínimo
+     *                                  o se permiten menos de 2 selecciones (no habría combinadas)
+     */
     public void cambiar(BigDecimal minimo, BigDecimal maximo, int selecciones) {
         if (minimo.signum() <= 0) {
             throw new IllegalArgumentException("El importe mínimo debe ser mayor que 0");
@@ -53,13 +64,14 @@ public class Limites {
         maxSelecciones = selecciones;
     }
 
-    /** Lanza una excepción si el importe no está entre el mínimo y el máximo. */
+    /** Lanza ImporteFueraDeLimitesException si el importe no está entre el mínimo y el máximo (ambos incluidos). */
     public void comprobarImporte(BigDecimal importe) {
         if (importe.compareTo(importeMinimo) < 0 || importe.compareTo(importeMaximo) > 0) {
             throw new ImporteFueraDeLimitesException(importeMinimo, importeMaximo);
         }
     }
 
+    /** Lanza IllegalArgumentException si la combinada tiene más selecciones de las permitidas. */
     public void comprobarSelecciones(int selecciones) {
         if (selecciones > maxSelecciones) {
             throw new IllegalArgumentException("Una combinada admite como máximo " + maxSelecciones + " selecciones");
