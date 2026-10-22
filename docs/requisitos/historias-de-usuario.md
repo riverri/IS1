@@ -7,7 +7,7 @@
 ## Cómo leer cada historia
 
 - **Historia:** quién la pide, qué quiere y para qué.
-- **Ficha:** fila del Product Backlog, prioridad MoSCoW de esa fila, sprint en que se hizo, estado y estimación: puntos de historia, líneas de código, horas sin IA y con IA y coste de la IA (ver [Estimación](#estimación)).
+- **Ficha:** fila del Product Backlog, prioridad MoSCoW de esa fila, sprint en que se hizo (en el Sprint 1, también la iteración: «1 (it. 3)»), estado y estimación: puntos de historia, líneas de código, horas sin IA y con IA y coste de la IA (ver [Estimación](#estimación)).
 - **Criterios de aceptación:** las condiciones que se tienen que cumplir para dar la historia por terminada (Definition of Done). Cada uno se lee como *Dado* (situación de partida), *Cuando* (lo que hace el usuario o el sistema) y *Entonces* (el resultado que se espera). 
 
 ## Estimación
@@ -16,7 +16,7 @@ Cada historia tiene un **tamaño** (puntos y líneas de código), las **horas** 
 
 ### 1. Tamaño
 
-- **Puntos de historia** (Fibonacci): tamaño relativo, decidido al planificar cada sprint. En las historias hechas son los de las actas; si se hizo en dos sprints, se suman (HU-03: 8 + 3). En las descartadas, una estimación por comparación con historias parecidas.
+- **Puntos de historia** (Fibonacci): tamaño relativo, decidido al planificar cada iteración. En las historias hechas son los de las actas de las iteraciones; si se hizo en dos iteraciones, se suman (HU-03: 8 + 3). En las descartadas, una estimación por comparación con historias parecidas.
 - **Líneas de código**: se han contado las líneas reales del repositorio, sin comentarios ni líneas en blanco: 15.103 en total (Java de la aplicación, pruebas, vistas HTML, CSS y JavaScript y migraciones SQL). Repartidas entre los 185 puntos hechos, salen **82 líneas por punto**. Las líneas de cada historia son sus puntos × 82.
 
 ### 2. Horas sin IA
@@ -41,7 +41,7 @@ Con IA la persona no escribe el código, pero tiene que dirigir a la IA y respon
 
 | Parte | Cómo se calcula | En qué se basa |
 |---|---|---|
-| **Dirigir a la IA** | 0,95 h por cada mil líneas | **Medido:** el código de los sprints 1 a 12 (13.625 líneas) se generó en unas 13 horas de reloj de trabajo con la IA |
+| **Dirigir a la IA** | 0,95 h por cada mil líneas | **Medido:** el código de las 12 iteraciones del Sprint 1 (13.625 líneas) se generó en unas 13 horas de reloj de trabajo con la IA |
 | **Revisar el código** | Leerlo y entenderlo a 138 líneas/h | Tres valores: 300, 150 y 75 líneas/h. Los estudios de revisión de código recomiendan no pasar de 200–400 líneas/h para encontrar fallos; quien aprende Spring necesita ir más despacio |
 | **Comprobar los criterios** | 10 minutos por criterio de aceptación | Probar a mano en el navegador el *Dado / Cuando / Entonces* de cada criterio de la historia |
 | **Corregir fallos** | 2,5 fallos por cada mil líneas × 1 h | **Medido:** la revisión encontró 34 fallos en 13.625 líneas (issues #34–#67). Cada uno: entenderlo, corregirlo con ayuda y comprobarlo |
@@ -54,7 +54,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fase | Tokens generados | Tokens de contexto leídos | Coste |
 |---|---:|---:|---:|
-| Programar la app (sprints 1–12, 13.625 líneas) | 1,0 millones | 372 millones | 114 $ |
+| Programar la app (Sprint 1, 13.625 líneas) | 1,0 millones | 372 millones | 114 $ |
 | Revisar y corregir los 34 fallos | 0,3 millones | 107 millones | 47 $ |
 | **Por cada mil líneas** | **92 mil** | **35 millones** | **11,8 $** |
 
@@ -67,14 +67,14 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
-| **Historias hechas (45)** | 185 | 15.170 | 1.091 | 177 | 1,4 millones | 179 $ |
+| **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
-**Cómo se reparten las 177 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
+**Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
 
 **Lectura:**
 - **Sin IA,** las historias hechas suman unas 1.091 horas, unas 218 por persona. Con lo que cinco estudiantes dedican a una asignatura en un cuatrimestre no cabe.
-- **Con IA,** bajan a unas 177 horas, unas 35 por persona, y el coste es de unos 179 $.
+- **Con IA,** bajan a unas 178 horas, unas 36 por persona, y el coste es de unos 179 $.
 - **El ahorro solo es real si la revisión se hace.** Si se salta, el tiempo baja todavía más, pero nadie del equipo conoce el código, y eso es lo que se evalúa en la defensa.
 
 **Límites de la estimación:**
@@ -103,7 +103,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-09 | Web adaptada a móvil | Hecha | 1 | 3 (Media) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 6 | 492 | 35 | 5,6 | 5,8 $ |
-| HU-11 | Registro | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-11 | Registro | Hecha | 3 | 1 (Muy alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 | HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
@@ -139,7 +139,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-44 | Apuestas a largo plazo | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-45 | Gestión de mercados | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-47 | Cambiar nombre y contraseña | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-47 | Cambiar nombre y contraseña | Hecha | 3 | 2 (Alta) | 2 | 164 | 12 | 2,2 | 1,9 $ |
 | HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
@@ -147,7 +147,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
-**53 historias**: 45 hechas y 8 descartadas. **107 criterios de aceptación** en total; 94 de ellos son de historias hechas.
+**53 historias**: 45 hechas y 8 descartadas. **109 criterios de aceptación** en total; 96 de ellos son de historias hechas.
 
 ---
 
@@ -159,7 +159,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 1, 2 | Must | 1 | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
+| 1, 2 | Must | 1 (it. 1) | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -174,7 +174,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 3 | Must | 6 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 3 | Must | 1 (it. 6) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -188,7 +188,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 3 | Must | 2, 6 | Hecha | 11 (8 + 3) | 902 | 65 | 10 | 10,7 $ |
+| 3 | Must | 1 (it. 2 y 6) | Hecha | 11 (8 + 3) | 902 | 65 | 10 | 10,7 $ |
 
 **Criterios de aceptación**
 
@@ -204,7 +204,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 16, 17 | Must | 3 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 16, 17 | Must | 1 (it. 3) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -219,7 +219,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 17 | Must | 3, 5 | Hecha | 4 (3 + 1) | 328 | 24 | 3,8 | 3,9 $ |
+| 17 | Must | 1 (it. 3 y 5) | Hecha | 4 (3 + 1) | 328 | 24 | 3,8 | 3,9 $ |
 
 **Criterios de aceptación**
 
@@ -234,7 +234,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 17 | Must | 3 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 17 | Must | 1 (it. 3) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -248,7 +248,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 17 | Must | 4, 6 | Hecha | 3 (1 + 2) | 246 | 18 | 2,8 | 2,9 $ |
+| 17 | Must | 1 (it. 4 y 6) | Hecha | 3 (1 + 2) | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -262,7 +262,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 29 | Should | 8 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 29 | Should | 1 (it. 8) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -277,7 +277,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 35 | Should | 11 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 35 | Should | 1 (it. 11) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -296,7 +296,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 9 | Must | 1 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 9 | Must | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -311,7 +311,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| Requisito no funcional | — | 9 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| Requisito no funcional | — | 1 (it. 9) | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -325,7 +325,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 27 | Could | 9 | Hecha | 6 (5 + 1) | 492 | 35 | 5,6 | 5,8 $ |
+| 27 | Could | 1 (it. 9) | Hecha | 6 (5 + 1) | 492 | 35 | 5,6 | 5,8 $ |
 
 **Criterios de aceptación**
 
@@ -344,7 +344,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 5 | Must | 1 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 5 | Must | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -352,6 +352,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 |---|---|---|---|
 | CA-11.1 | Relleno el formulario de registro con un email y una contraseña válidos | Lo envío | Se crea mi cuenta y mi perfil. |
 | CA-11.2 | Intento registrarme con un email ya existente | Lo envío | El sistema me avisa de que ya hay una cuenta con ese email. |
+| CA-11.3 | Escribo un nombre con palabras ofensivas, aunque cambie letras por números | Envío el registro | El sistema no crea la cuenta y me pide otro nombre. |
 
 ### HU-12 · Inicio de sesión
 
@@ -359,7 +360,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 5, 8 | Must | 1 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 5, 8 | Must | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -374,7 +375,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 4, 12 | Must | 1 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 4, 12 | Must | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -389,7 +390,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 4 | Must | 1 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 4 | Must | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -435,7 +436,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 22 | Should | — | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 22 | Should | 2 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -450,7 +451,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 22 | Should | 9 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 22 | Should | 1 (it. 9) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -465,7 +466,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 30 | Could | 8 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 30 | Could | 1 (it. 8) | Hecha | 2 | 164 | 12 | 2,2 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -473,6 +474,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 |---|---|---|---|
 | CA-47.1 | Introduzco mi contraseña actual y una nueva válida | La guardo | La siguiente vez entro con la nueva. |
 | CA-47.2 | La contraseña actual no es correcta | Intento cambiarla | El sistema no lo permite. |
+| CA-47.3 | Escribo un nombre nuevo con palabras ofensivas | Lo guardo | El sistema no lo cambia y me pide otro nombre. |
 
 ---
 
@@ -484,7 +486,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 9 | Must | 1 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 9 | Must | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -499,7 +501,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 3, 9 | Must | 2 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 3, 9 | Must | 1 (it. 2) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -514,7 +516,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 2, 13, 17 | Could, Must | 5 | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
+| 2, 13, 17 | Could, Must | 1 (it. 5) | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -529,7 +531,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 21 | Should | 2 | Hecha | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| 21 | Should | 1 (it. 2) | Hecha | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -549,7 +551,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 6 | Must | 2 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 6 | Must | 1 (it. 2) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -564,7 +566,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 10, 11 | Must | 2 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 10, 11 | Must | 1 (it. 2) | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -578,7 +580,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 16 | Must | 3, 5 | Hecha | 8 (5 + 3) | 656 | 47 | 7,5 | 7,8 $ |
+| 16 | Must | 1 (it. 3 y 5) | Hecha | 8 (5 + 3) | 656 | 47 | 7,5 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -594,7 +596,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 14 | Could | 2 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 14 | Could | 1 (it. 2) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -609,7 +611,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 14 | Could | 7 | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 14 | Could | 1 (it. 7) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -624,7 +626,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 34 | Should | 11 | Hecha | 8 | 656 | 47 | 7,5 | 7,8 $ |
+| 34 | Should | 1 (it. 11) | Hecha | 8 | 656 | 47 | 7,5 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -644,7 +646,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 15, 18 | Must | 4 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 15, 18 | Must | 1 (it. 4) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -660,7 +662,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 15, 18 | Must | 4 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 15, 18 | Must | 1 (it. 4) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -676,7 +678,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 16 | Must | 4 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 16 | Must | 1 (it. 4) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -696,7 +698,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 20 | Should | 7 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 20 | Should | 1 (it. 7) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -711,7 +713,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 20 | Should | 9 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 20 | Should | 1 (it. 9) | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -725,7 +727,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 32 | Should | 10 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 32 | Should | 1 (it. 10) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -740,7 +742,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 32 | Should | 10 | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 32 | Should | 1 (it. 10) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -755,7 +757,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 20 | Should | 7 | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 20 | Should | 1 (it. 7) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -774,7 +776,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 19 | Should | 3 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 19 | Should | 1 (it. 3) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -788,7 +790,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 19 | Should | 3 | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 19 | Should | 1 (it. 3) | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -806,7 +808,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 24 | Could | 2, 3 | Hecha | 5 (3 + 2) | 410 | 29 | 5,0 | 4,8 $ |
+| 24 | Could | 1 (it. 2 y 3) | Hecha | 5 (3 + 2) | 410 | 29 | 5,0 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -823,7 +825,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 23 | Could | 7 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 23 | Could | 1 (it. 7) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -925,7 +927,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 31 | Could | 8 | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 31 | Could | 1 (it. 8) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -939,7 +941,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 | Could | 11 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 33 | Could | 1 (it. 11) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -959,7 +961,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 28 | Should | 6 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 28 | Should | 1 (it. 6) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -975,7 +977,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 28 | Should | 6 | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 28 | Should | 1 (it. 6) | Hecha | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 

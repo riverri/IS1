@@ -1,17 +1,18 @@
-# Sprint 10 · 02/10 – 16/10
+# Iteración 10 · 02/10/2026 · Sprint 1
 
-## Sprint Planning (02/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** en la ficha de cada equipo se ven sus jugadores con su nota y la alineación probable; las plantillas llegan de la API y el creador puede ajustarlas.
-- **Velocidad media de los sprints anteriores:** 20 puntos · **Puntos comprometidos:** 11
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 9)_
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 10» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (02/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** en la ficha de cada equipo se ven sus jugadores con su nota y la alineación probable; las plantillas llegan de la API y el creador puede ajustarlas.
+- **Media de las iteraciones anteriores:** 20 puntos · **Puntos comprometidos:** 11
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
 | HU-49 | Plantilla y alineación probable en la ficha del equipo | 32 | 5 | Jing Li | Hecho |
 | HU-50 | Descarga de plantillas desde la API y gestión de jugadores y notas | 32 | 5 | Jing Li | Hecho |
 | — | Migración V7 de la base de datos | — | 1 | Jing Li | Hecho |
-| — | Corrección: la ficha se cortaba para los visitantes sin sesión | — | — | Jing Li | Hecho (encontrado durante el sprint) |
+| — | Corrección: la ficha se cortaba para los visitantes sin sesión | — | — | Jing Li | Hecho (encontrado durante la iteración) |
 
 ### Plantilla y alineación probable (HU-49)
 - **Alineación probable**, en la ficha de los equipos de fútbol con jugadores suficientes:
@@ -36,23 +37,18 @@
   - formulario para añadir jugadores (nombre, posición, dorsal, nota y nacionalidad).
 - **Sin la clave de la API** los equipos empiezan sin jugadores. No se cargan plantillas inventadas para no mostrar datos que no sean reales.
 
-### Corrección encontrada durante el sprint
+### Corrección encontrada durante la iteración
 - **El fallo:** las tarjetas de partido consultan el boleto, que vive en la sesión. Para un visitante sin sesión, la sesión se intentaba crear a mitad de página. En páginas largas (la ficha con la plantilla), parte de la respuesta ya se había enviado, la creación fallaba y la página se cortaba.
 - **La solución:** los visitantes no tienen boleto, así que ya no se les crea sesión. Hay un test que lo comprueba.
 
 ### Cambios en la base de datos (migración V7)
 - Tabla `jugador`: equipo, nombre, posición, dorsal, nacionalidad, fecha de nacimiento, nota e identificador de la API.
-- Las bases de datos del Sprint 9 se actualizan solas al arrancar (comprobado).
+- Las bases de datos de la iteración 9 se actualizan solas al arrancar (comprobado).
 
-## Dailies
+## Registro del trabajo
 - **02/10**: modelo de jugadores, alineación, descarga de la API, pantallas, gestión, migración V7, corrección de la sesión y pruebas.
 
-## Sprint Review (16/10)
+## Resultado (02/10)
 - **Historias completadas:** HU-49 y HU-50, más la migración V7 (11 puntos), y la corrección de la ficha para los visitantes.
 - **Historias no completadas:** ninguna.
-- **Feedback del PO:** entran en el backlog las ligas privadas entre amigos (fila 33, HU-51), más tipos de apuesta en fútbol (fila 34, HU-52) y un panel con las cuentas de la casa (fila 35, HU-54). La recuperación de contraseña (HU-17) se deja para más adelante.
-
-## Retrospectiva (16/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+- **Peticiones añadidas durante la iteración:** entran en el backlog las ligas privadas entre amigos (fila 33, HU-51), más tipos de apuesta en fútbol (fila 34, HU-52) y un panel con las cuentas de la casa (fila 35, HU-54). La recuperación de contraseña (HU-17) se deja para más adelante.

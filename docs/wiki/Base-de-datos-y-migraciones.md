@@ -9,7 +9,7 @@
 - Usuario: `sa`, sin contraseña
 
 ## Por qué Flyway
-Al principio Hibernate creaba las tablas desde las entidades. Cuando los datos empezaron a guardarse en un archivo, al añadir un campo las bases de datos existentes no tenían la columna y páginas como *Ranking* daban error 500. En el Sprint 5 se pasó a **Flyway**:
+Al principio Hibernate creaba las tablas desde las entidades. Cuando los datos empezaron a guardarse en un archivo, al añadir un campo las bases de datos existentes no tenían la columna y páginas como *Ranking* daban error 500. En la iteración 5 del Sprint 1 se pasó a **Flyway**:
 
 - Cada cambio es un script SQL numerado (`V1__esquema_inicial.sql`, `V2__...`).
 - Al arrancar, Flyway mira en su tabla `flyway_schema_history` cuáles ya aplicó y ejecuta solo los nuevos, en orden.

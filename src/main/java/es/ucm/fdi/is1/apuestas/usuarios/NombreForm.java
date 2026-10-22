@@ -8,6 +8,8 @@ public class NombreForm {
 
     @NotBlank(message = "Introduce tu nombre")
     @Size(max = 50, message = "Máximo 50 caracteres")
+    // Sin palabras ofensivas (issue #75, CA-47.3)
+    @NombrePermitido
     private String nombre;
 
     public String getNombre() {

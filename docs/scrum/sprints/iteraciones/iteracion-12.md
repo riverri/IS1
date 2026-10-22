@@ -1,12 +1,13 @@
-# Sprint 12 · 30/10 – 13/11
+# Iteración 12 · 02/10/2026 · Sprint 1
 
-## Sprint Planning (30/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** la aplicación funciona en un servidor permanente con sus datos, cada criterio de aceptación está enlazado con su prueba y el trabajo del sprint se sigue en un tablero.
-- **Velocidad media de los sprints anteriores:** 18,5 puntos · **Puntos comprometidos:** 10 (más tareas del equipo sin estimar)
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 11)_
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 12» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
 
-Desde este sprint el Sprint Backlog son los [issues](https://github.com/riverri/IS1/issues) con la etiqueta `sprint-12`, en el tablero de GitHub Projects.
+## Planificación (02/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** la aplicación funciona en un servidor permanente con sus datos, cada criterio de aceptación está enlazado con su prueba y el trabajo se sigue en un tablero.
+- **Media de las iteraciones anteriores:** 18,5 puntos · **Puntos comprometidos:** 10 (más tareas del equipo sin estimar)
+
+Desde esta iteración, el trabajo pendiente son los [issues](https://github.com/riverri/IS1/issues) con la etiqueta `sprint-12`, en el tablero de GitHub Projects.
 
 | Issue | Descripción | Puntos | Responsable | Estado |
 |---|---|---|---|---|
@@ -24,7 +25,7 @@ En el Product Backlog queda [#27](https://github.com/riverri/IS1/issues/27) (HU-
 - El Scrum Master es Carlos Jurado (#28).
 
 ### Matriz de trazabilidad (#24)
-- Nuevo documento [docs/requisitos/trazabilidad.md](../../requisitos/trazabilidad.md): 44 historias hechas y 92 criterios de aceptación.
+- Nuevo documento [docs/requisitos/trazabilidad.md](../../../requisitos/trazabilidad.md): 44 historias hechas y 92 criterios de aceptación.
   - 88 criterios tienen prueba automática.
   - 3 se comprueban a mano porque dependen del navegador: la web en el móvil, la ganancia potencial calculada al escribir el importe y la confirmación al eliminar la cuenta.
   - 1 no tiene prueba: el mensaje de "no hay enfrentamientos previos".
@@ -42,12 +43,12 @@ En el Product Backlog queda [#27](https://github.com/riverri/IS1/issues/27) (HU-
   - UptimeRobot, opcional, visita la web para que no se apague.
   - Los pasos están en el README.
 - El CI ejecuta ahora todas las pruebas dos veces: con H2 y con PostgreSQL.
-- **Corrección encontrada durante el sprint:**
+- **Corrección encontrada durante la iteración:**
   - **El fallo:** la lista de *Mis ligas* daba error 500 en la aplicación real. Los miembros de cada liga no se cargaban, y la página los pedía cuando la consulta a la base de datos ya había terminado. Las pruebas no lo detectaban porque se ejecutan dentro de una transacción.
   - **La solución:** los miembros se cargan junto con la liga. Hay una prueba nueva que se ejecuta fuera de una transacción; falla sin la corrección y pasa con ella.
 - **Comprobado:**
   - Con un PostgreSQL real: registro, apuestas, resolución con marcador, ligas y cuentas de la casa; todas las páginas sin errores y los datos se conservan al reiniciar.
-  - Las bases de datos H2 del Sprint 11 siguen arrancando y conservan sus datos.
+  - Las bases de datos H2 de la iteración 11 siguen arrancando y conservan sus datos.
 
 ### Plantillas con la API real
 Es la primera prueba con una clave real de football-data.org; hasta ahora solo se había probado con una API simulada.
@@ -60,15 +61,10 @@ Es la primera prueba con una clave real de football-data.org; hasta ahora solo s
 - **Resultado final:** 40 de los 51 equipos de fútbol tienen plantilla (1.063 jugadores) y ningún equipo repetido. Los otros 11 juegan en ligas que el plan gratuito no incluye; sus jugadores se añaden a mano.
 - El plan gratuito no da dorsales.
 
-## Dailies
+## Registro del trabajo
 - **30/10**: issues y tablero, matriz de trazabilidad, tabla de dinero apostado, soporte de PostgreSQL y pruebas.
 
-## Sprint Review (13/11)
+## Resultado (02/10)
 - Historias completadas:
 - Historias no completadas (vuelven al backlog):
 - Feedback del PO/profesor:
-
-## Retrospectiva (13/11)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**

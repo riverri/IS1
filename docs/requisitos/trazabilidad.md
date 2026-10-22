@@ -11,7 +11,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 | Historias hechas | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 45 | 94 | 91 (97 %) | 3 | 0 |
+| 45 | 96 | 93 (97 %) | 3 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
@@ -93,6 +93,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-11.1 | Con datos válidos se crea la cuenta | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroCreaLaCuentaConElSaldoDeBienvenida` |
 | CA-11.2 | Con un email ya registrado se avisa | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConEmailExistenteAvisa`<br>[`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConContrasenasDistintasAvisa` |
+| CA-11.3 | Un nombre con palabras ofensivas no se acepta en el registro | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConNombreOfensivoNoCreaLaCuenta`<br>[`NombresProhibidosTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NombresProhibidosTest.java) |
 
 ## HU-12 · Inicio de sesión
 
@@ -295,6 +296,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-47.1 | Con la contraseña actual correcta se cambia y se entra con la nueva | Automática | [`CuentaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CuentaWebTest.java)`.cambiaLaContrasenaConLaActualCorrecta`<br>[`CuentaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CuentaWebTest.java)`.cambiaElNombre` |
 | CA-47.2 | Con la contraseña actual incorrecta no se cambia | Automática | [`CuentaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CuentaWebTest.java)`.rechazaContrasenaActualIncorrectaCortaONoCoincidente` |
+| CA-47.3 | Un nombre con palabras ofensivas no se acepta al cambiarlo | Automática | [`CuentaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CuentaWebTest.java)`.elNombreNoPuedeSerOfensivo`<br>[`NombresProhibidosTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NombresProhibidosTest.java) |
 
 ## HU-48 · Perfil público de un jugador
 
