@@ -22,7 +22,7 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 | **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-52 y HU-54 |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
 
-En total hay **107 criterios de aceptación**; 94 son de historias hechas.
+En total hay **109 criterios de aceptación**; 96 son de historias hechas.
 
 ## Estimación
 
@@ -30,7 +30,7 @@ Cada historia tiene su **tamaño** (puntos de historia y líneas de código), la
 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---:|---:|---:|---:|---:|
-| Historias hechas (45) | 185 | 15.170 | 1.091 | 177 | 179 $ |
+| Historias hechas (45) | 185 | 15.170 | 1.091 | 178 | 179 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 28 $ |
 
 - **Tamaño:** medido en el repositorio. Son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.

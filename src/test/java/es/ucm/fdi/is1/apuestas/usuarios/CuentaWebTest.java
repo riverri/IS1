@@ -75,6 +75,15 @@ class CuentaWebTest {
         assertThat(ana().getNombre()).isEqualTo("Ana");
     }
 
+    /** CA-47.3: tampoco se puede cambiar el nombre por uno ofensivo. */
+    @Test
+    void elNombreNoPuedeSerOfensivo() throws Exception {
+        mvc.perform(post("/cuenta/nombre").with(COMO_ANA).with(csrf()).param("nombre", "Ana la Cabrona"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Ese nombre no está permitido")));
+        assertThat(ana().getNombre()).isEqualTo("Ana");
+    }
+
     @Test
     void cambiaLaContrasenaConLaActualCorrecta() throws Exception {
         mvc.perform(post("/cuenta/password").with(COMO_ANA).with(csrf())
