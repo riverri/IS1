@@ -1,10 +1,11 @@
-# Sprint 9 · 02/10 (cerrado antes de plazo)
+# Iteración 9 · 02/10/2026 · Sprint 1
 
-## Sprint Planning (02/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** la ficha de cada equipo muestra su evolución en la temporada; cada usuario puede ponerse límites o tomarse una pausa, y eliminar su cuenta cuando quiera.
-- **Velocidad media de los sprints anteriores:** 20 puntos · **Puntos comprometidos:** 12 (16 con lo añadido durante el sprint)
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 8)_
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 9» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (02/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** la ficha de cada equipo muestra su evolución en la temporada; cada usuario puede ponerse límites o tomarse una pausa, y eliminar su cuenta cuando quiera.
+- **Media de las iteraciones anteriores:** 20 puntos · **Puntos comprometidos:** 12 (16 con lo añadido durante la iteración)
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -12,8 +13,8 @@
 | HU-10 | Juego responsable: límites diario y semanal y pausa temporal | 27 | 5 | Jing Li | Hecho |
 | HU-18 | Eliminar la cuenta | 22 | 3 | Jing Li | Hecho |
 | — | Migraciones V5 y V6 de la base de datos | — | 1 | Jing Li | Hecho |
-| HU-10 | Interruptor en Gestión para activar o desactivar el juego responsable | 27 | 1 | Jing Li | Hecho (añadida durante el sprint) |
-| HU-09 | Rediseño visual: portada con partido destacado, colores por deporte, cabecera de partido, podio del ranking, acceso y pie de página | — | 3 | Jing Li | Hecho (añadida durante el sprint) |
+| HU-10 | Interruptor en Gestión para activar o desactivar el juego responsable | 27 | 1 | Jing Li | Hecho (añadida durante la iteración) |
+| HU-09 | Rediseño visual: portada con partido destacado, colores por deporte, cabecera de partido, podio del ranking, acceso y pie de página | — | 3 | Jing Li | Hecho (añadida durante la iteración) |
 
 ### Gráfico de evolución (HU-32)
 - En la ficha de cada equipo con dos o más partidos jugados.
@@ -31,7 +32,7 @@
   - Durante la pausa no se puede apostar ni subir el importe de una apuesta, pero sí bajarlo o cancelarla.
   - No se puede acortar: si ya hay una pausa más larga, se mantiene.
   - Una franja en la cabecera recuerda hasta cuándo dura.
-- **Interruptor en Gestión** (pedido por el PO durante el sprint): el creador puede desactivar el juego responsable en toda la web.
+- **Interruptor en Gestión** (pedido por el PO durante la iteración): el creador puede desactivar el juego responsable en toda la web.
   - Mientras está desactivado no se aplican los límites ni las pausas, y la sección desaparece de *Mi cuenta* y de la cabecera.
   - Lo que cada usuario tenga guardado se conserva y vuelve a aplicarse al activarlo.
 - **Decisión:** los límites cambian en el momento, también al subirlos. En las casas de apuestas reales subir un límite tarda unas horas en aplicarse; aquí no hace falta porque no hay dinero real. Queda anotado como posible mejora.
@@ -46,7 +47,7 @@
 - El jugador desaparece del ranking y su email queda libre para registrarse de nuevo.
 - La cuenta del creador de apuestas no se puede eliminar.
 
-### Rediseño visual (pedido por el PO durante el sprint)
+### Rediseño visual (pedido por el PO durante la iteración)
 - **Cabecera:**
   - fondo translúcido;
   - la sección en la que estás queda marcada en el menú;
@@ -62,18 +63,13 @@
 ### Cambios en la base de datos (migraciones V5 y V6)
 - **V5:** columnas `limite_diario`, `limite_semanal`, `pausa_hasta` y `eliminado` en la tabla `usuario`.
 - **V6:** columna `juego_responsable` en la tabla `limites` (activado por defecto).
-- Las bases de datos del Sprint 8 se actualizan solas al arrancar (comprobado).
+- Las bases de datos de la iteración 8 se actualizan solas al arrancar (comprobado).
 
-## Dailies
+## Registro del trabajo
 - **02/10**: gráfico de evolución, juego responsable, eliminar la cuenta, migración V5, pruebas y actualización de los diagramas y las métricas.
 - **02/10**: interruptor del juego responsable en Gestión y rediseño visual.
 
-## Sprint Review (02/10)
+## Resultado (02/10)
 - **Historias completadas:** HU-32, HU-10 (con el interruptor en Gestión) y HU-18, más el rediseño visual (16 puntos).
 - **Historias no completadas:** ninguna.
-- **Feedback del PO:** poder entrar en cada equipo y ver sus jugadores, su alineación y su puntuación. Entra en el backlog como fila 32 (HU-49 y HU-50).
-
-## Retrospectiva (02/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+- **Peticiones añadidas durante la iteración:** poder entrar en cada equipo y ver sus jugadores, su alineación y su puntuación. Entra en el backlog como fila 32 (HU-49 y HU-50).

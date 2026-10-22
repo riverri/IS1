@@ -1,12 +1,12 @@
-"""Genera las gráficas de velocidad y progreso a partir de los puntos de cada sprint.
+"""Genera las gráficas de velocidad y progreso de las iteraciones del Sprint 1.
 
 Uso: python3 docs/scrum/graficas/generar.py  (sin dependencias externas).
-Al cerrar un sprint, añade su fila a SPRINTS y vuelve a ejecutarlo.
+Los datos salen de las actas de docs/scrum/sprints/iteraciones/.
 """
 from pathlib import Path
 
-# (sprint, puntos comprometidos en la planificación, puntos completados, incluido lo añadido durante el sprint)
-SPRINTS = [
+# (iteración, puntos comprometidos en la planificación, puntos completados, incluido lo añadido durante la iteración)
+ITERACIONES = [
     (1, 23, 23),
     (2, 21, 33),
     (3, 24, 24),
@@ -18,6 +18,7 @@ SPRINTS = [
     (9, 12, 16),
     (10, 11, 11),
     (11, 17, 17),
+    (12, 10, 10),
 ]
 
 SUPERFICIE = "#fcfcfb"
@@ -70,48 +71,49 @@ def barra(x, y, ancho, alto, color):
 
 
 def velocidad():
-    svg = lienzo("Velocidad por sprint", "Puntos de historia comprometidos en la planificación y completados al cerrar")
+    svg = lienzo("Velocidad por iteración del Sprint 1", "Puntos comprometidos en la planificación de cada iteración y completados al cerrarla")
     leyenda(svg, [(COMPROMETIDO, "Comprometidos"), (COMPLETADO, "Completados")])
     maximo = 40
     alto_util = eje_y(svg, maximo, 10)
-    hueco = (ANCHO - IZQ - DER) / len(SPRINTS)
+    hueco = (ANCHO - IZQ - DER) / len(ITERACIONES)
     ancho_barra = min(26, hueco / 3)
-    for i, (sprint, comprometidos, completados) in enumerate(SPRINTS):
+    for i, (iteracion, comprometidos, completados) in enumerate(ITERACIONES):
         centro = IZQ + hueco * (i + 0.5)
         for desplazamiento, valor, color, nombre in ((-ancho_barra - 1, comprometidos, COMPROMETIDO, "comprometidos"),
                                                     (1, completados, COMPLETADO, "completados")):
             alto = valor / maximo * alto_util
             x = centro + desplazamiento
             y = ALTO - ABAJO - alto
-            svg.append(f'<g><title>Sprint {sprint}: {valor} puntos {nombre}</title>{barra(x, y, ancho_barra, alto, color)}</g>')
+            svg.append(f'<g><title>Iteración {iteracion}: {valor} puntos {nombre}</title>{barra(x, y, ancho_barra, alto, color)}</g>')
         svg.append(f'<text x="{centro:.1f}" y="{ALTO - ABAJO - completados / maximo * alto_util - 6:.1f}" font-size="11" '
                    f'text-anchor="start" fill="{TEXTO}">{completados}</text>')
-        svg.append(f'<text x="{centro:.1f}" y="{ALTO - ABAJO + 18}" font-size="12" text-anchor="middle" fill="{TEXTO_SUAVE}">Sprint {sprint}</text>')
-    media = sum(c for _, _, c in SPRINTS) / len(SPRINTS)
+        svg.append(f'<text x="{centro:.1f}" y="{ALTO - ABAJO + 18}" font-size="12" text-anchor="middle" fill="{TEXTO_SUAVE}">It. {iteracion}</text>')
+    media = sum(c for _, _, c in ITERACIONES) / len(ITERACIONES)
     y = ALTO - ABAJO - media / maximo * alto_util
     svg.append(f'<line x1="{IZQ}" x2="{ANCHO - DER}" y1="{y:.1f}" y2="{y:.1f}" stroke="{TEXTO_SUAVE}" stroke-width="1" stroke-dasharray="4 4"/>')
-    svg.append(f'<text x="{ANCHO - DER}" y="{y - 6:.1f}" font-size="11" text-anchor="end" fill="{TEXTO_SUAVE}">media {media:.1f}</text>')
+    media_texto = f"{media:.1f}".replace(".", ",")
+    svg.append(f'<text x="{ANCHO - DER}" y="{y + 14:.1f}" font-size="11" text-anchor="end" fill="{TEXTO_SUAVE}">media {media_texto}</text>')
     svg.append('</svg>')
     (CARPETA / "velocidad.svg").write_text("\n".join(svg), encoding="utf-8")
 
 
 def progreso():
-    total = sum(c for _, _, c in SPRINTS)
-    svg = lienzo("Puntos completados acumulados", f"Total entregado tras cada sprint ({total} puntos en {len(SPRINTS)} sprints)")
+    total = sum(c for _, _, c in ITERACIONES)
+    svg = lienzo("Puntos completados acumulados", f"Total entregado tras cada iteración del Sprint 1 ({total} puntos en {len(ITERACIONES)} iteraciones)")
     maximo = ((total + 49) // 50) * 50
     alto_util = eje_y(svg, maximo, 50)
-    hueco = (ANCHO - IZQ - DER) / len(SPRINTS)
+    hueco = (ANCHO - IZQ - DER) / len(ITERACIONES)
     puntos, acumulado = [], 0
-    for i, (sprint, _, completados) in enumerate(SPRINTS):
+    for i, (iteracion, _, completados) in enumerate(ITERACIONES):
         acumulado += completados
         x = IZQ + hueco * (i + 0.5)
         y = ALTO - ABAJO - acumulado / maximo * alto_util
-        puntos.append((sprint, x, y, acumulado))
-        svg.append(f'<text x="{x:.1f}" y="{ALTO - ABAJO + 18}" font-size="12" text-anchor="middle" fill="{TEXTO_SUAVE}">Sprint {sprint}</text>')
+        puntos.append((iteracion, x, y, acumulado))
+        svg.append(f'<text x="{x:.1f}" y="{ALTO - ABAJO + 18}" font-size="12" text-anchor="middle" fill="{TEXTO_SUAVE}">It. {iteracion}</text>')
     camino = " ".join(f"{'M' if i == 0 else 'L'}{x:.1f},{y:.1f}" for i, (_, x, y, _) in enumerate(puntos))
     svg.append(f'<path d="{camino}" fill="none" stroke="{COMPLETADO}" stroke-width="2" stroke-linejoin="round"/>')
-    for i, (sprint, x, y, valor) in enumerate(puntos):
-        svg.append(f'<g><title>Sprint {sprint}: {valor} puntos acumulados</title>'
+    for i, (iteracion, x, y, valor) in enumerate(puntos):
+        svg.append(f'<g><title>Iteración {iteracion}: {valor} puntos acumulados</title>'
                    f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4.5" fill="{COMPLETADO}" stroke="{SUPERFICIE}" stroke-width="2"/></g>')
         if i in (0, len(puntos) - 1) or i % 2 == 1:
             svg.append(f'<text x="{x:.1f}" y="{y - 10:.1f}" font-size="11" text-anchor="middle" fill="{TEXTO}">{valor}</text>')

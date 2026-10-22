@@ -18,17 +18,17 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 | `eventos` | BusquedaWebTest (5), CatalogoWebTest (5), EventoTest (2), FichaEquipoWebTest (10) |
 | `gestion` | CasaWebTest (2), EditarEventoWebTest (8), GestionWebTest (15) |
 | `ligas` | LigasWebTest (7), LigasSinTransaccionTest (1) |
-| `usuarios` | CuentaWebTest (6), RankingWebTest (2), RecuperacionWebTest (7), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (7) |
+| `usuarios` | CuentaWebTest (7), NombresProhibidosTest (5), RankingWebTest (2), RecuperacionWebTest (7), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (8) |
 | `web` | FormatoTest (5) |
 
-**Total: 276 pruebas en 44 clases.**
+**Total: 283 pruebas en 46 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
 
 | Historias hechas | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 45 | 94 | 91 (97 %) | 3 | 0 |
+| 45 | 96 | 93 (97 %) | 3 | 0 |
 
 Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al escribir el importe y la confirmación al eliminar la cuenta.
 

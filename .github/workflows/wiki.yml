@@ -1,12 +1,13 @@
 name: Wiki
 
 # Publica en la wiki de GitHub las páginas de docs/wiki cada vez que cambian en main,
-# y los diagramas de docs/diseno/uml.md como la página "Diagramas UML".
-# Solo añade o actualiza páginas: las que se escriben a mano en la wiki (por ejemplo, las de los sprints) no se tocan.
+# los diagramas de docs/diseno/uml.md como la página "Diagramas UML"
+# y las actas de docs/scrum/sprints/sprint-N.md como "Primer Sprint", "Segundo Sprint"…
+# Solo añade o actualiza páginas: las que se escriben a mano en la wiki no se tocan.
 on:
   push:
     branches: [main]
-    paths: ['docs/wiki/**', 'docs/diseno/uml.md']
+    paths: ['docs/wiki/**', 'docs/diseno/uml.md', 'docs/scrum/sprints/sprint-*.md']
   workflow_dispatch:
 
 permissions:
@@ -24,6 +25,11 @@ jobs:
           git clone "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
           cp docs/wiki/*.md wiki/
           cp docs/diseno/uml.md wiki/Diagramas-UML.md
+          ordinales=(Primer Segundo Tercer Cuarto Quinto Sexto Séptimo)
+          for acta in docs/scrum/sprints/sprint-[0-9]*.md; do
+            n=$(basename "$acta" .md); n=${n#sprint-}
+            cp "$acta" "wiki/${ordinales[n-1]}-Sprint.md"
+          done
           cd wiki
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -31,6 +37,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "La wiki ya está al día"
           else
-            git commit -m "Actualizar la wiki desde docs/wiki (${GITHUB_SHA::7})"
+            git commit -m "Actualizar la wiki desde el repositorio (${GITHUB_SHA::7})"
             git push
           fi

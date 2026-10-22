@@ -1,10 +1,11 @@
-# Sprint 3 · 01/10 (cerrado antes de plazo)
+# Iteración 3 · 01/10/2026 · Sprint 1
 
-## Sprint Planning (01/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** el creador de apuestas introduce el resultado de un evento y las apuestas se resuelven y se pagan solas; el usuario ve su historial y sus estadísticas.
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 3» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (01/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** el creador de apuestas introduce el resultado de un evento y las apuestas se resuelven y se pagan solas; el usuario ve su historial y sus estadísticas.
 - **Puntos comprometidos:** 24
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 2)_
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -23,15 +24,10 @@
 - **Al suspender un evento** desaparece del catálogo y no admite apuestas ni cancelaciones hasta que se reactive.
 - **Las apuestas canceladas o anuladas** no cuentan para las estadísticas ni para el ranking.
 
-## Dailies
+## Registro del trabajo
 - **01/10**: resolución de apuestas, suspensión y anulación, historial, estadísticas y ranking completo.
 
-## Sprint Review (01/10)
+## Resultado (01/10)
 - **Historias completadas:** HU-04, HU-05, HU-06, HU-25, HU-34, HU-35, HU-36 (24 puntos).
 - **Historias no completadas:** ninguna.
-- **Feedback del PO:** siguiente prioridad, las apuestas combinadas (MVP) antes que las de largo plazo.
-
-## Retrospectiva (01/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+- **Peticiones añadidas durante la iteración:** siguiente prioridad, las apuestas combinadas (MVP) antes que las de largo plazo.

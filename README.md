@@ -44,7 +44,8 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── scrum/
 │   │   ├── proceso.md                 # Cómo aplicamos Scrum
 │   │   ├── product-backlog.md         # Product Backlog (orden, estimación, MoSCoW y estado)
-│   │   ├── sprints/                   # Actas de cada sprint (planning, dailies, review y retro)
+│   │   ├── sprints/                   # Actas de cada sprint (se publican en la wiki)
+│   │   │   └── iteraciones/           # Las 12 iteraciones de desarrollo del Sprint 1
 │   │   ├── metricas.md                # Velocidad y progreso
 │   │   └── graficas/                  # Gráficas de las métricas y el script que las genera
 │   ├── diseno/uml.md                  # Diagramas UML (casos de uso, clases, estados, secuencia, datos)
@@ -193,7 +194,7 @@ Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, qu
 2. **No modifiques nunca un script que ya esté en `main`**: otros ordenadores ya lo han aplicado.
 3. Arranca y ejecuta `./mvnw test`. Hibernate comprueba (`ddl-auto=validate`) que las entidades coinciden con las tablas; si falta una migración, la aplicación no arranca y dice qué columna o tabla falta.
 
-Si tu carpeta `datos/` es de antes del Sprint 4 (apuestas combinadas), no se puede actualizar: para la aplicación y bórrala.
+Si tu carpeta `datos/` es de antes de la iteración 4 del Sprint 1 (apuestas combinadas), no se puede actualizar: para la aplicación y bórrala.
 
 ## Datos reales con la API (football-data.org)
 
