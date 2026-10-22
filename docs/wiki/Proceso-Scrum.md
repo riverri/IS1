@@ -2,7 +2,17 @@
 
 **Scrum** organiza el trabajo en ciclos cortos de duración fija (**sprints**). Al final de cada sprint hay algo que funciona y se puede enseñar. El proceso completo está en [`docs/scrum/proceso.md`](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md), basado en el Tema 3 de la asignatura.
 
-La documentación de cada sprint está en la sección **Sprints** de esta wiki.
+## Calendario de sprints
+
+Sprints de dos semanas. El acta de cada uno (planificación, review, retrospectiva y acciones de mejora) está en la sección **Sprints** de esta wiki.
+
+| Sprint | Fechas | Acta |
+|---|---|---|
+| 1 | 19/09 – 3/10 | [Primer Sprint](Primer-Sprint) · el código se hizo en 12 [iteraciones](https://github.com/riverri/IS1/tree/main/docs/scrum/sprints/iteraciones) el 1 y el 2 de octubre |
+| 2 | 3/10 – 17/10 | [Segundo Sprint](Segundo-Sprint) |
+| 3 | _por completar_ | [Tercer Sprint](Tercer-Sprint) |
+
+Las actas se editan en el repositorio, en `docs/scrum/sprints/sprint-N.md`, y se publican solas en la wiki. Para el siguiente sprint, copia la [plantilla](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/plantilla-sprint.md).
 
 ## Roles
 
@@ -45,5 +55,5 @@ Una historia está terminada si:
 
 ## Estimación y priorización
 - **Puntos de historia** en escala Fibonacci (1, 2, 3, 5, 8, 13, 20): tamaño relativo, no horas. Se estiman con **Planning Poker**.
-- **Velocidad:** puntos terminados por sprint; sirve para planificar.
+- **Velocidad:** puntos terminados por sprint. La del Sprint 1 no sirve para planificar, porque casi todo el código se hizo con IA en dos días; hasta tener la de un sprint normal se planifica con las horas estimadas de cada historia ([métricas](https://github.com/riverri/IS1/blob/main/docs/scrum/metricas.md)).
 - **MoSCoW:** cada fila del backlog es Must, Should, Could o Won't. El **MVP** (producto mínimo viable) son los Must.

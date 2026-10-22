@@ -1,44 +1,57 @@
 # Métricas del proyecto
 
-Puntos de historia por sprint, sacados de las actas de `sprints/`. Las gráficas se generan con `python3 docs/scrum/graficas/generar.py`. Al cerrar un sprint, se añade su fila a la lista `SPRINTS` de ese script y se vuelve a ejecutar.
+Puntos de historia de cada sprint, sacados de las [actas de los sprints](sprints/). Las gráficas se generan con `python3 docs/scrum/graficas/generar.py`.
 
-## Velocidad
+## Velocidad por sprint
 
-![Velocidad por sprint: puntos comprometidos y completados](graficas/velocidad.svg)
+| Sprint | Fechas | Puntos completados | Qué se hizo |
+|---|---|---:|---|
+| [1](sprints/sprint-1.md) | 19/09 – 3/10 | 214 | 44 historias, en 12 iteraciones el 1 y el 2 de octubre (detalle abajo) |
+| [2](sprints/sprint-2.md) | 3/10 – 17/10 | 5 | HU-17, recuperar la contraseña. El resto del sprint fue trabajo sin puntos: 34 fallos corregidos, criterios de aceptación, prioridades, wiki y gestión de riesgos |
+| [3](sprints/sprint-3.md) | _por completar_ | | |
 
-| Sprint | Comprometidos | Completados | Nota |
+- La mayor parte del código se escribió en el Sprint 1 con ayuda de IA, en dos días. Por eso **estas velocidades no sirven para planificar** los siguientes sprints: no dicen cuánto trabajo cabe en un sprint del equipo.
+- Para planificar el Sprint 3 hay que usar la estimación en horas de cada historia ([historias de usuario](../requisitos/historias-de-usuario.md#estimación)) y las horas que cada persona puede dedicar.
+- En el Sprint 2 los fallos y la documentación no tienen puntos porque no son historias de usuario. Se pueden ver en su acta.
+
+## Iteraciones del Sprint 1
+
+![Velocidad por iteración del Sprint 1: puntos comprometidos y completados](graficas/velocidad.svg)
+
+| Iteración | Comprometidos | Completados | Nota |
 |---:|---:|---:|---|
-| 1 | 23 | 23 | |
-| 2 | 21 | 33 | 12 puntos añadidos durante el sprint (búsqueda, cancelar, ranking por saldo, más deportes, escudos) |
-| 3 | 24 | 24 | |
-| 4 | 18 | 18 | |
-| 5 | 13 | 16 | 3 puntos añadidos: migraciones con Flyway por el error 500 del ranking |
-| 6 | 18 | 18 | |
-| 7 | 16 | 16 | |
-| 8 | 12 | 12 | |
-| 9 | 12 | 16 | 4 puntos añadidos: interruptor del juego responsable en Gestión y rediseño visual |
-| 10 | 11 | 11 | |
-| 11 | 17 | 17 | |
-| **Total** | **185** | **204** | Media de 18,5 puntos por sprint |
+| [1](sprints/iteraciones/iteracion-01.md) | 23 | 23 | |
+| [2](sprints/iteraciones/iteracion-02.md) | 21 | 33 | 12 puntos añadidos durante la iteración (búsqueda, cancelar, ranking por saldo, más deportes, escudos) |
+| [3](sprints/iteraciones/iteracion-03.md) | 24 | 24 | |
+| [4](sprints/iteraciones/iteracion-04.md) | 18 | 18 | |
+| [5](sprints/iteraciones/iteracion-05.md) | 13 | 16 | 3 puntos añadidos: migraciones con Flyway por el error 500 del ranking |
+| [6](sprints/iteraciones/iteracion-06.md) | 18 | 18 | |
+| [7](sprints/iteraciones/iteracion-07.md) | 16 | 16 | |
+| [8](sprints/iteraciones/iteracion-08.md) | 12 | 12 | |
+| [9](sprints/iteraciones/iteracion-09.md) | 12 | 16 | 4 puntos añadidos: interruptor del juego responsable en Gestión y rediseño visual |
+| [10](sprints/iteraciones/iteracion-10.md) | 11 | 11 | |
+| [11](sprints/iteraciones/iteracion-11.md) | 17 | 17 | |
+| [12](sprints/iteraciones/iteracion-12.md) | 10 | 10 | Trazabilidad, servidor con PostgreSQL y tablero |
+| **Total** | **195** | **214** | Media de 17,8 puntos por iteración |
 
-- **Comprometidos:** puntos de las historias elegidas en la Sprint Planning.
-- **Completados:** todo lo terminado al cerrar el sprint, incluido el trabajo que el PO añadió durante el sprint. HU-36 (3 puntos), que en el Sprint 2 quedó a medias (ranking solo por saldo), está contada en ese sprint.
-- **Lectura:** se ha completado todo lo comprometido en cada sprint. La velocidad baja a partir del Sprint 4 porque las historias del MVP más grandes (cuotas, resolución, combinadas) ya estaban hechas. La media de unos 19 puntos sirve para planificar los siguientes sprints.
+- **Comprometidos:** puntos de las historias elegidas al planificar la iteración.
+- **Completados:** todo lo terminado al cerrar la iteración, incluido lo que se añadió durante ella. HU-36 (3 puntos), que en la iteración 2 quedó a medias (ranking solo por saldo), está contada en esa iteración.
+- Los 214 puntos son más que los 185 de las historias hechas ([estimación](../requisitos/historias-de-usuario.md#estimación)) porque aquí también cuentan trabajos que no son historias: escudos, Flyway, el rediseño o las tareas de la iteración 12.
 
-## Progreso acumulado (burnup)
+## Progreso acumulado del Sprint 1 (burnup)
 
-![Puntos completados acumulados tras cada sprint](graficas/progreso.svg)
+![Puntos completados acumulados tras cada iteración del Sprint 1](graficas/progreso.svg)
 
-| Tras el sprint | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Puntos acumulados | 23 | 56 | 80 | 98 | 114 | 132 | 148 | 160 | 176 | 187 | 204 |
+| Tras la iteración | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Puntos acumulados | 23 | 56 | 80 | 98 | 114 | 132 | 148 | 160 | 176 | 187 | 204 | 214 |
 
-- El **MVP** quedó completo en el Sprint 4, con 98 puntos.
-- Del Sprint 5 en adelante se han hecho historias *Should* y *Could*: la API, las apuestas a largo plazo, las estadísticas de equipos, los avisos, la gestión de la cuenta, el juego responsable, las plantillas, las ligas privadas y los nuevos tipos de apuesta.
+- El **MVP** quedó completo en la iteración 4, con 98 puntos.
+- De la iteración 5 en adelante se hicieron historias *Should* y *Could*: la API, las apuestas a largo plazo, las estadísticas de equipos, los avisos, la gestión de la cuenta, el juego responsable, las plantillas, las ligas privadas y los nuevos tipos de apuesta.
 
-## ¿Y el burndown de cada sprint?
+## Burndown de cada sprint
 
-Un burndown diario necesita anotar, cada día del sprint, los puntos que quedan por hacer. Los sprints de este proyecto se han desarrollado de forma concentrada, en una o dos sesiones, así que su burndown diario sería una sola bajada de la línea y no aportaría información. Por eso se muestran la velocidad y el burnup del proyecto, que sí reflejan cómo avanza.
+Las iteraciones del Sprint 1 se hicieron en dos días y el Sprint 2 no tuvo historias con puntos salvo HU-17, así que todavía no hay burndown que mostrar.
 
 Para los próximos sprints, el burndown se puede llevar con una tabla en el acta del sprint, rellenada en cada daily:
 

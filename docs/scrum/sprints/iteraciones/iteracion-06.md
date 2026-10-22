@@ -1,10 +1,11 @@
-# Sprint 6 · 01/10 (cerrado antes de plazo)
+# Iteración 6 · 01/10/2026 · Sprint 1
 
-## Sprint Planning (01/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** las cuotas tienen en cuenta la forma de los equipos y el dinero apostado, el creador fija los límites de apuesta, y se puede apostar a largo plazo (Balón de Oro, campeón de liga…).
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 6» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (01/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** las cuotas tienen en cuenta la forma de los equipos y el dinero apostado, el creador fija los límites de apuesta, y se puede apostar a largo plazo (Balón de Oro, campeón de liga…).
 - **Puntos comprometidos:** 18
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 5)_
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -27,7 +28,7 @@
 
 ### Límites de apuesta
 - Se guardan en la base de datos y los cambia el creador en *Gestión → Límites de apuesta*.
-- Por defecto: entre 1 y 500 monedas por apuesta y combinadas de hasta 10 selecciones. Sustituye a la propiedad `apuestas.limites.max-selecciones` del Sprint 4.
+- Por defecto: entre 1 y 500 monedas por apuesta y combinadas de hasta 10 selecciones. Sustituye a la propiedad `apuestas.limites.max-selecciones` de la iteración 4.
 - Se aplican a las apuestas simples, a las combinadas y a las de largo plazo. Las páginas de apostar muestran los límites vigentes.
 
 ### Apuestas a largo plazo
@@ -47,19 +48,14 @@
 - Tabla `limites`, con los valores por defecto.
 - Tablas `mercado` y `candidato`.
 - Una selección pasa a ser el resultado de un evento **o** un candidato de un mercado.
-- Las bases de datos del Sprint 5 se actualizan solas al arrancar, sin perder apuestas ni saldos (comprobado).
+- Las bases de datos de la iteración 5 se actualizan solas al arrancar, sin perder apuestas ni saldos (comprobado).
 
-## Dailies
+## Registro del trabajo
 - **01/10**: forma y ajuste por volumen en las cuotas, límites de apuesta, mercados a largo plazo, pantallas, migración V3 y pruebas.
 
-## Sprint Review (01/10)
+## Resultado (01/10)
 - **Historias completadas:** HU-02, HU-03 (versión 2), HU-07, HU-44 y HU-45.
 - **Historias no completadas:** ninguna.
-- **Feedback del PO:**
+- **Peticiones añadidas durante la iteración:**
   - Añadir al backlog tres historias nuevas: HU-46 (editar y borrar eventos), HU-47 (cambiar nombre y contraseña) y HU-48 (perfil público desde el ranking).
-  - Siguiente sprint: ficha de equipo, cara a cara, notificaciones y modificar el importe de una apuesta.
-
-## Retrospectiva (01/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+  - Siguiente iteración: ficha de equipo, cara a cara, notificaciones y modificar el importe de una apuesta.

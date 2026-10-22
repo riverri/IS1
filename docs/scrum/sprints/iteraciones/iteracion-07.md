@@ -1,10 +1,11 @@
-# Sprint 7 · 01/10 (cerrado antes de plazo)
+# Iteración 7 · 01/10/2026 · Sprint 1
 
-## Sprint Planning (01/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** antes de apostar, el usuario puede consultar la ficha de cada equipo y el cara a cara de los rivales; recibe un aviso cuando se resuelven sus apuestas y puede cambiar el importe mientras el partido no haya empezado.
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 7» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (01/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** antes de apostar, el usuario puede consultar la ficha de cada equipo y el cara a cara de los rivales; recibe un aviso cuando se resuelven sus apuestas y puede cambiar el importe mientras el partido no haya empezado.
 - **Puntos comprometidos:** 16
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 6)_
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -51,19 +52,14 @@
   - **se aplica la cuota actual**. Si no, se podría apostar poco con una cuota alta y subir el importe cuando la cuota ya hubiera bajado.
 
 ### Cambios en la base de datos (migración V4)
-- Tabla `notificacion`. Las bases de datos del Sprint 6 se actualizan solas al arrancar.
+- Tabla `notificacion`. Las bases de datos de la iteración 6 se actualizan solas al arrancar.
 
-## Dailies
+## Registro del trabajo
 - **01/10**: historias nuevas en el backlog; ficha de equipo, cara a cara, avisos, cambiar importe, migración V4 y pruebas.
 
-## Sprint Review (02/10)
+## Resultado (01/10)
 - **Historias completadas:** HU-31, HU-33, HU-37 y HU-27 (16 puntos).
 - **Historias no completadas:** ninguna.
-- **Feedback del PO:**
-  - Siguiente sprint: HU-46, HU-47 y HU-48.
+- **Peticiones añadidas durante la iteración:**
+  - Siguiente iteración: HU-46, HU-47 y HU-48.
   - Además, documentación de la asignatura: diagramas UML y gráficas de velocidad y progreso.
-
-## Retrospectiva (02/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**

@@ -1,10 +1,11 @@
-# Sprint 5 · 01/10 (cerrado antes de plazo)
+# Iteración 5 · 01/10/2026 · Sprint 1
 
-## Sprint Planning (01/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** los partidos y resultados reales de LaLiga y la Champions llegan solos desde una API y las apuestas se resuelven sin intervención del creador.
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 5» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (01/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** los partidos y resultados reales de LaLiga y la Champions llegan solos desde una API y las apuestas se resuelven sin intervención del creador.
 - **Puntos comprometidos:** 13
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 4)_
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -12,7 +13,7 @@
 | HU-25 | Resolución automática de apuestas con el resultado que llega de la API | 13, 16 | 3 | Jing Li | Hecho |
 | — | Escudos oficiales de los equipos desde la API | 13 | 1 | Jing Li | Hecho |
 | HU-05 | Aplazados (suspender) y cancelados (anular) desde la API | 13 | 1 | Jing Li | Hecho |
-| — | Migraciones de base de datos con Flyway (corrige el error 500 en Ranking y Mis apuestas con bases de datos antiguas) | — | 3 | Jing Li | Hecho (añadida durante el sprint) |
+| — | Migraciones de base de datos con Flyway (corrige el error 500 en Ranking y Mis apuestas con bases de datos antiguas) | — | 3 | Jing Li | Hecho (añadida durante la iteración) |
 
 ### Cómo funciona
 - **API:** se usa la **API v4 de football-data.org**, gratuita para LaLiga, la Champions y las grandes ligas europeas.
@@ -34,26 +35,21 @@
 - **Varios ordenadores con la misma clave.** Si varias personas sincronizan con la misma clave a la vez, se puede superar el límite de 10 peticiones por minuto.
 
 ### Migraciones con Flyway
-- **El problema:** al probar la web apareció un error 500 en *Ranking* y *Mis apuestas*. La causa era una base de datos creada antes del Sprint 4: Hibernate (`ddl-auto=update`) no pudo añadir la columna obligatoria `pagado` a las apuestas existentes.
+- **El problema:** al probar la web apareció un error 500 en *Ranking* y *Mis apuestas*. La causa era una base de datos creada antes de la iteración 4: Hibernate (`ddl-auto=update`) no pudo añadir la columna obligatoria `pagado` a las apuestas existentes.
 - **La solución:** las tablas pasan a crearse con scripts SQL versionados que aplica Flyway:
-  - `V1` es el esquema del Sprint 4 y `V2` añade los identificadores de la API.
+  - `V1` es el esquema de la iteración 4 y `V2` añade los identificadores de la API.
   - Hibernate solo valida que las entidades coinciden con las tablas.
-  - Las bases de datos creadas con el esquema del Sprint 4 se toman como versión 1 y se actualizan solas, sin perder datos (comprobado).
-  - Las anteriores al Sprint 4 no se pueden actualizar y hay que borrarlas.
+  - Las bases de datos creadas con el esquema de la iteración 4 se toman como versión 1 y se actualizan solas, sin perder datos (comprobado).
+  - Las anteriores a la iteración 4 no se pueden actualizar y hay que borrarlas.
 
-## Dailies
+## Registro del trabajo
 - **01/10**: cliente de la API, sincronización, tarea programada, botón en Gestión y documentación.
 - **01/10**: error 500 en Ranking con una base de datos antigua; se introducen las migraciones con Flyway.
 
-## Sprint Review (01/10)
+## Resultado (01/10)
 - **Historias completadas:** HU-21, HU-25 y HU-05 (desde la API), los escudos oficiales y las migraciones con Flyway.
 - **Historias no completadas:** ninguna. Queda pendiente probar la sincronización con una clave real de la API.
-- **Feedback del PO:**
+- **Peticiones añadidas durante la iteración:**
   - Equipos agrupados por deporte, con filtro por competición y buscador (hecho).
   - Script `compartir.bat` para jugar en clase desde varios ordenadores con un túnel de Cloudflare (hecho).
-  - Siguiente sprint: terminar el algoritmo de cuotas, los límites de apuesta y las apuestas a largo plazo.
-
-## Retrospectiva (01/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+  - Siguiente iteración: terminar el algoritmo de cuotas, los límites de apuesta y las apuestas a largo plazo.
