@@ -59,6 +59,21 @@ class UsuariosWebTest {
                 .andExpect(content().string(containsString("Ya existe una cuenta con ese email")));
     }
 
+    /** CA-11.3: un nombre con palabras ofensivas no se acepta, aunque cambie letras por números. */
+    @Test
+    void registroConNombreOfensivoNoCreaLaCuenta() throws Exception {
+        for (String nombre : new String[] {"Juan Puta", "G1l1p0ll4s"}) {
+            mvc.perform(post("/registro").with(csrf())
+                            .param("nombre", nombre)
+                            .param("email", "nuevo@ucm.es")
+                            .param("password", "secreta123")
+                            .param("confirmacion", "secreta123"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string(containsString("Ese nombre no está permitido")));
+        }
+        assertThat(usuarios.findByEmail("nuevo@ucm.es")).isEmpty();
+    }
+
     @Test
     void registroConContrasenasDistintasAvisa() throws Exception {
         mvc.perform(post("/registro").with(csrf())

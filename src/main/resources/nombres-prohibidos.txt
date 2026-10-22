@@ -1,0 +1,62 @@
+# Palabras que no se permiten en el nombre visible de un usuario (issue #75).
+# Una por línea, en minúsculas y sin tildes. Las líneas que empiezan por # son comentarios.
+# Las de 6 letras o más se buscan también dentro de otras palabras; las cortas, solo como palabra completa
+# (así no se rechazan nombres como "Dickens"). Ver NombresProhibidos.java.
+
+# Español
+puta
+putas
+puto
+putos
+putita
+hijoputa
+hijodeputa
+mierda
+cabron
+cabrona
+cabrones
+gilipollas
+imbecil
+idiota
+subnormal
+retrasado
+retrasada
+maricon
+marica
+bollera
+zorra
+polla
+pollas
+joder
+follar
+mamon
+mamona
+capullo
+pendejo
+pendeja
+malparido
+malparida
+estupido
+estupida
+mongolo
+mongola
+sudaca
+negrata
+nazi
+hitler
+
+# Inglés
+fuck
+fucker
+fucking
+shit
+bitch
+cunt
+dick
+whore
+slut
+asshole
+nigger
+nigga
+faggot
+retard
