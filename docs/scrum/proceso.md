@@ -24,7 +24,7 @@ El profesor, como Product Owner, decide el orden del Product Backlog y acepta en
 | **Sprint Review** | Último día | ≤ 1 h | Demo del incremento. El PO dice qué está "Terminado" y se actualiza el Product Backlog |
 | **Sprint Retrospective** | Tras la review | ≤ 45 min | Qué fue bien, qué mejorar y **al menos una mejora** que entra en el siguiente Sprint Backlog |
 
-Las actas de cada sprint van en `docs/scrum/sprints/sprint-NN.md` (ver la [plantilla](sprints/plantilla-sprint.md)).
+Las actas de cada sprint van en `docs/scrum/sprints/sprint-N.md` (ver la [plantilla](sprints/plantilla-sprint.md)) y se publican solas en la wiki. Las iteraciones de desarrollo del Sprint 1 tienen sus propias actas en [sprints/iteraciones/](sprints/iteraciones/).
 
 ## Artefactos y su equivalencia en GitHub
 | Artefacto Scrum | En GitHub |
@@ -34,7 +34,7 @@ Las actas de cada sprint van en `docs/scrum/sprints/sprint-NN.md` (ver la [plant
 | Incremento | Rama `main` al final del sprint, marcada con un **tag/release** (`sprint-1`, `sprint-2`…) |
 
 ## Tablero Kanban (GitHub Projects)
-Desde el Sprint 12, cada historia o tarea es un [issue](https://github.com/riverri/IS1/issues) con su etiqueta (`historia`, `tarea`, `documentación`, `sprint-12`…) y está en el tablero de la pestaña *Projects* del repositorio. Un PR que termina un issue lo cierra con `Closes #N` en su descripción.
+Desde la iteración 12 del Sprint 1 (2/10), cada historia o tarea es un [issue](https://github.com/riverri/IS1/issues) con su etiqueta (`historia`, `tarea`, `documentación`, `sprint-12`…) y está en el tablero de la pestaña *Projects* del repositorio. Un PR que termina un issue lo cierra con `Closes #N` en su descripción.
 
 Columnas: `Product Backlog` → `Sprint Backlog` → `En curso` → `En revisión (PR)` → `Terminado`
 - **Límite de trabajo en curso (WIP):** como máximo **1 tarea en curso por persona**. No se empieza otra hasta mover la anterior a revisión.
@@ -44,7 +44,7 @@ Columnas: `Product Backlog` → `Sprint Backlog` → `En curso` → `En revisió
 - **Puntos de historia**, que son relativos y no equivalen a horas. Escala Fibonacci: 1, 2, 3, 5, 8, 13, 20.
 - Técnica: **Planning Poker**. El PO explica la historia, cada miembro elige carta en secreto y se revelan a la vez. Si hay mucha diferencia, los extremos explican su voto y se repite.
 - Una historia de más de 13 puntos es demasiado grande y se divide.
-- **Velocidad** = puntos terminados por sprint. Tras el Sprint 1 sirve para planificar los siguientes.
+- **Velocidad** = puntos terminados por sprint. La del Sprint 1 no sirve para planificar porque casi todo el código se hizo con IA en dos días; hasta tener la de un sprint normal, se planifica con las horas estimadas de cada historia (ver [métricas](metricas.md)).
 - Seguimiento con un **burndown**: puntos pendientes por día del sprint.
 
 ## Priorización

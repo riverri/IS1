@@ -16,7 +16,7 @@ Las apuestas se reevalúan y el saldo se ajusta con la diferencia entre lo que d
 Porque las bases de datos guardadas no tenían las columnas nuevas al cambiar las entidades y la aplicación fallaba. Con Flyway cada cambio es un script numerado que se aplica una vez y en orden, sin perder datos.
 
 **¿Cómo sabéis que funciona?**
-276 pruebas automáticas que se ejecutan en cada pull request con H2 y con PostgreSQL, y la matriz de trazabilidad, que enlaza los 94 criterios de aceptación de las historias hechas con su prueba (91 automáticas y 3 que se comprueban a mano porque dependen del navegador).
+283 pruebas automáticas que se ejecutan en cada pull request con H2 y con PostgreSQL, y la matriz de trazabilidad, que enlaza los 96 criterios de aceptación de las historias hechas con su prueba (93 automáticas y 3 que se comprueban a mano porque dependen del navegador).
 
 **¿Qué es una transacción y dónde la usáis?**
 Un grupo de cambios que se hace entero o no se hace. Al apostar se descuenta el saldo y se guarda la apuesta: si algo falla, no se descuenta nada. En la sincronización con la API se usa una por partido para que un fallo no deshaga los demás.
@@ -25,7 +25,7 @@ Un grupo de cambios que se hace entero o no se hace. Al apostar se descuenta el 
 BCrypt para las contraseñas; Spring Security decide qué es público, qué exige sesión y qué exige ser creador; token CSRF en los formularios; bloqueo de 15 minutos tras 5 fallos ([Seguridad](Seguridad)).
 
 **¿Qué es el MVP y cuándo lo tuvisteis?**
-El producto mínimo viable: las filas Must del backlog (catálogo, cuentas, moneditas, cuotas, apuestas simples y combinadas, resolución y panel del creador). Quedó completo en el Sprint 4.
+El producto mínimo viable: las filas Must del backlog (catálogo, cuentas, moneditas, cuotas, apuestas simples y combinadas, resolución y panel del creador). Quedó completo en el Sprint 1, en la iteración 4 (ver [Primer Sprint](Primer-Sprint)).
 
 **¿Qué historias no se han hecho y por qué?**
 Todas las previstas están hechas, incluida HU-17 (recuperar la contraseña). HU-15 y HU-16 (cuenta bancaria) se descartaron porque no hay dinero real, y HU-38 a HU-43 (parte social completa) por su coste; en su lugar se hicieron el perfil público y las ligas privadas.

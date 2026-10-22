@@ -1,10 +1,11 @@
-# Sprint 11 · 16/10 – 30/10
+# Iteración 11 · 02/10/2026 · Sprint 1
 
-## Sprint Planning (16/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** jugar entre amigos en ligas privadas, apostar a más cosas de cada partido de fútbol y que el creador vea si la casa gana o pierde dinero.
-- **Velocidad media de los sprints anteriores:** 18,7 puntos · **Puntos comprometidos:** 17
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 10)_
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 11» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (02/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** jugar entre amigos en ligas privadas, apostar a más cosas de cada partido de fútbol y que el creador vea si la casa gana o pierde dinero.
+- **Media de las iteraciones anteriores:** 18,7 puntos · **Puntos comprometidos:** 17
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -39,7 +40,7 @@
   - Si solo se marca el ganador, la doble oportunidad se resuelve igual, pero las apuestas de goles y de ambos marcan se **anulan** (cuentan con cuota 1,00).
   - Corregir el marcador vuelve a resolver las apuestas y ajusta los saldos, igual que con el resultado.
   - Con la API, el marcador entra solo si el partido acabó en los 90 minutos. Si hubo prórroga o penaltis, solo se usa el ganador, porque la API suma esos goles. _(Cambiado después: ahora se usa el marcador de los 90 minutos; ver la revisión de fallos.)_
-- **Corrección hecha durante el sprint:** las apuestas de estos tipos no tienen resultado 1X2 y rompían el cálculo del dinero apostado a cada resultado. Ahora no entran en ese cálculo, y hay una prueba que lo comprueba.
+- **Corrección hecha durante la iteración:** las apuestas de estos tipos no tienen resultado 1X2 y rompían el cálculo del dinero apostado a cada resultado. Ahora no entran en ese cálculo, y hay una prueba que lo comprueba.
 
 ### Cuentas de la casa (HU-54)
 - Nueva página **Gestión → Cuentas de la casa**, con:
@@ -52,17 +53,12 @@
 - Tablas `liga` y `liga_miembro`.
 - Columnas `goles_local` y `goles_visitante` en `evento`.
 - Columna `especial` en `seleccion`, con el tipo de apuesta cuando no es 1X2.
-- Las bases de datos del Sprint 10 se actualizan solas al arrancar (comprobado con una apuesta ya hecha).
+- Las bases de datos de la iteración 10 se actualizan solas al arrancar (comprobado con una apuesta ya hecha).
 
-## Dailies
+## Registro del trabajo
 - **16/10**: ligas, nuevos tipos de apuesta con sus cuotas y su resolución, marcador desde Gestión y desde la API, cuentas de la casa, migración V8 y pruebas.
 
-## Sprint Review (30/10)
+## Resultado (02/10)
 - Historias completadas:
 - Historias no completadas (vuelven al backlog):
 - Feedback del PO/profesor:
-
-## Retrospectiva (30/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**

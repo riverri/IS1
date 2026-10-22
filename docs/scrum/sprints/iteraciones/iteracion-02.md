@@ -1,10 +1,11 @@
-# Sprint 2 · 01/10 (cerrado antes de plazo)
+# Iteración 2 · 01/10/2026 · Sprint 1
 
-## Sprint Planning (01/10)
-- **Asistentes:** Jing Li
-- **Sprint Goal:** un usuario ve las cuotas de cada partido, calculadas por nuestro algoritmo, y puede hacer apuestas simples con sus moneditas.
-- **Velocidad del sprint anterior:** 23 puntos · **Puntos comprometidos:** 21
-- **Mejora de la retrospectiva anterior incluida:** _(pendiente de la retrospectiva del Sprint 1)_
+> **Iteración de desarrollo del [Sprint 1](../sprint-1.md)** (19/09 – 3/10). Esta acta se escribió como «Sprint 2» con el formato de un sprint, pero no lo es: las doce iteraciones se hicieron el 1 y el 2 de octubre, dentro del Sprint 1. Las retrospectivas y las reviews con el Product Owner son las de cada sprint, no las de cada iteración.
+
+## Planificación (01/10)
+- **Hecha por:** Jing Li
+- **Objetivo:** un usuario ve las cuotas de cada partido, calculadas por nuestro algoritmo, y puede hacer apuestas simples con sus moneditas.
+- **Puntos de la iteración anterior:** 23 puntos · **Puntos comprometidos:** 21
 
 | Historia | Descripción | Fila backlog | Puntos | Responsable | Estado |
 |---|---|---|---|---|---|
@@ -13,9 +14,9 @@
 | HU-23 | Apuesta simple con parte del saldo | 6, 7 | 5 | Jing Li | Hecho |
 | HU-24 | Ver mis apuestas activas | 10, 11 | 3 | Jing Li | Hecho |
 | — | Editar calificación y escudo de los equipos desde Gestión | 17 | 2 | Jing Li | Hecho |
-| HU-22 | Búsqueda y filtros del catálogo (pestañas por deporte, buscador) | 21 | 3 | Jing Li | Hecho (añadida durante el sprint) |
-| HU-26 | Cancelar una apuesta antes de que empiece el evento | 14 | 2 | Jing Li | Hecho (añadida durante el sprint) |
-| HU-36 | Ranking de usuarios | 24 | 3 | Jing Li | Parcial: por saldo (añadida durante el sprint) |
+| HU-22 | Búsqueda y filtros del catálogo (pestañas por deporte, buscador) | 21 | 3 | Jing Li | Hecho (añadida durante la iteración) |
+| HU-26 | Cancelar una apuesta antes de que empiece el evento | 14 | 2 | Jing Li | Hecho (añadida durante la iteración) |
+| HU-36 | Ranking de usuarios | 24 | 3 | Jing Li | Parcial: por saldo (añadida durante la iteración) |
 | — | Más deportes: baloncesto (ACB, Euroliga, NBA), tenis, Fórmula 1 y MotoGP | 2 | 3 | Jing Li | Hecho |
 | — | Escudos dibujados con los colores de cada club cuando no hay imagen | — | 1 | Jing Li | Hecho |
 
@@ -28,25 +29,20 @@
 
 Las cuotas se calculan en el momento, así que si el creador cambia la calificación de un equipo, cambian las cuotas de sus partidos pendientes. Cada apuesta guarda la cuota del momento en que se hizo.
 
-### Pendiente para la versión 2 (otro sprint)
+### Pendiente para la versión 2 (otra iteración)
 - **Factor de forma reciente (HU-02).**
 - **Bajada de la cuota según el volumen apostado** a cada resultado (fila 3 del backlog).
 
 ### Notas sobre el trabajo añadido
 - Los eventos de baloncesto, tenis, Fórmula 1 y MotoGP son **de ejemplo** (no son el calendario real). El creador de apuestas debe sustituirlos por los reales desde Gestión.
 - En Fórmula 1 y MotoGP se apuesta a **duelos**: cuál de los dos pilotos acaba por delante.
-- El ranking ordena por saldo. Cuando se resuelvan las apuestas (Sprint 3) se podrá ordenar por ganancias y por porcentaje de aciertos, como pide HU-36.
+- El ranking ordena por saldo. Cuando se resuelvan las apuestas (iteración 3) se podrá ordenar por ganancias y por porcentaje de aciertos, como pide HU-36.
 
-## Dailies
+## Registro del trabajo
 - **01/10**: algoritmo de cuotas, apuesta simple y "Mis apuestas".
 - **01/10**: catálogo por deportes con buscador, nuevos deportes, cancelación de apuestas, ranking y escudos dibujados.
 
-## Sprint Review (01/10)
+## Resultado (01/10)
 - **Historias completadas:** HU-03 (versión 1), HU-20, HU-23, HU-24, HU-22, HU-26 y HU-36 (por saldo), más los deportes nuevos y los escudos.
-- **Historias no completadas:** ninguna de las comprometidas. HU-36 se completa en el Sprint 3, con orden por ganancias y aciertos.
-- **Feedback del PO:** añadir apuestas a largo plazo (Balón de Oro, campeón de liga…). Entra en el backlog como fila 28 (HU-44, HU-45), después de la resolución de apuestas.
-
-## Retrospectiva (01/10)
-- **Bien:**
-- **A mejorar:**
-- **Acciones para el próximo sprint:**
+- **Historias no completadas:** ninguna de las comprometidas. HU-36 se completa en la iteración 3, con orden por ganancias y aciertos.
+- **Peticiones añadidas durante la iteración:** añadir apuestas a largo plazo (Balón de Oro, campeón de liga…). Entra en el backlog como fila 28 (HU-44, HU-45), después de la resolución de apuestas.

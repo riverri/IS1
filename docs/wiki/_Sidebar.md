@@ -28,6 +28,7 @@
 **Sprints**
 - [Primer Sprint](Primer-Sprint)
 - [Segundo Sprint](Segundo-Sprint)
+- [Tercer Sprint](Tercer-Sprint)
 
 **Ayuda**
 - [Preguntas frecuentes](Preguntas-frecuentes)
