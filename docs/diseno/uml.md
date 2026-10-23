@@ -125,15 +125,24 @@ classDiagram
         -BigDecimal limiteSemanal
         -LocalDateTime pausaHasta
         -boolean eliminado
-        +cargar(importe)
-        +abonar(importe)
-        +ajustar(diferencia)
+        +cargar(importe, tipo, concepto, ahora)
+        +abonar(importe, tipo, concepto, ahora)
+        +ajustar(diferencia, tipo, concepto, ahora)
+        -mover(importe, tipo, concepto, fecha)
         +aplicarRecargaPeriodica(ahora, periodo, importe) bool
         +cambiarNombre(nombre)
         +fijarLimites(diario, semanal)
         +pausarHasta(fecha)
         +enPausa(ahora) bool
-        +eliminar(hash)
+        +eliminar(hash, ahora)
+    }
+
+    class MovimientoSaldo {
+        -TipoMovimiento tipo
+        -BigDecimal importe
+        -BigDecimal saldoResultante
+        -String concepto
+        -LocalDateTime fecha
     }
 
     class Competicion {
@@ -300,6 +309,7 @@ classDiagram
 
     Usuario "1" --> "*" Apuesta : hace
     Usuario "1" --> "*" Notificacion : recibe
+    Usuario "1" *-- "*" MovimientoSaldo : movimientos del saldo
     TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
@@ -321,7 +331,7 @@ classDiagram
     Boleto ..> Apuesta : al confirmar crea
 ```
 
-**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion` y `EstadoMercado`.
+**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion`, `EstadoMercado` y `TipoMovimiento` (BIENVENIDA, RECARGA, APUESTA, PREMIO, DEVOLUCION, CORRECCION, BAJA, SALDO_INICIAL).
 
 **Decisiones de diseño:**
 - **Una apuesta simple es una combinada de una sola selección,** así hay una única forma de guardar, pagar y mostrar las apuestas.
@@ -330,6 +340,7 @@ classDiagram
 - **El ranking de una liga es el ranking general filtrado por sus miembros,** así los criterios y las cifras son siempre los mismos.
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
+- **El saldo solo cambia en `Usuario.mover`, que apunta cada cambio en el libro de movimientos (HU-55):** así ningún camino puede mover el saldo sin dejar rastro, y el último saldo resultante coincide siempre con el saldo.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
 
 ## 4. Estados
@@ -469,6 +480,7 @@ erDiagram
     USUARIO ||--o{ APUESTA : hace
     USUARIO ||--o{ NOTIFICACION : recibe
     USUARIO ||--o{ TOKEN_RECUPERACION : "recupera la contraseña"
+    USUARIO ||--o{ MOVIMIENTO_SALDO : "movimientos del saldo"
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -594,6 +606,15 @@ erDiagram
         varchar hash UK "SHA-256 del código"
         timestamp caduca
         boolean usado
+    }
+    MOVIMIENTO_SALDO {
+        bigint id PK
+        bigint usuario_id FK
+        varchar tipo
+        numeric importe "con signo"
+        numeric saldo_resultante
+        varchar concepto
+        timestamp fecha
     }
     LIMITES {
         bigint id PK

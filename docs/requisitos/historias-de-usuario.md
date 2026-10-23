@@ -146,8 +146,9 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-55 | Movimientos del saldo | En revisión (PR) | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
-**53 historias**: 45 hechas y 8 descartadas. **109 criterios de aceptación** en total; 96 de ellos son de historias hechas.
+**54 historias**: 45 hechas, 1 en revisión (HU-55) y 8 descartadas. **112 criterios de aceptación** en total; 96 de ellos son de historias hechas.
 
 ---
 
@@ -398,6 +399,24 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 |---|---|---|---|
 | CA-14.1 | Soy un usuario nuevo | Completo el registro | Se me asigna automáticamente el saldo de bienvenida. |
 | CA-14.2 | Ha pasado el periodo definido desde mi última recarga gratuita | Inicio sesión o abro mi cuenta | Recibo automáticamente una nueva recarga. |
+
+### HU-55 · Movimientos del saldo
+
+**Como** usuario, **quiero** ver cada movimiento de mi saldo con su concepto, **para** saber de dónde sale y adónde va cada monedita.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 36 | Should | 3 | En revisión (PR) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-55.1 | Una operación cambia mi saldo (apuesta, premio, devolución, corrección, recarga o baja) | Se confirma | Queda un movimiento con su tipo, el importe con signo, el saldo resultante, el concepto y la fecha. |
+| CA-55.2 | Tengo movimientos | Abro *Mi cuenta → Movimientos* | Los veo del más reciente al más antiguo, y el saldo resultante del último coincide con mi saldo. |
+| CA-55.3 | Una operación falla (saldo insuficiente, límites…) | Se deshace | No queda ningún movimiento ni cambia mi saldo. |
+
+Es la base común de la ampliación: el casino y los mercados de predicción apuntarán aquí sus cobros y pagos con sus propios tipos de movimiento.
 
 ### HU-15 · Cuenta bancaria
 
