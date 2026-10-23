@@ -18,6 +18,8 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **Liga** | nombre, codigo, creada | Un creador y muchos miembros (`liga_miembro`) |
 | **Notificacion** | texto, tipo, fecha, leida | Un usuario |
 | **MovimientoSaldo** | tipo, importe (con signo), saldoResultante, concepto, fecha | Un usuario. Cada cambio del saldo deja uno (HU-55) |
+| **Anuncio** | titulo, texto, icono, destino, prioridad, activo, desde, hasta, impresiones | Varias secciones donde se muestra (`anuncio_ubicacion`); muchos clics (HU-60, HU-61) |
+| **ClicAnuncio** | origen, fecha | Un anuncio y, si había sesión, un usuario (HU-62) |
 | **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 
