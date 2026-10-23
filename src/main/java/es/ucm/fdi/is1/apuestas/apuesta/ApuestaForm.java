@@ -30,7 +30,10 @@ public class ApuestaForm {
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal importe;
 
-    /** Validación: hay que elegir un resultado o un tipo especial. */
+    /**
+     * Validación: hay que elegir un resultado o un tipo especial. {@code @AssertTrue} en un método "is...":
+     * {@code @Valid} lo llama y, si devuelve false, da el error con ese mensaje.
+     */
     @AssertTrue(message = "Elige un pronóstico")
     public boolean isOpcionElegida() {
         return resultado != null || especial != null;

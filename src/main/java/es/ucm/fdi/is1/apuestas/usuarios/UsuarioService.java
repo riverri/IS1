@@ -19,6 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
  * Los emails se buscan siempre normalizados, así que da igual cómo los escriba el usuario.
  * Los métodos que cambian un usuario no llaman a {@code save}: el usuario lo ha cargado JPA dentro
  * de la transacción y sus cambios se guardan solos al terminarla.
+ *
+ * <p>{@code @Service}: Spring crea un único objeto de esta clase y se lo pasa a quien lo necesite (por ejemplo,
+ * a {@link UsuariosController}). {@code @Transactional} en un método: todo lo que hace en la base de datos se
+ * confirma junto al terminar, o se deshace entero si lanza una excepción. Con {@code readOnly = true} se avisa
+ * de que solo lee, y la base de datos puede ir más rápido.
  */
 @Service
 public class UsuarioService {
@@ -31,6 +36,7 @@ public class UsuarioService {
     private final SaldoProperties saldo;
     private final Clock reloj;
 
+    /** Inyección de dependencias: Spring llama a este constructor y le pasa los objetos que pide. */
     public UsuarioService(UsuarioRepository usuarios, PasswordEncoder passwordEncoder,
                           SaldoProperties saldo, Clock reloj) {
         this.usuarios = usuarios;
@@ -70,6 +76,7 @@ public class UsuarioService {
      */
     @Transactional
     public Usuario consultarConRecarga(String email) {
+        // findByEmail devuelve un Optional; orElseThrow saca el usuario o lanza una excepción si no existe
         Usuario usuario = usuarios.findByEmail(normalizar(email)).orElseThrow();
         usuario.aplicarRecargaPeriodica(LocalDateTime.now(reloj), saldo.recargaPeriodo(), saldo.recargaImporte());
         return usuario;
@@ -99,7 +106,8 @@ public class UsuarioService {
     /** Pone esta contraseña si no es ya la actual (contraseña del creador en los perfiles públicos). */
     @Transactional
     public void fijarPassword(String email, String password) {
-        // Se comprueba antes: con su sal aleatoria, BCrypt daría un resumen nuevo en cada arranque
+        // Se comprueba antes: con su sal aleatoria, BCrypt daría un resumen nuevo en cada arranque.
+        // filter deja el Optional vacío si la contraseña ya es esa, y entonces ifPresent no hace nada
         usuarios.findByEmail(normalizar(email))
                 .filter(u -> !passwordEncoder.matches(password, u.getPasswordHash()))
                 .ifPresent(u -> u.cambiarPasswordHash(passwordEncoder.encode(password)));
@@ -140,6 +148,7 @@ public class UsuarioService {
      */
     @Transactional(readOnly = true)
     public boolean passwordCorrecta(String email, String password) {
+        // map transforma el usuario (si existe) en true/false; si no existe, orElse(false)
         return password != null && usuarios.findByEmail(normalizar(email))
                 .map(u -> passwordEncoder.matches(password, u.getPasswordHash()))
                 .orElse(false);

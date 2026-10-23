@@ -83,6 +83,9 @@ public class ApuestaService {
      */
     @Transactional
     public Apuesta apostar(String email, List<SeleccionPedida> pedidas, BigDecimal importe) {
+        // Pasos: (1) límites del creador, (2) cada selección: evento disponible y cuota actual,
+        // (3) cuotas cambiadas, cuota total y juego responsable, (4) cobrar y guardar.
+        // Cualquier excepción por el camino deshace la transacción: no se cobra ni se guarda nada
         if (pedidas.isEmpty()) {
             throw new IllegalArgumentException("El boleto está vacío");
         }
@@ -96,6 +99,7 @@ public class ApuestaService {
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
         List<Long> cambiadas = new ArrayList<>();
         for (SeleccionPedida pedida : pedidas) {
+            // Si el evento no existe o no admite apuestas (filter deja el Optional vacío), se lanza la excepción
             Evento evento = eventos.findById(pedida.eventoId())
                     .filter(e -> e.admiteApuestas(ahora))
                     .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));

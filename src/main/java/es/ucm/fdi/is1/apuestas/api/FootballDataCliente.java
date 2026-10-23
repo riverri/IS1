@@ -28,7 +28,9 @@ public class FootballDataCliente implements FuenteDatosDeportivos {
 
     @Override
     public List<PartidoApi> partidos(String competicion, LocalDate desde, LocalDate hasta) {
-        // Las fechas van como AAAA-MM-DD, que es lo que da LocalDate.toString()
+        // Las fechas van como AAAA-MM-DD, que es lo que da LocalDate.toString().
+        // get() = petición GET; uri() = dirección, con {codigo}, {desde} y {hasta} sustituidos por los parámetros;
+        // retrieve() la envía; body(...) convierte el JSON de la respuesta en objetos Java (records PartidoApi)
         PartidoApi.Respuesta respuesta = http.get()
                 .uri("/competitions/{codigo}/matches?dateFrom={desde}&dateTo={hasta}", competicion, desde, hasta)
                 .retrieve()

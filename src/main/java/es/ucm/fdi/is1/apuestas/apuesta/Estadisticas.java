@@ -17,6 +17,7 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
 
     /** A partir de las apuestas de un usuario; se queda solo con las ganadas y perdidas. */
     public static Estadisticas de(List<Apuesta> apuestas) {
+        // Método "fábrica" static: se llama Estadisticas.de(lista), sin necesidad de un objeto previo
         List<Apuesta> resueltas = apuestas.stream().filter(Apuesta::isResuelta).toList();
         int ganadas = (int) resueltas.stream().filter(a -> a.getEstado() == EstadoApuesta.GANADA).count();
         BigDecimal apostado = resueltas.stream().map(Apuesta::getImporte).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -40,7 +41,7 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
         if (resueltas == 0) {
             return BigDecimal.ZERO;
         }
-        // ganadas × 100 / resueltas, con un decimal
+        // ganadas × 100 / resueltas, con un decimal. HALF_UP: redondeo normal (12,35 → 12,4)
         return BigDecimal.valueOf(ganadas * 100L).divide(BigDecimal.valueOf(resueltas), 1, RoundingMode.HALF_UP);
     }
 

@@ -38,7 +38,10 @@ public class LigasController {
         return "ligas";
     }
 
-    /** POST /ligas: crea una liga y lleva a su página, con el código que hay que compartir (CA-51.1). */
+    /**
+     * POST /ligas: crea una liga y lleva a su página, con el código que hay que compartir (CA-51.1).
+     * (Misma dirección que el GET de arriba, pero con otro método HTTP: GET la muestra y POST la crea.)
+     */
     @PostMapping
     public String crear(@RequestParam(required = false) String nombre, Principal principal,
                         RedirectAttributes redireccion) {

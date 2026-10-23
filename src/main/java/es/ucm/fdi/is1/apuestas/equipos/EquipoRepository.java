@@ -14,6 +14,7 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
     /**
      * Por nombre. Si hubiera dos con el mismo nombre (bases de datos de antes de impedirlo), devuelve el más
      * antiguo en lugar de fallar: con un error aquí, la aplicación no llegaba a arrancar.
+     * Es un método {@code default}: una interfaz puede traer métodos con código, y este solo llama a otro.
      */
     default Optional<Equipo> findByNombre(String nombre) {
         return findFirstByNombreOrderByIdAsc(nombre);

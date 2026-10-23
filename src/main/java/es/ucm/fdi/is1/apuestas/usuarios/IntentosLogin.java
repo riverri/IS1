@@ -37,7 +37,10 @@ public class IntentosLogin {
     }
 
     /**
-     * Email o contraseña incorrectos: suma un fallo. Si el anterior fue hace más de 15 minutos, la cuenta
+     * {@code @EventListener}: Spring llama a este método solo cada vez que se publica un evento del tipo del
+     * parámetro (aquí, un inicio de sesión fallido). Nadie lo llama directamente desde nuestro código.
+     *
+     * <p>Email o contraseña incorrectos: suma un fallo. Si el anterior fue hace más de 15 minutos, la cuenta
      * empieza de nuevo. Con la cuenta ya bloqueada Spring publica otro evento, así que esos intentos
      * no alargan el bloqueo.
      */

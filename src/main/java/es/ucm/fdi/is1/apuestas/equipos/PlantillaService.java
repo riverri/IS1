@@ -29,6 +29,8 @@ public class PlantillaService {
     @Transactional(readOnly = true)
     public Map<Posicion, List<Jugador>> plantilla(Equipo equipo) {
         // Primero por dorsal (sin dorsal al final) y, si empatan, por nombre.
+        // nullsLast(naturalOrder()): de menor a mayor, y los null (sin dorsal) al final.
+        // groupingBy reparte los jugadores en grupos según su posición: {PORTERO=[...], DEFENSA=[...], ...}
         // El EnumMap ordena los grupos como el enum Posicion: portero, defensa, centrocampista, delantero
         return jugadores.findByEquipo(equipo).stream()
                 .sorted(Comparator.comparing(Jugador::getDorsal, Comparator.nullsLast(Comparator.naturalOrder()))

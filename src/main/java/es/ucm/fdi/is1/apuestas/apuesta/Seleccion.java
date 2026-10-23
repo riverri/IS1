@@ -24,6 +24,8 @@ import jakarta.persistence.ManyToOne;
  *
  * <p>Entidad JPA. Solo la crea su {@link Apuesta} (los constructores no son públicos), que decide su
  * propio estado a partir del de sus selecciones.
+ * (Sin modificador de acceso, un constructor o método es "de paquete": solo lo pueden usar las clases del
+ * mismo paquete, {@code apuesta}.)
  */
 @Entity
 public class Seleccion {
@@ -116,6 +118,7 @@ public class Seleccion {
     void resolver(Resultado resultado, Integer golesLocal, Integer golesVisitante) {
         // Una 1X2 se acierta si coincide el resultado; una especial lo decide Especial.acierta,
         // que devuelve null si hace falta el marcador y solo se conoce el ganador
+        // Boolean (con mayúscula) y no boolean: así puede valer true, false o null ("no se sabe")
         Boolean acierto = especial != null ? especial.acierta(resultado, golesLocal, golesVisitante)
                 : Boolean.valueOf(pronostico == resultado);
         if (acierto == null) {

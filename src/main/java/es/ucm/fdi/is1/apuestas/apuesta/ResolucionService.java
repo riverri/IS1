@@ -79,6 +79,7 @@ public class ResolucionService {
     private int resolverApuestas(Evento evento) {
         // Por selección y no por apuesta: así salen también las combinadas que incluyen este evento
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
+        // for-each: "para cada selección de la lista afectadas"
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             // Se guarda el estado anterior para avisar solo si cambia (HU-37)
@@ -143,6 +144,7 @@ public class ResolucionService {
                 .toList();
         Cuotas cuotas = calculadora.calcular(evento);
         List<VolumenResultado> volumen = new ArrayList<>();
+        // values() devuelve todos los valores del enum: LOCAL, EMPATE, VISITANTE
         for (Resultado resultado : Resultado.values()) {
             if (resultado == Resultado.EMPATE && !evento.getDeporte().isAdmiteEmpate()) {
                 continue;

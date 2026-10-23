@@ -30,6 +30,7 @@ public class RecargaAlEntrarHandler extends SavedRequestAwareAuthenticationSucce
                                         Authentication authentication) throws ServletException, IOException {
         // authentication.getName() es el email con el que ha entrado
         usuarios.consultarConRecarga(authentication.getName());
+        // super: ejecuta lo que hacía la clase padre (redirigir a la página que se pedía antes del login)
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }

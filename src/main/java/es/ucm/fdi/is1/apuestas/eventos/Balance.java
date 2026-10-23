@@ -15,6 +15,7 @@ public record Balance(int victorias, int empates, int derrotas) {
         int e = 0;
         int d = 0;
         for (ResultadoEquipo resultado : resultados) {
+            // v++ suma 1 a v
             switch (resultado) {
                 case VICTORIA -> v++;
                 case EMPATE -> e++;

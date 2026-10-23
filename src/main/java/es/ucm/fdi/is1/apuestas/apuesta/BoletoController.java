@@ -63,6 +63,7 @@ public class BoletoController {
     public String anadir(@RequestParam("evento") Long eventoId, @RequestParam(required = false) Resultado resultado,
                          @RequestParam(required = false) Especial especial,
                          @RequestParam(required = false) String opcion,
+                         // Referer: cabecera que manda el navegador con la página desde la que se viene
                          @RequestHeader(value = "Referer", required = false) String referer,
                          HttpServletRequest peticion, RedirectAttributes redireccion) {
         if (peticion.isUserInRole("CREADOR")) {

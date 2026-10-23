@@ -6,6 +6,7 @@ import java.math.MathContext;
 /**
  * Cuotas decimales de un evento. {@code empate} es null en deportes sin empate.
  * Las crea {@link CalculadoraCuotas} cada vez que se piden (HU-03, HU-20); no se guardan en la base de datos.
+ * Cuota decimal: lo que se cobra por cada moneda apostada si se acierta (con 2,50, apostar 10 da 25).
  */
 public record Cuotas(BigDecimal local, BigDecimal empate, BigDecimal visitante) {
 

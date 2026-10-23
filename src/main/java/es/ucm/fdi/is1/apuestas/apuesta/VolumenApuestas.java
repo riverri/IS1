@@ -50,9 +50,12 @@ class VolumenApuestas implements VolumenApostado {
         Map<Clave, BigDecimal> porUsuario = new HashMap<>();
         // fila = [pronóstico, id del usuario, importe de la apuesta, número de selecciones]
         for (Object[] fila : selecciones.seleccionesActivasPorPronostico(evento)) {
-            // Parte de la apuesta que corresponde a esta selección: importe / número de selecciones
+            // Parte de la apuesta que corresponde a esta selección: importe / número de selecciones.
+            // MathContext.DECIMAL64 fija cuántas cifras guardar: sin él, 10 / 3 lanzaría una excepción
+            // porque BigDecimal no sabe dónde cortar un decimal infinito (3,333...)
             BigDecimal parte = ((BigDecimal) fila[2])
                     .divide(BigDecimal.valueOf(((Number) fila[3]).longValue()), MathContext.DECIMAL64);
+            // merge: si la clave no estaba, guarda "parte"; si estaba, le suma "parte" (BigDecimal::add)
             porUsuario.merge(new Clave((Resultado) fila[0], (Long) fila[1]), parte, BigDecimal::add);
         }
         // Primero se suma por usuario y resultado; después se aplica el tope y se suma por resultado

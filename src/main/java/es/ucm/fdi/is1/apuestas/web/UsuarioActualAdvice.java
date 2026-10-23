@@ -21,6 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
  * {@code @ControllerAdvice}: cada método {@code @ModelAttribute} se ejecuta antes de cualquier controlador
  * y deja su resultado en el modelo con ese nombre, así las plantillas lo tienen siempre a mano.
  * Para los visitantes ({@code principal} null) se devuelven valores vacíos.
+ * Por ejemplo, gracias a {@link #usuarioActual} la cabecera de {@code fragments/comun.html} puede pintar
+ * {@code ${usuarioActual.saldo}} en cualquier página sin que cada controlador lo añada a mano.
  */
 @ControllerAdvice
 public class UsuarioActualAdvice {

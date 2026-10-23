@@ -11,6 +11,8 @@ import jakarta.validation.constraints.Digits;
  */
 public class LimitesPersonalesForm {
 
+    // @DecimalMin("1"): si se rellena, al menos 1. @Digits: hasta 10 cifras enteras y 2 decimales.
+    // Si el campo llega vacío vale null, y estas anotaciones no se quejan (null = sin límite)
     @DecimalMin(value = "1", message = "Como mínimo 1 moneda")
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal diario;

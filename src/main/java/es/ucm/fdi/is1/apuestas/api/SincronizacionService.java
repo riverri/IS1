@@ -36,6 +36,9 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
  * <p>La lanzan {@link SincronizacionProgramada} (cada 30 minutos) y el botón <i>Sincronizar</i> de Gestión.
  * Los partidos llegan de {@link FuenteDatosDeportivos}; los cambios de estado de los eventos y el pago de las
  * apuestas los hace {@link ResolucionService}, igual que cuando los hace el creador a mano (HU-04, HU-05, HU-25).
+ *
+ * <p>Una API es un servicio de otra web al que nuestro programa hace peticiones por Internet y que contesta con
+ * datos en formato JSON (texto con llaves y corchetes), en lugar de con una página para personas.
  */
 @Service
 public class SincronizacionService {
@@ -106,6 +109,7 @@ public class SincronizacionService {
                         hoy.plusDays(propiedades.diasAdelante()));
                 for (PartidoApi partido : partidos) {
                     try {
+                        // Abre una transacción, ejecuta la lambda dentro y la confirma (o la deshace si falla)
                         transacciones.executeWithoutResult(t -> procesar(partido, competicion(codigo), resumen));
                     } catch (RuntimeException e) {
                         // Se deshacen solo los cambios de este partido y se sigue con el siguiente
@@ -137,6 +141,7 @@ public class SincronizacionService {
 
         // Emparejamiento: primero por el identificador de la API; si no, un evento con los mismos equipos
         // dentro de ±2 días (uno creado a mano o por DatosIniciales, quizá con otra hora)
+        // Optional.or: si el primero está vacío, prueba con el segundo; orElse(null): si los dos fallan, null
         Evento evento = eventos.findByIdExterno(partido.id())
                 .or(() -> eventos.findByLocalAndVisitanteAndFechaHoraBetween(local, visitante,
                         fecha.minusDays(2), fecha.plusDays(2)).stream().findFirst())
@@ -182,6 +187,7 @@ public class SincronizacionService {
                     // Solo si es nuevo o distinto del guardado (una corrección vuelve a resolver las apuestas)
                     int local = goles.home();
                     int visitante = goles.away();
+                    // Integer.valueOf(...).equals(...): compara con los goles guardados aunque estos sean null
                     if (evento.getEstado() != EstadoEvento.FINALIZADO
                             || !Integer.valueOf(local).equals(evento.getGolesLocal())
                             || !Integer.valueOf(visitante).equals(evento.getGolesVisitante())) {

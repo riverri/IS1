@@ -17,6 +17,11 @@ import es.ucm.fdi.is1.apuestas.usuarios.RecargaAlEntrarHandler;
  * sesiones abiertas y cifrado de contraseñas (HU-08, HU-11, HU-12, HU-18, HU-47).
  * Hay tres niveles: visitante sin sesión (catálogo público), usuario con sesión (apostar, cuenta…)
  * y creador de apuestas (rol CREADOR: panel de Gestión).
+ *
+ * <p>Spring Security funciona como un "portero": cada petición pasa por una cadena de filtros antes de llegar a
+ * los controladores. Si la página exige sesión y el visitante no la tiene, le manda a /login; si exige el rol
+ * CREADOR y no lo tiene, le devuelve un error 403 (prohibido). Los métodos {@code @Bean} de esta clase fabrican
+ * los objetos de seguridad que Spring usa (ver {@link RelojConfig} para qué es un {@code @Bean}).
  */
 @Configuration
 public class SeguridadConfig {
@@ -25,12 +30,15 @@ public class SeguridadConfig {
     @Bean
     public SecurityFilterChain filtroSeguridad(HttpSecurity http, RecargaAlEntrarHandler alEntrar,
                                                SessionRegistry registroSesiones) throws Exception {
+        // Estilo "fluido": cada método configura una parte y devuelve el mismo objeto, por eso se encadenan con puntos.
+        // Cada parte recibe una lambda (x -> x.algo()) con la que se rellenan sus opciones
         http
                 .authorizeHttpRequests(peticiones -> peticiones
                         // Páginas públicas: cualquier visitante puede ver el catálogo (HU-08)
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
                         .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login", "/recuperar", "/recuperar/nueva",
                                 "/css/**", "/error").permitAll()
+                        // hasRole("CREADOR") comprueba que el usuario tenga el rol CREADOR (ver usuarios.Rol)
                         // Consola de la base de datos (solo existe en local): únicamente para el creador
                         .requestMatchers("/h2-console/**").hasRole("CREADOR")
                         // Panel del creador de apuestas
@@ -58,6 +66,7 @@ public class SeguridadConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 // Frames solo desde la propia web (los necesita la consola de H2); otras webs no pueden incrustarla
                 .headers(cabeceras -> cabeceras.frameOptions(opciones -> opciones.sameOrigin()));
+        // Construye la cadena de filtros con todas las reglas anteriores
         return http.build();
     }
 
@@ -73,7 +82,11 @@ public class SeguridadConfig {
         return new HttpSessionEventPublisher();
     }
 
-    /** Las contraseñas se guardan con BCrypt: un hash con sal, nunca en claro (HU-11, HU-12). */
+    /**
+     * Las contraseñas se guardan con BCrypt: un hash con sal, nunca en claro (HU-11, HU-12).
+     * Un hash es una transformación que no se puede deshacer: para comprobar una contraseña se vuelve a calcular
+     * y se compara. La "sal" es un valor aleatorio que hace que dos contraseñas iguales den hashes distintos.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

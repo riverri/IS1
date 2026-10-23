@@ -56,7 +56,8 @@ public record Alineacion(String sistema, List<Linea> lineas, double notaMedia) {
                     .sorted(Comparator.comparing(Jugador::getDorsal, Comparator.nullsLast(Comparator.naturalOrder())))
                     .toList()));
         }
-        // Media de los once, redondeada a un decimal
+        // Media de los once, redondeada a un decimal. average() devuelve un OptionalDouble (vacío si no hay
+        // jugadores), por eso el orElse(0)
         double media = lineas.stream().flatMap(l -> l.jugadores().stream()).mapToDouble(Jugador::getNota)
                 .average().orElse(0);
         return new Alineacion("4-3-3", lineas, Math.round(media * 10) / 10.0);
