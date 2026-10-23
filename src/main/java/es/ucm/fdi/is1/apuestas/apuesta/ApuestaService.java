@@ -1,10 +1,8 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -38,26 +36,25 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 @Service
 public class ApuestaService {
 
-    private static final DateTimeFormatter FECHA =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy 'a las' HH:mm");
-
     private final ApuestaRepository apuestas;
     private final EventoRepository eventos;
     private final UsuarioRepository usuarios;
     private final CandidatoRepository candidatos;
     private final CalculadoraCuotas calculadora;
     private final LimitesService limites;
+    private final JuegoResponsableService juegoResponsable;
     private final Clock reloj;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
                           CandidatoRepository candidatos, CalculadoraCuotas calculadora, LimitesService limites,
-                          Clock reloj) {
+                          JuegoResponsableService juegoResponsable, Clock reloj) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
         this.candidatos = candidatos;
         this.calculadora = calculadora;
         this.limites = limites;
+        this.juegoResponsable = juegoResponsable;
         this.reloj = reloj;
     }
 
@@ -216,41 +213,9 @@ public class ApuestaService {
         }
     }
 
-    /**
-     * Juego responsable (HU-10): con una pausa activa no se puede apostar, y lo apostado en las últimas
-     * 24 horas o 7 días más el nuevo importe no puede superar los límites que se ha puesto el usuario.
-     * No se comprueba nada si el creador lo ha desactivado en Gestión.
-     */
+    /** Juego responsable (HU-10): las reglas están en {@link JuegoResponsableService}. */
     private void comprobarJuegoResponsable(Usuario usuario, BigDecimal importe, LocalDateTime ahora) {
-        if (!limites.actuales().isJuegoResponsable()) {
-            return;
-        }
-        if (usuario.enPausa(ahora)) {
-            throw new JuegoResponsableException("Has pausado tus apuestas hasta el "
-                    + FECHA.format(usuario.getPausaHasta()) + ".");
-        }
-        // Ventanas móviles (las últimas 24 h y los últimos 7 días), no el día o la semana del calendario
-        comprobarLimite(usuario, usuario.getLimiteDiario(), ahora.minusDays(1), importe, "diario", "24 horas");
-        comprobarLimite(usuario, usuario.getLimiteSemanal(), ahora.minusDays(7), importe, "semanal", "7 días");
-    }
-
-    /** Lanza JuegoResponsableException si lo apostado desde {@code desde} más {@code importe} supera el límite. */
-    private void comprobarLimite(Usuario usuario, BigDecimal limite, LocalDateTime desde, BigDecimal importe,
-                                 String nombre, String periodo) {
-        // Sin límite fijado (null): no hay nada que comprobar
-        if (limite == null) {
-            return;
-        }
-        // Cuentan también las apuestas ya resueltas; las canceladas no (ApuestaRepository.apostadoDesde)
-        BigDecimal apostado = apuestas.apostadoDesde(usuario, desde);
-        if (apostado.add(importe).compareTo(limite) > 0) {
-            throw new JuegoResponsableException("Superarías tu límite " + nombre + " de " + monedas(limite)
-                    + " monedas: llevas " + monedas(apostado) + " apostadas en los últimos " + periodo + ".");
-        }
-    }
-
-    private static String monedas(BigDecimal cantidad) {
-        return cantidad.setScale(2, RoundingMode.DOWN).toPlainString().replace('.', ',');
+        juegoResponsable.comprobar(usuario, importe, ahora);
     }
 
     /** Cuota vigente de una selección ya apostada: la del candidato o la que calcula ahora la calculadora. */
