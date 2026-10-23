@@ -18,7 +18,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**En revisión:** HU-55 (movimientos del saldo), con sus 3 criterios cubiertos por pruebas automáticas. Se sumará al resumen cuando se fusione su pull request.
+**En revisión:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos), con sus 9 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -350,3 +350,24 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-54.1 | Se ven el apostado, el pagado, el beneficio y el margen real frente al teórico | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio`<br>[`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.elCreadorVeElPanelYUnUsuarioNo` |
 | CA-54.2 | Se ve el desglose por tipo de apuesta y por deporte | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio` |
+
+## HU-60 · Anuncios de otras secciones
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-60.1 | Sale uno de los de prioridad más alta y se turnan entre los de la misma prioridad | Automática | [`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.seEligeUnoDeLosDePrioridadMasAltaYSeTurnan`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.unVisitanteVeElAnuncioPublicoDeMasPrioridadYCuentaLaImpresion` |
+| CA-60.2 | Nunca sale el anuncio de la sección en la que se está | Automática | [`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.nuncaSeMuestraElDeLaSeccionEnLaQueEstas`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.enUnaSeccionNuncaSaleSuPropioAnuncio` |
+| CA-60.3 | Al pulsarlo se va a su sección; los de secciones con sesión no se enseñan a los visitantes | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.alPulsarlo_apuntaElClicYLlevaASuSeccion`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.unVisitanteTambienPuedePulsarlo`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.losQueLlevanASeccionesConSesionNoSeEnsenanALosVisitantes` |
+
+## HU-61 · Gestionar los anuncios
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-61.1 | Un anuncio nuevo sale en sus secciones mientras esté activo y en fechas | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.elCreadorCreaUnAnuncioQueSaleEnSusSecciones`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.unAnuncioDesactivadoNoSaleNiCuenta`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.respetaLasFechasYSiEstaActivo` |
+| CA-61.2 | Un destino de otra web o desconocido se rechaza | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.noSeAdmitenDestinosDeFueraNiSinSecciones`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.soloLlevaASeccionesDeLaWeb`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.cadaRutaPerteneceASuSeccion` |
+
+## HU-62 · Medir los clics de cada anuncio
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-62.1 | Cada clic queda apuntado y en Gestión se ven impresiones, clics y porcentaje | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.alPulsarlo_apuntaElClicYLlevaASuSeccion`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.enGestionSeVenLasImpresionesYLosClicsYSePuedeDesactivar` |
