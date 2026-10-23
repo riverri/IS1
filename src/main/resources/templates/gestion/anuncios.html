@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Anuncios')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <div class="titulo-pagina">
+        <h1>Anuncios internos</h1>
+        <a class="boton" th:href="@{/gestion/anuncios/nuevo}">+ Nuevo anuncio</a>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p class="aviso">Promocionan otras secciones de la web. En cada página sale uno de los de prioridad más alta que se
+        puedan mostrar allí (nunca uno de la sección en la que ya estás), turnándose al azar entre los de la misma
+        prioridad. Los que llevan a secciones con sesión no se enseñan a los visitantes.</p>
+    <div class="vacio" th:if="${#lists.isEmpty(estadisticas)}">
+        <p>Todavía no hay anuncios.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(estadisticas)}">
+        <table>
+            <thead><tr><th>Anuncio</th><th>Lleva a</th><th>Se muestra en</th><th>Prioridad</th><th>Impresiones</th><th>Clics</th><th>% clics</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="e : ${estadisticas}" th:with="a=${e.anuncio}" th:classappend="${!a.activo} ? 'inactivo'">
+                <td>
+                    <span th:text="(${a.icono} ?: '') + ' ' + ${a.titulo}">🏆 Largo plazo</span>
+                    <br><small class="aviso" th:unless="${a.activo}">Desactivado</small>
+                </td>
+                <td><code th:text="${a.destino}">/mercados</code></td>
+                <td><small th:each="u, i : ${a.ubicaciones}" th:text="${u.nombre} + (${i.last} ? '' : ', ')">Portada, </small></td>
+                <td th:text="${a.prioridad}">5</td>
+                <td th:text="${a.impresiones}">120</td>
+                <td th:text="${e.clics}">6</td>
+                <td th:text="${e.porcentajeClics == null} ? '–' : ${#numbers.formatDecimal(e.porcentajeClics, 1, 'POINT', 1, 'COMMA')} + ' %'">5,0 %</td>
+                <td class="acciones">
+                    <a th:href="@{/gestion/anuncios/{id}/editar(id=${a.id})}">Editar</a>
+                    <form th:action="@{/gestion/anuncios/{id}/activar(id=${a.id})}" method="post" class="en-linea">
+                        <input type="hidden" name="activo" th:value="${!a.activo}">
+                        <button class="enlace" type="submit" th:text="${a.activo} ? 'Desactivar' : 'Activar'">Desactivar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="enlace-volver" th:href="@{/gestion}">← Volver al panel</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>
