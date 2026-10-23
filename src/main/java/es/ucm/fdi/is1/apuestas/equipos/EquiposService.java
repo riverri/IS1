@@ -35,6 +35,8 @@ public class EquiposService {
     @Transactional(readOnly = true)
     public Map<Deporte, List<Equipo>> buscar(Deporte deporte, Long competicionId, String texto) {
         String buscado = Nombres.normalizar(texto);
+        // Cada filter deja pasar solo los equipos que cumplen la condición. Las condiciones "x == null || ..."
+        // significan "si no hay filtro, pasan todos"
         return equipos.findAll().stream()
                 .filter(e -> deporte == null || e.getDeporte() == deporte)
                 .filter(e -> competicionId == null || e.participaEn(competicionId))

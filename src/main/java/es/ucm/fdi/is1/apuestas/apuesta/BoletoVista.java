@@ -11,6 +11,7 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
 /**
  * El boleto listo para mostrar: cada selección con su cuota actual y el multiplicador total (HU-29).
  * Lo construye {@link BoletoService} a partir del {@link Boleto} de la sesión; no se guarda.
+ * Es un "objeto de vista": solo junta los datos que necesita la plantilla {@code boleto.html}.
  *
  * @param cuotaTotal producto de las cuotas actuales (CA-29.1)
  */

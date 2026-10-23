@@ -28,6 +28,7 @@ public enum Especial {
 
     /** Las de doble oportunidad se deciden con el resultado; el resto necesitan el marcador. */
     public boolean isNecesitaMarcador() {
+        // name() devuelve el nombre del valor tal como se escribe en el código: "DOBLE_1X", "MAS_2_5"...
         return !name().startsWith("DOBLE");
     }
 
@@ -37,7 +38,8 @@ public enum Especial {
      */
     public Boolean acierta(Resultado resultado, Integer golesLocal, Integer golesVisitante) {
         if (!isNecesitaMarcador()) {
-            // Doble oportunidad: se acierta si no sale el único resultado que no cubre
+            // Doble oportunidad: se acierta si no sale el único resultado que no cubre.
+            // "this" es el valor del enum sobre el que se llama (por ejemplo, DOBLE_1X)
             return switch (this) {
                 case DOBLE_1X -> resultado != Resultado.VISITANTE;
                 case DOBLE_X2 -> resultado != Resultado.LOCAL;

@@ -26,8 +26,10 @@ public final class NombresProhibidos {
     /** A partir de esta longitud, la palabra se busca también dentro de otras. */
     static final int LONGITUD_SUBCADENA = 6;
 
+    // Se carga una sola vez, la primera vez que se usa la clase. Un Set no tiene repetidos y busca muy rápido
     private static final Set<String> PALABRAS = cargar();
 
+    // Constructor privado (y clase final): es una clase de utilidades, solo con métodos static; no se crean objetos
     private NombresProhibidos() {
     }
 
@@ -38,7 +40,9 @@ public final class NombresProhibidos {
         }
         String normalizado = normalizar(nombre);
         // Palabras sueltas: "Juan Puta" → [juan, puta]
+        // "[^a-z]+" es una expresión regular: "uno o más caracteres que no sean letras de la a a la z"
         String[] palabras = normalizado.split("[^a-z]+");
+        // Stream: recorre el array; anyMatch es true si alguna palabra está en la lista
         if (Arrays.stream(palabras).anyMatch(PALABRAS::contains)) {
             return true;
         }
@@ -51,9 +55,12 @@ public final class NombresProhibidos {
 
     /** Minúsculas, sin tildes ni diéresis y con las cifras y símbolos habituales cambiados por letras. */
     static String normalizar(String texto) {
+        // NFD separa cada letra de su tilde ("á" → "a" + "´"), y \p{M} borra esas marcas sueltas
         String sinTildes = Normalizer.normalize(texto.toLowerCase(Locale.ROOT), Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "");
         StringBuilder resultado = new StringBuilder(sinTildes.length());
+        // StringBuilder: para ir añadiendo caracteres sin crear un String nuevo cada vez.
+        // El switch con flechas (->) es una expresión: devuelve el carácter que se añade
         for (char c : sinTildes.toCharArray()) {
             resultado.append(switch (c) {
                 case '0' -> 'o';
@@ -74,7 +81,9 @@ public final class NombresProhibidos {
         if (entrada == null) {
             throw new IllegalStateException("Falta nombres-prohibidos.txt en el classpath");
         }
+        // try-with-resources: el lector se cierra solo al terminar, aunque haya un error
         try (BufferedReader lector = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8))) {
+            // Cada línea: se quitan espacios, se descartan vacías y comentarios, se normaliza y se juntan en un Set
             return lector.lines()
                     .map(String::trim)
                     .filter(l -> !l.isEmpty() && !l.startsWith("#"))

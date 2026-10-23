@@ -53,6 +53,8 @@ class AvisosApuestas {
 
     /** Importe en formato español: "1.234,50". */
     private static String monedas(BigDecimal cantidad) {
+        // Patrón "#,##0.00": separador de miles y siempre 2 decimales. Con los símbolos españoles, la coma de
+        // miles se pinta como punto y el punto decimal como coma
         DecimalFormat formato = new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.forLanguageTag("es-ES")));
         formato.setGroupingSize(3);
         formato.setGroupingUsed(true);

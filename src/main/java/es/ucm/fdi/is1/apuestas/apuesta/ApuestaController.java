@@ -30,6 +30,8 @@ import jakarta.validation.Valid;
  * Mis apuestas (HU-24, HU-34, HU-35), cancelar (HU-26) y cambiar el importe (HU-27), además del ranking
  * (HU-36) y el perfil público de un jugador (HU-48). Delega en {@link ApuestaService} y {@link RankingService}
  * y convierte sus excepciones en mensajes para el usuario.
+ * (Qué son {@code @GetMapping}, {@code Model}, {@code Principal}... está explicado en
+ * {@link es.ucm.fdi.is1.apuestas.usuarios.UsuariosController}.)
  */
 @Controller
 public class ApuestaController {
@@ -62,6 +64,8 @@ public class ApuestaController {
      * Si el evento ya no admite apuestas, 404 ({@link es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException}).
      */
     @GetMapping("/eventos/{id}/apostar")
+    // @PathVariable: el {id} de la dirección (/eventos/7/apostar → id = 7).
+    // @RequestParam(required = false): parámetro opcional de la URL (?resultado=LOCAL); si no viene, llega null
     public String formulario(@PathVariable Long id, @RequestParam(required = false) Resultado resultado,
                              @RequestParam(required = false) Especial especial, Model model) {
         ApuestaForm form = new ApuestaForm();
@@ -90,6 +94,8 @@ public class ApuestaController {
                         + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
                 return "redirect:/apuestas";
             } catch (SaldoInsuficienteException e) {
+                // Cada catch recoge un tipo de error y lo enseña junto al campo que corresponde.
+                // "A | B" en un catch recoge cualquiera de las dos excepciones
                 errores.rejectValue("importe", "saldo", "No tienes saldo suficiente para esta apuesta");
             } catch (ImporteFueraDeLimitesException | JuegoResponsableException e) {
                 errores.rejectValue("importe", "limites", e.getMessage());
@@ -178,7 +184,8 @@ public class ApuestaController {
     @PostMapping("/apuestas/{id}/importe")
     public String modificarImporte(@PathVariable Long id, @RequestParam(required = false) BigDecimal importe,
                                    Principal principal, RedirectAttributes redireccion) {
-        // Las mismas reglas que @DecimalMin y @Digits de ApuestaForm, a mano porque aquí no hay formulario
+        // Las mismas reglas que @DecimalMin y @Digits de ApuestaForm, a mano porque aquí no hay formulario.
+        // stripTrailingZeros().scale() = número de decimales sin contar los ceros finales (5,10 → 1 decimal)
         if (importe == null || importe.signum() <= 0 || importe.stripTrailingZeros().scale() > 2) {
             redireccion.addFlashAttribute("error", "Introduce un importe válido, con 2 decimales como mucho");
             return "redirect:/apuestas";

@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * Partido tal como lo devuelve la API v4 de football-data.org
  * ({@code GET /competitions/{codigo}/matches}). Solo se leen los campos que usamos.
  * Con {@code ignoreUnknown} el resto del JSON se descarta sin dar error.
+ * La librería Jackson rellena el record emparejando cada campo del JSON con el componente del mismo nombre
+ * ({@code "utcDate": "..."} → {@code utcDate}); por eso los nombres están en inglés, como en la API.
  *
  * @param id       identificador del partido en la API; se guarda en el evento como {@code idExterno}
  * @param utcDate  fecha y hora de inicio en UTC, en formato ISO-8601 (p. ej. 2026-10-10T19:00:00Z)

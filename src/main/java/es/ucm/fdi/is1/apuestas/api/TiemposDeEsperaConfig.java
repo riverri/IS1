@@ -26,6 +26,7 @@ public class TiemposDeEsperaConfig {
      */
     @Bean
     public RestClientCustomizer tiemposDeEspera() {
+        // Se devuelve una lambda: "cuando crees un builder, haz esto con él"
         return builder -> {
             SimpleClientHttpRequestFactory peticiones = new SimpleClientHttpRequestFactory();
             peticiones.setConnectTimeout(ESPERA_CONEXION);

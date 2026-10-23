@@ -57,6 +57,7 @@ public class FichaEquipoService {
         Equipo equipo = equipos.findById(equipoId).orElseThrow(() -> new EquipoNoEncontradoException(equipoId));
         // Del más reciente al más antiguo
         List<Evento> jugados = eventos.partidosDe(equipo, EstadoEvento.FINALIZADO);
+        // limit(n): se queda con los n primeros del stream
         List<FichaEquipo.PartidoJugado> ultimos = jugados.stream().limit(ULTIMOS)
                 .map(e -> {
                     // Se compara por id porque Equipo no redefine equals()
@@ -127,7 +128,9 @@ public class FichaEquipoService {
         if (!porEquipo.containsKey(equipo.getId())) {
             return null;
         }
-        // Orden de la tabla: más puntos, después más victorias y, por último, nombre (orden estable)
+        // Orden de la tabla: más puntos, después más victorias y, por último, nombre (orden estable).
+        // Entry es una pareja clave-valor del mapa (id del equipo, su balance). Comparator.<Entry<Long, Balance>>
+        // indica a Java el tipo de los elementos, que no sabe deducir solo en una cadena tan larga
         List<Entry<Long, Balance>> tabla = porEquipo.entrySet().stream()
                 .map(e -> Map.entry(e.getKey(), Balance.de(e.getValue())))
                 .sorted(Comparator.<Entry<Long, Balance>>comparingInt(e -> e.getValue().puntos()).reversed()

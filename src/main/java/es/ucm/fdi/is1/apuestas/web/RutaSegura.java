@@ -30,6 +30,7 @@ public final class RutaSegura {
             if (ruta == null || !ruta.startsWith("/") || ruta.startsWith("//") || ruta.startsWith("/login")) {
                 return porDefecto;
             }
+            // Ejemplo: "https://otra.web/eventos?q=madrid" → "/eventos?q=madrid"
             return uri.getRawQuery() == null ? ruta : ruta + "?" + uri.getRawQuery();
         } catch (IllegalArgumentException e) {
             // No es una dirección bien formada

@@ -59,7 +59,7 @@ public class InicioController {
         model.addAttribute("recuento", equipos.recuentoPorDeporte());
         model.addAttribute("deporteElegido", deporte);
         model.addAttribute("competicionElegida", competicion);
-        // El desplegable de competiciones solo aparece con un deporte elegido
+        // El desplegable de competiciones solo aparece con un deporte elegido (List.of() = lista vacía)
         model.addAttribute("competiciones", deporte == null ? List.of() : equipos.competiciones(deporte));
         model.addAttribute("q", q == null ? "" : q.trim());
         return "equipos";

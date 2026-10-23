@@ -43,6 +43,7 @@ public class BajaController {
         }
         // Se cierran las sesiones abiertas en otros navegadores y después la actual (CA-18.2)
         sesiones.cerrarOtras(principal.getName(), peticion.getSession(false));
+        // Cierra la sesión de este navegador (como pulsar "Salir")
         peticion.logout();
         return "redirect:/?cuentaEliminada";
     }
