@@ -31,6 +31,7 @@ import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
@@ -116,7 +117,7 @@ class ModificarImporteWebTest {
     void respetaLosLimitesYElSaldo() throws Exception {
         mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf()).param("importe", "501"))
                 .andExpect(flash().attribute("error", containsString("entre 1 y 500")));
-        usuarios.findByEmail(ANA).orElseThrow().cargar(saldo().subtract(BigDecimal.TEN));
+        usuarios.findByEmail(ANA).orElseThrow().cargar(saldo().subtract(BigDecimal.TEN), TipoMovimiento.APUESTA, "Gasto de prueba", Hora.ahora());
         mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf()).param("importe", "40"))
                 .andExpect(flash().attribute("error", containsString("saldo suficiente")));
         assertThat(apuesta.getImporte()).isEqualByComparingTo("20");

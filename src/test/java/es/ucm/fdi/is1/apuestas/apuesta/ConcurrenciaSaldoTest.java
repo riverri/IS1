@@ -21,6 +21,7 @@ import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.usuarios.MovimientoSaldoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
@@ -47,6 +48,9 @@ class ConcurrenciaSaldoTest {
     private UsuarioRepository usuarios;
 
     @Autowired
+    private MovimientoSaldoRepository movimientos;
+
+    @Autowired
     private EventoRepository eventos;
 
     @Autowired
@@ -64,6 +68,8 @@ class ConcurrenciaSaldoTest {
         if (evento != null) {
             eventos.deleteById(evento.getId());
         }
+        // Primero sus movimientos de saldo (HU-55), que apuntan al usuario
+        usuarios.findByEmail(EMAIL).ifPresent(u -> movimientos.deleteAll(movimientos.findByUsuarioOrderByIdAsc(u)));
         usuarios.findByEmail(EMAIL).ifPresent(usuarios::delete);
     }
 

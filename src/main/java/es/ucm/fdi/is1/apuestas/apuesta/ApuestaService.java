@@ -21,6 +21,7 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.CandidatoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
@@ -121,8 +122,8 @@ public class ApuestaService {
         comprobarCuotaTotal(apuesta.getCuota());
         comprobarJuegoResponsable(usuario, importe, ahora);
         // Se cobra tras todas las comprobaciones; sin saldo lanza SaldoInsuficienteException y no se guarda nada (CA-23.2)
-        usuario.cargar(importe);
-        // Las selecciones se guardan con la apuesta (cascade); el usuario, al confirmar la transacción
+        usuario.cargar(importe, TipoMovimiento.APUESTA, "Nueva " + apuesta.descripcion(), ahora);
+        // Las selecciones se guardan con la apuesta (cascade); el usuario y su movimiento, al confirmar la transacción
         return apuestas.save(apuesta);
     }
 
@@ -151,7 +152,7 @@ public class ApuestaService {
         comprobarJuegoResponsable(usuario, importe, ahora);
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
         apuesta.anadir(candidato, candidato.getCuota());
-        usuario.cargar(importe);
+        usuario.cargar(importe, TipoMovimiento.APUESTA, "Nueva " + apuesta.descripcion(), ahora);
         return apuestas.save(apuesta);
     }
 

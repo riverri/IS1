@@ -12,6 +12,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.Mercado;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -136,41 +137,43 @@ public class Apuesta {
         cuota = producto(List.of(cuotaCandidato));
     }
 
+    // En los cuatro métodos siguientes, "ahora" es la fecha del movimiento de saldo que deja el pago (HU-55)
+
     /** El creador ha marcado (o corregido) el ganador del mercado (HU-45). */
-    public void resolver(Mercado mercado, Candidato ganador) {
+    public void resolver(Mercado mercado, Candidato ganador, LocalDateTime ahora) {
         if (estado == EstadoApuesta.CANCELADA) {
             return;
         }
         seleccionDe(mercado).resolver(ganador);
-        reevaluar();
+        reevaluar(ahora);
     }
 
     /** El mercado se ha anulado: se devuelve el importe. */
-    public void anular(Mercado mercado) {
+    public void anular(Mercado mercado, LocalDateTime ahora) {
         if (estado == EstadoApuesta.CANCELADA) {
             return;
         }
         seleccionDe(mercado).anular();
-        reevaluar();
+        reevaluar(ahora);
     }
 
     /** Resultado de uno de sus eventos: se resuelve la selección y se recalcula la apuesta (HU-25, HU-30). */
-    public void resolver(Evento evento, Resultado resultado) {
+    public void resolver(Evento evento, Resultado resultado, LocalDateTime ahora) {
         // Una apuesta cancelada ya devolvió el importe: no se resuelve (igual en los otros resolver y anular)
         if (estado == EstadoApuesta.CANCELADA) {
             return;
         }
         seleccionDe(evento).resolver(resultado, evento.getGolesLocal(), evento.getGolesVisitante());
-        reevaluar();
+        reevaluar(ahora);
     }
 
     /** Uno de sus eventos se ha anulado: esa selección cuenta con cuota 1,00 (HU-05, HU-30). */
-    public void anular(Evento evento) {
+    public void anular(Evento evento, LocalDateTime ahora) {
         if (estado == EstadoApuesta.CANCELADA) {
             return;
         }
         seleccionDe(evento).anular();
-        reevaluar();
+        reevaluar(ahora);
     }
 
     /**
@@ -178,7 +181,9 @@ public class Apuesta {
      * o anuladas; anulada si se anulan todas. Ajusta el saldo con la diferencia respecto a lo ya pagado,
      * así una corrección de resultado deshace pagos anteriores (HU-04).
      */
-    private void reevaluar() {
+    private void reevaluar(LocalDateTime ahora) {
+        // Si ya estaba resuelta, cualquier cambio de dinero es una corrección (HU-04)
+        boolean yaResuelta = estado != EstadoApuesta.ACTIVA;
         // anyMatch: ¿alguna cumple la condición? allMatch: ¿la cumplen todas?
         boolean algunaFallada = selecciones.stream().anyMatch(s -> s.getEstado() == EstadoSeleccion.FALLADA);
         boolean algunaPendiente = selecciones.stream().anyMatch(s -> s.getEstado() == EstadoSeleccion.PENDIENTE);
@@ -205,7 +210,10 @@ public class Apuesta {
         };
         // Solo se abona la diferencia con lo pagado antes. Si se corrige un resultado y una ganada pasa a
         // perdida, la diferencia es negativa y se le retira lo cobrado (el saldo puede quedar negativo)
-        usuario.ajustar(debePagar.subtract(pagado));
+        BigDecimal diferencia = debePagar.subtract(pagado);
+        TipoMovimiento tipo = yaResuelta ? TipoMovimiento.CORRECCION
+                : estado == EstadoApuesta.GANADA ? TipoMovimiento.PREMIO : TipoMovimiento.DEVOLUCION;
+        usuario.ajustar(diferencia, tipo, tipo.getDescripcion() + ": " + descripcion(), ahora);
         pagado = debePagar;
     }
 
@@ -227,7 +235,7 @@ public class Apuesta {
             throw new IllegalStateException("La apuesta ya no se puede cancelar");
         }
         estado = EstadoApuesta.CANCELADA;
-        usuario.abonar(importe);
+        usuario.abonar(importe, TipoMovimiento.DEVOLUCION, "Cancelación: " + descripcion(), ahora);
     }
 
     /**
@@ -245,9 +253,9 @@ public class Apuesta {
         BigDecimal diferencia = nuevo.subtract(importe);
         // signum(): 1 si es positivo, -1 si es negativo, 0 si es cero. negate() le cambia el signo
         if (diferencia.signum() > 0) {
-            usuario.cargar(diferencia);
+            usuario.cargar(diferencia, TipoMovimiento.APUESTA, "Subida de importe: " + descripcion(), ahora);
         } else if (diferencia.signum() < 0) {
-            usuario.abonar(diferencia.negate());
+            usuario.abonar(diferencia.negate(), TipoMovimiento.DEVOLUCION, "Bajada de importe: " + descripcion(), ahora);
         }
         importe = nuevo;
         // La cuota vista al apostar ya no vale: toda la apuesta pasa a la cuota vigente ahora
@@ -291,6 +299,18 @@ public class Apuesta {
 
     public boolean isLargoPlazo() {
         return selecciones.stream().anyMatch(Seleccion::isLargoPlazo);
+    }
+
+    /**
+     * Texto corto para el concepto de los movimientos de saldo (HU-55): "apuesta a Real Madrid (Real Madrid –
+     * Getafe CF)" o "combinada de 3 selecciones". Es la misma forma de describirla que en los avisos.
+     */
+    String descripcion() {
+        if (isCombinada()) {
+            return "combinada de " + selecciones.size() + " selecciones";
+        }
+        Seleccion seleccion = selecciones.get(0);
+        return "apuesta a " + seleccion.getDescripcionPronostico() + " (" + seleccion.getTitulo() + ")";
     }
 
     private Seleccion seleccionDe(Evento evento) {
