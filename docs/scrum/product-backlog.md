@@ -17,7 +17,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 33 de 35 filas hechas y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 36 filas hechas, la 36 en revisión y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|:-:|:-:|---|
@@ -56,6 +56,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 33 | Ligas privadas entre amigos con código de invitación y ranking propio (HU-51). *Depende de la fila 31* | ½ sprint | 5 | C | | Hecho (it. 11) |
 | 34 | Más tipos de apuesta en fútbol: doble oportunidad, más/menos 2,5 goles y ambos marcan (HU-52). *Depende de las filas 6 y 17* | ½ sprint | 7 | S | | Hecho (it. 11) |
 | 35 | Panel de la casa para el creador: apostado, pagado, beneficio y margen real (HU-54) | ¼ sprint | 5 | S | | Hecho (it. 11) |
+| 36 | Libro de movimientos del saldo: cada cambio del saldo queda apuntado con su motivo y el saldo resultante (HU-55). Base común del casino y de los mercados de predicción | ½ sprint | 6 | S | | En revisión (PR) |
 
 ## Puntos a revisar en equipo
 
