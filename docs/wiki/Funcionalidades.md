@@ -126,3 +126,12 @@ Un **mercado** ("¿Quién ganará el Balón de Oro?") tiene varios **candidatos*
 - Mismas comprobaciones que al apostar: saldo, límites de apuesta, mercado abierto y juego responsable. Cada compra, venta y pago es un movimiento del saldo.
 - **Estadísticas** públicas: precio, volumen, participantes y gráfico del precio del «Sí». Con sesión, también tus participaciones y las de tus **compañeros de liga** (no salen en el perfil público).
 - El creador los crea, cierra, anula (devolviendo lo invertido) y resuelve en *Gestión → Predicciones*; corregir la respuesta ajusta los saldos por la diferencia.
+
+## Cartera de criptomonedas (HU-69 a HU-73)
+- Criptomonedas **reales a su precio real** en euros, compradas y vendidas con moneditas: **1 monedita = 1 €**. Solo el precio es real; nadie tiene criptomonedas de verdad.
+- Las protagonistas son las **memecoins** (DOGE, SHIB, PEPE, WIF, BONK, FLOKI, FARTCOIN), con aviso de **riesgo muy alto**; BTC, ETH y SOL quedan como referencia. Se destaca la que más se ha movido en 24 horas.
+- Los precios vienen de la **API pública de CoinGecko** y se descargan solos cada 2 minutos. Un precio solo sirve 15 minutos: sin precio al día no se compra ni se vende. Si el precio cambia mientras decides, se pide confirmar otra vez.
+- **Comprar:** primero se ve cuánta cripto se recibiría; se cobra el importe con una comisión del 1 %. Con memecoins de fracciones de céntimo se compran millones de unidades. **Vender:** una parte o todo, recibiendo cantidad × precio menos la comisión.
+- Mismas comprobaciones que al apostar: saldo, límites de apuesta y juego responsable (lo comprado cuenta como jugado). Cada compra y venta es un **movimiento del saldo** (`CRIPTO_COMPRA`, `CRIPTO_VENTA`).
+- *Mi cartera* (`/cripto/cartera`) enseña cantidad, valor, coste y ganancia o pérdida de cada cripto, y las últimas operaciones. **No cuenta en el ranking**, que solo mira el saldo: para que cuente hay que vender.
+- El creador abre o cierra la sección, fija la comisión y la validez de los precios, retira criptos (quien las tenga puede venderlas) y descarga los precios en el momento en *Gestión → Criptomonedas*. El *panel de la casa* enseña compras, ventas, comisiones y lo que valen las carteras.

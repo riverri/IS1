@@ -173,6 +173,8 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 | `/gestion/casino` | Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
 | `/predicciones` | Mercados de predicción de sí o no: precio de 0 a 1, comprar y vender participaciones, estadísticas, gráfico y posiciones de los compañeros de liga (`/predicciones/{id}`) | HU-64 a HU-68 |
 | `/gestion/predicciones` | Crear, cerrar, anular y resolver los mercados de predicción | HU-63, HU-66 |
+| `/cripto` | Criptomonedas a su precio real en euros (CoinGecko), memecoins primero; comprar y vender con moneditas y gráfico de la semana (`/cripto/{símbolo}`), y mi cartera (`/cripto/cartera`) | HU-69 a HU-72 |
+| `/gestion/cripto` | Abrir o cerrar las criptomonedas, comisión, validez de los precios, qué criptos se ofrecen y descargar los precios en el momento | HU-73 |
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 
@@ -193,8 +195,8 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 ## Base de datos y migraciones (Flyway)
 
 Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar. Hay una carpeta por base de datos:
-- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V14__mercados_prediccion.sql`.
-- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`, `V10__…`, `V11__…`, `V12__…`, `V13__…`, `V14__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V15__cartera_cripto.sql`.
+- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`, `V10__…`, `V11__…`, `V12__…`, `V13__…`, `V14__…`, `V15__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
 1. Crea un script nuevo con el número siguiente, por ejemplo `V11__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
