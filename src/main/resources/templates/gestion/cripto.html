@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Criptomonedas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="tarjeta tarjeta-formulario">
+        <h1>Configuración de las criptomonedas</h1>
+        <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+        <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+        <form class="formulario" th:action="@{/gestion/cripto}" method="post">
+            <label class="casilla">
+                <input type="checkbox" name="activo" value="true" th:checked="${configuracion.activo}">
+                <span>Sección abierta (si la cierras, se ven los precios pero nadie compra ni vende)</span>
+            </label>
+            <label for="comision">Comisión de cada compra y venta, en % (0–10)</label>
+            <input id="comision" name="comision" type="number" step="0.01" min="0" max="10" required
+                   th:value="${configuracion.comision * 100}">
+            <label for="minutosValidez">Minutos que sirve un precio descargado (1–120)</label>
+            <input id="minutosValidez" name="minutosValidez" type="number" min="1" max="120" required
+                   th:value="${configuracion.minutosValidez}">
+            <div class="acciones-formulario">
+                <button class="boton" type="submit">Guardar</button>
+                <a class="boton boton-secundario" th:href="@{/gestion}">Volver al panel</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="titulo-pagina">
+        <h2>Criptomonedas que se ofrecen</h2>
+        <form th:action="@{/gestion/cripto/actualizar}" method="post">
+            <button class="boton boton-secundario" type="submit">Actualizar precios ahora</button>
+        </form>
+    </div>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Cripto</th><th>Tipo</th><th>Id en CoinGecko</th><th>Precio</th><th>Descargado</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="c : ${criptos}" th:classappend="${!c.activa} ? 'inactivo'">
+                <td th:text="${c.simbolo} + ' · ' + ${c.nombre}">DOGE · Dogecoin</td>
+                <td th:text="${c.categoria.nombre}">Memecoins</td>
+                <td th:text="${c.idApi}">dogecoin</td>
+                <td th:text="${@formato.precioCripto(c.precio)} + ' €'">0,15 €</td>
+                <td th:text="${c.actualizado != null} ? ${#temporals.format(c.actualizado, 'dd/MM HH:mm')} : 'Nunca'">24/10 12:00</td>
+                <td>
+                    <form th:action="@{/gestion/cripto/{s}/activar(s=${c.simbolo})}" method="post">
+                        <input type="hidden" name="activa" th:value="${!c.activa}">
+                        <button class="boton boton-secundario" type="submit" th:text="${c.activa} ? 'Retirar' : 'Volver a ofrecer'">Retirar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>
