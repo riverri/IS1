@@ -147,11 +147,15 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-55 | Movimientos del saldo | En revisión (PR) | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-56 | Ruleta europea | En revisión (PR) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-57 | Blackjack | En revisión (PR) | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-58 | Historial de partidas del casino | En revisión (PR) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-59 | Configurar el casino | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-60 | Anuncios de otras secciones | En revisión (PR) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-61 | Gestionar los anuncios | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-62 | Medir los clics de cada anuncio | En revisión (PR) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**57 historias**: 45 hechas, 4 en revisión (HU-55, HU-60 a HU-62) y 8 descartadas. **118 criterios de aceptación** en total; 96 de ellos son de historias hechas.
+**61 historias**: 45 hechas, 8 en revisión (HU-55 a HU-62) y 8 descartadas. **129 criterios de aceptación** en total; 96 de ellos son de historias hechas.
 
 ---
 
@@ -1008,6 +1012,79 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-45.1 | Creo un mercado con al menos dos candidatos y sus cuotas | Lo guardo | Aparece en el catálogo. |
 | CA-45.2 | Un mercado abierto | Lo cierro | Deja de admitir apuestas. |
 | CA-45.3 | Un mercado con apuestas | Marco el candidato ganador | Las apuestas a ese candidato se cobran y el resto pasan a perdidas. |
+
+---
+
+## Casino
+
+Juegos de azar con moneditas virtuales. El azar lo decide siempre el servidor; cada partida deja sus movimientos de saldo (HU-55) y cuenta en el juego responsable (HU-10).
+
+### HU-56 · Ruleta europea
+
+**Como** usuario, **quiero** apostar moneditas a un número, un color, par o impar, o una docena en una ruleta europea, **para** jugar con mi saldo virtual.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 37 | Could | 3 | En revisión (PR) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-56.1 | Tengo saldo y un importe dentro de los límites del casino | Apuesto y giro | El servidor elige el número (0–36), se cobra el importe y, si acierto, se paga: pleno 35 a 1, color o par/impar 1 a 1 y docena 2 a 1. |
+| CA-56.2 | Sale el 0 | Tenía una apuesta a color, par/impar o docena | La pierdo. |
+| CA-56.3 | No tengo saldo, el importe está fuera de los límites, estoy en pausa o supero mis límites (HU-10) | Intento girar | No se juega, no se cobra nada y se me avisa. |
+
+### HU-57 · Blackjack
+
+**Como** usuario, **quiero** jugar al blackjack contra la banca pudiendo pedir, plantarme y doblar, **para** jugar con mi saldo virtual.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 37 | Could | 3 | En revisión (PR) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-57.1 | Empiezo una mano con un importe válido | Se reparte | Se cobra el importe y veo mis dos cartas y solo una de la banca; la otra no llega al navegador. |
+| CA-57.2 | Mi mano es blackjack y la de la banca no | Termina la mano | Cobro el importe más 3 a 2 (o lo que diga la configuración). |
+| CA-57.3 | Tengo dos cartas y saldo para otra apuesta igual | Doblo | Se cobra otro importe, recibo una sola carta y la mano termina. |
+| CA-57.4 | Juego mi mano | Paso de 21 o me planto | Si me paso, pierdo. Si me planto, la banca juega con sus reglas y cobro el doble si gano o recupero el importe si empato. |
+| CA-57.5 | Tengo una mano a medias | Recargo la página o pulso dos veces | Sigo en la misma mano: no se reparte otra ni se cobra dos veces. |
+
+Sin dividir parejas ni seguro (fuera del alcance).
+
+### HU-58 · Historial de partidas del casino
+
+**Como** usuario, **quiero** ver mis partidas del casino, **para** saber cuánto he jugado y ganado.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 37 | Could | 3 | En revisión (PR) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-58.1 | He jugado partidas | Abro el historial | Veo juego, fecha, apuesta, resultado, importe y balance, de la más reciente a la más antigua. |
+
+### HU-59 · Configurar el casino
+
+**Como** creador de apuestas, **quiero** fijar los límites por apuesta y las reglas del casino, **para** controlar la ventaja de la casa.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 37 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-59.1 | Estoy en *Gestión → Casino* | Guardo el mínimo, el máximo y las reglas del blackjack (barajas, si la banca pide con 17 blando y si el blackjack paga 3:2 o 6:5) | Se aplican a las partidas nuevas y veo la ventaja teórica de cada juego. |
+| CA-59.2 | Cierro el casino | Un usuario intenta jugar | No puede. |
+
+La ventaja de la casa se controla con reglas reales: la ruleta europea siempre tiene un 2,70 % (un 0 entre 37 números); la del blackjack es aproximada, con estrategia básica.
 
 ---
 
