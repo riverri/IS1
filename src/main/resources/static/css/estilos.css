@@ -1254,3 +1254,24 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
 .anuncio-texto span { color: var(--texto-suave); font-size: .92rem; }
 .anuncio-flecha { color: var(--primario-oscuro); font-weight: 800; font-size: 1.2rem; }
 tr.inactivo td { color: var(--texto-suave); }
+
+/* ==========================================================================
+   Casino: ruleta europea y blackjack (HU-56, HU-57)
+   ========================================================================== */
+
+.juegos-casino { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 16px 0; }
+.juego-casino { display: flex; flex-direction: column; gap: 6px; padding: 20px; color: var(--texto); text-decoration: none; }
+.juego-casino:hover, .juego-casino:focus-visible { border-color: var(--primario); }
+.juego-icono { font-size: 2.2rem; line-height: 1; }
+.resultado-ruleta { display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; margin: 12px 0; }
+.resultado-ruleta.gana { background: var(--exito-suave); border-color: var(--exito); }
+.resultado-ruleta.pierde { background: var(--error-suave); border-color: var(--error); }
+.mesa-blackjack { display: flex; flex-direction: column; gap: 14px; margin: 12px 0; padding: 18px; border-radius: var(--radio);
+    background: #0b5d3b; color: #fff; }
+.mesa-blackjack .aviso { color: #d1fae5; }
+.mano-titulo { font-weight: 700; }
+.cartas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.carta { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 72px; border-radius: 8px;
+    background: #fff; color: var(--texto); font-weight: 800; font-size: 1.15rem; box-shadow: var(--sombra); }
+.carta.roja { color: var(--error); }
+.carta.oculta { background: repeating-linear-gradient(45deg, #1e3a8a, #1e3a8a 6px, #2563eb 6px, #2563eb 12px); color: #fff; }
