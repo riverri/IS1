@@ -31,6 +31,7 @@ import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.web.Formato;
 
@@ -137,7 +138,7 @@ class ApuestaWebTest {
     @WithMockUser(username = USUARIO)
     void sinSaldoSuficienteNoSePuedeApostar() throws Exception {
         // Se deja el saldo en 20 monedas, por debajo del importe máximo por apuesta
-        usuarios.findByEmail(USUARIO).orElseThrow().cargar(saldo().subtract(new BigDecimal("20")));
+        usuarios.findByEmail(USUARIO).orElseThrow().cargar(saldo().subtract(new BigDecimal("20")), TipoMovimiento.APUESTA, "Gasto de prueba", Hora.ahora());
         BigDecimal antes = saldo();
 
         mvc.perform(post("/eventos/{id}/apostar", futbol.getId()).with(csrf())

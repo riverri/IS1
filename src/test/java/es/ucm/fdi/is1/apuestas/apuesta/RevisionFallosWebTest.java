@@ -45,6 +45,7 @@ import es.ucm.fdi.is1.apuestas.ligas.LigaService;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoRepository;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
@@ -152,7 +153,7 @@ class RevisionFallosWebTest {
 
     @Test
     void unSoloUsuarioNoPuedeMoverMuchoLasCuotas() {
-        usuarios.findByEmail(ANA).orElseThrow().abonar(new BigDecimal("2000"));
+        usuarios.findByEmail(ANA).orElseThrow().abonar(new BigDecimal("2000"), TipoMovimiento.RECARGA, "Saldo de prueba", Hora.ahora());
         for (int i = 0; i < 4; i++) {
             apuestas.apostar(ANA, futbol.getId(), Resultado.LOCAL, new BigDecimal("500"));
         }
@@ -205,9 +206,9 @@ class RevisionFallosWebTest {
     @Test
     void unaCuentaEliminadaNoCobraLasApuestasQueQuedaban() {
         Usuario ana = usuarios.findByEmail(ANA).orElseThrow();
-        ana.eliminar("x");
-        ana.ajustar(new BigDecimal("50"));
-        ana.abonar(new BigDecimal("50"));
+        ana.eliminar("x", Hora.ahora());
+        ana.ajustar(new BigDecimal("50"), TipoMovimiento.CORRECCION, "Prueba", Hora.ahora());
+        ana.abonar(new BigDecimal("50"), TipoMovimiento.PREMIO, "Prueba", Hora.ahora());
 
         assertThat(ana.getSaldo()).isEqualByComparingTo("0");
     }
