@@ -110,3 +110,11 @@ Un **mercado** ("¿Quién ganará el Balón de Oro?") tiene varios **candidatos*
 - Debajo de la cabecera sale, en cada sección, un anuncio de **otra** sección (largo plazo, ranking, ligas, equipos…). Al pulsarlo se va a ella.
 - Se elige uno de los de **prioridad más alta** (1–10) que se pueden mostrar allí; si hay varios con esa prioridad, se turnan al azar. Nunca sale el de la sección en la que estás, y los que llevan a secciones con sesión no se enseñan a los visitantes. El creador de apuestas no ve anuncios.
 - El creador los gestiona en *Gestión → Anuncios*: texto, icono, destino (siempre una sección de la web), secciones donde salen, prioridad y fechas. Ve las **impresiones**, los **clics** y el **porcentaje de clics** de cada uno, y puede desactivarlos sin perder sus cifras.
+
+## Casino (HU-56 a HU-59)
+- **Ruleta europea** (0–36): pleno 35:1, rojo/negro y par/impar 1:1, docenas 2:1. Si sale el 0, solo gana un pleno al 0. Ventaja de la casa fija: 2,70 %.
+- **Blackjack:** pedir, plantarse y doblar (con las dos primeras cartas). La banca pide hasta 17 y, si el creador lo configura, también con 17 blando. El blackjack paga 3:2 o 6:5. No se puede dividir ni asegurar.
+- El **azar lo decide el servidor**; la mano de blackjack se guarda en la partida y la página nunca recibe la carta oculta de la banca. Recargar o pulsar dos veces no reparte otra mano ni cobra dos veces.
+- Cada apuesta y cada premio son **movimientos del saldo** (`CASINO_APUESTA`, `CASINO_PREMIO`) y lo jugado **cuenta en los límites de juego responsable** (HU-10).
+- *Mis partidas* (`/casino/historial`) enseña las 50 últimas con su balance.
+- El creador lo abre o lo cierra y fija los límites por apuesta y las reglas del blackjack en *Gestión → Casino*, viendo la ventaja teórica de cada juego. El *panel de la casa* suma lo apostado y pagado en el casino.

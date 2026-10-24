@@ -165,6 +165,48 @@ classDiagram
         -LocalDateTime fecha
     }
 
+    class Partida {
+        -long version
+        -TipoJuego juego
+        -BigDecimal apostado
+        -BigDecimal premio
+        -EstadoPartida estado
+        -String apuesta
+        -String resultado
+        -String estadoJuego
+        +getBalance() BigDecimal
+    }
+
+    class ConfiguracionCasino {
+        -boolean activo
+        -BigDecimal importeMinimo
+        -BigDecimal importeMaximo
+        -int barajas
+        -boolean bancaPideCon17Blando
+        -PagoBlackjack pagoBlackjack
+        +cambiar(...)
+        +getVentajaRuleta() BigDecimal
+        +getVentajaBlackjack() BigDecimal
+    }
+
+    class ManoBlackjack {
+        +repartir(barajas, azar)$ ManoBlackjack
+        +pedir(pideCon17Blando)
+        +plantarse(pideCon17Blando)
+        +doblar(pideCon17Blando)
+        +resultado() ResultadoMano
+        +valor(cartas)$ int
+    }
+
+    class CasinoService {
+        <<service>>
+        +girarRuleta(email, tipo, numero, importe) Partida
+        +empezarBlackjack(email, importe) Partida
+        +pedir(email, id) Partida
+        +plantarse(email, id) Partida
+        +doblar(email, id) Partida
+    }
+
     class Competicion {
         -String nombre
         -Deporte deporte
@@ -332,6 +374,10 @@ classDiagram
     Usuario "1" *-- "*" MovimientoSaldo : movimientos del saldo
     ClicAnuncio "*" --> "1" Anuncio : en
     ClicAnuncio "*" --> "0..1" Usuario : pulsado por
+    Partida "*" --> "1" Usuario : juega
+    Partida ..> ManoBlackjack : guarda en estadoJuego
+    CasinoService ..> ConfiguracionCasino : límites y reglas
+    CasinoService ..> Partida : crea y paga
     TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
@@ -363,6 +409,7 @@ classDiagram
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
 - **El saldo solo cambia en `Usuario.mover`, que apunta cada cambio en el libro de movimientos (HU-55):** así ningún camino puede mover el saldo sin dejar rastro, y el último saldo resultante coincide siempre con el saldo.
+- **El casino es un módulo de juego genérico ligero:** `Partida` guarda lo común (quién, cuánto, cómo acabó) y `CasinoService` hace el cobro, el pago, los límites y el juego responsable una sola vez; cada juego solo aporta sus reglas (`ApuestaRuleta`, `ManoBlackjack`). El azar lo decide el servidor y la mano de blackjack se guarda en la partida, nunca en el navegador.
 - **Los anuncios son datos, no código:** el creador decide en Gestión qué se promociona y dónde; las plantillas solo pintan el que elige `AnunciosAdvice` en la cabecera común, y el azar (`RandomGenerator`) se inyecta como el reloj.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
 
@@ -507,6 +554,7 @@ erDiagram
     ANUNCIO ||--|{ ANUNCIO_UBICACION : "se muestra en"
     ANUNCIO ||--o{ CLIC_ANUNCIO : recibe
     USUARIO |o--o{ CLIC_ANUNCIO : pulsa
+    USUARIO ||--o{ PARTIDA : juega
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -632,6 +680,28 @@ erDiagram
         varchar hash UK "SHA-256 del código"
         timestamp caduca
         boolean usado
+    }
+    PARTIDA {
+        bigint id PK
+        bigint version
+        bigint usuario_id FK
+        varchar juego
+        numeric apostado
+        numeric premio
+        varchar estado
+        varchar apuesta
+        varchar resultado
+        varchar estado_juego "mano y baraja del blackjack"
+        timestamp fecha
+    }
+    CONFIGURACION_CASINO {
+        bigint id PK "una sola fila"
+        boolean activo
+        numeric importe_minimo
+        numeric importe_maximo
+        integer barajas
+        boolean banca_pide_con17_blando
+        varchar pago_blackjack
     }
     ANUNCIO {
         bigint id PK
