@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.ImporteFueraDeLimitesException;
 import es.ucm.fdi.is1.apuestas.apuesta.JuegoResponsableException;
 import es.ucm.fdi.is1.apuestas.usuarios.MovimientoSaldo;
@@ -68,6 +69,9 @@ class CriptoWebTest {
 
     @Autowired
     private MovimientoSaldoRepository movimientos;
+
+    @Autowired
+    private PrecioCriptoRepository historico;
 
     @MockitoBean
     private FuentePrecios fuente;
@@ -118,8 +122,20 @@ class CriptoWebTest {
     }
 
     @Test
-    void laFichaEsPublicaYEnseñaLaPrevisionDeCompra() throws Exception {
-        // CA-69.2 y CA-70.1: 100 monedas con un 1 % de comisión → 99 / 0,20 = 495 DOGE
+    void laFichaDibujaElGraficoDeLaSemana() throws Exception {
+        // CA-69.2: con un solo precio no hay línea; con uno de hace dos horas, sí
+        mvc.perform(get("/cripto/DOGE"))
+                .andExpect(content().string(containsString("Aún no hay suficientes precios")));
+        historico.save(new PrecioCripto(cripto.cripto("DOGE"), new BigDecimal("0.18"), Hora.ahora().minusHours(2)));
+
+        mvc.perform(get("/cripto/DOGE"))
+                .andExpect(content().string(containsString("Precio en los últimos 7 días")))
+                .andExpect(content().string(containsString("Mínimo 0,18 €")));
+    }
+
+    @Test
+    void laFichaEsPublicaYEnsenaLaPrevisionDeCompra() throws Exception {
+        // CA-70.1: 100 monedas con un 1 % de comisión → 99 / 0,20 = 495 DOGE
         mvc.perform(get("/cripto/DOGE").param("importe", "100"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dogecoin (DOGE)")))
