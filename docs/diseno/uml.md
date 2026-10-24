@@ -237,6 +237,40 @@ classDiagram
         +dineroPorVenta(si, participaciones, qSi, qNo, b)$ double
     }
 
+    class Criptomoneda {
+        -String simbolo
+        -String nombre
+        -String idApi
+        -CategoriaCripto categoria
+        -boolean activa
+        -BigDecimal precio
+        -BigDecimal variacion24h
+        -LocalDateTime actualizado
+        +precioAlDia(ahora, minutos) bool
+    }
+
+    class PosicionCripto {
+        -BigDecimal cantidad
+        -BigDecimal coste
+        +getValor() BigDecimal
+        +getGanancia() BigDecimal
+    }
+
+    class OperacionCripto {
+        -Tipo tipo
+        -BigDecimal cantidad
+        -BigDecimal precio
+        -BigDecimal importe
+        -BigDecimal comision
+    }
+
+    class FuentePrecios {
+        <<interface>>
+        +precios(ids) Map
+    }
+
+    class CoinGeckoCliente
+
     class CasinoService {
         <<service>>
         +girarRuleta(email, tipo, numero, importe) Partida
@@ -422,6 +456,12 @@ classDiagram
     OperacionPrediccion "*" --> "1" MercadoPrediccion : en
     OperacionPrediccion "*" --> "1" Usuario : de
     MercadoPrediccion ..> Lmsr : precio
+    PosicionCripto "*" --> "1" Criptomoneda : de
+    PosicionCripto "*" --> "1" Usuario : de
+    OperacionCripto "*" --> "1" Criptomoneda : de
+    OperacionCripto "*" --> "1" Usuario : de
+    CoinGeckoCliente ..|> FuentePrecios
+    FuentePrecios ..> Criptomoneda : precio real
     TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
@@ -454,6 +494,7 @@ classDiagram
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
 - **El saldo solo cambia en `Usuario.mover`, que apunta cada cambio en el libro de movimientos (HU-55):** así ningún camino puede mover el saldo sin dejar rastro, y el último saldo resultante coincide siempre con el saldo.
 - **El precio de los mercados de predicción lo pone un LMSR:** siempre hay contrapartida, los precios están entre 0 y 1 y suman 1, y la casa pierde como mucho b · ln 2 por mercado. Son cuentas en `double`; el dinero se redondea a favor de la casa (comisión hacia arriba, pagos hacia abajo). Se llama `MercadoPrediccion` para no confundirlo con el `Mercado` a largo plazo.
+- **En las criptomonedas solo el precio es real:** se descarga de CoinGecko (`FuentePrecios`, que las pruebas sustituyen por una falsa) y 1 monedita = 1 €. La casa hace de contrapartida, como en el casino. Un precio solo sirve unos minutos y se comprueba que no haya cambiado al confirmar, para que nadie compre sabiendo ya que ha subido. La llamada a la API va fuera de la transacción. La cantidad se redondea hacia abajo y la comisión hacia arriba. Lo comprado cuenta en el juego responsable, pero la cartera no cuenta en el ranking (que mira el saldo).
 - **El casino es un módulo de juego genérico ligero:** `Partida` guarda lo común (quién, cuánto, cómo acabó) y `CasinoService` hace el cobro, el pago, los límites y el juego responsable una sola vez; cada juego solo aporta sus reglas (`ApuestaRuleta`, `ManoBlackjack`). El azar lo decide el servidor y la mano de blackjack se guarda en la partida, nunca en el navegador.
 - **Los anuncios son datos, no código:** el creador decide en Gestión qué se promociona y dónde; las plantillas solo pintan el que elige `AnunciosAdvice` en la cabecera común, y el azar (`RandomGenerator`) se inyecta como el reloj.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
@@ -604,6 +645,11 @@ erDiagram
     MERCADO_PREDICCION ||--o{ OPERACION_PREDICCION : registra
     USUARIO ||--o{ POSICION_PREDICCION : "tiene participaciones"
     USUARIO ||--o{ OPERACION_PREDICCION : "compra y vende"
+    CRIPTOMONEDA ||--o{ PRECIO_CRIPTO : "histórico"
+    CRIPTOMONEDA ||--o{ POSICION_CRIPTO : "en carteras"
+    CRIPTOMONEDA ||--o{ OPERACION_CRIPTO : registra
+    USUARIO ||--o{ POSICION_CRIPTO : tiene
+    USUARIO ||--o{ OPERACION_CRIPTO : "compra y vende"
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -762,6 +808,48 @@ erDiagram
         numeric comision
         numeric precio_si_despues
         timestamp fecha
+    }
+    CRIPTOMONEDA {
+        bigint id PK
+        varchar simbolo "único"
+        varchar nombre
+        varchar id_api "id en CoinGecko"
+        varchar categoria
+        boolean activa
+        integer orden
+        numeric precio "en euros"
+        numeric variacion24h
+        timestamp actualizado
+    }
+    PRECIO_CRIPTO {
+        bigint id PK
+        bigint cripto_id FK
+        numeric precio
+        timestamp fecha
+    }
+    POSICION_CRIPTO {
+        bigint id PK
+        bigint usuario_id FK
+        bigint cripto_id FK "único por usuario y cripto"
+        numeric cantidad
+        numeric coste
+    }
+    OPERACION_CRIPTO {
+        bigint id PK
+        bigint usuario_id FK
+        bigint cripto_id FK
+        varchar tipo
+        numeric cantidad
+        numeric precio
+        numeric importe
+        numeric comision
+        timestamp fecha
+    }
+    CONFIGURACION_CRIPTO {
+        bigint id PK
+        boolean activo
+        numeric comision
+        integer minutos_validez
     }
     PARTIDA {
         bigint id PK

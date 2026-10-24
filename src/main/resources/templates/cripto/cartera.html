@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Mi cartera')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Mi cartera de criptomonedas</h1>
+        <a class="boton boton-secundario" th:href="@{/cripto}">Ver precios</a>
+    </div>
+    <p class="aviso">Lo que valen se calcula con el último precio y sin la comisión de venta. No cuenta para el ranking,
+        que solo mira el saldo: para que cuente, hay que vender.</p>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(cartera.valor, 1, 'POINT', 2, 'COMMA')}">250,00</span>monedas de valor</div>
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(cartera.coste, 1, 'POINT', 2, 'COMMA')}">200,00</span>monedas invertidas</div>
+        <div class="tarjeta estadistica"><span th:classappend="${cartera.ganancia.signum() >= 0} ? 'positivo' : 'negativo'"
+                                              th:text="${#numbers.formatDecimal(cartera.ganancia, 1, 'POINT', 2, 'COMMA')}">50,00</span>ganancia o pérdida</div>
+    </div>
+
+    <div class="vacio" th:if="${#lists.isEmpty(cartera.posiciones)}">
+        <p>Todavía no tienes criptomonedas. <a th:href="@{/cripto}">Échale un vistazo a las memecoins</a>.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(cartera.posiciones)}">
+        <table>
+            <thead><tr><th>Cripto</th><th>Cantidad</th><th>Precio</th><th>Valor</th><th>Coste</th><th>Ganancia</th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${cartera.posiciones}">
+                <td><a th:href="@{/cripto/{s}(s=${p.cripto.simbolo})}" th:text="${p.cripto.categoria.icono} + ' ' + ${p.cripto.simbolo}">🐸 DOGE</a></td>
+                <td th:text="${@formato.cantidadCripto(p.cantidad)}">1.000</td>
+                <td th:text="${@formato.precioCripto(p.cripto.precio)} + ' €'">0,1534 €</td>
+                <td th:text="${#numbers.formatDecimal(p.valor, 1, 'POINT', 2, 'COMMA')}">153,40</td>
+                <td th:text="${#numbers.formatDecimal(p.coste, 1, 'POINT', 2, 'COMMA')}">150,00</td>
+                <td><span th:classappend="${p.ganancia.signum() >= 0} ? 'positivo' : 'negativo'"
+                          th:text="${#numbers.formatDecimal(p.ganancia, 1, 'POINT', 2, 'COMMA')} + (${p.rentabilidad != null} ? ' (' + ${@formato.variacion(p.rentabilidad)} + ')' : '')">3,40 (2,3 %)</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <th:block th:unless="${#lists.isEmpty(operaciones)}">
+        <h2>Últimas operaciones</h2>
+        <div class="tarjeta tabla">
+            <table>
+                <thead><tr><th>Fecha</th><th>Operación</th><th>Cantidad</th><th>Precio</th><th>Importe</th><th>Comisión</th></tr></thead>
+                <tbody>
+                <tr th:each="o : ${operaciones}">
+                    <td th:text="${#temporals.format(o.fecha, 'dd/MM/yyyy HH:mm')}">24/10/2026 12:00</td>
+                    <td th:text="(${o.tipo.name() == 'COMPRA'} ? 'Compra de ' : 'Venta de ') + ${o.cripto.simbolo}">Compra de DOGE</td>
+                    <td th:text="${@formato.cantidadCripto(o.cantidad)}">1.000</td>
+                    <td th:text="${@formato.precioCripto(o.precio)} + ' €'">0,15 €</td>
+                    <td th:text="${#numbers.formatDecimal(o.importe, 1, 'POINT', 2, 'COMMA')}">150,00</td>
+                    <td th:text="${#numbers.formatDecimal(o.comision, 1, 'POINT', 2, 'COMMA')}">1,50</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

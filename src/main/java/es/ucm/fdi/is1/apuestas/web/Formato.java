@@ -46,6 +46,51 @@ public class Formato {
     }
 
     /**
+     * Precio de una criptomoneda en euros (HU-69). Por encima de 1 €, con dos decimales y separador de miles
+     * ("84.312,55"); por debajo, con 4 cifras significativas, porque muchas memecoins valen 0,00001 € o menos
+     * ("0,00001234"). "–" si aún no hay precio.
+     */
+    public String precioCripto(java.math.BigDecimal precio) {
+        if (precio == null) {
+            return "–";
+        }
+        if (precio.compareTo(java.math.BigDecimal.ONE) >= 0) {
+            return new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(ES))
+                    .format(precio);
+        }
+        return precio.round(new java.math.MathContext(4)).stripTrailingZeros().toPlainString().replace('.', ',');
+    }
+
+    /** Lo mismo que {@link #precioCripto} para los extremos del gráfico, que van en {@code double}. */
+    public String precioGrafico(double precio) {
+        return precioCripto(java.math.BigDecimal.valueOf(precio));
+    }
+
+    /**
+     * Cantidad de criptomoneda: con miles de unidades, como mucho 2 decimales ("1.250.000,5"); con menos de una,
+     * 6 cifras significativas ("0,00123456").
+     */
+    public String cantidadCripto(java.math.BigDecimal cantidad) {
+        if (cantidad == null || cantidad.signum() == 0) {
+            return "0";
+        }
+        if (cantidad.compareTo(java.math.BigDecimal.ONE) >= 0) {
+            return new java.text.DecimalFormat("#,##0.##", java.text.DecimalFormatSymbols.getInstance(ES))
+                    .format(cantidad);
+        }
+        return cantidad.round(new java.math.MathContext(6)).stripTrailingZeros().toPlainString().replace('.', ',');
+    }
+
+    /** Variación en %, con signo y un decimal: "+12,3 %", "-4,5 %"; "–" si no hay. */
+    public String variacion(java.math.BigDecimal porcentaje) {
+        if (porcentaje == null) {
+            return "–";
+        }
+        java.math.BigDecimal redondeado = porcentaje.setScale(1, java.math.RoundingMode.HALF_UP);
+        return (redondeado.signum() > 0 ? "+" : "") + redondeado.toPlainString().replace('.', ',') + " %";
+    }
+
+    /**
      * Nombre corto para el campo de la alineación: "Lamine Yamal" → "Yamal", "Pedri" → "Pedri",
      * "Frenkie de Jong" → "de Jong" (se mantienen las partículas en minúscula delante del apellido).
      */
