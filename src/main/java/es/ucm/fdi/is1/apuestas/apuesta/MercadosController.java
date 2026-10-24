@@ -51,7 +51,8 @@ public class MercadosController {
                           @RequestParam(required = false) BigDecimal cuota,
                           @RequestParam(required = false) BigDecimal importe, Principal principal,
                           RedirectAttributes redireccion) {
-        // El ancla lleva de vuelta al mercado en el que se estaba
+        // El ancla lleva de vuelta al mercado en el que se estaba. Se guarda en una variable porque
+        // se usa en varias salidas del método (cada "return volver")
         String volver = "redirect:/mercados#mercado-" + id;
         if (candidato == null) {
             redireccion.addFlashAttribute("error", "Elige un candidato");

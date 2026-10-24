@@ -30,6 +30,8 @@ public class UsuarioDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) {
+        // Se convierte nuestro Usuario en el UserDetails que entiende Spring Security (patrón "builder":
+        // se van poniendo los datos uno a uno y build() crea el objeto)
         return usuarios.buscar(email)
                 .map(u -> User.withUsername(u.getEmail())
                         .password(u.getPasswordHash())

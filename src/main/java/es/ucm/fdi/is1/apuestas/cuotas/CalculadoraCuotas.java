@@ -35,6 +35,19 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
  * <p>Las cuotas no se guardan en el evento: se calculan cada vez que se piden. Lo usan el catálogo, el boleto y
  * {@code ApuestaService}, que copia la cuota en la selección al apostar. El dinero apostado lo da
  * {@link VolumenApostado}. Hay un ejemplo resuelto en {@code docs/wiki/Algoritmo-de-cuotas.md}.
+ *
+ * <p><b>Ejemplo rápido</b> (fútbol, sin apuestas todavía): local de nivel 7,0 contra visitante de nivel 6,0.
+ * <ol>
+ *   <li>Diferencia = 7,0 + 0,5 − 6,0 = 1,5.</li>
+ *   <li>Empate = 0,30 − 0,02 × 1,5 = 0,27 (27 %).</li>
+ *   <li>Curva logística: 1 / (1 + e^(−0,45 × 1,5)) ≈ 0,663. Queda un 73 % que no es empate:
+ *       local = 0,73 × 0,663 ≈ 0,484 y visitante = 0,73 × 0,337 ≈ 0,246.</li>
+ *   <li>Cuota = 1 / (probabilidad × 1,07): local 1,93, empate 3,46 y visitante 3,79.</li>
+ * </ol>
+ * Cuota y probabilidad son inversas: cuanto más probable es un resultado, menos paga.
+ *
+ * <p>Aquí se usa {@code double} (y no BigDecimal) porque son cálculos aproximados con exponenciales
+ * ({@code Math.exp}); solo la cuota final se pasa a BigDecimal con 2 decimales.
  */
 @Service
 public class CalculadoraCuotas {
@@ -74,6 +87,7 @@ public class CalculadoraCuotas {
 
     private final VolumenApostado volumen;
 
+    // Spring inyecta aquí la única clase que implementa VolumenApostado (apuesta.VolumenApuestas)
     public CalculadoraCuotas(VolumenApostado volumen) {
         this.volumen = volumen;
     }
@@ -205,7 +219,8 @@ public class CalculadoraCuotas {
      * Las dos partes suman 1, así que el margen de la casa se mantiene.
      */
     private static void ajustarPorVolumen(Map<Resultado, Double> probabilidades, Map<Resultado, BigDecimal> apostado) {
-        // Solo cuenta el dinero de los resultados posibles (en un deporte sin empate no hay clave EMPATE)
+        // Solo cuenta el dinero de los resultados posibles (en un deporte sin empate no hay clave EMPATE).
+        // mapToDouble convierte cada resultado en su importe como double, y sum() los suma
         double total = probabilidades.keySet().stream()
                 .mapToDouble(r -> apostado.getOrDefault(r, BigDecimal.ZERO).doubleValue())
                 .sum();
@@ -216,7 +231,8 @@ public class CalculadoraCuotas {
         // Crece con el dinero en juego: casi 0 con poco dinero, 0,15 con 1.000 moneditas y tiende a 0,30 sin
         // llegar nunca. Así unas pocas apuestas apenas mueven las cuotas
         double peso = PESO_MAXIMO_VOLUMEN * total / (total + VOLUMEN_REFERENCIA);
-        // Media ponderada entre la probabilidad por nivel y la parte del dinero que hay en cada resultado
+        // Media ponderada entre la probabilidad por nivel y la parte del dinero que hay en cada resultado.
+        // replaceAll cambia el valor de cada entrada del mapa por lo que devuelve la lambda
         probabilidades.replaceAll((resultado, p) ->
                 (1 - peso) * p + peso * apostado.getOrDefault(resultado, BigDecimal.ZERO).doubleValue() / total);
     }
@@ -226,7 +242,7 @@ public class CalculadoraCuotas {
         // Multiplicar por el margen (1,07) baja todas las cuotas; redondear hacia abajo (1,789 → 1,78)
         // las baja un poco más, nunca a favor del apostante
         BigDecimal cuota = BigDecimal.valueOf(1 / (probabilidad * MARGEN_CASA)).setScale(2, RoundingMode.DOWN);
-        // Entre 1,01 (CA-03.3) y 50
+        // Entre 1,01 (CA-03.3) y 50: max sube la cuota al mínimo si se queda corta, y min la baja al máximo si se pasa
         return cuota.max(CUOTA_MINIMA).min(CUOTA_MAXIMA);
     }
 }

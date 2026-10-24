@@ -4,6 +4,7 @@ package es.ucm.fdi.is1.apuestas.equipos;
  * Deportes de la web, con el nombre y el icono que se muestran y dos propiedades que cambian las reglas:
  * si hay empate (mercado 1X2 o solo 1/2) y si compiten deportistas individuales en lugar de equipos.
  * El orden de los valores es el de las pestañas del catálogo y del listado de equipos.
+ * (Por eso nunca se guarda en la base de datos la posición del valor, sino su nombre: ver {@code EnumType.STRING}.)
  */
 public enum Deporte {
 

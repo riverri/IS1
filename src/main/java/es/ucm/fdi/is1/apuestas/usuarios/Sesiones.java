@@ -26,7 +26,9 @@ public class Sesiones {
         String id = actual == null ? null : actual.getId();
         // Cada principal es un usuario con sesión; false = sin contar las que ya han caducado
         registro.getAllPrincipals().stream()
+                // "p instanceof UserDetails u": si p es un UserDetails, lo usa ya convertido con el nombre u
                 .filter(p -> p instanceof UserDetails u && u.getUsername().equalsIgnoreCase(email))
+                // flatMap: cada usuario tiene una lista de sesiones; se juntan todas en un único stream
                 .flatMap(p -> registro.getAllSessions(p, false).stream())
                 .filter(s -> !s.getSessionId().equals(id))
                 // expireNow la marca como caducada: en su siguiente petición Spring la cierra y lleva a /login?expirada

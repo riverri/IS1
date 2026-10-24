@@ -24,6 +24,8 @@ public class EdicionEquipoForm {
     /**
      * Vacío para quitar el escudo y volver a mostrar las iniciales. Si no, tiene que ser una dirección
      * http o https sin espacios.
+     * La expresión regular se lee así: {@code ^$} = texto vacío, {@code |} = "o", {@code https?} = "http" con "s"
+     * opcional, {@code \S+} = uno o más caracteres que no son espacios; {@code ^} y {@code $} = principio y fin.
      */
     @Size(max = 500, message = "Máximo 500 caracteres")
     @Pattern(regexp = "^$|^https?://\\S+$", message = "Debe ser una dirección que empiece por http:// o https://")

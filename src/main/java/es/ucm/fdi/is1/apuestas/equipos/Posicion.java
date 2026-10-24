@@ -33,6 +33,7 @@ public enum Posicion {
         if (posicion == null) {
             return null;
         }
+        // Locale.ROOT: minúsculas iguales en cualquier idioma del servidor (en turco, "I" no da "i")
         String texto = posicion.toLowerCase(Locale.ROOT);
         // Se busca por trozos de palabra, así valen tanto la posición general como la detallada
         if (texto.contains("goalkeeper")) {

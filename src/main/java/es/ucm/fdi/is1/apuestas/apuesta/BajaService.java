@@ -66,7 +66,9 @@ public class BajaService {
                 .filter(a -> a.cancelable(ahora))
                 .forEach(a -> a.cancelar(ahora));
         notificaciones.borrarDe(usuario);
-        // Antes de anonimizar, para que otros paquetes (por ejemplo, las ligas) limpien lo suyo
+        // Antes de anonimizar, para que otros paquetes (por ejemplo, las ligas) limpien lo suyo.
+        // publishEvent "anuncia" lo que ha pasado: Spring llama a todos los métodos @EventListener que esperan un
+        // CuentaEliminada. Así este servicio no necesita conocer a quienes reaccionan
         eventos.publishEvent(new CuentaEliminada(usuario.getId()));
         usuarioService.anonimizar(usuario);
     }

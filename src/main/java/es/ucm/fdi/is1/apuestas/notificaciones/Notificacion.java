@@ -46,6 +46,7 @@ public class Notificacion {
         this.usuario = usuario;
         this.tipo = tipo;
         // La columna admite 500 caracteres: un texto más largo se corta y termina en "…"
+        // (substring(0, 497) = los caracteres de las posiciones 0 a 496; más "…" suman 498)
         this.texto = texto.length() > 500 ? texto.substring(0, 497) + "…" : texto;
         this.fecha = fecha;
     }

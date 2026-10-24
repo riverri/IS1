@@ -59,9 +59,11 @@ public class CatalogoService {
                 // EnumMap: los deportes salen en el orden del enum, no en uno aleatorio.
                 // LinkedHashMap: las competiciones salen en el orden en que aparece su primer evento,
                 // y como la lista viene ordenada por fecha, cada grupo queda ordenado por fecha.
+                // El tipo (Evento e) es explícito porque el compilador de Eclipse/VS Code no sabe deducirlo
+                // y deduce Object en lugar de String como clave (javac sí lo deduce)
                 .collect(Collectors.groupingBy(Evento::getDeporte,
                         () -> new EnumMap<>(Deporte.class),
-                        Collectors.groupingBy(e -> e.getCompeticion().getNombre(),
+                        Collectors.groupingBy((Evento e) -> e.getCompeticion().getNombre(),
                                 LinkedHashMap::new,
                                 Collectors.toList())));
     }

@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * La apuesta no existe o no es del usuario que la pide (cancelar o cambiar el importe, HU-26, HU-27).
  * Así no se revela si existe una apuesta ajena. Si nadie la captura, Spring responde con un 404
- * gracias a {@code @ResponseStatus}.
+ * gracias a {@code @ResponseStatus}. (404 es el código HTTP de "no encontrado"; el navegador recibe la página
+ * {@code templates/error.html}.)
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ApuestaNoEncontradaException extends RuntimeException {

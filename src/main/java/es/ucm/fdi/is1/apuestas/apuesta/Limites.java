@@ -19,6 +19,7 @@ public class Limites {
     /** Id de la única fila. */
     static final Long ID = 1L;
 
+    // Sin @GeneratedValue: el id no lo genera la base de datos, siempre es 1 (lo pone la migración)
     @Id
     private Long id;
 

@@ -51,6 +51,7 @@ public class Mercado {
      * Los candidatos se guardan y se borran junto con el mercado (cascada). Se cargan siempre con él (EAGER),
      * ordenados de la cuota más baja (el favorito) a la más alta.
      */
+    // Misma idea que las selecciones de Apuesta: "uno a muchos" (un mercado, muchos candidatos)
     @OneToMany(mappedBy = "mercado", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("cuota, nombre")
     private List<Candidato> candidatos = new ArrayList<>();

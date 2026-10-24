@@ -25,6 +25,11 @@ import jakarta.validation.constraints.NotNull;
  * <p>Guarda su {@link EstadoEvento} y solo permite las transiciones válidas; los métodos que cambian
  * el estado lanzan {@link IllegalStateException} si no se puede. El efecto sobre las apuestas
  * (resolverlas, devolver el dinero) no se hace aquí, sino en {@code ResolucionService}.
+ * El diagrama de estados está en {@link EstadoEvento}.
+ *
+ * <p>Por qué no hay setters para todo: si cualquiera pudiera hacer {@code evento.setEstado(FINALIZADO)}, se podría
+ * saltar las reglas (por ejemplo, dar resultado a un partido anulado). Por eso el estado solo cambia con métodos
+ * con nombre ({@link #finalizar}, {@link #suspender}, {@link #anular}...), que comprueban antes si se puede.
  */
 @Entity
 public class Evento {
@@ -33,6 +38,8 @@ public class Evento {
     @GeneratedValue
     private Long id;
 
+    // @NotNull (Bean Validation) se comprueba antes de guardar; @ManyToOne(optional = false) hace la columna
+    // obligatoria en la base de datos. Cada evento apunta a una competición y a dos equipos
     @NotNull
     @ManyToOne(optional = false)
     private Competicion competicion;
@@ -57,6 +64,7 @@ public class Evento {
     private Resultado resultado;
 
     /** Marcador final, si se conoce (HU-52). Sin él, las apuestas de goles se anulan. */
+    // Integer y no int: un int no puede ser null, y aquí null significa "marcador desconocido"
     private Integer golesLocal;
 
     private Integer golesVisitante;
@@ -123,7 +131,8 @@ public class Evento {
         if (!getDeporte().isAdmiteEmpate()) {
             throw new IllegalArgumentException("En " + getDeporte().getNombre() + " solo se indica el ganador");
         }
-        // finalizar() borra los goles, así que se guardan después
+        // finalizar() borra los goles, así que se guardan después.
+        // Ternario encadenado: si local > visitante → LOCAL; si no, si local < visitante → VISITANTE; si no → EMPATE
         finalizar(local > visitante ? Resultado.LOCAL : local < visitante ? Resultado.VISITANTE : Resultado.EMPATE);
         golesLocal = local;
         golesVisitante = visitante;
@@ -180,6 +189,7 @@ public class Evento {
 
     /** True a partir de la hora de inicio, sea cual sea el estado. */
     public boolean haEmpezado(LocalDateTime ahora) {
+        // "no es posterior a ahora" = es ahora mismo o ya ha pasado
         return !fechaHora.isAfter(ahora);
     }
 
