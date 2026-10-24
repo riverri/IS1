@@ -23,6 +23,7 @@
         <nav class="menu" aria-label="Principal">
             <a th:href="@{/eventos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'activo'">Eventos</a>
             <a th:href="@{/mercados}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/mercados')} ? 'activo'">Largo plazo</a>
+            <a th:href="@{/predicciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/predicciones')} ? 'activo'">Predicciones</a>
             <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
             <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas')} ? 'activo'">Ligas</a>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza(${mercado.pregunta})}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <h1 th:text="${mercado.pregunta}">¿Ganará el FC Barcelona LaLiga 2026/27?</h1>
+    <p class="aviso" th:if="${mercado.descripcion}" th:text="${mercado.descripcion}">Cómo se resuelve</p>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="alerta" th:if="${aviso}" th:text="${aviso}">El precio ha cambiado</p>
+
+    <div th:replace="~{fragments/prediccion :: barra(${mercado})}"></div>
+
+    <p th:if="${mercado.resultado != null}" class="chip" th:text="'Respuesta: ' + ${mercado.resultado.nombre}">Respuesta: Sí</p>
+    <p th:unless="${abierto}" class="aviso">Este mercado ya no admite compras ni ventas.</p>
+
+    <!-- Estadísticas (HU-67) -->
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(estadisticas.volumen, 1, 'POINT', 2, 'COMMA')}">0,00</span>monedas de volumen</div>
+        <div class="tarjeta estadistica"><span th:text="${estadisticas.participantes}">0</span>participantes</div>
+        <div class="tarjeta estadistica"><span th:text="${estadisticas.operaciones}">0</span>operaciones</div>
+    </div>
+    <div class="tarjeta grafico-precio" th:if="${estadisticas.grafico != null}" th:with="g=${estadisticas.grafico}">
+        <strong>Evolución del precio del «Sí»</strong>
+        <svg th:attr="viewBox='0 0 ' + ${g.ancho} + ' ' + ${g.alto}" role="img" aria-label="Evolución del precio del sí">
+            <line x1="12" th:attr="x2=${g.ancho - 12}" y1="90" y2="90" class="rejilla"/>
+            <path th:attr="d=${g.linea}" class="linea"/>
+        </svg>
+        <small class="aviso">De 0 (abajo) a 1 (arriba); la línea de en medio es 0,50.</small>
+    </div>
+
+    <!-- Comprar (HU-64): primero se ve la previsión y después se confirma -->
+    <th:block th:if="${abierto}">
+        <h2>Comprar</h2>
+        <form class="tarjeta formulario" th:action="@{/predicciones/{id}(id=${mercado.id})}" method="get">
+            <fieldset>
+                <legend>Respuesta</legend>
+                <label class="casilla" th:each="l : ${lados}">
+                    <input type="radio" name="lado" th:value="${l}" th:checked="${cotizacion != null and cotizacion.lado == l}" required>
+                    <span th:text="${l.nombre}">Sí</span>
+                </label>
+            </fieldset>
+            <label for="importe">Moneditas (comisión incluida)</label>
+            <input id="importe" name="importe" type="number" step="0.01" min="0.01" required
+                   th:value="${cotizacion != null} ? ${cotizacion.importe}">
+            <button class="boton boton-secundario" type="submit">Ver cuántas recibo</button>
+        </form>
+        <div class="tarjeta cotizacion" th:if="${cotizacion != null}">
+            <p th:text="'Recibirías ' + ${#numbers.formatDecimal(cotizacion.participaciones, 1, 'POINT', 2, 'COMMA')} + ' participaciones de «' + ${cotizacion.lado.nombre} + '» a un precio medio de ' + ${#numbers.formatDecimal(cotizacion.precioMedio, 1, 'POINT', 4, 'COMMA')} + ' (comisión: ' + ${#numbers.formatDecimal(cotizacion.comision, 1, 'POINT', 2, 'COMMA')} + '). Si acierta, cobras ' + ${#numbers.formatDecimal(cotizacion.participaciones, 1, 'POINT', 2, 'COMMA')} + ' monedas.'">
+                Recibirías 18,5 participaciones…</p>
+            <p class="aviso" th:text="'Después de tu compra, el «Sí» quedaría a ' + ${#numbers.formatDecimal(cotizacion.precioSiDespues, 1, 'POINT', 2, 'COMMA')} + '.'">El «Sí» quedaría a 0,55.</p>
+            <form th:action="@{/predicciones/{id}/comprar(id=${mercado.id})}" method="post">
+                <input type="hidden" name="lado" th:value="${cotizacion.lado}">
+                <input type="hidden" name="importe" th:value="${cotizacion.importe}">
+                <input type="hidden" name="precioVisto" th:value="${mercado.precioSi}">
+                <button class="boton" type="submit">Confirmar la compra</button>
+            </form>
+        </div>
+    </th:block>
+
+    <!-- Mi posición y vender (HU-65) -->
+    <th:block th:if="${mias != null and !#lists.isEmpty(mias)}">
+        <h2>Tus participaciones</h2>
+        <div class="tarjeta posicion" th:each="p : ${mias}">
+            <span th:text="${#numbers.formatDecimal(p.participaciones, 1, 'POINT', 2, 'COMMA')} + ' de «' + ${p.lado.nombre} + '» · valen ahora ' + ${#numbers.formatDecimal(p.valorActual, 1, 'POINT', 2, 'COMMA')} + ' monedas'">10 de «Sí»</span>
+            <form th:if="${abierto}" class="en-linea" th:action="@{/predicciones/{id}/vender(id=${mercado.id})}" method="post">
+                <input type="hidden" name="lado" th:value="${p.lado}">
+                <input type="hidden" name="precioVisto" th:value="${mercado.precioSi}">
+                <input name="participaciones" type="number" step="0.000001" min="0.000001" th:max="${p.participaciones}"
+                       th:value="${p.participaciones}" aria-label="Participaciones a vender">
+                <button class="boton boton-secundario" type="submit">Vender</button>
+            </form>
+        </div>
+    </th:block>
+
+    <!-- Compañeros de liga (HU-68) -->
+    <th:block th:if="${deMisLigas != null}">
+        <h2>Tus compañeros de liga</h2>
+        <p class="aviso" th:if="${#lists.isEmpty(deMisLigas)}">Nadie de tus ligas privadas tiene participaciones aquí.</p>
+        <div class="tarjeta tabla" th:unless="${#lists.isEmpty(deMisLigas)}">
+            <table>
+                <thead><tr><th>Jugador</th><th>Respuesta</th><th>Participaciones</th><th>Valor ahora</th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${deMisLigas}">
+                    <td th:text="${p.usuario.nombre}">Luis</td>
+                    <td th:text="${p.lado.nombre}">Sí</td>
+                    <td th:text="${#numbers.formatDecimal(p.participaciones, 1, 'POINT', 2, 'COMMA')}">12,00</td>
+                    <td th:text="${#numbers.formatDecimal(p.valorActual, 1, 'POINT', 2, 'COMMA')}">7,20</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+    <a class="enlace-volver" th:href="@{/predicciones}">← Todos los mercados</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>
