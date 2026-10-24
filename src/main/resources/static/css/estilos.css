@@ -1275,3 +1275,22 @@ tr.inactivo td { color: var(--texto-suave); }
     background: #fff; color: var(--texto); font-weight: 800; font-size: 1.15rem; box-shadow: var(--sombra); }
 .carta.roja { color: var(--error); }
 .carta.oculta { background: repeating-linear-gradient(45deg, #1e3a8a, #1e3a8a 6px, #2563eb 6px, #2563eb 12px); color: #fff; }
+
+/* ==========================================================================
+   Mercados de predicción (HU-63 a HU-68)
+   ========================================================================== */
+
+.mercado-prediccion { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; margin: 12px 0;
+    color: var(--texto); text-decoration: none; }
+.mercado-prediccion:hover, .mercado-prediccion:focus-visible { border-color: var(--primario); }
+.barra-prediccion { display: flex; overflow: hidden; border-radius: 999px; background: var(--error-suave); margin: 8px 0;
+    font-weight: 700; font-size: .9rem; }
+.barra-prediccion .lado-si { background: var(--primario); color: #fff; padding: 6px 12px; white-space: nowrap; min-width: 70px; }
+.barra-prediccion .lado-no { color: var(--error); padding: 6px 12px; margin-left: auto; white-space: nowrap; }
+.grafico-precio { padding: 16px; margin: 12px 0; }
+.grafico-precio svg { width: 100%; height: auto; }
+.grafico-precio .linea { fill: none; stroke: var(--primario); stroke-width: 3; }
+.grafico-precio .rejilla { stroke: var(--borde); stroke-dasharray: 4 4; }
+.cotizacion, .posicion { padding: 14px 18px; margin: 10px 0; }
+.posicion { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.posicion input { width: 140px; }

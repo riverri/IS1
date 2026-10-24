@@ -75,6 +75,24 @@
             </tbody>
         </table>
     </div>
+
+    <h2>Mercados de predicción</h2>
+    <p class="aviso">Lo que se queda la casa: compras − ventas − pagos a los ganadores. Con mercados aún sin resolver la cifra es provisional.</p>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Mercados</th><th>Compras</th><th>Ventas</th><th>Pagos</th><th>Beneficio</th></tr></thead>
+            <tbody>
+            <tr>
+                <td th:text="${predicciones.mercados}">2</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.compras, 1, 'POINT', 2, 'COMMA')}">100,00</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.ventas, 1, 'POINT', 2, 'COMMA')}">20,00</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.pagos, 1, 'POINT', 2, 'COMMA')}">70,00</td>
+                <td><strong th:classappend="${predicciones.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(predicciones.beneficio, 1, 'POINT', 2, 'COMMA')}">10,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

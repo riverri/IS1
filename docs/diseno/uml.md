@@ -198,6 +198,45 @@ classDiagram
         +valor(cartas)$ int
     }
 
+    class MercadoPrediccion {
+        -long version
+        -String pregunta
+        -LocalDateTime cierre
+        -EstadoPrediccion estado
+        -Lado resultado
+        -BigDecimal liquidez
+        -BigDecimal comision
+        -BigDecimal qSi
+        -BigDecimal qNo
+        +admiteOperaciones(ahora) bool
+        +precio(lado) double
+    }
+
+    class PosicionPrediccion {
+        -Lado lado
+        -BigDecimal participaciones
+        -BigDecimal invertido
+        -BigDecimal pagado
+        +getValorActual() BigDecimal
+    }
+
+    class OperacionPrediccion {
+        -Lado lado
+        -Tipo tipo
+        -BigDecimal participaciones
+        -BigDecimal importe
+        -BigDecimal comision
+        -BigDecimal precioSiDespues
+    }
+
+    class Lmsr {
+        <<utilidad>>
+        +coste(qSi, qNo, b)$ double
+        +precioSi(qSi, qNo, b)$ double
+        +participacionesPorDinero(si, dinero, qSi, qNo, b)$ double
+        +dineroPorVenta(si, participaciones, qSi, qNo, b)$ double
+    }
+
     class CasinoService {
         <<service>>
         +girarRuleta(email, tipo, numero, importe) Partida
@@ -378,6 +417,11 @@ classDiagram
     Partida ..> ManoBlackjack : guarda en estadoJuego
     CasinoService ..> ConfiguracionCasino : límites y reglas
     CasinoService ..> Partida : crea y paga
+    PosicionPrediccion "*" --> "1" MercadoPrediccion : en
+    PosicionPrediccion "*" --> "1" Usuario : de
+    OperacionPrediccion "*" --> "1" MercadoPrediccion : en
+    OperacionPrediccion "*" --> "1" Usuario : de
+    MercadoPrediccion ..> Lmsr : precio
     TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
@@ -409,6 +453,7 @@ classDiagram
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
 - **El saldo solo cambia en `Usuario.mover`, que apunta cada cambio en el libro de movimientos (HU-55):** así ningún camino puede mover el saldo sin dejar rastro, y el último saldo resultante coincide siempre con el saldo.
+- **El precio de los mercados de predicción lo pone un LMSR:** siempre hay contrapartida, los precios están entre 0 y 1 y suman 1, y la casa pierde como mucho b · ln 2 por mercado. Son cuentas en `double`; el dinero se redondea a favor de la casa (comisión hacia arriba, pagos hacia abajo). Se llama `MercadoPrediccion` para no confundirlo con el `Mercado` a largo plazo.
 - **El casino es un módulo de juego genérico ligero:** `Partida` guarda lo común (quién, cuánto, cómo acabó) y `CasinoService` hace el cobro, el pago, los límites y el juego responsable una sola vez; cada juego solo aporta sus reglas (`ApuestaRuleta`, `ManoBlackjack`). El azar lo decide el servidor y la mano de blackjack se guarda en la partida, nunca en el navegador.
 - **Los anuncios son datos, no código:** el creador decide en Gestión qué se promociona y dónde; las plantillas solo pintan el que elige `AnunciosAdvice` en la cabecera común, y el azar (`RandomGenerator`) se inyecta como el reloj.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
@@ -555,6 +600,10 @@ erDiagram
     ANUNCIO ||--o{ CLIC_ANUNCIO : recibe
     USUARIO |o--o{ CLIC_ANUNCIO : pulsa
     USUARIO ||--o{ PARTIDA : juega
+    MERCADO_PREDICCION ||--o{ POSICION_PREDICCION : tiene
+    MERCADO_PREDICCION ||--o{ OPERACION_PREDICCION : registra
+    USUARIO ||--o{ POSICION_PREDICCION : "tiene participaciones"
+    USUARIO ||--o{ OPERACION_PREDICCION : "compra y vende"
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -680,6 +729,39 @@ erDiagram
         varchar hash UK "SHA-256 del código"
         timestamp caduca
         boolean usado
+    }
+    MERCADO_PREDICCION {
+        bigint id PK
+        bigint version
+        varchar pregunta
+        timestamp cierre
+        varchar estado
+        varchar resultado
+        numeric liquidez "b del LMSR"
+        numeric comision
+        numeric q_si
+        numeric q_no
+    }
+    POSICION_PREDICCION {
+        bigint id PK
+        bigint usuario_id FK
+        bigint mercado_id FK
+        varchar lado "único por usuario, mercado y lado"
+        numeric participaciones
+        numeric invertido
+        numeric pagado
+    }
+    OPERACION_PREDICCION {
+        bigint id PK
+        bigint usuario_id FK
+        bigint mercado_id FK
+        varchar lado
+        varchar tipo
+        numeric participaciones
+        numeric importe
+        numeric comision
+        numeric precio_si_despues
+        timestamp fecha
     }
     PARTIDA {
         bigint id PK

@@ -22,6 +22,9 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **ClicAnuncio** | origen, fecha | Un anuncio y, si había sesión, un usuario (HU-62) |
 | **Partida** | juego, apostado, premio, estado, apuesta, resultado, estadoJuego, fecha, version | Un usuario. Una por tirada de ruleta o mano de blackjack (HU-56 a HU-58) |
 | **ConfiguracionCasino** | activo, importeMinimo, importeMaximo, barajas, bancaPideCon17Blando, pagoBlackjack | Una sola fila (HU-59) |
+| **MercadoPrediccion** | pregunta, descripcion, cierre, estado, resultado, liquidez, comision, qSi, qNo, version | Muchas posiciones y operaciones (HU-63 a HU-67) |
+| **PosicionPrediccion** | lado, participaciones, invertido, pagado | Un usuario y un mercado; una por lado (HU-64 a HU-66, HU-68) |
+| **OperacionPrediccion** | lado, tipo (compra o venta), participaciones, importe, comision, precioSiDespues, fecha | Un usuario y un mercado (HU-67) |
 | **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 
@@ -44,6 +47,9 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 
 ### Mercado
 `ABIERTO`, `CERRADO`, `RESUELTO`, `ANULADO`.
+
+### Mercado de predicción
+`ABIERTO` (hasta su fecha de cierre), `CERRADO`, `RESUELTO` (se puede corregir), `ANULADO`.
 
 ### Partida del casino
 - **EN_CURSO** → solo una mano de blackjack a medias (una por usuario).
