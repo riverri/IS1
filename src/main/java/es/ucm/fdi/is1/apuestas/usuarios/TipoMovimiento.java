@@ -40,7 +40,11 @@ public enum TipoMovimiento {
     /** Lo que se recupera al vender participaciones, ya sin la comisión (HU-65). */
     PREDICCION_VENTA("Predicción: venta"),
     /** Lo cobrado al resolverse un mercado: 1 monedita por participación ganadora (HU-66). */
-    PREDICCION_PAGO("Predicción: pago");
+    PREDICCION_PAGO("Predicción: pago"),
+    /** Compra de una criptomoneda, con la comisión (HU-70). */
+    CRIPTO_COMPRA("Cripto: compra", true),
+    /** Lo que se recupera al vender una criptomoneda, ya sin la comisión (HU-71). */
+    CRIPTO_VENTA("Cripto: venta");
 
     private final String descripcion;
     private final boolean juego;

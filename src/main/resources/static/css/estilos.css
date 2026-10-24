@@ -1294,3 +1294,22 @@ tr.inactivo td { color: var(--texto-suave); }
 .cotizacion, .posicion { padding: 14px 18px; margin: 10px 0; }
 .posicion { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
 .posicion input { width: 140px; }
+
+/* ==========================================================================
+   Criptomonedas (HU-69 a HU-73): las memecoins, protagonistas
+   ========================================================================== */
+
+.aviso-riesgo { background: #fff7ed; border: 1px solid #fb923c; color: #7c2d12; }
+.cripto-destacada { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 16px 20px; margin: 12px 0;
+    color: var(--texto); text-decoration: none; background: linear-gradient(90deg, #ecfccb, #fef9c3); }
+.cripto-destacada:hover, .cripto-destacada:focus-visible { border-color: var(--primario); }
+.cripto-destacada-titulo { font-weight: 800; }
+.cripto-destacada .cripto-variacion { margin-left: auto; font-size: 1.2rem; }
+.rejilla-cripto { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin: 12px 0 20px; }
+.tarjeta-cripto { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; color: var(--texto); text-decoration: none; }
+.tarjeta-cripto:hover, .tarjeta-cripto:focus-visible { border-color: var(--primario); }
+.tarjeta-cripto.memecoin { border-left: 4px solid #84cc16; }
+.cripto-simbolo { font-weight: 800; letter-spacing: .04em; }
+.cripto-nombre { color: var(--texto-suave); font-size: .9rem; }
+.cripto-precio { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.cripto-variacion { font-weight: 700; font-variant-numeric: tabular-nums; }
