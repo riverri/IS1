@@ -118,3 +118,11 @@ Un **mercado** ("¿Quién ganará el Balón de Oro?") tiene varios **candidatos*
 - Cada apuesta y cada premio son **movimientos del saldo** (`CASINO_APUESTA`, `CASINO_PREMIO`) y lo jugado **cuenta en los límites de juego responsable** (HU-10).
 - *Mis partidas* (`/casino/historial`) enseña las 50 últimas con su balance.
 - El creador lo abre o lo cierra y fija los límites por apuesta y las reglas del blackjack en *Gestión → Casino*, viendo la ventaja teórica de cada juego. El *panel de la casa* suma lo apostado y pagado en el casino.
+
+## Mercados de predicción (HU-63 a HU-68)
+- Preguntas de **sí o no** ("¿Ganará el FC Barcelona LaLiga?"). El precio de cada respuesta va de **0 a 1** y es la probabilidad que le da la comunidad; cada participación ganadora paga **1 monedita**.
+- El precio lo calcula un **creador de mercado automático LMSR**: siempre se puede comprar y vender, los dos precios suman 1 y la casa pierde como mucho *liquidez × ln 2* por mercado. Con más liquidez, el precio se mueve menos en cada compra.
+- **Comprar:** primero se ve cuántas participaciones se recibirían y a qué precio medio; si el precio cambia antes de confirmar, se pide aceptarlo otra vez. **Vender:** antes del cierre, recibiendo el valor menos la comisión.
+- Mismas comprobaciones que al apostar: saldo, límites de apuesta, mercado abierto y juego responsable. Cada compra, venta y pago es un movimiento del saldo.
+- **Estadísticas** públicas: precio, volumen, participantes y gráfico del precio del «Sí». Con sesión, también tus participaciones y las de tus **compañeros de liga** (no salen en el perfil público).
+- El creador los crea, cierra, anula (devolviendo lo invertido) y resuelve en *Gestión → Predicciones*; corregir la respuesta ajusta los saldos por la diferencia.
