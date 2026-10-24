@@ -147,8 +147,11 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-54 | Cuentas de la casa | Hecha | 2 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-55 | Movimientos del saldo | En revisión (PR) | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-60 | Anuncios de otras secciones | En revisión (PR) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-61 | Gestionar los anuncios | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-62 | Medir los clics de cada anuncio | En revisión (PR) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**54 historias**: 45 hechas, 1 en revisión (HU-55) y 8 descartadas. **112 criterios de aceptación** en total; 96 de ellos son de historias hechas.
+**57 historias**: 45 hechas, 4 en revisión (HU-55, HU-60 a HU-62) y 8 descartadas. **118 criterios de aceptación** en total; 96 de ellos son de historias hechas.
 
 ---
 
@@ -1005,6 +1008,55 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-45.1 | Creo un mercado con al menos dos candidatos y sus cuotas | Lo guardo | Aparece en el catálogo. |
 | CA-45.2 | Un mercado abierto | Lo cierro | Deja de admitir apuestas. |
 | CA-45.3 | Un mercado con apuestas | Marco el candidato ganador | Las apuestas a ese candidato se cobran y el resto pasan a perdidas. |
+
+---
+
+## Anuncios internos
+
+### HU-60 · Anuncios de otras secciones
+
+**Como** visitante o usuario, **quiero** ver anuncios de otras secciones de la web y pulsarlos, **para** descubrir lo que ofrece.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 38 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-60.1 | Hay anuncios activos para la sección de la página | La abro | Veo uno de los de prioridad más alta; si hay varios con esa prioridad, se turnan al azar. |
+| CA-60.2 | Estoy en una sección | Se elige el anuncio | Nunca es uno que lleve a esa misma sección. |
+| CA-60.3 | Veo un anuncio | Lo pulso | Voy directo a su sección. Los que llevan a secciones que necesitan sesión (ligas, Mi cuenta) no se enseñan a los visitantes. |
+
+### HU-61 · Gestionar los anuncios
+
+**Como** creador de apuestas, **quiero** crear, editar, activar y desactivar anuncios con su texto, su destino, las secciones donde salen, su prioridad y sus fechas, **para** decidir qué se promociona sin tocar el código.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 38 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-61.1 | Creo un anuncio con un destino de la web y al menos una sección | Lo guardo | Sale en esas secciones mientras esté activo y dentro de sus fechas. |
+| CA-61.2 | El destino es una dirección de otra web o no es una sección conocida | Lo guardo | Se rechaza con un mensaje. |
+
+### HU-62 · Medir los clics de cada anuncio
+
+**Como** creador de apuestas, **quiero** ver cuántas veces se ha mostrado y pulsado cada anuncio, **para** saber cuáles funcionan.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 38 | Could | 3 | En revisión (PR) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-62.1 | Un usuario o un visitante pulsa un anuncio | Lo abro en Gestión | Queda apuntado el clic con su fecha y la página de origen, y veo las impresiones, los clics y el porcentaje de clics de cada anuncio. |
 
 ---
 

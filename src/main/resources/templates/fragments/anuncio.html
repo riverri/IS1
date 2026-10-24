@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+    Componente reutilizable de anuncio interno (HU-60). Se usa así:
+    <th:block th:if="${anuncio != null}"><div th:replace="~{fragments/anuncio :: anuncio(${anuncio})}"></div></th:block>
+    Todo el bloque es un enlace que pasa por /anuncios/{id}/ir, que apunta el clic y lleva a la sección.
+-->
+<a class="anuncio" th:fragment="anuncio(a)"
+   th:href="@{/anuncios/{id}/ir(id=${a.id}, desde=${ruta})}">
+    <span class="anuncio-icono" aria-hidden="true" th:if="${a.icono != null}" th:text="${a.icono}">🏆</span>
+    <span class="anuncio-texto">
+        <strong th:text="${a.titulo}">Apuestas a largo plazo</strong>
+        <span th:text="${a.texto}">¿Quién ganará el Balón de Oro? Apuesta a los mercados de temporada.</span>
+    </span>
+    <span class="anuncio-flecha" aria-hidden="true">→</span>
+</a>
+</body>
+</html>

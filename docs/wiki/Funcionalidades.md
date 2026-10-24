@@ -105,3 +105,8 @@ Un **mercado** ("¿Quién ganará el Balón de Oro?") tiene varios **candidatos*
 - **Límites personales** (HU-10): máximo apostado en 24 horas y en 7 días.
 - **Pausa:** 1, 7 o 30 días sin apostar. El creador puede desactivar el juego responsable.
 - **Eliminar la cuenta** (HU-18): pide la contraseña. Se cancelan las apuestas cancelables, se borran avisos y ligas propias, se cierran las otras sesiones y la cuenta se **anonimiza** (email `eliminado-<id>@apuestas.invalid`, nombre "Usuario eliminado", saldo 0). La fila se conserva para que las cuentas de la casa cuadren.
+
+## Anuncios internos (HU-60 a HU-62)
+- Debajo de la cabecera sale, en cada sección, un anuncio de **otra** sección (largo plazo, ranking, ligas, equipos…). Al pulsarlo se va a ella.
+- Se elige uno de los de **prioridad más alta** (1–10) que se pueden mostrar allí; si hay varios con esa prioridad, se turnan al azar. Nunca sale el de la sección en la que estás, y los que llevan a secciones con sesión no se enseñan a los visitantes. El creador de apuestas no ve anuncios.
+- El creador los gestiona en *Gestión → Anuncios*: texto, icono, destino (siempre una sección de la web), secciones donde salen, prioridad y fechas. Ve las **impresiones**, los **clics** y el **porcentaje de clics** de cada uno, y puede desactivarlos sin perder sus cifras.
