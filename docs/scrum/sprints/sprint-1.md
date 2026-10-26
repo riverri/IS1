@@ -48,7 +48,7 @@ El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull r
 | [8](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-08.md) | 02/10 | HU-46, HU-47, HU-48; diagramas UML y métricas | 12 |
 | [9](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-09.md) | 02/10 | HU-10, HU-18, HU-32; rediseño visual | 16 |
 | [10](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-10.md) | 02/10 | HU-49, HU-50 | 11 |
-| [11](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-11.md) | 02/10 | HU-51, HU-52, HU-54 | 17 |
+| [11](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-11.md) | 02/10 | HU-51, HU-52, HU-53 | 17 |
 | [12](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-12.md) | 02/10 | Matriz de trazabilidad, servidor permanente con PostgreSQL y tablero (issues #24–#26) | 10 |
 | | | **Total** | **214** |
 
