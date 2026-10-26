@@ -159,7 +159,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 1, 2 | Must | 1 (it. 1) | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
+| 1, 2 | 1 (Muy Alta) | 1 (it. 1) | Hecha | 8 | 656 | 47 | 7,3 | 7,8 $ |
 
 **Criterios de aceptación**
 
