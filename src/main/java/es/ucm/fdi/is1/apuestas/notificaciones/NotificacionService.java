@@ -56,7 +56,8 @@ public class NotificacionService {
         List<Aviso> avisos = mostradas.stream()
                 .map(n -> new Aviso(n.getTipo(), n.getTexto(), n.getFecha(), !n.isLeida()))
                 .toList();
-        // Solo se marcan como leídos los que se ven: los más antiguos siguen contando en la campana
+        // Solo se marcan como leídos los que se ven: los más antiguos siguen contando en la campana.
+        // Sin save: dentro de la transacción, JPA guarda solo el cambio de "leida" de cada aviso
         mostradas.forEach(Notificacion::marcarLeida);
         return avisos;
     }

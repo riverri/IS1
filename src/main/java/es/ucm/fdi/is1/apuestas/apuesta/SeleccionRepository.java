@@ -20,7 +20,10 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
     /** Si alguien ha apostado alguna vez al evento: entonces no se puede borrar ni cambiar de equipos (HU-46). */
     boolean existsByEvento(Evento evento);
 
-    /** Selecciones a cualquier candidato del mercado (navega {@code candidato.mercado}). */
+    /**
+     * Selecciones a cualquier candidato del mercado (navega {@code candidato.mercado}): en el nombre del
+     * método, "CandidatoMercado" significa "el atributo mercado del atributo candidato".
+     */
     List<Seleccion> findByCandidatoMercado(Mercado mercado);
 
     /**

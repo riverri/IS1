@@ -36,6 +36,7 @@ public class Formato {
         // NFD separa cada letra de su tilde, y \p{M} quita las tildes sueltas: "Fórmula" → "Formula"
         String sinTildes = java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "");
+        // Todo lo que no sea letra o número pasa a "-", y después se quitan los "-" del principio y del final
         return sinTildes.toLowerCase(ES).replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
     }
 
@@ -85,6 +86,8 @@ public class Formato {
      * da siempre el mismo tono (de 0 a 359 en la rueda de color).
      */
     public String color(String nombre) {
+        // hashCode() convierte el texto en un número (siempre el mismo para el mismo texto, puede ser negativo);
+        // floorMod lo deja entre 0 y 359 aunque sea negativo
         int tono = Math.floorMod(nombre.hashCode(), 360);
         return "hsl(" + tono + " 55% 38%)";
     }
@@ -104,6 +107,7 @@ public class Formato {
 
     /** Si un color "#rrggbb" es claro, según su luminosidad percibida (el verde pesa más que el azul). */
     private static boolean esClaro(String hex) {
+        // "#a50044": cada pareja de caracteres es un número en base 16 (de 00 a ff, es decir, de 0 a 255)
         int r = Integer.parseInt(hex.substring(1, 3), 16);
         int g = Integer.parseInt(hex.substring(3, 5), 16);
         int b = Integer.parseInt(hex.substring(5, 7), 16);

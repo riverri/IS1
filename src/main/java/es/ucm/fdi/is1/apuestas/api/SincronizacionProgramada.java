@@ -32,7 +32,11 @@ public class SincronizacionProgramada {
         this.propiedades = propiedades;
     }
 
-    /** Las plantillas cambian poco: una vez al día (y al poco de arrancar). */
+    /**
+     * Las plantillas cambian poco: una vez al día (y al poco de arrancar).
+     * {@code @Scheduled}: Spring llama solo a este método cada cierto tiempo (funciona gracias a
+     * {@code @EnableScheduling} en {@code ApuestasApplication}). {@code initialDelay}: cuánto espera la primera vez.
+     */
     @Scheduled(initialDelayString = "${apuestas.api.retraso-inicial-plantillas:PT2M}",
             fixedDelayString = "${apuestas.api.intervalo-plantillas:P1D}")
     public void sincronizarPlantillas() {

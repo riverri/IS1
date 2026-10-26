@@ -8,6 +8,11 @@ import jakarta.validation.constraints.Size;
  * Formulario de registro (HU-11). Las anotaciones las comprueba {@code @Valid} en
  * {@link UsuariosController}; que la confirmación coincida y que la contraseña quepa en BCrypt
  * se comprueba allí a mano.
+ *
+ * <p>Un "form" es una clase sencilla con un atributo por cada campo del formulario HTML (mismo nombre que el
+ * {@code name} del {@code <input>}). Spring la rellena con los setters al recibir el envío. Las anotaciones de
+ * validación ({@code @NotBlank}: no vacío; {@code @Size}: longitud; {@code @Email}: formato de email) llevan el
+ * mensaje que se enseña si no se cumplen.
  */
 public class RegistroForm {
 

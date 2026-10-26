@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
  * quien la ha olvidado no puede iniciar sesión. La lógica está en {@link RecuperacionService}.
  */
 @Controller
+// @RequestMapping en la clase: todas las rutas de abajo empiezan por /recuperar
+// (@GetMapping sin ruta = /recuperar; @GetMapping("/nueva") = /recuperar/nueva)
 @RequestMapping("/recuperar")
 public class RecuperacionController {
 

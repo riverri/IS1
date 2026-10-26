@@ -23,7 +23,9 @@ public class EventoForm {
     @NotNull(message = "Elige el equipo visitante")
     private Long visitanteId;
 
-    // No se puede crear un evento en el pasado. El patrón es el formato del campo datetime-local de HTML
+    // No se puede crear un evento en el pasado. El patrón es el formato del campo datetime-local de HTML.
+    // @Future: la fecha tiene que ser posterior a ahora. @DateTimeFormat: cómo convertir el texto que envía
+    // el navegador ("2026-10-25T21:00") en un LocalDateTime
     @NotNull(message = "Introduce la fecha y hora")
     @Future(message = "La fecha debe ser futura")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")

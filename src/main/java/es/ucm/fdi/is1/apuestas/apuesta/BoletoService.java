@@ -62,7 +62,8 @@ public class BoletoService {
         if (boleto.getTamano() >= maximo) {
             throw new IllegalArgumentException("El boleto admite como máximo " + maximo + " selecciones");
         }
-        // Multiplicador que tendría el boleto con la nueva selección
+        // Multiplicador que tendría el boleto con la nueva selección.
+        // new ArrayList<>(...): copia modificable (toList() devuelve una lista a la que no se puede añadir)
         List<BigDecimal> conLaNueva = new ArrayList<>(boleto.getLineas().stream().map(Boleto.Linea::cuotaVista).toList());
         conLaNueva.add(cuota);
         ApuestaService.comprobarCuotaTotal(Apuesta.producto(conLaNueva));
@@ -106,6 +107,7 @@ public class BoletoService {
                 if (quitarNoDisponibles) {
                     boleto.quitar(linea.eventoId());
                 }
+                // continue: salta a la siguiente vuelta del bucle sin ejecutar lo de abajo
                 continue;
             }
             // La cuota puede haber cambiado desde que se añadió (por ejemplo, por el ajuste por volumen)
@@ -137,6 +139,7 @@ public class BoletoService {
             // La transacción se deshace (no se cobra nada), pero el boleto está en la sesión, no en la base
             // de datos: las cuotas nuevas se quedan guardadas para el siguiente intento
             aceptarCuotasActuales(boleto);
+            // throw e: se vuelve a lanzar la misma excepción para que el controlador avise al usuario
             throw e;
         }
     }

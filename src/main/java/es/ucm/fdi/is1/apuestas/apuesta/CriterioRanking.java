@@ -10,6 +10,8 @@ public enum CriterioRanking {
     /** Porcentaje de apuestas ganadas; primero los que tienen un mínimo de apuestas resueltas. */
     ACIERTOS("% de aciertos");
 
+    // Un enum puede tener atributos y constructor: cada valor de arriba, como SALDO("Saldo"),
+    // llama a este constructor con su texto. El constructor de un enum no se puede llamar desde fuera
     private final String nombre;
 
     CriterioRanking(String nombre) {

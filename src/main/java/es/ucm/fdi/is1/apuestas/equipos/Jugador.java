@@ -86,11 +86,13 @@ public class Jugador {
         if (Double.isNaN(nueva) || nueva < 0 || nueva > 10) {
             throw new IllegalArgumentException("La nota debe estar entre 0 y 10");
         }
+        // Redondeo a un decimal: 7,46 × 10 = 74,6 → round = 75 → 75 / 10,0 = 7,5
         nota = Math.round(nueva * 10) / 10.0;
     }
 
     /** Años cumplidos, o null si no se conoce la fecha de nacimiento. */
     public Integer getEdad() {
+        // Period.between calcula el tiempo entre dos fechas; getYears() se queda con los años completos
         return fechaNacimiento == null ? null : Period.between(fechaNacimiento, LocalDate.now()).getYears();
     }
 

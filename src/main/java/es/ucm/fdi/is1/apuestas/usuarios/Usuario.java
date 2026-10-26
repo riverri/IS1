@@ -18,6 +18,12 @@ import jakarta.persistence.Version;
  * Aquí están las reglas del saldo (cargar, abonar, recargas gratuitas), los límites del juego
  * responsable (HU-10), el cambio de nombre y contraseña (HU-47) y la baja (HU-18).
  * {@link UsuarioService} llama a estos métodos dentro de una transacción.
+ *
+ * <p><b>Qué es una entidad:</b> {@code @Entity} indica a JPA (la librería que conecta Java con la base de datos)
+ * que cada objeto {@code Usuario} es una fila de la tabla {@code usuario}, y cada atributo, una columna.
+ * Así no hace falta escribir SQL para guardarlo o leerlo: lo hace el {@link UsuarioRepository}.
+ * Los atributos son {@code private}: solo se cambian a través de los métodos de esta clase, que son los que
+ * conocen las reglas (por ejemplo, que el saldo no puede quedar negativo al apostar).
  */
 @Entity
 public class Usuario {
@@ -28,15 +34,19 @@ public class Usuario {
     /**
      * Control de concurrencia: si dos operaciones cambian el saldo a la vez (doble clic, dos pestañas,
      * una apuesta mientras se paga otra), la segunda falla en lugar de pisar a la primera.
+     * JPA suma 1 a este número cada vez que guarda el usuario; si al guardar ve que otro ya lo había cambiado,
+     * lanza una excepción (la recoge {@code web.ConcurrenciaAdvice}).
      */
     @Version
     private long version;
 
+    // @Id: clave primaria (identifica la fila). @GeneratedValue: la base de datos le asigna el número al guardar
     @Id
     @GeneratedValue
     private Long id;
 
     /** Se guarda normalizado (sin espacios y en minúsculas) y es único. */
+    // @Column configura la columna: nullable = false → obligatoria; unique = true → no puede repetirse
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -47,11 +57,17 @@ public class Usuario {
     @Column(nullable = false)
     private String passwordHash;
 
+    // EnumType.STRING: se guarda el texto "USUARIO" o "CREADOR" (y no su posición 0/1, que cambiaría si se reordenan)
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
-    /** Moneditas disponibles. BigDecimal con 2 decimales: sin los errores de redondeo de double. */
+    /**
+     * Moneditas disponibles. BigDecimal con 2 decimales: sin los errores de redondeo de double.
+     * (Con double, 0.1 + 0.2 da 0.30000000000000004; con dinero eso no se puede permitir. BigDecimal no se suma con
+     * {@code +} sino con {@code add}, y no se compara con {@code <} sino con {@code compareTo}.)
+     * precision = 12, scale = 2: hasta 12 cifras en total, 2 de ellas decimales.
+     */
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal saldo;
 
@@ -75,7 +91,8 @@ public class Usuario {
     private boolean eliminado;
 
     protected Usuario() {
-        // requerido por JPA
+        // requerido por JPA: al leer de la base de datos crea el objeto vacío y luego rellena los atributos.
+        // Es protected para que el resto del código use el constructor de abajo, que deja el usuario completo
     }
 
     /**
@@ -114,6 +131,7 @@ public class Usuario {
      * @throws SaldoInsuficienteException si el saldo no llega al importe
      */
     public void cargar(BigDecimal importe) {
+        // compareTo devuelve un número negativo si saldo < importe, 0 si son iguales y positivo si saldo > importe
         if (saldo.compareTo(importe) < 0) {
             throw new SaldoInsuficienteException(saldo, importe);
         }
@@ -193,6 +211,9 @@ public class Usuario {
         pausaHasta = null;
         eliminado = true;
     }
+
+    // Getters: dan acceso de solo lectura a los atributos. Las plantillas HTML (Thymeleaf) los usan también:
+    // ${usuario.saldo} llama a getSaldo(), y ${usuario.creador} a isCreador() (los boolean empiezan por "is")
 
     public BigDecimal getLimiteDiario() {
         return limiteDiario;

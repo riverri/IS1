@@ -83,6 +83,7 @@ public class ResolucionMercadosService {
                 .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA
                         && s.getApuesta().getEstado() != EstadoApuesta.ANULADA)
                 .toList();
+        // Una lambda con llaves { } puede tener varias líneas; devuelve lo que pone su "return"
         return mercado.getCandidatos().stream().map(candidato -> {
             List<Seleccion> aEste = delMercado.stream()
                     .filter(s -> s.getCandidato().getId().equals(candidato.getId()))

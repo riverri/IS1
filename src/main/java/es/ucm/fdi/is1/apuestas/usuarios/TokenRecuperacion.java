@@ -20,6 +20,8 @@ public class TokenRecuperacion {
     @GeneratedValue
     private Long id;
 
+    // Relación "muchos a uno": un usuario puede tener varios tokens y cada token es de un único usuario.
+    // En la tabla se guarda como una columna usuario_id que apunta al usuario; optional = false → obligatorio
     @ManyToOne(optional = false)
     private Usuario usuario;
 

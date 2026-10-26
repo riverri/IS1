@@ -33,7 +33,8 @@ public final class Nombres {
 
     /** Clave para reconocer un club con nombres distintos: "Club Atlético de Madrid" → "atletico madrid". */
     public static String clave(String nombre) {
-        // Se parte por todo lo que no sea letra o número y se quitan las palabras genéricas
+        // Se parte por todo lo que no sea letra o número y se quitan las palabras genéricas;
+        // joining(" ") vuelve a unir las palabras que quedan, separadas por un espacio
         return Arrays.stream(normalizar(nombre).split("[^a-z0-9]+"))
                 .filter(p -> !p.isBlank() && !GENERICAS.contains(p))
                 .collect(Collectors.joining(" "));

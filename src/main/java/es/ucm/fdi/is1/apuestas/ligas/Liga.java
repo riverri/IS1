@@ -48,6 +48,8 @@ public class Liga {
      * Relación muchos a muchos con los usuarios, en la tabla intermedia liga_miembro.
      * Se cargan con la liga: las páginas los muestran fuera de la transacción (open-in-view desactivado).
      */
+    // @JoinTable da nombre a la tabla intermedia y a sus dos columnas: cada fila (liga_id, usuario_id)
+    // significa "este usuario es miembro de esta liga"
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "liga_miembro", joinColumns = @JoinColumn(name = "liga_id"),
             inverseJoinColumns = @JoinColumn(name = "usuario_id"))

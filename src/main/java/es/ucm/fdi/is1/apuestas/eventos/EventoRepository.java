@@ -13,6 +13,9 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 /**
  * Repositorio Spring Data de {@link Evento}. Spring genera la implementación: las consultas salen del
  * nombre de cada método o de su {@code @Query} (JPQL).
+ * Cómo se leen los nombres: ver {@link es.ucm.fdi.is1.apuestas.apuesta.ApuestaRepository}.
+ * Aquí aparecen también {@code After} (fecha posterior a), {@code Between} (entre dos valores) y
+ * {@code findAllByOrderBy...} (todos, ordenados).
  */
 public interface EventoRepository extends JpaRepository<Evento, Long> {
 
