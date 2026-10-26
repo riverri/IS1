@@ -73,14 +73,17 @@ public class SincronizacionPlantillas {
         }
         // Equipos ya actualizados: si un equipo llega por dos competiciones, solo cuenta la primera
         Set<Long> procesados = new HashSet<>();
-        // Contadores que rellena actualizar(): [nuevos, actualizados, retirados]
+        // Contadores que rellena actualizar(): [nuevos, actualizados, retirados].
+        // Es un array porque Java pasa los int por copia: si actualizar() recibiera un int, sus sumas no se verían
+        // aquí. Con un array, el método cambia las casillas del mismo array que tenemos nosotros
         int[] cuenta = new int[3];
         List<String> errores = new ArrayList<>();
         for (String codigo : propiedades.ligasDePlantillas()) {
             try {
                 for (PlantillaApi datos : fuente.plantillas(codigo)) {
                     Equipo equipo = buscar(datos);
-                    // Una plantilla vacía (la Champions en el plan gratuito) no borra la que ya tenemos
+                    // Una plantilla vacía (la Champions en el plan gratuito) no borra la que ya tenemos.
+                    // procesados.add devuelve false si el id ya estaba en el conjunto (equipo ya hecho)
                     if (equipo == null || datos.squad() == null || datos.squad().isEmpty()
                             || !procesados.add(equipo.getId())) {
                         continue;

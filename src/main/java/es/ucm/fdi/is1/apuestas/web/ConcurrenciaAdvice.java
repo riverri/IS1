@@ -15,7 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @ControllerAdvice
 public class ConcurrenciaAdvice {
 
-    /** Vuelve a la página de la que venía (Referer) con el aviso; si no se sabe, a Mis apuestas (/apuestas). */
+    /**
+     * Vuelve a la página de la que venía (Referer) con el aviso; si no se sabe, a Mis apuestas (/apuestas).
+     * {@code @ExceptionHandler}: si cualquier controlador deja escapar esa excepción, Spring llama a este método
+     * en lugar de mostrar la página de error.
+     */
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public String aLaVez(@RequestHeader(value = "Referer", required = false) String referer,
                          RedirectAttributes redireccion) {

@@ -12,6 +12,8 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
  * (3 por victoria y 1 por empate). Las coordenadas se calculan aquí para dibujar un SVG sin JavaScript.
  *
  * <p>Forma parte de {@link FichaEquipo}; la plantilla {@code equipo.html} solo pinta los datos.
+ * (SVG es un formato de dibujo dentro del HTML: se describen líneas y círculos con coordenadas x, y en píxeles,
+ * con el origen (0, 0) en la esquina de arriba a la izquierda.)
  *
  * @param ancho     ancho del SVG en píxeles
  * @param alto      alto del SVG en píxeles
@@ -75,7 +77,9 @@ public record GraficoEvolucion(int ancho, int alto, String linea, List<Marca> pu
             Evento evento = jugados.get(i);
             double x = MARGEN_IZQ + i * paso;
             // En SVG la y crece hacia abajo: 0 puntos va abajo y el máximo arriba
+            // (double) maximo: sin él, dividir dos enteros daría un entero (2 / 3 = 0) y se perdería la fracción
             double y = MARGEN_ARRIBA + altoUtil * (1 - acumulados.get(i) / (double) maximo);
+            // "M x,y" mueve el lápiz al primer punto; " L x,y" traza una línea hasta el siguiente
             linea.append(i == 0 ? "M" : " L").append(redondear(x)).append(',').append(redondear(y));
             ResultadoEquipo resultado = ResultadoEquipo.de(evento, equipo);
             Equipo rival = evento.getLocal().getId().equals(equipo.getId()) ? evento.getVisitante() : evento.getLocal();
@@ -83,7 +87,8 @@ public record GraficoEvolucion(int ancho, int alto, String linea, List<Marca> pu
             puntos.add(new Marca(x, y, FECHA.format(evento.getFechaHora()) + " · " + resultado.getDescripcion()
                     + " contra " + rival.getNombre() + " · " + acumulados.get(i) + " puntos",
                     resultado.name().toLowerCase(Locale.ROOT)));
-            // La fecha del último partido se muestra siempre
+            // La fecha del último partido se muestra siempre. "%" es el resto de la división:
+            // i % 3 == 0 es cierto para i = 0, 3, 6... (una de cada tres fechas)
             if (i % cadaCuantos == 0 || i == jugados.size() - 1) {
                 ejeX.add(new Marca(x, ALTO - 8, FECHA.format(evento.getFechaHora()), ""));
             }

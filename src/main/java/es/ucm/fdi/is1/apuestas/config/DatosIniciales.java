@@ -32,10 +32,14 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
  * solo se cargan si la base de datos no tiene ninguno (ver {@code cargarPartidos}).
  *
  * <p>Como {@link ApplicationRunner}, Spring lo ejecuta una vez en cada arranque, cuando la aplicación ya está lista.
+ *
+ * <p>{@code @Component}: le dice a Spring que cree un objeto de esta clase al arrancar (y que lo ejecute, por ser
+ * un {@code ApplicationRunner}). Es la anotación genérica; {@code @Service} y {@code @Controller} son variantes.
  */
 @Component
 public class DatosIniciales implements ApplicationRunner {
 
+    // Dependencias: "final" porque se asignan una sola vez, en el constructor, y ya no cambian
     private final CompeticionRepository competiciones;
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
@@ -58,6 +62,10 @@ public class DatosIniciales implements ApplicationRunner {
      * CREADOR_PASSWORD y USUARIO_PASSWORD. En los perfiles {@code compartir} y {@code nube} la del creador es
      * obligatoria y se le aplica aunque ya exista ({@code passwordCreadorFija}); en {@code nube} el usuario de
      * prueba solo se crea si se le da contraseña.
+     *
+     * <p>Spring llama a este constructor y le pasa los repositorios y servicios (inyección de dependencias).
+     * {@code @Value("${clave:valorPorDefecto}")} lee un valor de {@code application.properties} (o de una variable
+     * de entorno); lo que va tras los dos puntos se usa si la clave no está definida.
      */
     public DatosIniciales(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
                           MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios,
@@ -78,6 +86,8 @@ public class DatosIniciales implements ApplicationRunner {
     /**
      * Identificadores de los escudos en el servicio público de football-data.org. Son los mismos que usa su API,
      * así que también sirven para enlazar cada equipo con ella ({@code idExterno}).
+     * Es un {@code Map} (diccionario) de nombre del equipo → número; {@code static final} = una constante común a
+     * toda la clase, y {@code Map.ofEntries} crea un mapa que ya no se puede modificar.
      */
     private static final Map<String, Integer> ESCUDOS = Map.ofEntries(
             Map.entry("Real Madrid", 86), Map.entry("FC Barcelona", 81),
@@ -111,6 +121,9 @@ public class DatosIniciales implements ApplicationRunner {
 
     /**
      * Carga los datos que falten. Va en una sola transacción: si algo falla, no queda nada a medias.
+     * ({@code @Transactional}: todo lo que se guarda en la base de datos dentro del método se confirma junto al
+     * final; si se lanza una excepción, se deshace todo. {@code @Override}: este método sustituye al de la
+     * interfaz {@code ApplicationRunner}.)
      *
      * @throws IllegalStateException si no hay contraseña para el creador; entonces la aplicación no arranca
      */
@@ -267,7 +280,10 @@ public class DatosIniciales implements ApplicationRunner {
         mercadosALargoPlazo();
 
         // Escudos: solo se rellenan si el equipo aún no tiene uno (no pisa los cambios hechos en Gestión)
-        // y se guarda el identificador de football-data.org para enlazar con la API
+        // y se guarda el identificador de football-data.org para enlazar con la API.
+        // forEach recorre el mapa; (nombre, id) -> {...} es una lambda: una función corta que se ejecuta por cada
+        // pareja. findByNombre devuelve un Optional (una caja que puede estar vacía) e ifPresent solo ejecuta su
+        // código si el equipo existe. No hace falta save: dentro de la transacción, JPA guarda solo los cambios
         ESCUDOS.forEach((nombre, id) -> equipos.findByNombre(nombre).ifPresent(e -> {
             if (e.getEscudoUrl() == null) {
                 e.setEscudoUrl("https://crests.football-data.org/" + id + ".png");
@@ -356,6 +372,7 @@ public class DatosIniciales implements ApplicationRunner {
     /**
      * Candidatos con el formato "Nombre;cuota". Si el nombre es un equipo o deportista, se enlaza con él.
      * Si ya hay un mercado con ese nombre, no se toca.
+     * ({@code String...} = número variable de parámetros: dentro del método {@code candidatos} es un array.)
      */
     private void mercado(String nombre, Deporte deporte, LocalDateTime cierre, String... candidatos) {
         if (mercados.findByNombre(nombre).isPresent()) {
@@ -363,10 +380,13 @@ public class DatosIniciales implements ApplicationRunner {
         }
         Mercado mercado = new Mercado(nombre, deporte, cierre);
         for (String linea : candidatos) {
+            // "FC Barcelona;5.50" → partes[0] = "FC Barcelona", partes[1] = "5.50"
             String[] partes = linea.split(";");
             Candidato candidato = mercado.anadirCandidato(partes[0], new BigDecimal(partes[1]));
+            // candidato::setEquipo es una "referencia a método": equivale a e -> candidato.setEquipo(e)
             equipos.findByNombre(partes[0]).filter(e -> e.getDeporte() == deporte).ifPresent(candidato::setEquipo);
         }
+        // Al guardar el mercado se guardan también sus candidatos (relación en cascada)
         mercados.save(mercado);
     }
 
@@ -377,6 +397,7 @@ public class DatosIniciales implements ApplicationRunner {
         }
     }
 
+    /** Busca la competición por nombre; si no existe (Optional vacío), orElseGet la crea y la guarda. */
     private Competicion competicion(String nombre, Deporte deporte) {
         return competiciones.findByNombre(nombre)
                 .orElseGet(() -> competiciones.save(new Competicion(nombre, deporte)));
@@ -408,6 +429,7 @@ public class DatosIniciales implements ApplicationRunner {
         LocalDateTime fechaHora = LocalDateTime.of(anio, mes, dia, hora, minuto);
         Evento evento = eventos.findByLocalAndVisitanteAndFechaHora(equipoLocal, equipoVisitante, fechaHora)
                 .orElseGet(() -> eventos.save(new Evento(competicion, equipoLocal, equipoVisitante, fechaHora)));
+        // Solo se pone la fase si no tenía ninguna, para no pisar la que haya escrito el creador
         if (evento.getFase() == null) {
             evento.setFase(fase);
         }

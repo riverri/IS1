@@ -45,6 +45,7 @@ public class Candidato {
     Candidato(Mercado mercado, String nombre, BigDecimal cuota) {
         this.mercado = mercado;
         this.nombre = nombre;
+        // Se pasa por cambiarCuota para aplicar las mismas comprobaciones al crear que al editar
         cambiarCuota(cuota);
     }
 

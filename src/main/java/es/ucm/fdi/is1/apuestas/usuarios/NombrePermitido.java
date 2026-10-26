@@ -15,6 +15,12 @@ import jakarta.validation.Payload;
  * Restricción de Bean Validation para el nombre visible: no puede contener palabras ofensivas
  * (issue #75). Se usa en {@link RegistroForm} (CA-11.3) y {@link NombreForm} (CA-47.3); la lista y la forma
  * de comparar están en {@link NombresProhibidos}.
+ *
+ * <p>Esto es una anotación propia ({@code @interface}), como {@code @NotBlank} pero hecha por nosotros: basta con
+ * escribir {@code @NombrePermitido} encima de un campo para que {@code @Valid} lo compruebe. Las anotaciones de
+ * encima dicen cómo se comporta: {@code @Constraint} indica qué clase la valida, {@code @Target(FIELD)} que se pone
+ * en atributos y {@code @Retention(RUNTIME)} que sigue existiendo mientras el programa se ejecuta.
+ * {@code message}, {@code groups} y {@code payload} los exige Bean Validation en toda restricción.
  */
 @Documented
 @Constraint(validatedBy = NombrePermitido.Validador.class)

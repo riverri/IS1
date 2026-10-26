@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CorreoRecuperacion implements EnvioCorreo {
 
+    // Logger: escribe mensajes en la consola de la aplicación (mejor que System.out.println: tiene niveles
+    // info/warn/error y fecha). Los {} del mensaje se sustituyen por los parámetros que siguen
     private static final Logger LOG = LoggerFactory.getLogger(CorreoRecuperacion.class);
 
     // ObjectProvider: Spring Boot solo crea el JavaMailSender si hay servidor de correo configurado

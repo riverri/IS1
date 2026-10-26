@@ -70,6 +70,7 @@ public class GestionService {
                     + ". Si es de otro deporte, añade algo que lo distinga (por ejemplo, \"" + nombre + " Baloncesto\").");
         }
         Equipo equipo = new Equipo(nombre, form.getDeporte(), form.getCalidad());
+        // findAllById: carga de golpe todas las competiciones con esos ids (las marcadas en el formulario)
         for (Competicion competicion : competiciones.findAllById(form.getCompeticionIds())) {
             // Un equipo de fútbol no puede jugar una competición de baloncesto
             if (competicion.getDeporte() != form.getDeporte()) {
@@ -151,6 +152,7 @@ public class GestionService {
         }
         String fase = form.getFase() == null || form.getFase().isBlank() ? null : form.getFase().trim();
         // El propio evento comprueba que aún no ha empezado; su error se convierte en un error del formulario
+        // (se "traduce" una excepción en otra para que el controlador sepa a qué campo asociarla)
         try {
             evento.modificar(local, visitante, form.getFechaHora(), fase, LocalDateTime.now(reloj));
         } catch (IllegalStateException e) {

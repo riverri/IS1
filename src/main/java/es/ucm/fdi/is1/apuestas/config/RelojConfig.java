@@ -11,6 +11,10 @@ import org.springframework.context.annotation.Configuration;
  * Reloj inyectable: en las pruebas se puede sustituir por uno fijo.
  * Las fechas de los partidos se guardan en hora de Madrid, así que "ahora" también tiene que serlo,
  * aunque el servidor esté en otra zona (en Render va en UTC y se podía apostar con el partido empezado).
+ *
+ * <p>{@code @Configuration}: clase de configuración de Spring. Sus métodos {@code @Bean} fabrican objetos que
+ * Spring guarda y luego inyecta a quien los pida; aquí, cualquier constructor con un parámetro {@code Clock}
+ * recibe el reloj que devuelve {@link #reloj}.
  */
 @Configuration
 public class RelojConfig {

@@ -30,6 +30,7 @@ public class EventosController {
     @GetMapping("/eventos")
     public String catalogo(@RequestParam(required = false) Deporte deporte,
                            @RequestParam(required = false) String q, Model model) {
+        // Spring convierte el texto "FUTBOL" de la URL en el valor Deporte.FUTBOL del enum automáticamente
         model.addAttribute("eventosPorDeporte", catalogo.buscar(deporte, q));
         // El recuento de las pestañas no depende de los filtros: siempre se ven todos los deportes
         model.addAttribute("recuento", catalogo.recuentoPorDeporte());

@@ -34,6 +34,10 @@ import jakarta.persistence.OrderBy;
  * {@link Seleccion}es se guardan y se borran con ella (cascade). El estado se recalcula cada vez que se
  * resuelve o se anula una selección ({@code reevaluar}), y aquí se hacen los pagos, devoluciones y
  * cambios de importe sobre el saldo del {@link Usuario}. El cobro inicial lo hace {@link ApuestaService}.
+ *
+ * <p>Ejemplo: una combinada de 10 moneditas con dos selecciones de cuota 2,00 y 1,50 tiene cuota total
+ * 2,00 × 1,50 = 3,00; si se aciertan las dos, el usuario cobra 10 × 3,00 = 30 (sus 10 más 20 de beneficio).
+ * Si se anula uno de los partidos, esa selección cuenta como 1,00 y cobraría 10 × 2,00 = 20.
  */
 @Entity
 public class Apuesta {
@@ -49,9 +53,14 @@ public class Apuesta {
     @GeneratedValue
     private Long id;
 
+    // Muchas apuestas pertenecen a un mismo usuario (columna usuario_id en la tabla apuesta)
     @ManyToOne(optional = false)
     private Usuario usuario;
 
+    // Una apuesta tiene muchas selecciones. mappedBy = "apuesta": la relación la guarda el atributo "apuesta" de
+    // Seleccion. cascade = ALL: al guardar o borrar la apuesta se guardan o borran sus selecciones.
+    // orphanRemoval: si se quita una selección de la lista, se borra de la base de datos.
+    // EAGER: las selecciones se cargan a la vez que la apuesta (casi siempre se necesitan). @OrderBy: por id
     @OneToMany(mappedBy = "apuesta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("id")
     private List<Seleccion> selecciones = new ArrayList<>();
@@ -91,6 +100,9 @@ public class Apuesta {
         this.cuota = BigDecimal.ONE;
     }
 
+    // Hay tres métodos "anadir" con el mismo nombre y distintos parámetros (sobrecarga): Java elige cuál
+    // ejecutar según los tipos con los que se llame
+
     /** Añade una selección; no se admiten dos del mismo evento (HU-28). */
     public void anadir(Evento evento, Resultado pronostico, BigDecimal cuotaSeleccion) {
         anadir(evento, new Seleccion(this, evento, pronostico, cuotaSeleccion));
@@ -110,7 +122,8 @@ public class Apuesta {
             throw new IllegalArgumentException("No se pueden combinar dos selecciones del mismo evento");
         }
         selecciones.add(nueva);
-        // Multiplicador total (HU-29): producto de las cuotas de todas las selecciones
+        // Multiplicador total (HU-29): producto de las cuotas de todas las selecciones.
+        // map(Seleccion::getCuota) convierte cada selección en su cuota, y toList() las junta en una lista
         cuota = producto(selecciones.stream().map(Seleccion::getCuota).toList());
     }
 
@@ -166,6 +179,7 @@ public class Apuesta {
      * así una corrección de resultado deshace pagos anteriores (HU-04).
      */
     private void reevaluar() {
+        // anyMatch: ¿alguna cumple la condición? allMatch: ¿la cumplen todas?
         boolean algunaFallada = selecciones.stream().anyMatch(s -> s.getEstado() == EstadoSeleccion.FALLADA);
         boolean algunaPendiente = selecciones.stream().anyMatch(s -> s.getEstado() == EstadoSeleccion.PENDIENTE);
         boolean todasAnuladas = selecciones.stream().allMatch(s -> s.getEstado() == EstadoSeleccion.ANULADA);
@@ -182,7 +196,8 @@ public class Apuesta {
             estado = EstadoApuesta.GANADA;
         }
 
-        // Lo que le corresponde al usuario en el estado actual; la ganancia ya incluye el importe apostado
+        // Lo que le corresponde al usuario en el estado actual; la ganancia ya incluye el importe apostado.
+        // switch con flechas: devuelve un valor según el estado (default = cualquier otro caso)
         BigDecimal debePagar = switch (estado) {
             case GANADA -> getGananciaPotencial();
             case ANULADA -> importe;
@@ -228,6 +243,7 @@ public class Apuesta {
         }
         // Sube: se cobra solo la diferencia. Baja: se devuelve la diferencia (CA-27.1, CA-27.2)
         BigDecimal diferencia = nuevo.subtract(importe);
+        // signum(): 1 si es positivo, -1 si es negativo, 0 si es cero. negate() le cambia el signo
         if (diferencia.signum() > 0) {
             usuario.cargar(diferencia);
         } else if (diferencia.signum() < 0) {
@@ -251,6 +267,7 @@ public class Apuesta {
      * Se redondea hacia abajo para no pagar nunca un céntimo de más.
      */
     public BigDecimal getGananciaPotencial() {
+        // setScale(2, DOWN): deja 2 decimales cortando el resto (12,349 → 12,34)
         return importe.multiply(getCuotaEfectiva()).setScale(2, RoundingMode.DOWN);
     }
 
@@ -291,6 +308,7 @@ public class Apuesta {
      * Lo usan también los servicios para calcular la cuota total antes de apostar.
      */
     static BigDecimal producto(List<BigDecimal> cuotas) {
+        // reduce: empieza en 1 y va multiplicando por cada cuota de la lista (1 × c1 × c2 × ...)
         return cuotas.stream().reduce(BigDecimal.ONE, BigDecimal::multiply).setScale(2, RoundingMode.DOWN);
     }
 
@@ -303,6 +321,7 @@ public class Apuesta {
     }
 
     public List<Seleccion> getSelecciones() {
+        // Copia de solo lectura: desde fuera no se pueden añadir selecciones saltándose las reglas de anadir
         return Collections.unmodifiableList(selecciones);
     }
 

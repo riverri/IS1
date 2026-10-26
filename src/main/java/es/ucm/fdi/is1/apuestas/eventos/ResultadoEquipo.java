@@ -31,6 +31,7 @@ public enum ResultadoEquipo {
         // Gana si es local y ganó el local, o si es visitante y ganó el visitante
         boolean ganaLocal = evento.getResultado() == Resultado.LOCAL;
         boolean esLocal = evento.getLocal().getId().equals(equipo.getId());
+        // Si los dos son true (local y ganó el local) o los dos false (visitante y no ganó el local): victoria
         return ganaLocal == esLocal ? VICTORIA : DERROTA;
     }
 

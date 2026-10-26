@@ -22,6 +22,22 @@ import jakarta.validation.Valid;
  * nombre y contraseña). HU-10, HU-11, HU-12, HU-13, HU-14 y HU-47. La baja (HU-18) está en
  * {@code BajaController}. La lógica está en {@link UsuarioService}.
  * Cuando un formulario tiene errores no se redirige: se vuelve a pintar la página para que se vean los mensajes.
+ *
+ * <p><b>Cómo funciona un controlador:</b>
+ * <ul>
+ *   <li>{@code @Controller}: Spring envía a esta clase las peticiones de las direcciones que declara.</li>
+ *   <li>{@code @GetMapping("/x")}: el método se ejecuta al abrir la página /x (petición GET).
+ *       {@code @PostMapping("/x")}: al enviar un formulario a /x (petición POST).</li>
+ *   <li>El método devuelve un texto: el nombre de la plantilla HTML que se pinta ({@code "cuenta"} →
+ *       {@code templates/cuenta.html}) o {@code "redirect:/otra"}, que manda al navegador a otra dirección.</li>
+ *   <li>{@code Model}: la "mochila" de datos que se pasa a la plantilla; lo que se mete con
+ *       {@code addAttribute("usuario", ...)} se usa en el HTML como {@code ${usuario}}.</li>
+ *   <li>{@code Principal}: el usuario que ha iniciado sesión; {@code getName()} devuelve su email.</li>
+ *   <li>{@code @Valid @ModelAttribute}: Spring rellena el formulario con los campos enviados y comprueba sus
+ *       anotaciones ({@code @NotBlank}, {@code @Size}...); los errores quedan en el {@code BindingResult}.</li>
+ *   <li>{@code RedirectAttributes.addFlashAttribute}: un mensaje que sobrevive a la redirección y se muestra
+ *       una sola vez en la página siguiente.</li>
+ * </ul>
  */
 @Controller
 public class UsuariosController {
@@ -50,6 +66,7 @@ public class UsuariosController {
     /** GET /registro: formulario de registro, con el saldo de bienvenida que se recibirá (HU-11, HU-14). */
     @GetMapping("/registro")
     public String registro(Model model) {
+        // Un formulario vacío para que la plantilla tenga dónde enlazar los campos (th:object="${registro}")
         model.addAttribute("registro", new RegistroForm());
         model.addAttribute("bienvenida", saldo.bienvenida());
         return "registro";
@@ -62,6 +79,7 @@ public class UsuariosController {
      */
     @PostMapping("/registro")
     public String registrar(@Valid @ModelAttribute("registro") RegistroForm form, BindingResult errores, Model model) {
+        // rejectValue(campo, código, mensaje) añade un error a ese campo; la plantilla lo pinta bajo el campo
         if (form.getPassword() != null && !form.getPassword().equals(form.getConfirmacion())) {
             errores.rejectValue("confirmacion", "noCoincide", "Las contraseñas no coinciden");
         }
@@ -69,13 +87,16 @@ public class UsuariosController {
             errores.rejectValue("password", "larga", Contrasenas.DEMASIADO_LARGA);
         }
         if (!errores.hasErrors()) {
+            // try/catch: si registrar lanza EmailYaRegistradoException, se salta al catch en vez de romper la página
             try {
                 usuarios.registrar(form);
+                // Redirigir tras un POST evita que al recargar la página se envíe el formulario otra vez
                 return "redirect:/login?registrado";
             } catch (EmailYaRegistradoException e) {
                 errores.rejectValue("email", "duplicado", "Ya existe una cuenta con ese email");
             }
         }
+        // Hay errores: se vuelve a pintar el registro con lo que escribió el usuario y los mensajes de error
         model.addAttribute("bienvenida", saldo.bienvenida());
         return "registro";
     }
@@ -97,6 +118,7 @@ public class UsuariosController {
             try {
                 usuarios.fijarLimites(principal.getName(), form.getDiario(), form.getSemanal());
                 redireccion.addFlashAttribute("mensaje", "Límites guardados");
+                // "#juego-responsable" hace que el navegador baje hasta esa sección de la página
                 return "redirect:/cuenta#juego-responsable";
             } catch (IllegalArgumentException e) {
                 errores.rejectValue("diario", "mayorQueSemanal", e.getMessage());
@@ -107,6 +129,7 @@ public class UsuariosController {
 
     /** POST /cuenta/pausa: pausa temporal de las apuestas (HU-10); los días deben ser 1, 7 o 30. */
     @PostMapping("/cuenta/pausa")
+    // @RequestParam lee el campo "dias" del formulario y lo convierte a int
     public String pausa(@RequestParam(defaultValue = "0") int dias, Principal principal,
                         RedirectAttributes redireccion) {
         // Sin elegir duración llega 0, y el servicio lo rechaza con un mensaje
@@ -162,6 +185,8 @@ public class UsuariosController {
 
     /** Página Mi cuenta; los formularios que ya están en el modelo (con sus errores) se respetan. */
     private String cuenta(Usuario usuario, Model model) {
+        // Si el formulario ya está en el modelo es porque se envió con errores: se deja tal cual para mostrarlos.
+        // Si no, se crea uno nuevo relleno con los datos actuales del usuario
         if (!model.containsAttribute("datosNombre")) {
             NombreForm nombre = new NombreForm();
             nombre.setNombre(usuario.getNombre());

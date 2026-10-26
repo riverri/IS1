@@ -47,22 +47,27 @@ public class RankingService {
         // Los emails se guardan en minúsculas: se normaliza para compararlo
         String yo = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
         // Una sola consulta agregada para todos: fila = [id, resueltas, ganadas, apostado, pagado]
+        // HashMap: diccionario id del usuario → sus estadísticas, para encontrarlas al instante después
         Map<Long, Estadisticas> porUsuario = new HashMap<>();
         for (Object[] fila : apuestas.resumenResueltasPorUsuario()) {
-            // El tipo exacto de count y sum (Long, Integer…) depende de la consulta: se leen como Number
+            // El tipo exacto de count y sum (Long, Integer…) depende de la consulta: se leen como Number.
+            // (Long) fila[0] es un "cast": le dice a Java de qué tipo es realmente ese Object
             porUsuario.put((Long) fila[0], Estadisticas.de(((Number) fila[1]).longValue(),
                     ((Number) fila[2]).longValue(), (BigDecimal) fila[3], (BigDecimal) fila[4]));
         }
 
+        // Record local: un tipo auxiliar que solo existe dentro de este método, para juntar usuario y estadísticas
         record Fila(Usuario usuario, Estadisticas estadisticas) {
         }
-        // Los jugadores sin apuestas resueltas también salen, con estadísticas vacías
+        // Los jugadores sin apuestas resueltas también salen, con estadísticas vacías (getOrDefault)
         List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
                 .filter(u -> !u.isEliminado())
                 .filter(u -> soloUsuarios == null || soloUsuarios.contains(u.getId()))
                 .map(u -> new Fila(u, porUsuario.getOrDefault(u.getId(), Estadisticas.VACIAS)))
                 .toList());
 
+        // Un Comparator dice cómo ordenar dos filas. comparing(f -> valor) ordena por ese valor de menor a mayor,
+        // reversed() le da la vuelta (de mayor a menor) y thenComparing desempata con otro criterio
         Comparator<Fila> orden = switch (criterio) {
             case SALDO -> Comparator.comparing((Fila f) -> f.usuario().getSaldo()).reversed();
             case GANANCIAS -> Comparator.comparing((Fila f) -> f.estadisticas().beneficio()).reversed();

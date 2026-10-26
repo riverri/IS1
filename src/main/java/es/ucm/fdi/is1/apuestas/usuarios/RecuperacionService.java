@@ -20,6 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
  * Recuperar la contraseña (HU-17): se pide un enlace con el email y el enlace permite poner una nueva.
  * La respuesta es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
  * El código del enlace es aleatorio y en la base de datos solo se guarda su resumen ({@link TokenRecuperacion}).
+ *
+ * <p>El proceso completo: (1) el usuario escribe su email en /recuperar; (2) {@link #solicitar} genera un código
+ * secreto y le envía un enlace que lo lleva; (3) al abrir el enlace, {@link #valido} comprueba que el código sirve;
+ * (4) al enviar la contraseña nueva, {@link #restablecer} la guarda y gasta el código para que no se reutilice.
  */
 @Service
 public class RecuperacionService {
@@ -55,6 +59,7 @@ public class RecuperacionService {
      */
     @Transactional
     public void solicitar(String email, String base) {
+        // Operador ternario: condición ? valorSiSeCumple : valorSiNo (aquí, "" si el email es null)
         String normalizado = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
         Optional<Usuario> cuenta = usuarios.findByEmail(normalizado).filter(u -> !u.isEliminado());
         if (cuenta.isEmpty()) {
@@ -62,6 +67,7 @@ public class RecuperacionService {
             return;
         }
         Usuario usuario = cuenta.get();
+        // Se borran los enlaces anteriores: solo sirve el último que se ha pedido
         tokens.borrarDe(usuario);
         // 32 bytes aleatorios (256 bits), en Base64 apto para URL: se puede poner tal cual en el enlace
         byte[] bytes = new byte[32];
@@ -86,6 +92,7 @@ public class RecuperacionService {
      */
     @Transactional
     public String restablecer(String codigo, String nueva) {
+        // EnlaceNoValidoException::new = "crea una EnlaceNoValidoException" (referencia al constructor)
         TokenRecuperacion token = buscar(codigo).orElseThrow(EnlaceNoValidoException::new);
         Usuario usuario = token.getUsuario();
         usuario.cambiarPasswordHash(passwordEncoder.encode(nueva));

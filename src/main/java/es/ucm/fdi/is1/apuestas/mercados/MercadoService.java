@@ -164,6 +164,7 @@ public class MercadoService {
                 throw new IllegalArgumentException("Línea no válida: \"" + linea.trim()
                         + "\". El formato es: Nombre; cuota");
             }
+            // new String[] {a, b}: crea un array de 2 textos con esos valores
             leidos.add(new String[] {partes[0].trim(), partes[1].trim()});
         }
         return leidos;
@@ -172,6 +173,7 @@ public class MercadoService {
     /** Convierte la cuota; admite coma decimal ("2,50") además de punto. El rango lo comprueba Candidato. */
     private static BigDecimal cuota(String texto, String candidato) {
         try {
+            // new BigDecimal("abc") lanza NumberFormatException: se cambia por un mensaje que entienda el creador
             return new BigDecimal(texto.replace(',', '.'));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("La cuota de " + candidato + " no es un número: " + texto);

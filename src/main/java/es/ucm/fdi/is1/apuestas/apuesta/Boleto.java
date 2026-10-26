@@ -26,6 +26,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 @SessionScope
 public class Boleto implements Serializable {
 
+    // Número de versión del formato al guardar el objeto (serializarlo); lo exige Serializable
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -66,6 +67,7 @@ public class Boleto implements Serializable {
     }
 
     void quitar(Long eventoId) {
+        // Los Long se comparan con equals, no con == (== compararía si son el mismo objeto, no el mismo número)
         lineas.removeIf(l -> l.eventoId().equals(eventoId));
     }
 

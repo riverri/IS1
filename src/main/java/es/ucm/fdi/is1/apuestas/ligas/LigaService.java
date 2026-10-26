@@ -81,6 +81,7 @@ public class LigaService {
     public Liga unirse(String email, String codigo) {
         Usuario usuario = jugador(email);
         // "abc 123" y "ABC123" son el mismo código: se quitan los espacios y se pasa a mayúsculas
+        // ("\\s" en una expresión regular = cualquier espacio en blanco)
         String limpio = codigo == null ? "" : codigo.replaceAll("\\s", "").toUpperCase(Locale.ROOT);
         Liga liga = ligas.findByCodigo(limpio)
                 .orElseThrow(() -> new IllegalArgumentException("No hay ninguna liga con el código " + limpio));
@@ -169,9 +170,11 @@ public class LigaService {
     /** Genera códigos al azar con {@link #ALFABETO} hasta dar con uno que no use otra liga. */
     private String codigoNuevo() {
         String codigo;
+        // do-while: el cuerpo se ejecuta al menos una vez y se repite mientras el código ya exista
         do {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < LONGITUD_CODIGO; i++) {
+                // nextInt(n) da un número al azar entre 0 y n-1: la posición de una letra del alfabeto
                 sb.append(ALFABETO.charAt(azar.nextInt(ALFABETO.length())));
             }
             codigo = sb.toString();

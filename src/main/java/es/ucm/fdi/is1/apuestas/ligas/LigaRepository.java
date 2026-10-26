@@ -16,7 +16,10 @@ public interface LigaRepository extends JpaRepository<Liga, Long> {
     /** Para no repetir código al generar uno nuevo. */
     boolean existsByCodigo(String codigo);
 
-    /** Ligas en las que está el usuario (creadas por él o no), por nombre. El join recorre la tabla liga_miembro. */
+    /**
+     * Ligas en las que está el usuario (creadas por él o no), por nombre. El join recorre la tabla liga_miembro:
+     * "join l.miembros m" pone una fila por cada pareja (liga, miembro), y el where se queda con las de ese usuario.
+     */
     @Query("select l from Liga l join l.miembros m where m = :usuario order by l.nombre")
     List<Liga> deMiembro(Usuario usuario);
 }

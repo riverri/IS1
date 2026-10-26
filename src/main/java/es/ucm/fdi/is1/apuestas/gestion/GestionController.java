@@ -79,8 +79,10 @@ public class GestionController {
     public String sincronizar(RedirectAttributes redireccion) {
         try {
             ResumenSincronizacion resumen = sincronizacion.sincronizar();
+            // Al concatenar "texto" + resumen, Java llama a resumen.toString()
             redireccion.addFlashAttribute("mensaje", "Sincronizado con la API: " + resumen + ".");
             if (!resumen.getErrores().isEmpty()) {
+                // String.join une todos los errores en un solo texto separados por " · "
                 redireccion.addFlashAttribute("error", String.join(" · ", resumen.getErrores()));
             }
         } catch (IllegalStateException e) {
@@ -154,7 +156,11 @@ public class GestionController {
         }
     }
 
-    /** Deportes para los desplegables; Spring lo añade al modelo de todas las páginas de este controlador. */
+    /**
+     * Deportes para los desplegables; Spring lo añade al modelo de todas las páginas de este controlador.
+     * ({@code @ModelAttribute("deportes")} en un método: antes de cada petición de esta clase, Spring lo llama y
+     * guarda lo que devuelve como {@code ${deportes}} para la plantilla.)
+     */
     @ModelAttribute("deportes")
     public Deporte[] deportes() {
         return Deporte.values();
@@ -427,6 +433,7 @@ public class GestionController {
                             @RequestParam(required = false) Integer golesVisitante,
                             RedirectAttributes redireccion) {
         try {
+            // Se declaran aquí y se rellenan en cada rama del if: Java comprueba que ninguna rama los deja sin valor
             String guardado;
             int resueltas;
             // Con los dos goles manda el marcador; el ganador se deduce de él
@@ -458,6 +465,8 @@ public class GestionController {
     /** POST /gestion/eventos/{id}/suspender: el evento deja de admitir apuestas nuevas (HU-05). */
     @PostMapping("/eventos/{id}/suspender")
     public String suspender(@PathVariable Long id, RedirectAttributes redireccion) {
+        // () -> resolucion.suspender(id) es una lambda sin parámetros: se le pasa a accion() "lo que hay que hacer",
+        // y accion() lo ejecuta dentro de su try/catch. Así no se repite el mismo try/catch en los tres métodos
         return accion(id, () -> resolucion.suspender(id), "Evento suspendido: no admite apuestas nuevas.", redireccion);
     }
 
@@ -480,6 +489,7 @@ public class GestionController {
      */
     private String accion(Long id, Runnable accion, String mensaje, RedirectAttributes redireccion) {
         try {
+            // Runnable es una interfaz con un solo método, run(): ejecuta la lambda que se pasó
             accion.run();
             redireccion.addFlashAttribute("mensaje", mensaje);
         } catch (IllegalStateException e) {
