@@ -174,7 +174,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 3 | Must | 1 (it. 6) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 3 | 1 (Muy Alta) | 1 (it. 6) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -204,7 +204,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 16, 17 | Must | 1 (it. 3) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 16, 17 | 1 (Muy Alta) | 1 (it. 3) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -262,7 +262,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 29 | Should | 1 (it. 8) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 29 | 1 (Muy Alta) | 1 (it. 8) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -296,7 +296,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 9 | Must | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 9 | 1 (Muy Alta) | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -344,7 +344,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 5 | Must | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| 5 | 1 (Muy Alta) | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -360,7 +360,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 5, 8 | Must | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 5, 8 | 1 (Muy Alta) | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -375,7 +375,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 4, 12 | Must | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| 4, 12 | 1 (Muy Alta) | 1 (it. 1) | Hecha | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -451,7 +451,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 22 | Should | 1 (it. 9) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 22 | 1 (Muy Alta) | 1 (it. 9) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -486,7 +486,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 9 | Must | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 9 | 1 (Muy Alta) | 1 (it. 1) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -551,7 +551,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 6 | Must | 1 (it. 2) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 6 | 1 (Muy Alta) | 1 (it. 2) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
