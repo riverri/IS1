@@ -271,7 +271,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | CA-46.1 | Un evento aún no ha empezado | Cambio su fecha, sus equipos o su fase | Se guardan los cambios y las cuotas se recalculan. |
 | CA-46.2 | Un evento no tiene apuestas | Lo borro | Desaparece del catálogo. Si tiene apuestas, solo se puede anular (se devuelve el importe). |
 
-### HU-54 · Cuentas de la casa
+### HU-53 · Cuentas de la casa
 
 **Como** creador de apuestas, **quiero** ver un panel con lo que se ha apostado, lo que se ha pagado y el beneficio de la casa, **para** comprobar si las cuotas están bien ajustadas.
 
@@ -283,8 +283,8 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
-| CA-54.1 | Hay apuestas resueltas | Entro en el panel de la casa | Veo el total apostado, el total pagado, el beneficio y el margen real frente al margen teórico. |
-| CA-54.2 | Hay apuestas de varios tipos y deportes | Entro en el panel de la casa | Veo el desglose por tipo de apuesta (simples, combinadas y largo plazo) y por deporte. |
+| CA-53.1 | Hay apuestas resueltas | Entro en el panel de la casa | Veo el total apostado, el total pagado, el beneficio y el margen real frente al margen teórico. |
+| CA-53.2 | Hay apuestas de varios tipos y deportes | Entro en el panel de la casa | Veo el desglose por tipo de apuesta (simples, combinadas y largo plazo) y por deporte. |
 
 ---
 
