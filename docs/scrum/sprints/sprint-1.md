@@ -54,6 +54,8 @@ El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull r
 
 Todas las iteraciones las hizo Jing Li, con ayuda de IA. La velocidad del sprint no sirve para planificar los siguientes; ver [métricas](https://github.com/riverri/IS1/blob/main/docs/scrum/metricas.md).
 
+**Nota**: Aunque todos las historias de usuario que teníamos planificadas se desarrollaron en el primer Sprint, el equipo no tuvo consciencia de que se habían realizado hasta el segundo Sprint (6/10 aproximadamente) y por eso algunas historias se marcan como completadas en el siguiente Sprint.
+
 ## Sprint Review
 Se han logrado todos los objetivos del sprint salvo la exposición, debido a la falta de tiempo en clase para realizarla, pero queda prevista para el segundo sprint. Además, se ha considerado que los objetivos de este sprint eran demasiado reducidos, por lo que se decidió también crear una primera versión MVP para poder ir complementándola en futuros sprints, por iniciativa de uno de los miembros del equipo. Además, en esta fase se decidieron los objetivos del siguiente Sprint (Sprint Planning), que estarán documentados en la hoja correspondiente.
 
