@@ -15,45 +15,42 @@
 ## Sprint Backlog
 Se ha dividido en dos secciones: una para lo que se tenía previsto desarrollar en este Sprint (que corresponde con lo que se ha decidido que formará el MVP) y otra para lo que se desarrolló de manera adicional a lo planeado.
 
-- HU-01: Alta de Competiciones y equipos
+- HU-01: Alta de competiciones y equipos
 - HU-04: Introducir resultado
 - HU-05: Anular evento
-- HU-06:
+- HU-06: Dinero apostado a cada resultado
 - HU-08: Catálogo de apuestas
 - HU-11: Registro de cuenta
 - HU-12: Inicio de sesión
 - HU-13: Consultar saldo
-- HU-14:
+- HU-14: Saldo de bienvenida y recargas 
 - HU-18: Eliminar cuenta
 - HU-19: Catálogo por deporte y fecha
-- HU-20:
-- HU-22:
+- HU-20: Cuotas de cada resultado
+- HU-22: Búsqueda y filtros
 - HU-23: Apuesta simple
 - HU-24: Apuestas activas
-- HU-25:
 - HU-26: Cancelar Apuesta
-- HU-28:
-- HU-29:
-- HU-30:
-- HU-34:
-- HU-35:
-- HU-36:
+- HU-29: Multiplicador total y ganancias
+- HU-34: Historial
+- HU-35: Estadísticas Personales
+- HU-36: Ranking
 
 
 Las historias que se desarrollaron de forma adicional fueron:
 
 - HU-02: Forma reciente de los equipos
-- HU-03:
-- HU-07:
-- HU-21: 
-- HU-25: 
-- HU-26: 
+- HU-03: Cuotas automaticas
+- HU-07: Límites de apuesta
+- HU-21: Cargar eventos
+- HU-25: Resolución automática
+- HU-26: Cancelar una apuesta
 - HU-27: Cambiar Importe
-- HU-31:
-- HU-33:
-- HU-37:
-- HU-44:
-- HU-45:
+- HU-31: Ficha del equipo
+- HU-33: Cara a cara
+- HU-37: Avisos
+- HU-44: Apuestas a largo plazo
+- HU-45: Gestión de mercados
   
 ### Trabajo integrado en el código durante el sprint (según el repositorio)
 El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull requests #1 a #30). Cada iteración tiene su acta, con lo que se planificó, lo que se hizo y las decisiones tomadas. En el código quedaron integradas **44 historias**: las 16 de la lista anterior y 28 más.
@@ -62,7 +59,7 @@ El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull r
 |---:|---|---|---:|
 | [1](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-01.md) | 01/10 | HU-01, HU-08, HU-11, HU-12, HU-13, HU-14, HU-19 | 23 |
 | [2](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-02.md) | 01/10 | HU-03 (versión 1), HU-20, HU-22, HU-23, HU-24, HU-26, HU-36 (por saldo); más deportes y escudos | 33 |
-| [3](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-03.md) | 01/10 | HU-04, HU-05, HU-06, HU-25, HU-34, HU-35, HU-36 | 24 |
+| [3](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-03.md) | 01/10 | HU-04, HU-05, HU-06, HU-34, HU-35, HU-36 | 24 |
 | [4](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-04.md) | 01/10 | HU-28, HU-29, HU-30, HU-07 (parcial). Con ellas, el **MVP queda completo** | 18 |
 | [5](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-05.md) | 01/10 | HU-21, HU-25 y HU-05 desde la API; migraciones con Flyway | 16 |
 | [6](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-06.md) | 01/10 | HU-02, HU-03 (versión 2), HU-07, HU-44, HU-45 | 18 |
