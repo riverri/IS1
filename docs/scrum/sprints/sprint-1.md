@@ -13,26 +13,48 @@
 - Desarrollar una primera versión del MVP que contenga las especificaciones detalladas en el Sprint Backlog.
 
 ## Sprint Backlog
-Se ha dividido en dos secciones: una para lo que se tenía previsto desarrollar en este Sprint y otra para lo que se desarrolló de manera adicional a lo planeado.
+Se ha dividido en dos secciones: una para lo que se tenía previsto desarrollar en este Sprint (que corresponde con lo que se ha decidido que formará el MVP) y otra para lo que se desarrolló de manera adicional a lo planeado.
+
 - HU-01: Alta de Competiciones y equipos
+- HU-04: Introducir resultado
+- HU-05: Anular evento
+- HU-06:
 - HU-08: Catálogo de apuestas
 - HU-11: Registro de cuenta
 - HU-12: Inicio de sesión
 - HU-13: Consultar saldo
+- HU-14:
 - HU-18: Eliminar cuenta
 - HU-19: Catálogo por deporte y fecha
-- HU-46: Editar o modificar un evento
-
-Las historias que se desarrollaron de forma adicional fueron:
-- HU-02: Forma reciente de los equipos
-- HU-04: Introducir resultado
-- HU-05: Anular evento
+- HU-20:
+- HU-22:
 - HU-23: Apuesta simple
 - HU-24: Apuestas activas
+- HU-25:
 - HU-26: Cancelar Apuesta
-- HU-27: Cambiar Importe
-- HU-47: Cambiar nombre y contraseña
+- HU-28:
+- HU-29:
+- HU-30:
+- HU-34:
+- HU-35:
+- HU-36:
 
+
+Las historias que se desarrollaron de forma adicional fueron:
+
+- HU-02: Forma reciente de los equipos
+- HU-03:
+- HU-07:
+- HU-21: 
+- HU-25: 
+- HU-26: 
+- HU-27: Cambiar Importe
+- HU-31:
+- HU-33:
+- HU-37:
+- HU-44:
+- HU-45:
+  
 ### Trabajo integrado en el código durante el sprint (según el repositorio)
 El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull requests #1 a #30). Cada iteración tiene su acta, con lo que se planificó, lo que se hizo y las decisiones tomadas. En el código quedaron integradas **44 historias**: las 16 de la lista anterior y 28 más.
 
@@ -54,7 +76,7 @@ El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull r
 
 Todas las iteraciones las hizo Jing Li, con ayuda de IA. La velocidad del sprint no sirve para planificar los siguientes; ver [métricas](https://github.com/riverri/IS1/blob/main/docs/scrum/metricas.md).
 
-**Nota**: Aunque todos las historias de usuario que teníamos planificadas se desarrollaron en el primer Sprint, el equipo no tuvo consciencia de que se habían realizado hasta el segundo Sprint (6/10 aproximadamente) y por eso algunas historias se marcan como completadas en el siguiente Sprint.
+**Nota**: Aunque todos las historias de usuario que teníamos planificadas se desarrollaron en el primer Sprint, el equipo no tuvo consciencia de que se habían realizado hasta el segundo Sprint (6/10 aproximadamente) y por ello el Sprint Review, Sprint Retrospective y la presentación de clase no son reflejo de lo que realmente se realizó, aunque este desajuste de documentación fue corregido durante el Sprint 2. El Sprint Backlog de este Sprint fue corregido con posterioridad para reflejar lo que realmente se realizó y que tuviese concordancia con el resto de los Sprints. Sin embargo se consideró que tanto el Review como la Retrospective deberían mantenerse los originales pues fueron los resultados de una reunion de la mayoría del equipo y no se puede reemplazar las observaciones que se pusieron en común en ese momento.
 
 ## Sprint Review
 Se han logrado todos los objetivos del sprint salvo la exposición, debido a la falta de tiempo en clase para realizarla, pero queda prevista para el segundo sprint. Además, se ha considerado que los objetivos de este sprint eran demasiado reducidos, por lo que se decidió también crear una primera versión MVP para poder ir complementándola en futuros sprints, por iniciativa de uno de los miembros del equipo. Además, en esta fase se decidieron los objetivos del siguiente Sprint (Sprint Planning), que estarán documentados en la hoja correspondiente.
@@ -72,3 +94,4 @@ Salen de los dos problemas que señala la retrospectiva: la planificación se qu
 
 ## Documentación auxiliar
 - Presentación: https://docs.google.com/presentation/d/13Zj3vaPLyBvaLjcsb8fe4QZFU6ODuAaYIT8MFqxArok/edit?usp=sharing
+  La presentación también está añadida al repositorio en la carpeta de presentaciones.
