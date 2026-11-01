@@ -1,6 +1,6 @@
 # Gestión de riesgos
 
-Plan de Reducción, Supervisión y Gestión del Riesgo (**RSGR**) del proyecto, siguiendo el método de **Boehm** con la tabla de probabilidad y consecuencias **SQAS-SEI**. Cubre el proyecto actual y la ampliación (sprints 2 a 7, hasta el 18/12/2026) y se revisa en cada retrospectiva.
+Plan de Reducción, Supervisión y Gestión del Riesgo (**RSGR**) del proyecto. Versión del 1 de noviembre de 2026; sustituye a la del 16 de octubre y se revisa en cada retrospectiva.
 
 Versión en PDF: [`docs/scrum/gestion-riesgos.pdf`](https://github.com/riverri/IS1/blob/main/docs/scrum/gestion-riesgos.pdf)
 
@@ -8,53 +8,67 @@ Versión en PDF: [`docs/scrum/gestion-riesgos.pdf`](https://github.com/riverri/I
 
 Un **riesgo** es todo aquello que pueda afectar negativamente al proyecto. No todos preocupan igual, así que este plan identifica los riesgos, los valora, se queda con los más graves y define qué hacer con cada uno.
 
-Se sigue una **estrategia proactiva**: los riesgos se identifican y valoran antes del trabajo técnico de la ampliación, se priorizan y se prepara un plan para evitarlos, con planes de contingencia por si se hacen reales. Lo contrario sería la estrategia reactiva, que solo "apaga fuegos" cuando ya hay un problema.
+Se sigue una **estrategia proactiva**: los riesgos se identifican y valoran antes de que ocurran, se priorizan y se prepara un plan para evitarlos, con planes de contingencia por si se hacen reales. Lo contrario sería la estrategia reactiva, que solo «apaga fuegos» cuando ya hay un problema. El método es el de **Boehm**, con la tabla de probabilidad y consecuencias **SQAS-SEI**.
 
 | Fase | Paso | Dónde |
 |---|---|---|
-| Valoración del riesgo | Identificación | Sección 2 |
-| | Análisis | Sección 3 |
-| | Priorización | Sección 4 |
-| Control del riesgo | Planificación | Secciones 5 y 6 |
-| | Resolución | Sección 7 |
-| | Monitorización | Sección 8 |
+| Valoración del riesgo | Identificación | Sección 2.1 |
+| | Análisis | Sección 2.2 |
+| | Priorización | Secciones 2.3 y 2.4 |
+| Control del riesgo | Planificación | Secciones 3 y 4 |
+| | Resolución | Sección 3 (gestión de cada riesgo) |
+| | Monitorización | Sección 3 (supervisión) y sección 4 |
 
-**Contexto:**
+**Contexto del proyecto:**
 - Equipo de cinco estudiantes. El profesor actúa como Product Owner y el Scrum Master es Carlos Jurado.
-- Scrum con sprints de dos semanas. Quedan los sprints 3 a 6 y un Sprint 7 corto.
-- La aplicación actual tiene 45 historias hechas y 276 pruebas automáticas. El Product Owner ha pedido una ampliación grande.
+- Scrum con sprints de dos semanas hasta el 18/12/2026. Está terminando el Sprint 3 (21/10 – 3/11); quedan los sprints 4 a 6 y un Sprint 7 corto.
+- La aplicación tiene 45 historias hechas y 283 pruebas automáticas. Casi todo el código se ha generado con IA: el Sprint 1 se programó en dos días, y en el Sprint 3 aparecieron ramas de la ampliación con más de 10.000 líneas añadidas en dos días.
 - La nota es individual: proyecto (40 %), defensa sobre lo aprendido en el proyecto (30 %) y examen (30 %).
 
-## 2. Identificación de riesgos
+**Cambios respecto a la versión del 16 de octubre:**
+- El documento sigue un índice nuevo: introducción, priorización, plan RSGR de los intolerables, planificación temporal y resumen.
+- Se eliminan los antiguos R07 (incumplir las normas de integridad académica) y R18 (juego compulsivo), que no tienen sentido a ojos del proyecto.
+- Se añaden cuatro riesgos: R19 (uso abusivo de la IA), R20 (subestimación de la capacidad de desarrollo de la IA), R21 (pérdida de noción de lo que la IA desarrolla) y R22 (pérdida de la rutina de trabajo por exámenes).
+- Los demás se renumeran: R08 → R07, R09 → R08, R10 → R09, R11 → R10, R12 → R11, R13 → R12, R14 → R13, R15 → R14, R16 → R15, R17 → R16, R19 → R17, R20 → R18; R01 a R06 no cambian.
+- Solo se desarrolla el plan RSGR de los riesgos intolerables (sección 3).
 
-Se ha usado como lista de comprobación el **Top 10 de Boehm** y se han revisado personal, planificación, requisitos, tecnología, despliegue y evaluación. Tipos: **P** = de proyecto (amenaza el plan), **T** = técnico (amenaza la calidad), **N** = de negocio (amenaza la viabilidad: aprobar y aprender).
+## 2. Priorización de riesgos del proyecto
+
+Se identifican los riesgos, se valora la probabilidad y la gravedad de cada uno y se combinan las tres técnicas de priorización del tema:
+- el **nivel de riesgo SQAS-SEI**, que sale de cruzar probabilidad y gravedad;
+- la **exposición**, que es probabilidad × gravedad, con las dos escalas de 1 a 5;
+- la **tabla de riesgo ordenada**, con una línea de corte.
+
+### 2.1 Riesgos identificados
+
+Se ha usado como lista de comprobación el **Top 10 de Boehm** y se han revisado personal, planificación, requisitos, tecnología, despliegue, evaluación y uso de la IA. Tipos: **P** = de proyecto (amenaza el plan), **T** = técnico (amenaza la calidad), **N** = de negocio (amenaza la viabilidad: aprobar y aprender).
 
 | ID | Riesgo | Tipo | Descripción | Top 10 de Boehm |
 |---|---|:-:|---|---|
 | R01 | Participación desigual | P | El trabajo se concentra en pocos miembros y el resto aporta poco. El proyecto depende de una o dos personas. | Deficiencias del personal |
-| R02 | Ausencias de miembros | P | Exámenes de otras asignaturas, enfermedad u otras obligaciones reducen la disponibilidad en momentos clave. | Deficiencias del personal |
-| R03 | Planificación poco realista | P | La velocidad de 25 puntos por sprint es una hipótesis; si la real es menor, no se termina lo comprometido. | Planificaciones y presupuestos poco realistas |
+| R02 | Ausencias de miembros | P | Una persona concreta no puede trabajar durante varios días en un momento clave por exámenes, enfermedad u otras obligaciones. | Deficiencias del personal |
+| R03 | Planificación poco realista | P | No hay una velocidad real medida del equipo: la del Sprint 1 no sirve porque se hizo con IA en dos días. Si la capacidad real es menor que la planificada, no se termina lo comprometido. | Planificaciones y presupuestos poco realistas |
 | R04 | Alcance excesivo y chapado | P | Querer hacer todas las épicas, o añadir detalles que nadie ha pedido, deja sin terminar lo importante. | Chapado |
 | R05 | Requisitos poco claros o cambiantes | P | El Product Owner no ha concretado la ampliación; pueden aparecer cambios tarde o criterios mal entendidos. | Continua corriente de cambios en los requisitos |
-| R06 | Documentación que no refleja la realidad | P | Las actas de los sprints no cuadran con el calendario real de la wiki, y faltan reviews y retrospectivas. | — |
-| R07 | Incumplir las normas de integridad académica | N | Usar herramientas o materiales no autorizados expresamente por el profesorado en entregas evaluables (ficha docente). | — |
-| R08 | Miembros que no conocen el proyecto | N | Quien no ha trabajado en una parte no sabe explicarla, y la defensa es individual. | Deficiencias del personal (formación cruzada) |
-| R09 | Conflictos al integrar cambios | T | Ramas que tocan los mismos archivos, o dos migraciones con el mismo número, rompen `main` o bloquean pull requests. | — |
-| R10 | Dependencia de la API externa | T | El plan gratuito de football-data.org limita las peticiones, no da datos en directo y puede cambiar o caer. | Deficiencias en componentes externos |
-| R11 | Directo y cash-out más difíciles de lo previsto | T | Cuotas en tiempo real y valor de cash-out son técnicamente nuevos para el equipo. | Exprimir las capacidades; tiempo real |
-| R12 | Regresiones al ampliar | T | Las funciones nuevas rompen otras que ya funcionaban (resolución de apuestas, saldos). | — |
-| R13 | Caída del despliegue en la demo | T | Render o Neon (planes gratuitos) fallan, tardan en arrancar o cambian sus condiciones el día de una review. | Deficiencias en componentes externos |
-| R14 | Fallos de seguridad en las funciones nuevas | T | Comentarios, roles de moderador o perfiles públicos abren huecos (XSS, acceso a datos de otros). | — |
-| R15 | Rendimiento insuficiente | T | Las consultas del ranking fantasy o de la exposición de la casa se vuelven lentas con más datos. | Deficiencias en rendimiento |
-| R16 | Pérdida de datos del servidor | T | Se pierden los datos de la base de datos de Neon (error humano o del servicio). | — |
-| R17 | Construir algo que el Product Owner no valora | N | La ampliación no es lo que el profesor esperaba con "mucho más grande". | Desarrollo de funciones erróneas |
-| R18 | Impacto social: juego compulsivo | N | Directo, cash-out y rachas pueden incitar a apostar más, aunque sea con moneditas. | — |
-| R19 | Interfaz poco usable | T | Las pantallas nuevas (quiniela, fantasy, directo) se ven mal en el móvil o son confusas. | Desarrollo erróneo del interfaz |
-| R20 | Filtración de credenciales | T | La clave de la API o las contraseñas del servidor acaban en el repositorio o en capturas compartidas. | — |
+| R06 | Documentación que no refleja la realidad | P | Las actas no recogen lo que de verdad pasó: faltan dailies, reviews o retrospectivas, o no cuadran con el calendario. | — |
+| R07 | Miembros que no conocen el proyecto | N | Quien no ha trabajado en una parte no sabe explicarla, y la defensa es individual. | Deficiencias del personal (formación cruzada) |
+| R08 | Conflictos al integrar cambios | T | Ramas que tocan los mismos archivos, o dos migraciones con el mismo número, rompen main o bloquean pull requests. | — |
+| R09 | Dependencia de la API externa | T | El plan gratuito de football-data.org limita las peticiones, no da datos en directo y puede cambiar o caer. | Deficiencias en componentes externos |
+| R10 | Directo y cash-out más difíciles de lo previsto | T | Cuotas en tiempo real y valor de cash-out son técnicamente nuevos para el equipo. | Exprimir las capacidades; tiempo real |
+| R11 | Regresiones al ampliar | T | Las funciones nuevas rompen otras que ya funcionaban (resolución de apuestas, saldos). | — |
+| R12 | Caída del despliegue en la demo | T | Render o Neon (planes gratuitos) fallan, tardan en arrancar o cambian sus condiciones el día de una review. | Deficiencias en componentes externos |
+| R13 | Fallos de seguridad en las funciones nuevas | T | Comentarios, roles de moderador o perfiles públicos abren huecos (XSS, acceso a datos de otros). | — |
+| R14 | Rendimiento insuficiente | T | Las consultas del ranking o de la exposición de la casa se vuelven lentas con más datos. | Deficiencias en rendimiento |
+| R15 | Pérdida de datos del servidor | T | Se pierden los datos de la base de datos de Neon por un error humano o del servicio. | — |
+| R16 | Construir algo que el Product Owner no valora | N | La ampliación no es lo que el profesor esperaba con «mucho más grande». | Desarrollo de funciones erróneas |
+| R17 | Interfaz poco usable | T | Las pantallas nuevas se ven mal en el móvil o son confusas. | Desarrollo erróneo del interfaz |
+| R18 | Filtración de credenciales | T | La clave de la API o las contraseñas del servidor acaban en el repositorio o en capturas compartidas. | — |
+| R19 | Uso abusivo de la IA | N | Se delega en la IA el trabajo que hay que aprender o decidir (código, documentación, actas, retrospectivas) sin criterio propio ni revisión. El proyecto avanza, pero el equipo no aprende lo que se evalúa en la defensa y en el examen. | — |
+| R20 | Subestimación de la capacidad de desarrollo de la IA | P | Se planifica como si todo se programara a mano: la IA genera en horas lo que se estimó para semanas, el plan deja de servir y se produce más de lo que el equipo puede revisar. | Planificaciones y presupuestos poco realistas |
+| R21 | Pérdida de noción de lo que la IA desarrolla | N | El código crece más deprisa de lo que el equipo lo lee: nadie sabe con seguridad qué hace cada parte, si es correcta ni por qué se hizo así. Los fallos pasan desapercibidos y el proyecto no se puede mantener ni defender. | Deficiencias del personal |
+| R22 | Pérdida de la rutina de trabajo por causas externas (exámenes) | P | En las semanas de exámenes de otras asignaturas el equipo entero deja de hacer dailies, commits y revisiones; al volver cuesta retomar el ritmo y el contexto. | Deficiencias del personal |
 
-Según el conocimiento: R01 a R06 y R08 son **conocidos** (el equipo ya los ha notado); el resto son **desconocidos** que han salido al seguir el proceso de identificación. Los **impredecibles** se tratarán según aparezcan.
-
-## 3. Análisis de riesgos
+### 2.2 Análisis: probabilidad y consecuencias
 
 La tabla SQAS-SEI original habla de meses de retraso y porcentaje de coste. Para un proyecto de un cuatrimestre se ha adaptado a sprints y a historias:
 
@@ -70,234 +84,180 @@ La tabla SQAS-SEI original habla de meses de retraso y porcentaje de coste. Para
 |---|---|---|---|---|
 | R01 | Participación desigual | Frecuente | Crítica | Ya ha pasado en los primeros sprints |
 | R02 | Ausencias de miembros | Probable | Seria | Diciembre tiene exámenes de otras asignaturas |
-| R03 | Planificación poco realista | Probable | Crítica | No hay velocidad real medida en la ampliación |
+| R03 | Planificación poco realista | Probable | Crítica | No hay velocidad real medida del equipo |
 | R04 | Alcance excesivo y chapado | Probable | Seria | 173 puntos deseados frente a unos 110 de capacidad |
-| R05 | Requisitos poco claros o cambiantes | Probable | Seria | El Product Owner solo ha pedido "más grande" |
-| R06 | Documentación que no refleja la realidad | Probable | Seria | Ya hay contradicciones entre actas y wiki |
-| R07 | Incumplir las normas de integridad | Ocasional | Catastrófica | La ficha prevé la pérdida de la convocatoria |
-| R08 | Miembros que no conocen el proyecto | Probable | Crítica | La defensa es el 30 % de la nota de cada uno |
-| R09 | Conflictos al integrar cambios | Probable | Menor | Cinco épicas en paralelo; se arreglan en horas |
-| R10 | Dependencia de la API externa | Ocasional | Seria | Plan gratuito con límites |
-| R11 | Directo y cash-out difíciles | Probable | Seria | Tecnología nueva para el equipo |
-| R12 | Regresiones al ampliar | Ocasional | Seria | Hay 276 pruebas que lo detectan |
-| R13 | Caída del despliegue en la demo | Ocasional | Seria | Servicios gratuitos sin garantías |
-| R14 | Fallos de seguridad nuevos | Ocasional | Seria | Contenido escrito por usuarios y roles nuevos |
-| R15 | Rendimiento insuficiente | Remota | Menor | Pocos usuarios y consultas ya agregadas |
-| R16 | Pérdida de datos del servidor | Remota | Seria | Neon permite restaurar; los datos se pueden recrear |
-| R17 | Algo que el Product Owner no valora | Ocasional | Crítica | La ampliación aún no se ha validado con él |
-| R18 | Juego compulsivo | Ocasional | Seria | Las funciones nuevas son más adictivas |
-| R19 | Interfaz poco usable | Ocasional | Menor | Ya hay diseño adaptado al móvil |
-| R20 | Filtración de credenciales | Ocasional | Seria | Ya se ha compartido una captura con una clave visible |
+| R05 | Requisitos poco claros o cambiantes | Probable | Seria | El Product Owner solo ha pedido «más grande» |
+| R06 | Documentación que no refleja la realidad | Probable | Seria | Ya pasó con las actas de las iteraciones del Sprint 1, y el acta del Sprint 3 tiene apartados sin rellenar |
+| R07 | Miembros que no conocen el proyecto | Probable | Crítica | La defensa es el 30 % de la nota de cada uno |
+| R08 | Conflictos al integrar cambios | Probable | Menor | Varias ramas en paralelo; se arreglan en horas |
+| R09 | Dependencia de la API externa | Ocasional | Seria | Plan gratuito con límites |
+| R10 | Directo y cash-out difíciles | Probable | Seria | Tecnología nueva para el equipo |
+| R11 | Regresiones al ampliar | Ocasional | Seria | Hay 283 pruebas automáticas que lo detectan |
+| R12 | Caída del despliegue en la demo | Ocasional | Seria | Servicios gratuitos sin garantías |
+| R13 | Fallos de seguridad nuevos | Ocasional | Seria | Contenido escrito por usuarios y roles nuevos |
+| R14 | Rendimiento insuficiente | Remota | Menor | Pocos usuarios y consultas ya agregadas |
+| R15 | Pérdida de datos del servidor | Remota | Seria | Neon permite restaurar; los datos se pueden recrear |
+| R16 | Algo que el Product Owner no valora | Ocasional | Crítica | La ampliación aún no se ha validado con él |
+| R17 | Interfaz poco usable | Ocasional | Menor | Ya hay diseño adaptado al móvil |
+| R18 | Filtración de credenciales | Ocasional | Seria | Ya se ha compartido una captura con una clave visible |
+| R19 | Uso abusivo de la IA | Ocasional | Crítica | Casi todo el desarrollo se ha hecho con IA; en el Sprint 3 el equipo acordó vigilar su uso excesivo |
+| R20 | Subestimación de la capacidad de la IA | Ocasional | Crítica | La retrospectiva del Sprint 2 lo señala: la IA superó de lejos el ritmo que el equipo podía manejar |
+| R21 | Pérdida de noción de lo que la IA desarrolla | Frecuente | Catastrófica | Ya pasa: el Sprint 1 se programó en dos días y el objetivo del Sprint 3 fue entender el código que ya existía |
+| R22 | Pérdida de la rutina por exámenes | Ocasional | Menor | Los exámenes se concentran en pocas semanas y el ritmo se recupera en unos días |
 
-## 4. Priorización de riesgos
-
-Se combinan las tres técnicas del tema:
-- el **nivel de riesgo SQAS-SEI**, que sale de cruzar probabilidad y gravedad;
-- la **exposición**, que es probabilidad × gravedad (de 1 a 5 cada una);
-- la **tabla de riesgo ordenada** con una línea de corte.
-
-### Matriz de nivel de riesgo
+### 2.3 Matriz de nivel de riesgo
 
 | Gravedad \ Probabilidad | Frecuente | Probable | Ocasional | Remota | Improbable |
 |---|---|---|---|---|---|
-| **Catastrófica** | 🟥 IN | 🟥 IN | 🟥 IN · **R07** | 🟧 H | 🟨 M |
-| **Crítica** | 🟥 IN · **R01** | 🟥 IN · **R03 R08** | 🟧 H · **R17** | 🟨 M | 🟩 L |
-| **Seria** | 🟧 H | 🟧 H · **R02 R04 R05 R06 R11** | 🟨 M · R10 R12 R13 R14 R18 R20 | 🟩 L · R16 | ⬜ T |
-| **Menor** | 🟨 M | 🟨 M · R09 | 🟩 L · R19 | ⬜ T · R15 | ⬜ T |
+| **Catastrófica** | 🟥 IN · **R21** | 🟥 IN | 🟥 IN | 🟧 H | 🟨 M |
+| **Crítica** | 🟥 IN · **R01** | 🟥 IN · **R03** **R07** | 🟧 H · **R16** **R19** **R20** | 🟨 M | 🟩 L |
+| **Seria** | 🟧 H | 🟧 H · **R02** **R04** **R05** **R06** **R10** | 🟨 M · R09 R11 R12 R13 R18 | 🟩 L · R15 | ⬜ T |
+| **Menor** | 🟨 M | 🟨 M · R08 | 🟩 L · R17 R22 | ⬜ T · R14 | ⬜ T |
 | **Despreciable** | 🟨 M | 🟩 L | ⬜ T | ⬜ T | ⬜ T |
 
 **IN** Intolerable: no puede obviarse su gestión · **H** Alto: controlar, supervisar y tener plan de contingencia · **M** Medio: debería controlarse · **L** Bajo: efectos asumibles · **T** Tolerable: si sucede, no importa.
 
-### Tabla de riesgo ordenada
+### 2.4 Tabla de riesgo ordenada
 
 | Orden | ID | Riesgo | Nivel | Exposición | Estrategia |
 |---:|---|---|:-:|:-:|---|
-| 1 | R01 | Participación desigual | 🟥 IN | 20 | Controlar |
-| 2 | R03 | Planificación poco realista | 🟥 IN | 16 | Controlar |
-| 3 | R08 | Miembros que no conocen el proyecto | 🟥 IN | 16 | Controlar |
-| 4 | R07 | Incumplir las normas de integridad | 🟥 IN | 15 | Evitar |
-| 5 | R17 | Algo que el Product Owner no valora | 🟧 H | 12 | Controlar |
-| 6 | R11 | Directo y cash-out difíciles | 🟧 H | 12 | Controlar |
-| 7 | R04 | Alcance excesivo y chapado | 🟧 H | 12 | Evitar |
-| 8 | R05 | Requisitos poco claros o cambiantes | 🟧 H | 12 | Controlar |
-| 9 | R02 | Ausencias de miembros | 🟧 H | 12 | Controlar |
-| 10 | R06 | Documentación que no refleja la realidad | 🟧 H | 12 | Controlar |
-| | | **— Línea de corte: por encima, plan detallado; por debajo, medidas básicas —** | | | |
-| 11 | R10 | Dependencia de la API externa | 🟨 M | 9 | Controlar |
-| 12 | R12 | Regresiones al ampliar | 🟨 M | 9 | Controlar |
-| 13 | R13 | Caída del despliegue en la demo | 🟨 M | 9 | Controlar |
-| 14 | R14 | Fallos de seguridad nuevos | 🟨 M | 9 | Controlar |
-| 15 | R18 | Juego compulsivo | 🟨 M | 9 | Controlar |
-| 16 | R20 | Filtración de credenciales | 🟨 M | 9 | Evitar |
-| 17 | R09 | Conflictos al integrar cambios | 🟨 M | 8 | Controlar |
-| 18 | R16 | Pérdida de datos del servidor | 🟩 L | 6 | Asumir |
-| 19 | R19 | Interfaz poco usable | 🟩 L | 6 | Asumir |
-| 20 | R15 | Rendimiento insuficiente | ⬜ T | 4 | Asumir |
+| 1 | R21 | Pérdida de noción de lo que la IA desarrolla | 🟥 IN | 25 | Controlar |
+| 2 | R01 | Participación desigual | 🟥 IN | 20 | Controlar |
+| 3 | R03 | Planificación poco realista | 🟥 IN | 16 | Controlar |
+| 4 | R07 | Miembros que no conocen el proyecto | 🟥 IN | 16 | Controlar |
+| | | **— Línea de corte: por encima, intolerables con plan RSGR detallado (sección 3) —** | | | |
+| 5 | R02 | Ausencias de miembros | 🟧 H | 12 | Controlar |
+| 6 | R04 | Alcance excesivo y chapado | 🟧 H | 12 | Evitar |
+| 7 | R05 | Requisitos poco claros o cambiantes | 🟧 H | 12 | Controlar |
+| 8 | R06 | Documentación que no refleja la realidad | 🟧 H | 12 | Controlar |
+| 9 | R10 | Directo y cash-out difíciles | 🟧 H | 12 | Controlar |
+| 10 | R16 | Algo que el Product Owner no valora | 🟧 H | 12 | Controlar |
+| 11 | R19 | Uso abusivo de la IA | 🟧 H | 12 | Controlar |
+| 12 | R20 | Subestimación de la capacidad de la IA | 🟧 H | 12 | Controlar |
+| 13 | R09 | Dependencia de la API externa | 🟨 M | 9 | Controlar |
+| 14 | R11 | Regresiones al ampliar | 🟨 M | 9 | Controlar |
+| 15 | R12 | Caída del despliegue en la demo | 🟨 M | 9 | Controlar |
+| 16 | R13 | Fallos de seguridad nuevos | 🟨 M | 9 | Controlar |
+| 17 | R18 | Filtración de credenciales | 🟨 M | 9 | Evitar |
+| 18 | R08 | Conflictos al integrar cambios | 🟨 M | 8 | Controlar |
+| 19 | R15 | Pérdida de datos del servidor | 🟩 L | 6 | Asumir |
+| 20 | R17 | Interfaz poco usable | 🟩 L | 6 | Asumir |
+| 21 | R22 | Pérdida de la rutina por exámenes | 🟩 L | 6 | Asumir |
+| 22 | R14 | Rendimiento insuficiente | ⬜ T | 4 | Asumir |
 
-**Principio de Pareto.** Con 20 riesgos, dedicar entre 3 y 7 pasos a cada uno sería inviable. Siguiendo la regla 80-20, el plan detallado se reserva a los **4 intolerables** (el 20 % de la lista, donde se concentra la mayor parte del riesgo real) y a los **6 de nivel alto**. Los de nivel medio reciben medidas básicas; los bajos y tolerables se asumen.
+**Decisión:** los riesgos de nivel **intolerable** son los que no pueden dejar de gestionarse, así que son los que reciben un plan RSGR detallado en la sección 3. Son 4 de 22: R21 (pérdida de noción de lo que la IA desarrolla), R01 (participación desigual), R03 (planificación poco realista), R07 (miembros que no conocen el proyecto). El resto se revisa en cada retrospectiva (sección 4).
 
-| Estrategia | Significado | Riesgos |
-|---|---|---|
-| **Evitar** | Elegir una alternativa con menos riesgo | R07, R04, R20 |
-| **Controlar** | Reducir la probabilidad o el impacto | R01, R02, R03, R05, R06, R08, R09–R14, R17, R18 |
-| **Asumir** | Aceptar que ocurra y tener solo plan de contingencia | R15, R16, R19 |
-| **Transferir** | Compartir el riesgo con otro | Ninguno: no hay terceros a quienes trasladarlo |
+**Estrategias:** *evitar* (elegir una alternativa con menos riesgo), *controlar* (reducir la probabilidad o el impacto) y *asumir* (aceptar que ocurra y tener solo un plan de contingencia). No hay riesgos que *transferir*, porque no hay terceros a quienes trasladarlos.
 
-## 5. Reducción, supervisión y gestión de cada riesgo
+## 3. Reducción, supervisión y gestión del riesgo
 
-Para cada riesgo por encima de la línea de corte:
-- **Reducción:** pasos para que no ocurra o haga menos daño.
-- **Supervisión:** cómo se sabe si se está haciendo real, con un **disparador** concreto que activa la contingencia.
-- **Gestión:** el plan de contingencia si ocurre.
+El plan de **Reducción, Supervisión y Gestión del Riesgo (RSGR)** define tres cosas para cada riesgo que se trata:
+- **Reducción:** los pasos para que no ocurra o, si ocurre, haga menos daño.
+- **Supervisión:** cómo se sabe si se está haciendo real y si los pasos de reducción se cumplen. Incluye un **disparador**: la señal concreta que activa la gestión.
+- **Gestión:** el plan de contingencia que se aplica si el riesgo se hace real.
 
-### R01 · Participación desigual 🟥 IN
-- **Estrategia:** controlar · **Responsable:** Scrum Master
-- **Reducción:**
-  - un responsable por épica;
-  - al menos un pull request por persona y sprint, revisado por otra persona;
-  - como mucho una tarea en curso por persona;
-  - historias repartidas con nombre en la Sprint Planning;
-  - programación en pareja en las historias grandes.
-- **Supervisión:** pull requests y puntos completados por persona en cada sprint (pestaña *Insights* de GitHub y tablero). **Disparador:** un miembro termina el sprint sin ningún PR fusionado, o una sola persona hace más del 50 % de los puntos.
-- **Gestión:**
-  - en la daily, sus tareas se reasignan a otra persona en pareja con él;
-  - en la retrospectiva se habla abiertamente y se acuerda una acción;
-  - si se repite dos sprints seguidos, se comunica al Product Owner, porque la nota del proyecto es individual.
+Preparar los tres pasos para los 22 riesgos identificados sería inviable y diluiría el esfuerzo. Se aplica la **regla de Pareto (80/20)**: el 20 % de los riesgos identificados supone el 80 % del riesgo total. Por eso solo se detallan los riesgos que la priorización ha marcado como **intolerables**: 4 de 22, un 18 %, cerca de ese 20 %. Si en una retrospectiva otro riesgo pasa a intolerable, se le añade aquí su apartado.
 
-### R03 · Planificación poco realista 🟥 IN
-- **Estrategia:** controlar · **Responsable:** Scrum Master
-- **Reducción:**
-  - Planning Poker entre todos;
-  - capacidad calculada con las horas reales de cada uno;
-  - desarrollo incremental, con las historias Must primero;
-  - tareas de un día como máximo;
-  - velocidad recalculada al final de cada sprint.
-- **Supervisión:** burndown en cada daily y velocidad real frente a la prevista. **Disparador:** a mitad de sprint está hecho menos del 40 % de los puntos, o la velocidad de un sprint queda por debajo de 20.
-- **Gestión:**
-  - recortar alcance según MoSCoW, primero las Could y luego las Should;
-  - las historias sin terminar vuelven al backlog;
-  - renegociar la entrega final con el Product Owner.
+### 3.1 R21 · Pérdida de noción de lo que la IA desarrolla 🟥 IN
 
-### R08 · Miembros que no conocen el proyecto 🟥 IN
-- **Estrategia:** controlar · **Responsable:** todo el equipo
-- **Reducción:**
-  - formación cruzada: cada pull request lo revisa alguien de otra épica;
-  - en la review, cada responsable explica su épica a los demás;
-  - rotar las historias pequeñas entre épicas;
-  - usar la guía y la wiki como material de estudio.
-- **Supervisión:** simulacro de defensa en la retrospectiva de los sprints 4 y 6: cada miembro explica en dos minutos una parte que no ha programado. **Disparador:** alguien no sabe explicar la arquitectura, el proceso o una épica que no es la suya.
-- **Gestión:** sesiones de repaso por parejas en el Sprint 7, centradas en proceso, requisitos, planificación y modelado, con preguntas de práctica.
+**Probabilidad:** frecuente · **Gravedad:** catastrófica · **Exposición:** 25 · **Estrategia:** controlar · **Responsable:** todo el equipo; el Scrum Master hace el seguimiento
 
-### R07 · Incumplir las normas de integridad académica 🟥 IN
-- **Estrategia:** evitar · **Responsable:** todo el equipo
-- **Reducción:**
-  - confirmar con el profesor, **por escrito**, qué herramientas y materiales están autorizados;
-  - guardar esa confirmación en la wiki;
-  - que cada miembro sea autor real de su trabajo y lo entienda (ver R08).
-- **Supervisión:** revisar los avisos y normas de la asignatura antes de cada entrega. **Disparador:** no hay confirmación escrita antes de la primera entrega de la ampliación, o cambian las normas.
-- **Gestión:** dejar de usar en las entregas lo que no esté autorizado, rehacer esas partes y explicarlo con transparencia al profesor antes de que lo detecte él.
+#### 3.1.1 Reducción
+- Nada entra en `main` sin un pull request revisado y aprobado por un miembro que no lo haya generado. Quien lo aprueba tiene que poder explicar el cambio.
+- Pull requests pequeños, de una historia cada uno. Si un cambio no se puede revisar en una sesión, se divide antes de revisarlo.
+- Quien abre el pull request explica con sus palabras qué cambia y por qué, en la plantilla del PR.
+- La IA no decide qué se construye: solo se programan historias del Product Backlog con criterios de aceptación.
+- El resumen del código y las revisiones de código (`docs/ResumenCodigo.md`, `docs/RevisionCódigo1.md`) se actualizan con cada funcionalidad que entra.
 
-### R17 · Construir algo que el Product Owner no valora 🟧 H
-- **Estrategia:** controlar · **Responsable:** responsables de épica
-- **Reducción:**
-  - presentar las épicas al Product Owner en el Sprint 2, antes de programar;
-  - Sprint Review con él en cada sprint, con prototipos y demos;
-  - empezar cada épica por la pieza más visible.
-- **Supervisión:** comentarios del Product Owner en el acta de cada review y porcentaje de historias aceptadas. **Disparador:** rechaza una épica o dice que no es lo que esperaba.
-- **Gestión:** repriorizar el backlog en la siguiente planning; si hace falta, sustituir la épica.
+#### 3.1.2 Supervisión
+- **Indicadores:** pull requests fusionados sin revisión, tamaño de cada pull request y funcionalidades de `main` que nadie del equipo sabe explicar (se pregunta en la daily y en la review).
+- **Disparador:** se fusiona un pull request sin la revisión de otro miembro, o en la review nadie sabe explicar una funcionalidad que ya está en `main`.
 
-### R11 · Directo y cash-out más difíciles de lo previsto 🟧 H
-- **Estrategia:** controlar · **Responsable:** responsable de la épica E2
-- **Reducción:**
-  - simulador de partidos desde el primer sprint;
-  - desarrollo en cadena: en juego → cuotas → apuestas → cash-out;
-  - investigación previa (*spike*) de la fórmula del cash-out en el Sprint 5.
-- **Supervisión:** estado de HU-63 y HU-64 al final del Sprint 5. **Disparador:** las cuotas en directo no están terminadas al cerrar el Sprint 5.
-- **Gestión:** el cash-out pasa a Should; el directo se entrega con el simulador y con cuotas simplificadas.
+#### 3.1.3 Gestión
+- Se paran las funcionalidades nuevas hasta revisar lo pendiente, como se hizo en el Sprint 3.
+- Lo que nadie entienda no se fusiona. Si ya está en `main`, se revisa en pareja o se revierte.
+- Sesión de lectura en parejas del código afectado; lo aprendido se apunta en el resumen del código.
 
-### R04 · Alcance excesivo y chapado 🟧 H
-- **Estrategia:** evitar · **Responsable:** Scrum Master con el Product Owner
-- **Reducción:**
-  - MoSCoW y "fregado de requisitos";
-  - nada se programa sin historia ni criterios de aceptación;
-  - lo comprometido nunca supera la capacidad.
-- **Supervisión:** puntos comprometidos frente a capacidad, y trabajo en los PR sin historia asociada. **Disparador:** se comprometen más puntos de los que caben, o aparece trabajo fuera del backlog.
-- **Gestión:** congelar el alcance desde el Sprint 6: solo se termina y se arregla, no se empieza nada nuevo.
+### 3.2 R01 · Participación desigual 🟥 IN
 
-### R05 · Requisitos poco claros o cambiantes 🟧 H
-- **Estrategia:** controlar · **Responsable:** responsables de épica
-- **Reducción:**
-  - criterios Dado / Cuando / Entonces revisados con el Product Owner;
-  - refinamiento a mitad de sprint;
-  - trazabilidad entre criterios y pruebas, para medir el impacto de los cambios;
-  - umbral de cambio alto: un cambio entra por el backlog en la siguiente planning.
-- **Supervisión:** cambios pedidos por sprint y dudas abiertas en las historias. **Disparador:** más de dos historias cambian después de la planning, o una llega a la planning sin criterios.
-- **Gestión:** la historia sale del sprint y vuelve a refinamiento; si el cambio es urgente, se cambia por otra del mismo tamaño.
+**Probabilidad:** frecuente · **Gravedad:** crítica · **Exposición:** 20 · **Estrategia:** controlar · **Responsable:** Scrum Master
 
-### R02 · Ausencias de miembros 🟧 H
-- **Estrategia:** controlar · **Responsable:** Scrum Master
-- **Reducción:**
-  - calendario de exámenes de todos en la planning;
-  - Sprint 7 corto y sin funcionalidades nuevas;
-  - formación cruzada (R08);
-  - trabajo siempre subido a una rama, nunca solo en un ordenador.
-- **Supervisión:** disponibilidad anunciada en la planning y en cada daily. **Disparador:** alguien no puede trabajar más de tres días seguidos en un sprint.
-- **Gestión:** reasignar sus tareas en la daily; si no hay capacidad, la historia vuelve al backlog y se avisa en la review.
+#### 3.2.1 Reducción
+- Un responsable por épica o funcionalidad.
+- Cada miembro abre al menos un pull request por sprint, y otra persona se lo revisa.
+- Como mucho una tarea en curso por persona.
+- Las historias se reparten en la Sprint Planning, con nombre y apellidos.
+- Programación en pareja en las historias grandes.
 
-### R06 · Documentación que no refleja la realidad 🟧 H
-- **Estrategia:** controlar · **Responsable:** Scrum Master
-- **Reducción:**
-  - acta de cada evento el mismo día, en la wiki, con fechas y asistentes reales;
-  - corregir las actas que no cuadran con el calendario;
-  - rellenar las reviews y retrospectivas pendientes.
-- **Supervisión:** lista de comprobación en cada review (acta de planning, dailies, review y retrospectiva). **Disparador:** falta el acta de algún evento al cerrar el sprint.
-- **Gestión:** reconstruir el acta con el historial de GitHub y las notas del equipo antes de la siguiente entrega.
+#### 3.2.2 Supervisión
+- **Indicadores:** pull requests y horas completadas por persona en cada sprint (pestaña *Insights* de GitHub y tablero).
+- **Disparador:** un miembro termina el sprint sin ningún pull request fusionado, o una sola persona hace más del 50 % del trabajo.
 
-## 6. Riesgos de nivel medio, bajo y tolerable
+#### 3.2.3 Gestión
+- En la daily, sus tareas se reasignan a otra persona, que las hace en pareja con quien las tenía.
+- En la retrospectiva se habla abiertamente y se acuerda una acción concreta.
+- Si se repite dos sprints seguidos, se comunica al Product Owner, porque la nota del proyecto es individual.
 
-| ID | Riesgo | Reducción | Contingencia |
+### 3.3 R03 · Planificación poco realista 🟥 IN
+
+**Probabilidad:** probable · **Gravedad:** crítica · **Exposición:** 16 · **Estrategia:** controlar · **Responsable:** Scrum Master
+
+#### 3.3.1 Reducción
+- Estimar entre todos con Planning Poker.
+- Calcular la capacidad con las horas reales que puede dedicar cada uno (en el Sprint 3, 20 horas).
+- Planificar con las horas estimadas de cada historia, no con la velocidad del Sprint 1, que se hizo con IA ([métricas](https://github.com/riverri/IS1/blob/main/docs/scrum/metricas.md)).
+- Desarrollo incremental: las historias Must van primero.
+- Tareas de un día como máximo.
+- Comparar al final de cada sprint las horas reales con las estimadas y ajustar el siguiente.
+
+#### 3.3.2 Supervisión
+- **Indicadores:** burndown actualizado en cada daily; horas reales frente a las estimadas.
+- **Disparador:** a mitad de sprint está hecho menos del 40 % de lo comprometido, o las horas reales superan en más de un 50 % a las estimadas.
+
+#### 3.3.3 Gestión
+- Recortar el alcance según MoSCoW: primero las Could y luego las Should.
+- Las historias sin terminar vuelven al Product Backlog.
+- Renegociar con el Product Owner qué entra en la entrega final.
+
+### 3.4 R07 · Miembros que no conocen el proyecto 🟥 IN
+
+**Probabilidad:** probable · **Gravedad:** crítica · **Exposición:** 16 · **Estrategia:** controlar · **Responsable:** todo el equipo
+
+#### 3.4.1 Reducción
+- Formación cruzada: cada pull request lo revisa alguien que no lo ha hecho (ver R21).
+- En la Sprint Review, cada responsable explica su parte a los demás.
+- Rotar las historias pequeñas entre miembros.
+- Usar como material de estudio la guía del proyecto, la wiki y el resumen del código.
+
+#### 3.4.2 Supervisión
+- **Indicadores:** simulacro de defensa en la retrospectiva de los sprints 4 y 6: cada miembro explica en dos minutos una parte que no ha programado.
+- **Disparador:** alguien no sabe explicar la arquitectura, el proceso o una parte que no es la suya.
+
+#### 3.4.3 Gestión
+- Sesiones de repaso por parejas en el Sprint 7, centradas en lo que pregunta la defensa (proceso, requisitos, planificación y modelado), con preguntas de práctica.
+
+## 4. Planificación temporal
+
+Las fechas de los sprints 4 a 7 son orientativas (sprints de dos semanas desde el cierre del Sprint 3) y se confirman en cada Sprint Planning. Las acciones continuas (revisión de cada pull request, un pull request por persona y sprint, actas) se hacen en todos los sprints.
+
+| Sprint | Fechas | Acciones | Riesgos |
 |---|---|---|---|
-| R10 | API externa 🟨 | Simulador; datos iniciales propios; tiempos de espera configurados; respetar el límite de peticiones | Trabajar solo con datos propios y el simulador |
-| R12 | Regresiones 🟨 | Las 276 pruebas en el CI con H2 y PostgreSQL; pruebas nuevas en la Definition of Done | Revertir el pull request que lo rompe |
-| R13 | Caída en la demo 🟨 | Despertar el servidor antes de la clase; ensayar la demo | Demo en local o con el túnel; vídeo de respaldo |
-| R14 | Seguridad 🟨 | Escapar el texto de los usuarios, CSRF, comprobar permisos, pruebas de acceso | Desactivar la función hasta corregirla |
-| R18 | Juego compulsivo 🟨 | Límites, pausas y avisos de juego responsable en todas las funciones nuevas; máximo diario de experiencia | Desactivar la función desde Gestión |
-| R20 | Credenciales 🟨 | Claves solo en variables de entorno; revisar las capturas antes de compartirlas | Revocar la clave expuesta y pedir una nueva |
-| R09 | Integración 🟨 | Pull requests pequeños; actualizar la rama con `main` a menudo; reservar los números de migración | Resolver el conflicto en pareja el mismo día |
-| R16 | Pérdida de datos 🟩 | Se asume | Restaurar desde Neon o recrear con los datos iniciales; exportar antes de cada demo |
-| R19 | Interfaz 🟩 | Se asume | Ajustar el diseño en el sprint siguiente |
-| R15 | Rendimiento ⬜ | Se asume | Optimizar la consulta lenta si aparece |
+| **Cierre del Sprint 3** | hasta el 3/11 | Aprobar esta versión del plan. Acordar las reglas de revisión: ningún pull request sin revisar y uno por historia. Apuntar en la siguiente planning los exámenes de todos. | R21, R19, R22 |
+| **Sprint 4** | 3/11 – 17/11 | Revisar el código pendiente de integrar antes de añadir funcionalidades nuevas. Planificar con horas reales y horas estimadas. Primer simulacro de defensa. Revisión completa de este plan. | R21, R20, R03, R07 |
+| **Sprint 5** | 17/11 – 1/12 | Comprobar los pull requests por persona del Sprint 4 y corregir el reparto. Ajustar la capacidad a los exámenes. Recalcular el plan con las horas reales. | R01, R03, R22, R02 |
+| **Sprint 6** | 1/12 – 15/12 | Congelar el alcance: solo se termina y se arregla. Segundo simulacro de defensa. Ensayo de la demo final con el servidor. | R04, R07, R12 |
+| **Sprint 7** | 15/12 – 18/12 | Repaso por parejas. Cierre de este plan: qué riesgos se dieron y qué se aprendió. | R07, R21 |
 
-## 7. Planificación temporal
+**Monitorización continua:**
+- **En cada daily:** el Scrum Master repasa los 4 intolerables: ¿alguno se está haciendo real?
+- **En cada retrospectiva:** se vuelven a valorar todos los riesgos, se comprueba que los pasos de reducción se están haciendo y se añaden los riesgos nuevos.
+- **Registro:** cada revisión deja una línea en el acta del sprint con los riesgos que suben, bajan o se han hecho reales y la acción tomada.
 
-| Sprint | Acciones | Riesgos |
-|---|---|---|
-| **2** · 5/10 – 16/10 | Aprobar este plan. Confirmar por escrito el uso de herramientas autorizado. Elegir los responsables de épica (el Scrum Master ya está elegido: Carlos Jurado). Presentar las épicas al Product Owner. Corregir actas y rellenar retrospectivas. Planning Poker de las Must. | R07, R01, R17, R06, R03, R05 |
-| **3** · 19/10 – 30/10 | Capacidad con las horas reales. Reservar números de migración. Simulador de partidos (HU-67). Medir la velocidad real. | R03, R09, R11, R10 |
-| **4** · 2/11 – 13/11 | Recalcular el plan con la velocidad real y recortar si hace falta. Primer simulacro de defensa. Revisión completa de este plan. | R03, R04, R08 |
-| **5** · 16/11 – 27/11 | Investigación previa del cash-out. Calendarios de exámenes de diciembre. Revisión de seguridad de comentarios y moderación. | R11, R02, R14 |
-| **6** · 30/11 – 11/12 | Congelar el alcance. Segundo simulacro de defensa. Ensayo de la demo final con el servidor. | R04, R08, R13 |
-| **7** · 14/12 – 18/12 | Repaso por parejas. Exportar la base de datos y grabar el vídeo de respaldo. Cierre de este plan: qué riesgos se dieron y qué se aprendió. | R08, R13, R16 |
+## 5. Resumen
 
-Las acciones continuas (revisión cruzada, un PR por persona y sprint, actas) se hacen en todos los sprints.
-
-## 8. Monitorización
-
-- **En cada daily:** el Scrum Master repasa los intolerables (R01, R03, R07 y R08): ¿alguno se está haciendo real?
-- **En cada retrospectiva:**
-  - se revisan todos los riesgos altos e intolerables;
-  - se vuelven a valorar su probabilidad y su gravedad;
-  - se comprueba que los pasos de reducción se están haciendo;
-  - se añaden los riesgos nuevos.
-- **Métricas:** velocidad y burndown (R03), pull requests por persona (R01), historias aceptadas por el Product Owner (R17), cambios de requisitos por sprint (R05), pruebas en verde en el CI (R12).
-- **Registro:** cada revisión deja una línea en el acta del sprint con los riesgos que suben, bajan o se han hecho reales y la acción tomada. Esta página se actualiza al final de los sprints 4 y 7.
-
-## 9. Resumen
-
-**20 riesgos identificados: 4 intolerables y 6 de nivel alto.** Los más graves **no son técnicos**, sino de personas y de planificación:
-- que el trabajo recaiga en pocos miembros (R01);
-- que la velocidad prevista no sea real (R03);
-- que no todos conozcan el proyecto para la defensa (R08);
-- incumplir las normas de integridad académica (R07).
-
-Los riesgos técnicos quedan en nivel medio porque el proyecto ya tiene pruebas automáticas, integración continua y un simulador previsto. La estrategia es **proactiva**: las acciones principales se toman en el Sprint 2, antes de empezar la ampliación, y los riesgos se revisan en cada daily y en cada retrospectiva.
+- **22 riesgos identificados:** 4 intolerables, 8 altos, 6 medios, 3 bajos y 1 tolerable.
+- **Los 4 intolerables** reciben el plan RSGR completo, siguiendo la regla de Pareto: R21, pérdida de noción de lo que la IA desarrolla (exposición 25); R01, participación desigual (exposición 20); R03, planificación poco realista (exposición 16); R07, miembros que no conocen el proyecto (exposición 16).
+- **El riesgo más grave es nuevo: R21, la pérdida de noción de lo que la IA desarrolla.** Es frecuente y catastrófico porque ya está pasando, y si el equipo no entiende el código no puede mantenerlo, encontrar sus fallos ni defenderlo.
+- **Tres de los cuatro riesgos nuevos tienen que ver con la IA** (R19, R20 y R21). El reto del proyecto ya no es producir código, sino entenderlo, revisarlo y planificar a un ritmo que el equipo pueda seguir. La pérdida de la rutina por exámenes (R22) queda en nivel bajo y se asume.
+- **Los riesgos técnicos siguen en nivel medio o bajo**, porque el proyecto tiene pruebas automáticas e integración continua.
+- **La estrategia es proactiva:** las primeras acciones se toman al cerrar el Sprint 3 y los riesgos se revisan en cada daily y en cada retrospectiva.
