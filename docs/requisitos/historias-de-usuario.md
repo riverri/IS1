@@ -94,11 +94,11 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | Historia | Título | Estado | Criterios | Prioridad | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) | 8 | 656 | 47 | 7,3 | 7,8 $ |
-| HU-02 | Forma reciente de un equipo | Hecha | 1 | 1 (Muy alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-02 | Forma reciente de un equipo | Hecha | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 3 (Media) | 11 | 902 | 65 | 10 | 10,7 $ |
 | HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy Alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) | 4 | 328 | 24 | 3,8 | 3,9 $ |
-| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-07 | Límites de apuesta del creador | Hecha | 1 | 3 (Media) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-09 | Web adaptada a móvil | Hecha | 1 | 5 (Muy baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
@@ -117,7 +117,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-22 | Búsqueda y filtros | Hecha | 3 | 3 (Media) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 | HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-25 | Resolución automática | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
+| HU-25 | Resolución automática | Hecha | 3 | 2 (Alta) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-28 | Boleto de combinadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
@@ -127,8 +127,8 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-34 | Historial | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-35 | Estadísticas personales | Hecha | 1 | 3 (Media) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-36 | Ranking | Hecha | 4 | 3 (Media) | 5 | 410 | 29 | 5,0 | 4,8 $ |
+| HU-35 | Estadísticas personales | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-36 | Ranking | Hecha | 4 | 2 (Alta) | 5 | 410 | 29 | 5,0 | 4,8 $ |
 | HU-37 | Avisos | Hecha | 3 | 2 (Alta) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 5 (Muy Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 | 5 (Muy Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
@@ -139,10 +139,10 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-44 | Apuestas a largo plazo | Hecha | 3 | 3 (Medio) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-45 | Gestión de mercados | Hecha | 3 | 3 (Medio) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy Alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-47 | Cambiar nombre y contraseña | Hecha | 3 | 2 (Alta) | 2 | 164 | 12 | 2,2 | 1,9 $ |
+| HU-47 | Cambiar nombre y contraseña | Hecha | 3 | 3 (Media) | 2 | 164 | 12 | 2,2 | 1,9 $ |
 | HU-48 | Perfil público de un jugador | Hecha | 1 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-49 | Plantilla y alineación probable | Hecha | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
-| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 2 (Alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-50 | Plantillas desde la API y a mano | Hecha | 2 | 3 (Media) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-53 | Cuentas de la casa | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
@@ -174,7 +174,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 3 | 1 (Muy Alta) | 1 (it. 6) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 3 | 3 (Media) | 1 (it. 6) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -234,7 +234,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 17 | 3 (Medio) | 1 (it. 3) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 17 | 2 (Alto) | 1 (it. 3) | Hecha | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -466,7 +466,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 30 | 2 (Alta) | 1 (it. 8) | Hecha | 2 | 164 | 12 | 2,2 | 1,9 $ |
+| 30 | 3 (Media) | 1 (it. 8) | Hecha | 2 | 164 | 12 | 2,2 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -580,7 +580,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 16 | 3 (Medio) | 1 (it. 3 y 5) | Hecha | 8 (5 + 3) | 656 | 47 | 7,5 | 7,8 $ |
+| 16 | 2 (Alta) | 1 (it. 3 y 5) | Hecha | 8 (5 + 3) | 656 | 47 | 7,5 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -742,7 +742,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 32 | 2 (Alta) | 1 (it. 10) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 32 | 3 (Media) | 1 (it. 10) | Hecha | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -790,7 +790,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 19 | 3 (Medio) | 1 (it. 3) | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 19 | 2 (Alta) | 1 (it. 3) | Hecha | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -808,7 +808,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 24 | 3 (Medio) | 1 (it. 2 y 3) | Hecha | 5 (3 + 2) | 410 | 29 | 5,0 | 4,8 $ |
+| 24 | 2 (Alta) | 1 (it. 2 y 3) | Hecha | 5 (3 + 2) | 410 | 29 | 5,0 | 4,8 $ |
 
 **Criterios de aceptación**
 
