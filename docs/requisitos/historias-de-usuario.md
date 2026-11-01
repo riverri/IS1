@@ -125,7 +125,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-30 | Resolución de combinadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-31 | Ficha del equipo | Hecha | 2 | 3 (Media) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-32 | Gráfico de evolución | Hecha | 1 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-33 | Cara a cara | Hecha | 2 | 5 (Muy Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-33 | Cara a cara | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-34 | Historial | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-35 | Estadísticas personales | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-36 | Ranking | Hecha | 4 | 2 (Alta) | 5 | 410 | 29 | 5,0 | 4,8 $ |
@@ -757,7 +757,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 20 | 5 (Muy baja) | 1 (it. 7) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 20 | 3 (Media) | 1 (it. 7) | Hecha | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
