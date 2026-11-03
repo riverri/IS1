@@ -2,15 +2,27 @@
 
 > Acta del sprint, por completar por el equipo. Esta página se publica sola en la wiki desde `docs/scrum/sprints/sprint-3.md`: para cambiarla, edita ese archivo.
 
-## Sprint Planning (_fecha_)
-- **Asistentes: Carlos Jurado, Ling Ji, David Ortega, Carlos Martín-Salas, Jaime Martín**
+## Sprint Planning (21/10)
+- **Asistentes: Carlos Jurado, Jing Li, David Ortega, Carlos Martín-Salas, Jaime Martín**
 - **Sprint Goal: comprender el código con más precisión para ser capaz de encontrar errores y tenerlo estructurado, y arreglar primeros errores**
 - **Capacidad del equipo (horas): 20**
 - **Acciones de la retrospectiva anterior que se incluyen: ser más conscientes del posible uso excesivo de la Inteligencia Artificial**
 
-| Issue | Historia | Puntos | Horas estimadas | Responsable |
+El sprint no tiene historias de usuario nuevas: son tareas para entender el código, arreglar errores y completar la documentación, así que no llevan puntos.
+
+| Issue | Tarea | Puntos | Horas estimadas | Responsable |
 |---|---|---:|---:|---|
-| | | | | |
+| — | Comentar el código para saber con certeza lo que ha hecho la IA | — | 3 | David Ortega |
+| — | Esquema de la carpeta `src`: dónde está el código y la interfaz (`docs/ResumenCodigo.md`) | — | 2 | Carlos Martín-Salas |
+| — | Resumen de cada paquete y clase del código (`docs/RevisionCódigo1.md`) | — | 4 | Carlos Martín-Salas |
+| [#75](https://github.com/riverri/IS1/issues/75) | Arreglo de errores: prohibir nombres de usuario ofensivos | — | 2 | Jaime Martín · Jing Li |
+| [#73](https://github.com/riverri/IS1/issues/73) | Gestión de riesgos: nueva versión del plan RSGR | — | 4 | Carlos Jurado · Jing Li |
+| [#91](https://github.com/riverri/IS1/issues/91) | Quitar la documentación con erratas (la de los 12 sprints) | — | 1 | Carlos Jurado |
+| [#92](https://github.com/riverri/IS1/issues/92) | Reconfigurar el Sprint Backlog del Sprint 1 | — | 2 | Carlos Jurado |
+| — | Acta del Sprint 3 y retrospectiva del Sprint 2 | — | 2 | Jaime Martín |
+| | **Total** | | **20** | |
+
+**Fuera de la planificación:** David Ortega abrió los pull requests #86 a #90 (libro de movimientos del saldo, anuncios, casino, mercados de predicción y criptomonedas). Sus 19 historias están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md), pendientes de revisar por el equipo y de aprobar por el Product Owner.
 
 ## Daily scrums
 - **_fecha_:**
