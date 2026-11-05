@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Blackjack')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <div class="tarjeta tarjeta-formulario">
+        <h1>🃏 Blackjack</h1>
+        <p class="subtitulo" th:text="'Acércate a 21 sin pasarte. La banca pide hasta 17' + (${configuracion.bancaPideCon17Blando} ? ' y también con 17 blando' : '') + '. El blackjack paga ' + ${configuracion.pagoBlackjack.texto} + '.'">
+            Acércate a 21 sin pasarte. La banca pide hasta 17. El blackjack paga 3:2.</p>
+        <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+        <!-- Mesa: de la banca solo llegan las cartas que se ven (CA-57.1) -->
+        <div class="mesa-blackjack" th:if="${mesa != null}">
+            <div class="mano">
+                <span class="mano-titulo" th:text="'Banca' + (${mesa.terminada} ? ' · ' + ${mesa.valorBanca} : '')">Banca</span>
+                <div class="cartas">
+                    <span class="carta" th:each="c : ${mesa.cartasBanca}" th:classappend="${c.roja} ? 'roja'" th:text="${c.texto}">K♠</span>
+                    <span class="carta oculta" th:unless="${mesa.terminada}" aria-label="Carta oculta">?</span>
+                </div>
+            </div>
+            <div class="mano">
+                <span class="mano-titulo" th:text="'Tú · ' + ${mesa.valorJugador}">Tú · 18</span>
+                <div class="cartas">
+                    <span class="carta" th:each="c : ${mesa.cartasJugador}" th:classappend="${c.roja} ? 'roja'" th:text="${c.texto}">A♥</span>
+                </div>
+            </div>
+            <p class="aviso" th:text="'Apostado: ' + ${#numbers.formatDecimal(mesa.apostado, 1, 'POINT', 2, 'COMMA')} + ' monedas'">Apostado: 10,00 monedas</p>
+
+            <div class="acciones" th:unless="${mesa.terminada}">
+                <form th:action="@{/casino/blackjack/{id}/pedir(id=${mesa.partidaId})}" method="post">
+                    <button class="boton" type="submit">Pedir carta</button>
+                </form>
+                <form th:action="@{/casino/blackjack/{id}/plantarse(id=${mesa.partidaId})}" method="post">
+                    <button class="boton boton-secundario" type="submit">Plantarse</button>
+                </form>
+                <form th:if="${mesa.puedeDoblar}" th:action="@{/casino/blackjack/{id}/doblar(id=${mesa.partidaId})}" method="post">
+                    <button class="boton boton-secundario" type="submit">Doblar</button>
+                </form>
+            </div>
+            <div class="resultado-ruleta tarjeta" th:if="${mesa.terminada}"
+                 th:classappend="${mesa.premio.signum() > 0} ? 'gana' : 'pierde'">
+                <strong th:text="${mesa.resultado.descripcion}">Ganas la mano</strong>
+                <span th:text="${mesa.premio.signum() > 0} ? 'Cobras ' + ${#numbers.formatDecimal(mesa.premio, 1, 'POINT', 2, 'COMMA')} + ' monedas.' : 'Pierdes lo apostado.'">Cobras 20,00 monedas.</span>
+            </div>
+        </div>
+
+        <form class="formulario" th:if="${mesa == null or mesa.terminada}" th:action="@{/casino/blackjack}" method="post">
+            <label for="importe" th:text="'Importe (de ' + ${#numbers.formatDecimal(configuracion.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' a ' + ${#numbers.formatDecimal(configuracion.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ')'">Importe</label>
+            <input id="importe" name="importe" type="number" step="0.01" min="0.01" th:value="${mesa != null} ? ${mesa.apostado}" required>
+            <div class="acciones-formulario">
+                <button class="boton" type="submit" th:text="${mesa == null} ? 'Repartir' : 'Otra mano'">Repartir</button>
+                <a class="boton boton-secundario" th:href="@{/casino}">Volver</a>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

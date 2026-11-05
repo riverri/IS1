@@ -20,6 +20,8 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **MovimientoSaldo** | tipo, importe (con signo), saldoResultante, concepto, fecha | Un usuario. Cada cambio del saldo deja uno (HU-55) |
 | **Anuncio** | titulo, texto, icono, destino, prioridad, activo, desde, hasta, impresiones | Varias secciones donde se muestra (`anuncio_ubicacion`); muchos clics (HU-60, HU-61) |
 | **ClicAnuncio** | origen, fecha | Un anuncio y, si había sesión, un usuario (HU-62) |
+| **Partida** | juego, apostado, premio, estado, apuesta, resultado, estadoJuego, fecha, version | Un usuario. Una por tirada de ruleta o mano de blackjack (HU-56 a HU-58) |
+| **ConfiguracionCasino** | activo, importeMinimo, importeMaximo, barajas, bancaPideCon17Blando, pagoBlackjack | Una sola fila (HU-59) |
 | **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 
@@ -42,5 +44,9 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 
 ### Mercado
 `ABIERTO`, `CERRADO`, `RESUELTO`, `ANULADO`.
+
+### Partida del casino
+- **EN_CURSO** → solo una mano de blackjack a medias (una por usuario).
+- **TERMINADA** → la ruleta termina al girar; el blackjack, al pasarse, plantarse, doblar o con un blackjack al repartir.
 
 Los diagramas UML (casos de uso, clases, estados, secuencias y modelo de datos) están en [`docs/diseno/uml.md`](https://github.com/riverri/IS1/blob/main/docs/diseno/uml.md).

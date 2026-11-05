@@ -20,7 +20,8 @@ public enum Ubicacion {
     RANKING("Ranking", "/ranking", false),
     MIS_APUESTAS("Mis apuestas", "/apuestas", true),
     LIGAS("Ligas", "/ligas", true),
-    CUENTA("Mi cuenta", "/cuenta", true);
+    CUENTA("Mi cuenta", "/cuenta", true),
+    CASINO("Casino", "/casino", true);
 
     private final String nombre;
     private final String ruta;

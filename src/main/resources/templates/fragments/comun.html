@@ -26,6 +26,7 @@
             <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
             <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas')} ? 'activo'">Ligas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'">Casino</a>
             <a th:if="${usuarioActual != null}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
             <a th:if="${usuarioActual != null}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>

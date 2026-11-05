@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import es.ucm.fdi.is1.apuestas.apuesta.CuentasCasaService;
+import es.ucm.fdi.is1.apuestas.casino.CasinoService;
 
 /**
  * Controlador del panel de la casa para el creador de apuestas (HU-54). Los cálculos (total apostado,
@@ -14,9 +15,11 @@ import es.ucm.fdi.is1.apuestas.apuesta.CuentasCasaService;
 public class CasaController {
 
     private final CuentasCasaService cuentas;
+    private final CasinoService casino;
 
-    public CasaController(CuentasCasaService cuentas) {
+    public CasaController(CuentasCasaService cuentas, CasinoService casino) {
         this.cuentas = cuentas;
+        this.casino = casino;
     }
 
     /**
@@ -26,6 +29,9 @@ public class CasaController {
     @GetMapping("/gestion/casa")
     public String casa(Model model) {
         model.addAttribute("cuentas", cuentas.cuentas());
+        // El casino va aparte: no son apuestas deportivas, pero también es dinero que gana o pierde la casa
+        model.addAttribute("casino", casino.resumenCasa());
+        model.addAttribute("configuracionCasino", casino.configuracion());
         return "gestion/casa";
     }
 }
