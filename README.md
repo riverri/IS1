@@ -131,6 +131,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | `USUARIO_PASSWORD` | Opcional: crea también `usuario@apuestas.es` con esta contraseña. |
 | `FOOTBALL_DATA_TOKEN` | Opcional: la clave de la API para los partidos reales. |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: servidor de correo para enviar el enlace de recuperar la contraseña (ver abajo). |
+| `URL_PUBLICA` | Opcional: dirección de la web para el enlace de recuperar la contraseña. En Render no hace falta (se usa la que da Render). |
 
 3. Despliega. La primera vez tarda unos minutos. Las tablas las crea Flyway solo, y queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
 
@@ -223,6 +224,7 @@ En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para c
   1. Crea una *contraseña de aplicación* en https://myaccount.google.com/apppasswords.
   2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación` (en IntelliJ o en Render).
 - La respuesta al pedir el enlace es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
+- El enlace apunta siempre a la dirección configurada (`apuestas.url-publica`), nunca a la que llega en la petición: así nadie puede falsear las cabeceras para que el correo lleve a otra web. En local es `http://localhost:8080`; en Render, la de Render; con el túnel, define `URL_PUBLICA` con el enlace `https://…trycloudflare.com`.
 
 ## Cómo empezar
 

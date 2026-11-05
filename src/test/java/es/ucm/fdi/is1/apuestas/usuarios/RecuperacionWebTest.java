@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,6 +52,9 @@ class RecuperacionWebTest {
 
     @MockitoBean
     private EnvioCorreo correo;
+
+    @Value("${apuestas.url-publica}")
+    private String urlPublica;
 
     @BeforeEach
     void crearUsuaria() {
@@ -128,6 +132,28 @@ class RecuperacionWebTest {
 
         mvc.perform(get("/recuperar/nueva").param("token", primero))
                 .andExpect(content().string(containsString("El enlace ha caducado o ya se ha usado")));
+    }
+
+    /**
+     * Quien pide el enlace no puede elegir a qué web apunta: si se fiara de las cabeceras Host o X-Forwarded-Host,
+     * la víctima recibiría un correo auténtico con un enlace a la web del atacante, que se quedaría con el código.
+     */
+    @Test
+    void elEnlaceUsaLaDireccionConfiguradaAunqueLaPeticionFalseeElServidor() throws Exception {
+        mvc.perform(post("/recuperar").with(csrf()).param("email", ANA)
+                        .header("Host", "atacante.example")
+                        .header("X-Forwarded-Host", "atacante.example")
+                        .header("X-Forwarded-Proto", "https")
+                        .with(peticion -> {
+                            peticion.setServerName("atacante.example");
+                            return peticion;
+                        }))
+                .andExpect(redirectedUrl("/recuperar?enviado"));
+
+        ArgumentCaptor<String> enlace = ArgumentCaptor.forClass(String.class);
+        verify(correo).enviarRecuperacion(eq(ANA), eq("Ana"), enlace.capture());
+        assertThat(enlace.getValue()).startsWith(urlPublica + "/recuperar/nueva?token=")
+                .doesNotContain("atacante");
     }
 
     @Test

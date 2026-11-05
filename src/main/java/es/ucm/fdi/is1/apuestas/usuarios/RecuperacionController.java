@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.usuarios;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 
@@ -24,10 +24,15 @@ public class RecuperacionController {
 
     private final RecuperacionService recuperacion;
     private final Sesiones sesiones;
+    /** Dirección pública de la web (propiedad apuestas.url-publica), sin la barra final. */
+    private final String urlPublica;
 
-    public RecuperacionController(RecuperacionService recuperacion, Sesiones sesiones) {
+    public RecuperacionController(RecuperacionService recuperacion, Sesiones sesiones,
+                                  @Value("${apuestas.url-publica}") String urlPublica) {
         this.recuperacion = recuperacion;
         this.sesiones = sesiones;
+        // "https://web.com/" y "https://web.com" valen igual: se quita la barra final para no dejar "//recuperar"
+        this.urlPublica = urlPublica.endsWith("/") ? urlPublica.substring(0, urlPublica.length() - 1) : urlPublica;
     }
 
     /** GET /recuperar: formulario para pedir el enlace con el email. */
@@ -42,8 +47,10 @@ public class RecuperacionController {
      */
     @PostMapping
     public String solicitar(@RequestParam(defaultValue = "") String email) {
-        // La base del enlace es la dirección por la que se ha entrado: vale en local y en la nube
-        recuperacion.solicitar(email, ServletUriComponentsBuilder.fromCurrentContextPath().toUriString());
+        // La base del enlace es la dirección pública configurada, nunca la de la petición: las cabeceras Host y
+        // X-Forwarded-Host las puede falsear quien pide el enlace, y entonces el correo de la víctima llevaría un
+        // enlace a la web del atacante, que se quedaría con el código
+        recuperacion.solicitar(email, urlPublica);
         return "redirect:/recuperar?enviado";
     }
 
