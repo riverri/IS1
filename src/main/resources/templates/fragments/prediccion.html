@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Barra con los precios del «Sí» y del «No» de un mercado de predicción. La usan la lista y la página del mercado:
+     th:replace="~{fragments/prediccion :: barra(${mercado})}" -->
+<div class="barra-prediccion" th:fragment="barra(m)">
+    <span class="lado-si" th:style="'width:' + ${#numbers.formatDecimal(m.precioSi * 100, 1, 'POINT', 1, 'POINT')} + '%'"
+          th:text="'Sí ' + ${#numbers.formatDecimal(m.precioSi, 1, 'POINT', 2, 'COMMA')}">Sí 0,50</span>
+    <span class="lado-no" th:text="'No ' + ${#numbers.formatDecimal(m.precioNo, 1, 'POINT', 2, 'COMMA')}">No 0,50</span>
+</div>
+</body>
+</html>

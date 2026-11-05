@@ -2,6 +2,7 @@ package es.ucm.fdi.is1.apuestas.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -40,6 +41,8 @@ public class SeguridadConfig {
                                 "/css/**", "/error").permitAll()
                         // Clic en un anuncio interno (HU-60): los visitantes también los ven
                         .requestMatchers("/anuncios/*/ir").permitAll()
+                        // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
+                        .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
                         // hasRole("CREADOR") comprueba que el usuario tenga el rol CREADOR (ver usuarios.Rol)
                         // Consola de la base de datos (solo existe en local): únicamente para el creador
                         .requestMatchers("/h2-console/**").hasRole("CREADOR")

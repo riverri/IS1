@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Predicciones')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Mercados de predicción</h1>
+    </div>
+    <p class="aviso">Preguntas de sí o no. El precio de cada respuesta va de 0 a 1 y es la probabilidad que le da la
+        comunidad: si compras «Sí» a 0,63 y acierta, cada participación te paga 1 monedita. Se puede vender antes del cierre.</p>
+    <div class="vacio" th:if="${#lists.isEmpty(abiertos)}">
+        <p>Ahora mismo no hay mercados abiertos.</p>
+    </div>
+    <a class="tarjeta mercado-prediccion" th:each="m : ${abiertos}" th:href="@{/predicciones/{id}(id=${m.id})}">
+        <strong th:text="${m.pregunta}">¿Ganará el FC Barcelona LaLiga 2026/27?</strong>
+        <div th:replace="~{fragments/prediccion :: barra(${m})}"></div>
+        <small class="aviso" th:text="'Cierra el ' + ${#temporals.format(m.cierre, 'dd/MM/yyyy HH:mm')}">Cierra el 30/04/2027 23:59</small>
+    </a>
+    <th:block th:unless="${#lists.isEmpty(terminados)}">
+        <h2>Cerrados y resueltos</h2>
+        <a class="tarjeta mercado-prediccion" th:each="m : ${terminados}" th:href="@{/predicciones/{id}(id=${m.id})}">
+            <strong th:text="${m.pregunta}">Pregunta</strong>
+            <span class="chip" th:text="${m.resultado != null} ? 'Respuesta: ' + ${m.resultado.nombre} : 'Cerrado, pendiente de respuesta'">Respuesta: Sí</span>
+        </a>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

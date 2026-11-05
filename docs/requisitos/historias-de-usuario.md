@@ -154,8 +154,14 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-60 | Anuncios de otras secciones | En revisión (PR) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-61 | Gestionar los anuncios | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-62 | Medir los clics de cada anuncio | En revisión (PR) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-63 | Crear, cerrar y anular mercados de predicción | En revisión (PR) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-64 | Comprar participaciones | En revisión (PR) | 3 | 4 (Baja) | 8 | 656 | 47 | 7,5 | 7,8 $ |
+| HU-65 | Vender participaciones | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-66 | Resolver el mercado y pagar | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-67 | Estadísticas y evolución del precio | En revisión (PR) | 1 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
+| HU-68 | Posiciones de mis compañeros de liga | En revisión (PR) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 
-**61 historias**: 45 hechas, 8 en revisión (HU-55 a HU-62) y 8 descartadas. **129 criterios de aceptación** en total; 96 de ellos son de historias hechas.
+**67 historias**: 45 hechas, 14 en revisión (HU-55 a HU-68) y 8 descartadas. **142 criterios de aceptación** en total; 96 de ellos son de historias hechas.
 
 ---
 
@@ -1134,6 +1140,103 @@ La ventaja de la casa se controla con reglas reales: la ruleta europea siempre t
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
 | CA-62.1 | Un usuario o un visitante pulsa un anuncio | Lo abro en Gestión | Queda apuntado el clic con su fecha y la página de origen, y veo las impresiones, los clics y el porcentaje de clics de cada anuncio. |
+
+---
+
+## Mercados de predicción
+
+Preguntas de sí o no, tipo Polymarket. El precio de cada respuesta va de 0 a 1 y se lee como probabilidad; lo calcula un creador de mercado automático (LMSR) con cada compra y venta. No son los mercados a largo plazo de HU-44 (cuotas fijas del creador).
+
+### HU-63 · Crear, cerrar y anular mercados de predicción
+
+**Como** creador de apuestas, **quiero** crear un mercado de sí o no con su pregunta, su fecha de cierre y su liquidez, y poder cerrarlo o anularlo, **para** ofrecer predicciones.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 39 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-63.1 | Escribo la pregunta, el cierre, la liquidez y la comisión | Creo el mercado | Queda abierto con el «Sí» y el «No» a 0,50. |
+| CA-63.2 | Un mercado abierto | Lo cierro o llega su fecha | Ya no admite compras ni ventas. |
+| CA-63.3 | Un mercado con posiciones | Lo anulo | A cada usuario se le devuelve lo que pagó menos lo que recuperó vendiendo. |
+
+### HU-64 · Comprar participaciones
+
+**Como** usuario, **quiero** comprar participaciones del «Sí» o del «No» con mi saldo, **para** ganar si acierto la predicción.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 39 | Could | 3 | En revisión (PR) | 8 | 656 | 47 | 7,5 | 7,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-64.1 | Elijo un lado y un importe | Pido la previsión y confirmo | Antes de confirmar veo cuántas participaciones recibo y el precio medio; al confirmar se cobra el importe (comisión incluida) y el precio de ese lado sube. |
+| CA-64.2 | No tengo saldo, el importe está fuera de los límites, el mercado está cerrado o resuelto, o el juego responsable no lo permite | Intento comprar | No se compra y se me avisa. |
+| CA-64.3 | El precio cambia entre que lo veo y confirmo | Confirmo | No se compra y se me pide aceptar el precio nuevo, como en HU-29. |
+
+### HU-65 · Vender participaciones
+
+**Como** usuario, **quiero** vender mis participaciones antes del cierre, **para** recoger ganancias o cortar pérdidas.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 39 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-65.1 | Tengo participaciones de un mercado abierto | Vendo | Recibo su valor menos la comisión y el precio de ese lado baja. |
+| CA-65.2 | Quiero vender más participaciones de las que tengo | Lo intento | No se vende nada y se me avisa. |
+
+### HU-66 · Resolver el mercado y pagar
+
+**Como** creador de apuestas, **quiero** marcar si la respuesta fue «Sí» o «No», **para** pagar a los ganadores.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 39 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-66.1 | Un mercado con posiciones | Marco la respuesta | Cada participación ganadora paga 1 monedita y las perdedoras nada, cada pago con su movimiento de saldo y su aviso (HU-37). |
+| CA-66.2 | Un mercado ya resuelto | Corrijo la respuesta | Los saldos se ajustan por la diferencia con lo ya pagado (ADR 0002). |
+
+### HU-67 · Estadísticas y evolución del precio
+
+**Como** visitante, **quiero** ver el precio actual, el volumen, el número de participantes y la evolución del precio de cada mercado, **para** saber qué piensa la comunidad.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 39 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,7 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-67.1 | Un mercado con operaciones | Lo abro, aunque no haya iniciado sesión | Veo el precio, el volumen, los participantes y un gráfico con el precio del «Sí» después de cada operación. |
+
+### HU-68 · Posiciones de mis compañeros de liga
+
+**Como** usuario, **quiero** ver en cada mercado qué posiciones tienen los miembros de mis ligas privadas, **para** comparar mis predicciones con las de mis amigos.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 39 | Could | 3 | En revisión (PR) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-68.1 | Comparto una liga privada (HU-51) con otros jugadores | Abro un mercado | Veo el lado, las participaciones y el valor actual de los que tienen posición. |
+| CA-68.2 | Alguien no comparte ninguna liga conmigo | Abre el mercado | No ve mis posiciones (tampoco se enseñan en el perfil público, HU-48). |
 
 ---
 

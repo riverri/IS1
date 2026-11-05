@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Predicciones')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <div class="titulo-pagina">
+        <h1>Mercados de predicción</h1>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="aviso">El precio lo pone un creador de mercado automático (LMSR). Con más liquidez el precio se mueve menos en
+        cada compra, pero la casa puede perder más: como mucho liquidez × ln 2 por mercado, que la comisión compensa.</p>
+
+    <form class="tarjeta formulario" th:action="@{/gestion/predicciones}" method="post">
+        <h2>Nuevo mercado</h2>
+        <label for="pregunta">Pregunta de sí o no</label>
+        <input id="pregunta" name="pregunta" type="text" maxlength="200" required placeholder="¿Ganará el Real Madrid LaLiga?">
+        <label for="descripcion">Cómo se resuelve (opcional)</label>
+        <input id="descripcion" name="descripcion" type="text" maxlength="500">
+        <label for="cierre">Se puede operar hasta</label>
+        <input id="cierre" name="cierre" type="datetime-local" required>
+        <label for="liquidez">Liquidez (b)</label>
+        <input id="liquidez" name="liquidez" type="number" step="0.01" min="10" value="100">
+        <label for="comision">Comisión (%)</label>
+        <input id="comision" name="comision" type="number" step="0.1" min="0" max="10" value="2">
+        <button class="boton" type="submit">Crear mercado</button>
+    </form>
+
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(mercados)}">
+        <table>
+            <thead><tr><th>Pregunta</th><th>Cierre</th><th>Estado</th><th>Precio del sí</th><th>Pérdida máxima</th><th>Acciones</th></tr></thead>
+            <tbody>
+            <tr th:each="m : ${mercados}">
+                <td><a th:href="@{/predicciones/{id}(id=${m.id})}" th:text="${m.pregunta}">Pregunta</a></td>
+                <td th:text="${#temporals.format(m.cierre, 'dd/MM/yyyy HH:mm')}">30/04/2027 23:59</td>
+                <td th:text="${m.estado} + (${m.resultado != null} ? ' · ' + ${m.resultado.nombre} : '')">ABIERTO</td>
+                <td th:text="${#numbers.formatDecimal(m.precioSi, 1, 'POINT', 2, 'COMMA')}">0,50</td>
+                <td th:text="${#numbers.formatDecimal(m.perdidaMaxima, 1, 'POINT', 2, 'COMMA')}">69,31</td>
+                <td class="acciones">
+                    <form th:if="${m.estado.name() == 'ABIERTO'}" th:action="@{/gestion/predicciones/{id}/cerrar(id=${m.id})}" method="post" class="en-linea">
+                        <button class="enlace" type="submit">Cerrar</button>
+                    </form>
+                    <form th:unless="${m.estado.name() == 'ANULADO'}" th:each="l : ${lados}" th:action="@{/gestion/predicciones/{id}/resolver(id=${m.id})}" method="post" class="en-linea">
+                        <input type="hidden" name="respuesta" th:value="${l}">
+                        <button class="enlace" type="submit" th:text="'Resolver: ' + ${l.nombre}">Resolver: Sí</button>
+                    </form>
+                    <form th:if="${m.estado.name() == 'ABIERTO' or m.estado.name() == 'CERRADO'}" th:action="@{/gestion/predicciones/{id}/anular(id=${m.id})}" method="post" class="en-linea">
+                        <button class="enlace" type="submit">Anular</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="enlace-volver" th:href="@{/gestion}">← Volver al panel</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

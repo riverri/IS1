@@ -34,7 +34,13 @@ public enum TipoMovimiento {
     /** Lo que se juega en una partida del casino, también al doblar en el blackjack (HU-56, HU-57). */
     CASINO_APUESTA("Casino: apuesta", true),
     /** Lo que se cobra al ganar (o se recupera al empatar) una partida del casino. */
-    CASINO_PREMIO("Casino: premio");
+    CASINO_PREMIO("Casino: premio"),
+    /** Compra de participaciones en un mercado de predicción, con la comisión (HU-64). */
+    PREDICCION_COMPRA("Predicción: compra", true),
+    /** Lo que se recupera al vender participaciones, ya sin la comisión (HU-65). */
+    PREDICCION_VENTA("Predicción: venta"),
+    /** Lo cobrado al resolverse un mercado: 1 monedita por participación ganadora (HU-66). */
+    PREDICCION_PAGO("Predicción: pago");
 
     private final String descripcion;
     private final boolean juego;
