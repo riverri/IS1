@@ -2,6 +2,7 @@ package es.ucm.fdi.is1.apuestas.gestion;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
@@ -15,14 +16,18 @@ import jakarta.validation.constraints.NotNull;
  */
 public class LimitesForm {
 
-    // Importes en moneditas con céntimos: positivos y con 2 decimales como mucho
+    // Importes en moneditas con céntimos: positivos y con 2 decimales como mucho.
+    // Tope de 100.000: multiplicado por la cuota total máxima (1.000) la ganancia sigue cabiendo en el saldo
+    // (columna de 12 cifras); sin tope, una ganancia enorme haría fallar la resolución de todo el evento
     @NotNull(message = "Introduce el importe mínimo")
     @DecimalMin(value = "0.01", message = "Tiene que ser mayor que 0")
+    @DecimalMax(value = "100000", message = "Como mucho 100.000 monedas")
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal importeMinimo;
 
     @NotNull(message = "Introduce el importe máximo")
     @DecimalMin(value = "0.01", message = "Tiene que ser mayor que 0")
+    @DecimalMax(value = "100000", message = "Como mucho 100.000 monedas")
     @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
     private BigDecimal importeMaximo;
 

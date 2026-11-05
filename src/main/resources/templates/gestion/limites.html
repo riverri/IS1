@@ -9,11 +9,11 @@
         <p class="subtitulo">Se aplican a todas las apuestas nuevas: simples, combinadas y a largo plazo.</p>
         <form class="formulario" th:action="@{/gestion/limites}" th:object="${limites}" method="post">
             <label for="importeMinimo">Importe mínimo por apuesta</label>
-            <input id="importeMinimo" type="number" step="0.01" min="0.01" th:field="*{importeMinimo}" th:errorclass="con-error">
+            <input id="importeMinimo" type="number" step="0.01" min="0.01" max="100000" th:field="*{importeMinimo}" th:errorclass="con-error">
             <span class="error-campo" th:if="${#fields.hasErrors('importeMinimo')}" th:text="${#fields.errors('importeMinimo')[0]}"></span>
 
             <label for="importeMaximo">Importe máximo por apuesta</label>
-            <input id="importeMaximo" type="number" step="0.01" min="0.01" th:field="*{importeMaximo}" th:errorclass="con-error">
+            <input id="importeMaximo" type="number" step="0.01" min="0.01" max="100000" th:field="*{importeMaximo}" th:errorclass="con-error">
             <span class="error-campo" th:if="${#fields.hasErrors('importeMaximo')}" th:text="${#fields.errors('importeMaximo')[0]}"></span>
 
             <label for="maxSelecciones">Selecciones máximas en una combinada</label>
