@@ -5,6 +5,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,6 +20,9 @@ import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
+import es.ucm.fdi.is1.apuestas.equipos.Jugador;
+import es.ucm.fdi.is1.apuestas.equipos.JugadorRepository;
+import es.ucm.fdi.is1.apuestas.equipos.Posicion;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.Candidato;
@@ -48,12 +52,15 @@ public class DatosIniciales implements ApplicationRunner {
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
     private final MercadoRepository mercados;
+    private final JugadorRepository jugadores;
     private final UsuarioRepository usuarioRepository;
     private final UsuarioService usuarios;
     private final String passwordCreador;
     private final String passwordUsuario;
     private final boolean passwordCreadorFija;
     private final boolean passwordUsuarioFija;
+    /** Si se inventan plantillas para los equipos de LaLiga que no tienen jugadores (para la liga fantasy). */
+    private final boolean plantillasDeEjemplo;
     /**
      * Los partidos y los mercados de ejemplo solo se cargan en una base de datos vacía. Si se buscaran cada vez
      * por equipos y fecha, un partido al que la API o el creador cambian la hora (o que el creador borra)
@@ -87,22 +94,26 @@ public class DatosIniciales implements ApplicationRunner {
      * de entorno); lo que va tras los dos puntos se usa si la clave no está definida.
      */
     public DatosIniciales(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
-                          MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios,
+                          MercadoRepository mercados, JugadorRepository jugadores,
+                          UsuarioRepository usuarioRepository, UsuarioService usuarios,
                           @Value("${apuestas.creador.password}") String passwordCreador,
                           @Value("${apuestas.usuario.password}") String passwordUsuario,
                           @Value("${apuestas.creador.password-fija:false}") boolean passwordCreadorFija,
                           @Value("${apuestas.usuario.password-fija:false}") boolean passwordUsuarioFija,
+                          @Value("${apuestas.plantillas-ejemplo:false}") boolean plantillasDeEjemplo,
                           Clock reloj) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
         this.mercados = mercados;
+        this.jugadores = jugadores;
         this.usuarioRepository = usuarioRepository;
         this.usuarios = usuarios;
         this.passwordCreador = passwordCreador;
         this.passwordUsuario = passwordUsuario;
         this.passwordCreadorFija = passwordCreadorFija;
         this.passwordUsuarioFija = passwordUsuarioFija;
+        this.plantillasDeEjemplo = plantillasDeEjemplo;
         this.reloj = reloj;
     }
 
@@ -308,6 +319,9 @@ public class DatosIniciales implements ApplicationRunner {
 
         eventosDeEjemplo(acb, euroliga, nba, atp, f1, motoGp);
         mercadosALargoPlazo();
+        if (plantillasDeEjemplo) {
+            plantillasDeEjemplo(laLiga);
+        }
 
         // Escudos: solo se rellenan si el equipo aún no tiene uno (no pisa los cambios hechos en Gestión)
         // y se guarda el identificador de football-data.org para enlazar con la API.
@@ -462,6 +476,48 @@ public class DatosIniciales implements ApplicationRunner {
         // Solo se pone la fase si no tenía ninguna, para no pisar la que haya escrito el creador
         if (evento.getFase() == null) {
             evento.setFase(fase);
+        }
+    }
+
+    private static final List<String> NOMBRES = List.of("Álvaro", "Bruno", "Carlos", "Dani", "Edu", "Fran", "Gonzalo",
+            "Hugo", "Iker", "Jorge", "Lucas", "Mario", "Nico", "Óscar", "Pablo", "Rubén", "Sergio", "Tomás", "Unai",
+            "Víctor", "Adrián", "Marcos", "Raúl", "Samuel");
+    private static final List<String> APELLIDOS = List.of("Arranz", "Benítez", "Cuesta", "Durán", "Escobar",
+            "Ferrer", "Galindo", "Herrero", "Iglesias", "Jurado", "Lozano", "Medina", "Navas", "Ortega", "Pastor",
+            "Quintana", "Rivas", "Sanz", "Toledo", "Urrutia", "Vidal", "Zamora", "Bermejo", "Castaño", "Prieto",
+            "Rojo", "Salvador", "Velasco", "Aguado", "Montero", "Nieto");
+    /** Plantilla inventada: 2 porteros, 4 defensas, 4 centrocampistas y 3 delanteros. */
+    private static final List<Posicion> PLANTILLA = List.of(Posicion.PORTERO, Posicion.PORTERO, Posicion.DEFENSA,
+            Posicion.DEFENSA, Posicion.DEFENSA, Posicion.DEFENSA, Posicion.CENTROCAMPISTA, Posicion.CENTROCAMPISTA,
+            Posicion.CENTROCAMPISTA, Posicion.CENTROCAMPISTA, Posicion.DELANTERO, Posicion.DELANTERO,
+            Posicion.DELANTERO);
+
+    /**
+     * Inventa una plantilla para cada equipo de LaLiga que no tenga ningún jugador, para poder jugar a la liga
+     * fantasy sin la API de plantillas (que necesita una clave). Los nombres son inventados y siempre salen los
+     * mismos (no hay azar); la nota de cada jugador gira en torno a la calidad de su equipo. Si luego llega la
+     * plantilla real de la API, estos jugadores siguen ahí y el creador los puede borrar desde Gestión.
+     */
+    private void plantillasDeEjemplo(Competicion laLiga) {
+        int n = 0;
+        for (Equipo equipo : equipos.findAllByOrderByDeporteAscNombreAsc()) {
+            if (equipo.getDeporte() != Deporte.FUTBOL || !equipo.getCompeticiones().contains(laLiga)
+                    || jugadores.countByEquipo(equipo) > 0) {
+                n++;
+                continue;
+            }
+            for (int i = 0; i < PLANTILLA.size(); i++) {
+                int semilla = n * 13 + i;
+                String nombre = NOMBRES.get((semilla * 7) % NOMBRES.size()) + " "
+                        + APELLIDOS.get((semilla * 11 + n) % APELLIDOS.size());
+                Jugador jugador = new Jugador(equipo, nombre, PLANTILLA.get(i));
+                jugador.setDorsal(i == 1 ? 13 : i + 1);
+                // De calidad − 1,5 a calidad + 1: unos mejores que otros, y mejores en los equipos buenos
+                double nota = equipo.getCalidad() - 1.5 + ((semilla * 17) % 26) / 10.0;
+                jugador.cambiarNota(Math.max(3, Math.min(9.8, nota)));
+                jugadores.save(jugador);
+            }
+            n++;
         }
     }
 }
