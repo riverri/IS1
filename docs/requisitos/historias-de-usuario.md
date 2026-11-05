@@ -160,8 +160,13 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-66 | Resolver el mercado y pagar | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-67 | Estadísticas y evolución del precio | En revisión (PR) | 1 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 | HU-68 | Posiciones de mis compañeros de liga | En revisión (PR) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,1 | 1,9 $ |
+| HU-69 | Ver criptomonedas a su precio real | En revisión (PR) | 4 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-70 | Comprar criptomonedas con moneditas | En revisión (PR) | 4 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-71 | Vender criptomonedas | En revisión (PR) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-72 | Mi cartera de criptomonedas | En revisión (PR) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
+| HU-73 | Configurar las criptomonedas | En revisión (PR) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 
-**67 historias**: 45 hechas, 14 en revisión (HU-55 a HU-68) y 8 descartadas. **142 criterios de aceptación** en total; 96 de ellos son de historias hechas.
+**72 historias**: 45 hechas, 19 en revisión (HU-55 a HU-73) y 8 descartadas. **157 criterios de aceptación** en total; 96 de ellos son de historias hechas.
 
 ---
 
@@ -1237,6 +1242,92 @@ Preguntas de sí o no, tipo Polymarket. El precio de cada respuesta va de 0 a 1 
 |---|---|---|---|
 | CA-68.1 | Comparto una liga privada (HU-51) con otros jugadores | Abro un mercado | Veo el lado, las participaciones y el valor actual de los que tienen posición. |
 | CA-68.2 | Alguien no comparte ninguna liga conmigo | Abre el mercado | No ve mis posiciones (tampoco se enseñan en el perfil público, HU-48). |
+
+---
+
+## Cartera de criptomonedas
+
+Criptomonedas reales a su precio real en euros, compradas y vendidas con moneditas (1 monedita = 1 €). Solo el precio es real: nadie tiene criptomonedas de verdad, no hay carteras externas ni blockchain, y todo sigue siendo saldo virtual. Las protagonistas son las memecoins (DOGE, SHIB, PEPE, WIF, BONK, FLOKI, FARTCOIN), las de más riesgo y las que más se mueven; BTC, ETH y SOL quedan como referencia. Los precios vienen de la API pública de CoinGecko.
+
+### HU-69 · Ver criptomonedas a su precio real
+
+**Como** visitante, **quiero** ver las criptomonedas con su precio real en euros, cuánto se han movido en 24 horas y su gráfico de la semana, **para** decidir en cuál me la juego.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 40 | Could | 3 | En revisión (PR) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-69.1 | Hay criptomonedas con precio | Abro *Cripto*, aunque no haya iniciado sesión | Veo primero las memecoins y después las de referencia, cada una con su precio (con las cifras necesarias aunque valga una fracción de céntimo) y su variación en 24 horas, y destacada la que más se ha movido. |
+| CA-69.2 | Una cripto con precios guardados | Abro su ficha | Veo un gráfico de su precio en los últimos 7 días. |
+| CA-69.3 | Cualquier página de criptomonedas | La abro | Veo un aviso de riesgo (muy alto en las memecoins) y que solo se juega con moneditas. |
+| CA-69.4 | La aplicación está en marcha | Pasan 2 minutos | Los precios se descargan solos de CoinGecko; si la API falla, la web sigue funcionando y se reintenta después. |
+
+### HU-70 · Comprar criptomonedas con moneditas
+
+**Como** usuario, **quiero** comprar una criptomoneda con mi saldo al precio actual, **para** ganar si sube.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 40 | Could | 3 | En revisión (PR) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-70.1 | Elijo una cripto y un importe | Pido la previsión y confirmo | Antes de confirmar veo cuánta cripto recibo y la comisión; al confirmar se cobra el importe (comisión incluida) con un movimiento de saldo (HU-55). |
+| CA-70.2 | No tengo saldo, el importe está fuera de los límites (HU-07), soy el creador o el juego responsable no lo permite (HU-10) | Intento comprar | No se compra, no se cobra y se me avisa. |
+| CA-70.3 | Llega un precio nuevo entre que veo la previsión y confirmo | Confirmo | No se compra y se me enseña el precio nuevo para que decida, como en HU-29. |
+| CA-70.4 | El último precio tiene más de 15 minutos o no hay | Intento comprar | No se compra: hace falta un precio al día. |
+
+### HU-71 · Vender criptomonedas
+
+**Como** usuario, **quiero** vender una parte o todo lo que tengo de una criptomoneda, **para** recoger ganancias o cortar pérdidas.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 40 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-71.1 | Tengo una cripto con precio al día | Vendo una parte o todo | Recibo cantidad × precio menos la comisión, y el coste de lo que me queda baja en la misma proporción. |
+| CA-71.2 | Quiero vender más de lo que tengo, o algo que no tengo | Lo intento | No se vende nada y se me avisa. |
+
+### HU-72 · Mi cartera de criptomonedas
+
+**Como** usuario, **quiero** ver lo que tengo de cada criptomoneda, cuánto vale y cuánto gano o pierdo, **para** seguir mis inversiones.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 40 | Could | 3 | En revisión (PR) | 2 | 164 | 12 | 2,0 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-72.1 | Tengo criptomonedas | Abro *Mi cartera* | Veo de cada una la cantidad, el precio, el valor, lo que me costó y la ganancia o pérdida en moneditas y en %, y los totales. |
+| CA-72.2 | He comprado y vendido | Abro *Mi cartera* | Veo mis últimas operaciones con su precio, importe y comisión. |
+
+### HU-73 · Configurar las criptomonedas
+
+**Como** creador de apuestas, **quiero** abrir o cerrar la sección, fijar la comisión y elegir qué criptos se ofrecen, **para** controlar lo que gana o arriesga la casa.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 40 | Could | 3 | En revisión (PR) | 3 | 246 | 18 | 2,7 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-73.1 | Estoy en *Gestión → Criptomonedas* | Guardo si está abierta, la comisión (0–10 %) y los minutos que sirve un precio (1–120) | Se aplica a las compras y ventas siguientes; con la sección cerrada se ven los precios pero nadie opera. |
+| CA-73.2 | Retiro una cripto | Un usuario la busca | Ya no aparece ni se puede comprar, pero quien la tenga puede venderla. |
+| CA-73.3 | Quiero precios ya | Pulso *Actualizar precios ahora* | Se descargan en el momento; si CoinGecko no responde, se me avisa. |
 
 ---
 

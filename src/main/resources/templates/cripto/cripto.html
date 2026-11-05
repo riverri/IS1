@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza(${cripto.nombre})}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1 th:text="${cripto.nombre} + ' (' + ${cripto.simbolo} + ')'">Dogecoin (DOGE)</h1>
+        <span class="chip" th:text="${cripto.categoria.icono} + ' ' + ${cripto.categoria.nombre}">🐸 Memecoins</span>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="alerta" th:if="${aviso}" th:text="${aviso}">El precio ha cambiado</p>
+    <p class="alerta aviso-riesgo" th:text="${cripto.categoria.riesgo} + '. Solo juegas con moneditas.'">Riesgo muy alto…</p>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${@formato.precioCripto(cripto.precio)} + ' €'">0,1534 €</span>precio ahora</div>
+        <div class="tarjeta estadistica"><span th:classappend="${cripto.variacion24h != null} ? (${cripto.variacion24h.signum() >= 0} ? 'positivo' : 'negativo')"
+                                              th:text="${@formato.variacion(cripto.variacion24h)}">+2,3 %</span>en 24 horas</div>
+        <div class="tarjeta estadistica"><span th:text="${cripto.actualizado != null} ? ${#temporals.format(cripto.actualizado, 'HH:mm')} : '–'">12:04</span>última descarga</div>
+    </div>
+
+    <!-- Gráfico de la última semana (CA-69.2) -->
+    <div class="tarjeta grafico-precio" th:if="${grafico != null}" th:with="g=${grafico}">
+        <strong>Precio en los últimos 7 días</strong>
+        <svg th:attr="viewBox='0 0 ' + ${g.ancho} + ' ' + ${g.alto}" role="img" aria-label="Evolución del precio">
+            <path th:attr="d=${g.linea}" class="linea"/>
+        </svg>
+        <small class="aviso" th:text="'Mínimo ' + ${@formato.precioGrafico(g.minimo)} + ' € · máximo ' + ${@formato.precioGrafico(g.maximo)} + ' €'">Mínimo… máximo…</small>
+    </div>
+    <p class="aviso" th:if="${grafico == null}">Aún no hay suficientes precios guardados para dibujar el gráfico.</p>
+
+    <p class="alerta" th:unless="${alDia}">Ahora mismo no tenemos un precio al día: no se puede comprar ni vender hasta la próxima descarga.</p>
+
+    <!-- Lo que tengo y vender (HU-71) -->
+    <th:block th:if="${posicion != null}">
+        <h2>Lo que tienes</h2>
+        <div class="tarjeta posicion">
+            <span>
+                <strong th:text="${@formato.cantidadCripto(posicion.cantidad)} + ' ' + ${cripto.simbolo}">1.000 DOGE</strong>
+                · valen <span th:text="${#numbers.formatDecimal(posicion.valor, 1, 'POINT', 2, 'COMMA')}">153,40</span> monedas
+                · te costaron <span th:text="${#numbers.formatDecimal(posicion.coste, 1, 'POINT', 2, 'COMMA')}">150,00</span>
+                · <span th:classappend="${posicion.ganancia.signum() >= 0} ? 'positivo' : 'negativo'"
+                        th:text="${#numbers.formatDecimal(posicion.ganancia, 1, 'POINT', 2, 'COMMA')} + (${posicion.rentabilidad != null} ? ' (' + ${@formato.variacion(posicion.rentabilidad)} + ')' : '')">+3,40 (2,3 %)</span>
+            </span>
+            <form th:if="${alDia and configuracion.activo}" class="en-linea" th:action="@{/cripto/{s}/vender(s=${cripto.simbolo})}" method="post">
+                <input type="hidden" name="precioVisto" th:value="${cripto.precio}">
+                <input name="cantidad" type="number" step="any" min="0" th:max="${posicion.cantidad}"
+                       th:value="${posicion.cantidad.stripTrailingZeros().toPlainString()}" aria-label="Cantidad a vender">
+                <button class="boton boton-secundario" type="submit">Vender</button>
+                <button class="boton boton-secundario" type="submit" name="todo" value="true">Vender todo</button>
+            </form>
+        </div>
+    </th:block>
+
+    <!-- Comprar (HU-70): primero se ve la previsión y después se confirma -->
+    <th:block th:if="${alDia and configuracion.activo and cripto.activa and (usuarioActual == null or !usuarioActual.creador)}">
+        <h2>Comprar</h2>
+        <form class="tarjeta formulario" th:action="@{/cripto/{s}(s=${cripto.simbolo})}" method="get">
+            <label for="importe">Moneditas (comisión incluida)</label>
+            <input id="importe" name="importe" type="number" step="0.01" min="0.01" required
+                   th:value="${cotizacion != null} ? ${cotizacion.importe}">
+            <button class="boton boton-secundario" type="submit">Ver cuánto recibo</button>
+        </form>
+        <div class="tarjeta cotizacion" th:if="${cotizacion != null}">
+            <p th:text="'Recibirías ' + ${@formato.cantidadCripto(cotizacion.cantidad)} + ' ' + ${cripto.simbolo} + ' a ' + ${@formato.precioCripto(cotizacion.precio)} + ' € cada uno (comisión: ' + ${#numbers.formatDecimal(cotizacion.comision, 1, 'POINT', 2, 'COMMA')} + ' monedas).'">
+                Recibirías 650 DOGE…</p>
+            <form th:action="@{/cripto/{s}/comprar(s=${cripto.simbolo})}" method="post">
+                <input type="hidden" name="importe" th:value="${cotizacion.importe}">
+                <input type="hidden" name="precioVisto" th:value="${cotizacion.precio}">
+                <button class="boton" type="submit">Confirmar la compra</button>
+            </form>
+        </div>
+    </th:block>
+    <p class="aviso" th:unless="${cripto.activa}">Esta cripto ya no se puede comprar; quien la tenga puede venderla.</p>
+    <a class="enlace-volver" th:href="@{/cripto}">← Todas las criptomonedas</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>
