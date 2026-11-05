@@ -79,6 +79,11 @@ public class BoletoService {
         boleto.quitar(eventoId);
     }
 
+    /** Deja el boleto vacío; el controlador lo llama cuando la apuesta ya está guardada. */
+    public void vaciar(Boleto boleto) {
+        boleto.vaciar();
+    }
+
     /**
      * Selecciones con su cuota actual. Quita del boleto los eventos que ya no admiten apuestas
      * (han empezado, se han suspendido…) y marca las que han cambiado de cuota.
@@ -123,8 +128,8 @@ public class BoletoService {
     /**
      * Confirma el boleto como apuesta simple o combinada. Si alguna cuota ha cambiado, actualiza las
      * cuotas vistas y relanza la excepción para que el usuario acepte las nuevas (HU-29).
-     * Si sale bien, vacía el boleto. Las demás excepciones de {@link ApuestaService#apostar} llegan
-     * tal cual al controlador.
+     * Si sale bien, el controlador vacía el boleto con {@link #vaciar}. Las demás excepciones de
+     * {@link ApuestaService#apostar} llegan tal cual al controlador.
      */
     @Transactional
     public Apuesta confirmar(String email, Boleto boleto, BigDecimal importe) {
@@ -132,9 +137,9 @@ public class BoletoService {
                 .map(l -> new SeleccionPedida(l.eventoId(), l.resultado(), l.especial(), l.cuotaVista()))
                 .toList();
         try {
-            Apuesta apuesta = apuestas.apostar(email, pedidas, importe);
-            boleto.vaciar();
-            return apuesta;
+            // El boleto NO se vacía aquí: la transacción aún puede fallar al confirmarse (por ejemplo, si el saldo
+            // cambia a la vez). Lo vacía el controlador cuando este método ha terminado bien
+            return apuestas.apostar(email, pedidas, importe);
         } catch (CuotasCambiadasException e) {
             // La transacción se deshace (no se cobra nada), pero el boleto está en la sesión, no en la base
             // de datos: las cuotas nuevas se quedan guardadas para el siguiente intento
