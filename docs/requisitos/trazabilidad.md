@@ -18,6 +18,8 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
+**En revisión:** HU-55 (movimientos del saldo), con sus 3 criterios cubiertos por pruebas automáticas. Se sumará al resumen cuando se fusione su pull request.
+
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
 ## HU-01 · Alta de competiciones y equipos con su calificación
@@ -115,6 +117,14 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-14.1 | Al registrarse se recibe el saldo de bienvenida | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroCreaLaCuentaConElSaldoDeBienvenida`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.empiezaConElSaldoDeBienvenida` |
 | CA-14.2 | Pasado el periodo se recibe una recarga, una sola vez | Automática | [`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.noRecargaAntesDeQuePaseElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.recargaCuandoHaPasadoElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.soloRecargaUnaVezPorPeriodo` |
+
+## HU-55 · Movimientos del saldo
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-55.1 | Cada cambio del saldo deja un movimiento con tipo, importe con signo, saldo resultante, concepto y fecha | Automática | [`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.cadaCambioApuntaSuImporteConSignoYElSaldoQueQueda`<br>[`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.elSaldoDeBienvenidaEsElPrimerMovimiento`<br>[`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.laBajaDejaElSaldoACeroConSuMovimientoYDespuesNoEntraNada`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.apostarYCobrarDejanSusMovimientos`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.cancelarYCorregirUnResultadoTambienSeApuntan`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.laBajaDejaElSaldoACeroEnElLibro` |
+| CA-55.2 | En Mi cuenta → Movimientos se ven del más reciente al más antiguo y el último cuadra con el saldo | Automática | [`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.laPaginaMuestraLosMovimientosDelMasRecienteAlMasAntiguo`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.sinSesionLlevaAlLogin` |
+| CA-55.3 | Si la operación falla, no queda movimiento ni cambia el saldo | Automática | [`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.sinSaldoNoSeCobraNiQuedaMovimiento`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.unaApuestaQueFallaNoDejaMovimiento` |
 
 ## HU-17 · Recuperar la contraseña
 

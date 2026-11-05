@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -32,14 +33,16 @@ public class UsuarioService {
     static final Set<Integer> DIAS_DE_PAUSA = Set.of(1, 7, 30);
 
     private final UsuarioRepository usuarios;
+    private final MovimientoSaldoRepository movimientos;
     private final PasswordEncoder passwordEncoder;
     private final SaldoProperties saldo;
     private final Clock reloj;
 
     /** Inyección de dependencias: Spring llama a este constructor y le pasa los objetos que pide. */
-    public UsuarioService(UsuarioRepository usuarios, PasswordEncoder passwordEncoder,
-                          SaldoProperties saldo, Clock reloj) {
+    public UsuarioService(UsuarioRepository usuarios, MovimientoSaldoRepository movimientos,
+                          PasswordEncoder passwordEncoder, SaldoProperties saldo, Clock reloj) {
         this.usuarios = usuarios;
+        this.movimientos = movimientos;
         this.passwordEncoder = passwordEncoder;
         this.saldo = saldo;
         this.reloj = reloj;
@@ -158,7 +161,19 @@ public class UsuarioService {
     @Transactional
     public void anonimizar(Usuario usuario) {
         // La contraseña pasa a ser un UUID aleatorio que no se guarda en ningún sitio: nadie la conoce
-        usuario.eliminar(passwordEncoder.encode(UUID.randomUUID().toString()));
+        usuario.eliminar(passwordEncoder.encode(UUID.randomUUID().toString()), LocalDateTime.now(reloj));
+    }
+
+    /**
+     * Últimos 100 movimientos del saldo, del más reciente al más antiguo (HU-55, CA-55.2).
+     * Primero aplica la recarga gratuita si toca, igual que Mi cuenta, así el primero coincide con el saldo actual.
+     */
+    @Transactional
+    public List<MovimientoSaldo> movimientos(String email) {
+        Usuario usuario = consultarConRecarga(email);
+        // flush: la recarga recién aplicada se escribe antes de consultar, para que salga en la lista
+        usuarios.flush();
+        return movimientos.findTop100ByUsuarioOrderByFechaDescIdDesc(usuario);
     }
 
     /** Busca la cuenta por email, sin aplicar la recarga. */

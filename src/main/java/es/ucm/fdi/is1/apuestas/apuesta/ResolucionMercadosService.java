@@ -1,6 +1,8 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -21,12 +23,15 @@ public class ResolucionMercadosService {
     private final MercadoService mercados;
     private final SeleccionRepository selecciones;
     private final AvisosApuestas avisos;
+    /** Fecha de los movimientos de saldo que dejan los pagos (HU-55). */
+    private final Clock reloj;
 
     public ResolucionMercadosService(MercadoService mercados, SeleccionRepository selecciones,
-                                     AvisosApuestas avisos) {
+                                     AvisosApuestas avisos, Clock reloj) {
         this.mercados = mercados;
         this.selecciones = selecciones;
         this.avisos = avisos;
+        this.reloj = reloj;
     }
 
     /**
@@ -45,11 +50,12 @@ public class ResolucionMercadosService {
                 .orElseThrow(() -> new IllegalArgumentException("Ese candidato no es de este mercado"));
         mercado.resolver(ganador);
         List<Seleccion> afectadas = selecciones.findByCandidatoMercado(mercado);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             // Se guarda el estado anterior para avisar solo si cambia (HU-37)
             EstadoApuesta antes = apuesta.getEstado();
-            apuesta.resolver(mercado, ganador);
+            apuesta.resolver(mercado, ganador, ahora);
             avisos.siCambia(apuesta, antes);
         }
         return afectadas.size();
@@ -65,10 +71,11 @@ public class ResolucionMercadosService {
         Mercado mercado = mercados.mercado(mercadoId);
         mercado.anular();
         List<Seleccion> afectadas = selecciones.findByCandidatoMercado(mercado);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             EstadoApuesta antes = apuesta.getEstado();
-            apuesta.anular(mercado);
+            apuesta.anular(mercado, ahora);
             avisos.siCambia(apuesta, antes);
         }
         return afectadas.size();
