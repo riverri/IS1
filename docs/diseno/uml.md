@@ -145,6 +145,26 @@ classDiagram
         -LocalDateTime fecha
     }
 
+    class Anuncio {
+        -String titulo
+        -String texto
+        -String destino
+        -Set~Ubicacion~ ubicaciones
+        -int prioridad
+        -boolean activo
+        -LocalDateTime desde
+        -LocalDateTime hasta
+        -long impresiones
+        +seMuestra(donde, conSesion, ahora) bool
+        +cambiar(...)
+        +activar(activo)
+    }
+
+    class ClicAnuncio {
+        -String origen
+        -LocalDateTime fecha
+    }
+
     class Competicion {
         -String nombre
         -Deporte deporte
@@ -310,6 +330,8 @@ classDiagram
     Usuario "1" --> "*" Apuesta : hace
     Usuario "1" --> "*" Notificacion : recibe
     Usuario "1" *-- "*" MovimientoSaldo : movimientos del saldo
+    ClicAnuncio "*" --> "1" Anuncio : en
+    ClicAnuncio "*" --> "0..1" Usuario : pulsado por
     TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
@@ -331,7 +353,7 @@ classDiagram
     Boleto ..> Apuesta : al confirmar crea
 ```
 
-**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion`, `EstadoMercado` y `TipoMovimiento` (BIENVENIDA, RECARGA, APUESTA, PREMIO, DEVOLUCION, CORRECCION, BAJA, SALDO_INICIAL).
+**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion`, `EstadoMercado`, `Ubicacion` (secciones donde sale un anuncio y a las que lleva) y `TipoMovimiento` (BIENVENIDA, RECARGA, APUESTA, PREMIO, DEVOLUCION, CORRECCION, BAJA, SALDO_INICIAL).
 
 **Decisiones de diseño:**
 - **Una apuesta simple es una combinada de una sola selección,** así hay una única forma de guardar, pagar y mostrar las apuestas.
@@ -341,6 +363,7 @@ classDiagram
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
 - **El saldo solo cambia en `Usuario.mover`, que apunta cada cambio en el libro de movimientos (HU-55):** así ningún camino puede mover el saldo sin dejar rastro, y el último saldo resultante coincide siempre con el saldo.
+- **Los anuncios son datos, no código:** el creador decide en Gestión qué se promociona y dónde; las plantillas solo pintan el que elige `AnunciosAdvice` en la cabecera común, y el azar (`RandomGenerator`) se inyecta como el reloj.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
 
 ## 4. Estados
@@ -481,6 +504,9 @@ erDiagram
     USUARIO ||--o{ NOTIFICACION : recibe
     USUARIO ||--o{ TOKEN_RECUPERACION : "recupera la contraseña"
     USUARIO ||--o{ MOVIMIENTO_SALDO : "movimientos del saldo"
+    ANUNCIO ||--|{ ANUNCIO_UBICACION : "se muestra en"
+    ANUNCIO ||--o{ CLIC_ANUNCIO : recibe
+    USUARIO |o--o{ CLIC_ANUNCIO : pulsa
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -606,6 +632,28 @@ erDiagram
         varchar hash UK "SHA-256 del código"
         timestamp caduca
         boolean usado
+    }
+    ANUNCIO {
+        bigint id PK
+        varchar titulo
+        varchar texto
+        varchar destino "sección de la web"
+        integer prioridad
+        boolean activo
+        timestamp desde
+        timestamp hasta
+        bigint impresiones
+    }
+    ANUNCIO_UBICACION {
+        bigint anuncio_id FK
+        varchar ubicacion
+    }
+    CLIC_ANUNCIO {
+        bigint id PK
+        bigint anuncio_id FK
+        bigint usuario_id FK "null si es un visitante"
+        varchar origen
+        timestamp fecha
     }
     MOVIMIENTO_SALDO {
         bigint id PK

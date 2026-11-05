@@ -43,6 +43,14 @@
 
     <div class="tarjeta api-estado">
         <div>
+            <strong>Anuncios internos</strong>
+            <p class="aviso">Qué secciones se promocionan, dónde y con qué prioridad; y cuántas veces se ha mostrado y pulsado cada anuncio.</p>
+        </div>
+        <a class="boton boton-secundario" th:href="@{/gestion/anuncios}">Gestionar anuncios</a>
+    </div>
+
+    <div class="tarjeta api-estado">
+        <div>
             <strong>Límites de apuesta</strong>
             <p class="aviso" th:text="'Importe entre ' + ${#numbers.formatDecimal(limites.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' y ' + ${#numbers.formatDecimal(limites.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas · combinadas de hasta ' + ${limites.maxSelecciones} + ' selecciones'">
                 Importe entre 1,00 y 500,00 monedas · combinadas de hasta 10 selecciones</p>
