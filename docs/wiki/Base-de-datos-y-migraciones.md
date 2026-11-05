@@ -30,9 +30,10 @@ Al principio Hibernate creaba las tablas desde las entidades. Cuando los datos e
 | `V9__concurrencia_y_suspensiones` | `version` en el usuario y `suspendido_por_api` en el evento |
 | `V10__recuperar_contrasena` | Tabla `token_recuperacion` (enlaces para recuperar la contraseña) |
 | `V11__movimientos_saldo` | Tabla `movimiento_saldo` (libro de movimientos del saldo, HU-55), con el saldo que ya tenía cada cuenta |
+| `V12__anuncios` | Tablas `anuncio`, `anuncio_ubicacion` y `clic_anuncio` (HU-60 a HU-62), con cuatro anuncios de partida |
 
 ## Reglas
 - Los scripts están en `db/migration/h2/` y `db/migration/postgresql/`. En PostgreSQL, `V8__esquema_postgresql.sql` crea todo lo de V1–V8 de golpe; desde V9 van los mismos scripts en las dos carpetas.
-- Si cambias una entidad, crea un script nuevo (`V11__descripcion.sql`) **en las dos carpetas**.
+- Si cambias una entidad, crea un script nuevo (`V13__descripcion.sql`) **en las dos carpetas**.
 - **Nunca modifiques un script que ya está en `main`**: otros ordenadores ya lo aplicaron.
 - Con `ddl-auto=validate`, si falta una migración la aplicación no arranca y dice qué columna falta. Las pruebas lo detectan antes.

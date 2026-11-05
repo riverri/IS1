@@ -38,6 +38,8 @@ public class SeguridadConfig {
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
                         .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login", "/recuperar", "/recuperar/nueva",
                                 "/css/**", "/error").permitAll()
+                        // Clic en un anuncio interno (HU-60): los visitantes también los ven
+                        .requestMatchers("/anuncios/*/ir").permitAll()
                         // hasRole("CREADOR") comprueba que el usuario tenga el rol CREADOR (ver usuarios.Rol)
                         // Consola de la base de datos (solo existe en local): únicamente para el creador
                         .requestMatchers("/h2-console/**").hasRole("CREADOR")
