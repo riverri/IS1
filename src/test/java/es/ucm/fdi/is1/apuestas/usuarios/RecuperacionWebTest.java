@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,9 +57,14 @@ class RecuperacionWebTest {
     @Value("${apuestas.url-publica}")
     private String urlPublica;
 
+    @Autowired
+    private EnviosRecuperacion envios;
+
     @BeforeEach
     void crearUsuaria() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
+        // El límite de envíos está en memoria y se comparte entre pruebas: cada una empieza de cero
+        envios.olvidar(ANA);
     }
 
     /** Pide el enlace y devuelve el código que se ha enviado por correo. */
@@ -154,6 +160,17 @@ class RecuperacionWebTest {
         verify(correo).enviarRecuperacion(eq(ANA), eq("Ana"), enlace.capture());
         assertThat(enlace.getValue()).startsWith(urlPublica + "/recuperar/nueva?token=")
                 .doesNotContain("atacante");
+    }
+
+    /** Nadie puede llenar de correos el buzón de otra persona: como mucho 3 enlaces cada media hora. */
+    @Test
+    void comoMuchoTresEnlacesCadaMediaHora() throws Exception {
+        for (int i = 0; i < EnviosRecuperacion.MAXIMO + 2; i++) {
+            mvc.perform(post("/recuperar").with(csrf()).param("email", ANA))
+                    // La respuesta es siempre la misma: no se desvela nada
+                    .andExpect(redirectedUrl("/recuperar?enviado"));
+        }
+        verify(correo, times(EnviosRecuperacion.MAXIMO)).enviarRecuperacion(eq(ANA), eq("Ana"), any());
     }
 
     @Test
