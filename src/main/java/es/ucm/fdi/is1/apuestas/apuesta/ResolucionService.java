@@ -110,9 +110,10 @@ public class ResolucionService {
 
     /**
      * Anula el evento y devuelve el importe de sus apuestas simples activas (HU-05). En una combinada, la
-     * selección cuenta con cuota 1,00 y el resto sigue en juego (CA-30.3).
+     * selección cuenta con cuota 1,00 y el resto sigue en juego (CA-30.3). Si el evento ya estaba finalizado,
+     * las apuestas ya resueltas se recalculan igual: lo ya pagado se ajusta con {@code Apuesta.pagado}.
      *
-     * @throws IllegalStateException si el evento ya estaba finalizado o anulado
+     * @throws IllegalStateException si el evento ya estaba anulado
      */
     @Transactional
     public int anular(Long eventoId) {

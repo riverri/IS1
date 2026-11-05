@@ -112,8 +112,16 @@
               onsubmit="return confirm('¿Anular el evento? Se devolverá el importe de todas las apuestas.');">
             <button class="boton boton-peligro" type="submit">Anular evento</button>
         </form>
-        <p class="aviso" th:if="${evento.estado.name() == 'FINALIZADO' or evento.estado.name() == 'ANULADO'}">
-            Un evento finalizado o anulado no se puede suspender ni anular.</p>
+        <!-- Un evento finalizado también se puede anular: se quita el resultado y se recalculan sus apuestas -->
+        <form th:if="${evento.estado.name() == 'FINALIZADO'}"
+              th:action="@{/gestion/eventos/{id}/anular(id=${evento.id})}" method="post"
+              onsubmit="return confirm('¿Anular un evento ya finalizado? Se quitará el resultado, se devolverá el importe de sus apuestas y se descontará lo que ya se pagó a los ganadores.');">
+            <button class="boton boton-peligro" type="submit">Anular evento finalizado</button>
+        </form>
+        <p class="aviso" th:if="${evento.estado.name() == 'FINALIZADO'}">
+            Un evento finalizado no se puede suspender. Si el resultado está mal, corrígelo arriba; anúlalo solo si el partido no vale.</p>
+        <p class="aviso" th:if="${evento.estado.name() == 'ANULADO'}">
+            Un evento anulado no se puede suspender ni anular otra vez.</p>
     </div>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>

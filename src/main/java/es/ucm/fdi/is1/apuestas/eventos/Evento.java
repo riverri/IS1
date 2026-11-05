@@ -177,13 +177,18 @@ public class Evento {
 
     /**
      * Anula el evento; las apuestas se devuelven desde el servicio (HU-05). Es definitivo.
+     * También se puede anular uno ya finalizado (por ejemplo, si se metió un resultado y luego el partido
+     * no valió): se borra el resultado y el servicio vuelve a resolver sus apuestas, ajustando los saldos.
      *
-     * @throws IllegalStateException si ya está finalizado o anulado
+     * @throws IllegalStateException si ya está anulado
      */
     public void anular() {
-        if (estado == EstadoEvento.FINALIZADO || estado == EstadoEvento.ANULADO) {
-            throw new IllegalStateException("No se puede anular un evento finalizado o ya anulado");
+        if (estado == EstadoEvento.ANULADO) {
+            throw new IllegalStateException("El evento ya está anulado");
         }
+        resultado = null;
+        golesLocal = null;
+        golesVisitante = null;
         estado = EstadoEvento.ANULADO;
     }
 
