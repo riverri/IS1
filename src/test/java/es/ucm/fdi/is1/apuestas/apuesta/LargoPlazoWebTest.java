@@ -147,6 +147,17 @@ class LargoPlazoWebTest {
         assertThat(apuestas.count()).isZero();
     }
 
+    /** El aviso habla del mercado, no de un partido que no existe en una apuesta a largo plazo. */
+    @Test
+    void cancelarConElMercadoCerradoExplicaQueEstaCerrado() throws Exception {
+        Apuesta deAna = apostar(COMO_ANA, mbappe, "15");
+        mvc.perform(post("/gestion/mercados/{id}/cerrar", pichichi.getId()).with(CREADOR).with(csrf()));
+
+        mvc.perform(post("/apuestas/{id}/cancelar", deAna.getId()).with(COMO_ANA).with(csrf()))
+                .andExpect(flash().attribute("error", "Esa apuesta ya no se puede cancelar: el mercado ya está cerrado."));
+        assertThat(deAna.getEstado()).isEqualTo(EstadoApuesta.ACTIVA);
+    }
+
     @Test
     void unMercadoCerradoNoAdmiteApuestas() throws Exception {
         mvc.perform(post("/gestion/mercados/{id}/cerrar", pichichi.getId()).with(CREADOR).with(csrf()))

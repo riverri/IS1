@@ -173,22 +173,36 @@ public class ApuestaService {
         return apuesta;
     }
 
+    /** Igual que {@link #modificarImporte(String, Long, BigDecimal, BigDecimal)} sin comprobar la cuota vista. */
+    @Transactional
+    public Apuesta modificarImporte(String email, Long apuestaId, BigDecimal nuevo) {
+        return modificarImporte(email, apuestaId, nuevo, null);
+    }
+
     /**
      * Cambia el importe de una apuesta activa del usuario antes de que empiece el evento (HU-27).
      * Se aplican los límites de apuesta y las cuotas actuales, y se cobra o devuelve la diferencia.
+     * Si el usuario vio otra cuota total (las cuotas se han movido desde que apostó), no se cambia nada
+     * y se le enseña la nueva para que la acepte, como en HU-29.
      *
+     * @param cuotaVista cuota total que vio el usuario; null para no comprobarla
      * @throws ApuestaNoEncontradaException si no existe o es de otro usuario
-     * @throws IllegalStateException        si alguno de sus eventos ya ha empezado
+     * @throws IllegalStateException        si ya no se puede modificar; el mensaje dice por qué
+     * @throws CuotaApuestaCambiadaException si la cuota total actual no es la que vio el usuario
      * @throws IllegalArgumentException     si el nuevo importe o la nueva cuota total no respetan los límites
      * @throws es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException si sube el importe y no hay saldo
      */
     @Transactional
-    public Apuesta modificarImporte(String email, Long apuestaId, BigDecimal nuevo) {
+    public Apuesta modificarImporte(String email, Long apuestaId, BigDecimal nuevo, BigDecimal cuotaVista) {
         Apuesta apuesta = apuestas.findById(apuestaId)
                 .filter(a -> a.getUsuario().getEmail().equals(email))
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
-        limites.actuales().comprobarImporte(nuevo);
         LocalDateTime ahora = LocalDateTime.now(reloj);
+        // Primero si aún se puede tocar: si el partido ha empezado no tiene sentido hablar de cuotas
+        if (!apuesta.cancelable(ahora)) {
+            throw new IllegalStateException(apuesta.motivoNoCancelable(ahora));
+        }
+        limites.actuales().comprobarImporte(nuevo);
         // Para el juego responsable solo cuenta lo que se añade; bajar el importe siempre se permite
         BigDecimal aumento = nuevo.subtract(apuesta.getImporte());
         if (aumento.signum() > 0) {
@@ -196,7 +210,12 @@ public class ApuestaService {
         }
         // Cuotas vigentes, en el mismo orden que las selecciones (Apuesta.cambiarImporte cuenta con ello)
         List<BigDecimal> cuotas = apuesta.getSelecciones().stream().map(this::cuotaActual).toList();
-        comprobarCuotaTotal(Apuesta.producto(cuotas));
+        BigDecimal cuotaTotal = Apuesta.producto(cuotas);
+        // HU-29 también aquí: no se aplica en silencio una cuota distinta de la que ha visto
+        if (cuotaVista != null && cuotaVista.compareTo(cuotaTotal) != 0) {
+            throw new CuotaApuestaCambiadaException(cuotaTotal);
+        }
+        comprobarCuotaTotal(cuotaTotal);
         apuesta.cambiarImporte(nuevo, cuotas, ahora);
         return apuesta;
     }

@@ -218,13 +218,28 @@ public class Apuesta {
     }
 
     /**
+     * Por qué ya no se puede cancelar ni cambiar el importe, para explicárselo al usuario;
+     * null si todavía se puede (ver {@link #cancelable}).
+     */
+    public String motivoNoCancelable(LocalDateTime ahora) {
+        if (cancelable(ahora)) {
+            return null;
+        }
+        if (estado != EstadoApuesta.ACTIVA) {
+            return "ya no está activa";
+        }
+        // Una apuesta a largo plazo no tiene partido: lo que se cierra es el mercado
+        return isLargoPlazo() ? "el mercado ya está cerrado" : "el partido ya ha empezado o se ha suspendido";
+    }
+
+    /**
      * Cancela la apuesta y devuelve el importe al usuario (HU-26).
      *
-     * @throws IllegalStateException si ya no es cancelable (ver {@link #cancelable})
+     * @throws IllegalStateException si ya no es cancelable (ver {@link #cancelable}); el mensaje dice por qué
      */
     public void cancelar(LocalDateTime ahora) {
         if (!cancelable(ahora)) {
-            throw new IllegalStateException("La apuesta ya no se puede cancelar");
+            throw new IllegalStateException(motivoNoCancelable(ahora));
         }
         estado = EstadoApuesta.CANCELADA;
         usuario.abonar(importe);
@@ -234,12 +249,12 @@ public class Apuesta {
      * Cambia el importe mientras se pueda cancelar (HU-27): se cobra o se devuelve la diferencia
      * y se aplican las cuotas actuales, una por selección y en el mismo orden.
      *
-     * @throws IllegalStateException si ya no se puede cancelar
+     * @throws IllegalStateException si ya no se puede cancelar; el mensaje dice por qué
      * @throws es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException si sube el importe y no hay saldo
      */
     public void cambiarImporte(BigDecimal nuevo, List<BigDecimal> cuotasActuales, LocalDateTime ahora) {
         if (!cancelable(ahora)) {
-            throw new IllegalStateException("La apuesta ya no se puede modificar");
+            throw new IllegalStateException(motivoNoCancelable(ahora));
         }
         // Sube: se cobra solo la diferencia. Baja: se devuelve la diferencia (CA-27.1, CA-27.2)
         BigDecimal diferencia = nuevo.subtract(importe);
