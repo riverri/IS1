@@ -107,6 +107,13 @@ public class UsuariosController {
         return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
     }
 
+    /** GET /cuenta/movimientos: cada entrada y salida del saldo, con su motivo y el saldo que dejó (HU-55). */
+    @GetMapping("/cuenta/movimientos")
+    public String movimientos(Principal principal, Model model) {
+        model.addAttribute("movimientos", usuarios.movimientos(principal.getName()));
+        return "movimientos";
+    }
+
     /**
      * POST /cuenta/limites: límites diario y semanal que se pone el usuario (HU-10). Vuelve a la sección
      * de juego responsable de Mi cuenta. Si el diario supera al semanal, lo muestra como error del campo.

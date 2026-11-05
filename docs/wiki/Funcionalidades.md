@@ -17,6 +17,7 @@ Spring Security con el formulario `/login`. Tras 5 contraseñas incorrectas, la 
 - El saldo se ve siempre en la cabecera.
 - Cada **7 días** se suman **200 moneditas** gratis (al iniciar sesión o abrir *Mi cuenta*). No se acumulan.
 - El saldo cambia con `cargar` (al apostar; si no hay saldo, `SaldoInsuficienteException`), `abonar` (cancelar, cobrar) y `ajustar` (resolver o corregir).
+- Cada cambio queda apuntado en *Mi cuenta → Movimientos* con su motivo, el importe y el saldo que dejó (HU-55).
 - Si dos operaciones cambian el mismo saldo a la vez, la segunda se rechaza con un aviso (bloqueo optimista).
 
 ### Recuperar la contraseña (HU-17)

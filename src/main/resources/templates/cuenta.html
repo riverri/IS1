@@ -12,6 +12,7 @@
         <span class="tarjeta-saldo-valor" th:text="${#numbers.formatDecimal(usuario.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</span>
         <span class="tarjeta-saldo-email" th:text="${usuario.email}">usuario@apuestas.es</span>
     </div>
+    <a class="enlace-volver" th:href="@{/cuenta/movimientos}">Ver los movimientos del saldo →</a>
     <div class="tarjeta recarga">
         <span class="ventaja-icono" aria-hidden="true">🎁</span>
         <div>

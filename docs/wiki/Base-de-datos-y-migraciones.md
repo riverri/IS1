@@ -29,6 +29,7 @@ Al principio Hibernate creaba las tablas desde las entidades. Cuando los datos e
 | `V8__ligas_y_mas_apuestas` | Tablas `liga` y `liga_miembro`; goles en el evento; tipo especial en la selección |
 | `V9__concurrencia_y_suspensiones` | `version` en el usuario y `suspendido_por_api` en el evento |
 | `V10__recuperar_contrasena` | Tabla `token_recuperacion` (enlaces para recuperar la contraseña) |
+| `V11__movimientos_saldo` | Tabla `movimiento_saldo` (libro de movimientos del saldo, HU-55), con el saldo que ya tenía cada cuenta |
 
 ## Reglas
 - Los scripts están en `db/migration/h2/` y `db/migration/postgresql/`. En PostgreSQL, `V8__esquema_postgresql.sql` crea todo lo de V1–V8 de golpe; desde V9 van los mismos scripts en las dos carpetas.

@@ -6,7 +6,7 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 
 | Entidad | Campos principales | Relaciones |
 |---|---|---|
-| **Usuario** | email, nombre, passwordHash, rol, saldo, ultimaRecarga, limiteDiario, limiteSemanal, pausaHasta, eliminado, version | Muchas apuestas, notificaciones y ligas |
+| **Usuario** | email, nombre, passwordHash, rol, saldo, ultimaRecarga, limiteDiario, limiteSemanal, pausaHasta, eliminado, version | Muchas apuestas, notificaciones, ligas y movimientos del saldo |
 | **Competicion** | nombre, deporte | Muchos equipos (`equipo_competiciones`) |
 | **Equipo** | nombre, deporte, calidad, forma, escudoUrl, idExterno | Varias competiciones; muchos jugadores |
 | **Jugador** | nombre, posicion, dorsal, nacionalidad, fechaNacimiento, nota, idExterno | Un equipo |
@@ -17,6 +17,7 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **Candidato** | nombre, cuota | Un mercado; opcionalmente un equipo |
 | **Liga** | nombre, codigo, creada | Un creador y muchos miembros (`liga_miembro`) |
 | **Notificacion** | texto, tipo, fecha, leida | Un usuario |
+| **MovimientoSaldo** | tipo, importe (con signo), saldoResultante, concepto, fecha | Un usuario. Cada cambio del saldo deja uno (HU-55) |
 | **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 

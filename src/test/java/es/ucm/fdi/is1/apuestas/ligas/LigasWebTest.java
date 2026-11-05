@@ -24,7 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
@@ -55,7 +57,7 @@ class LigasWebTest {
         usuarioService.crear("ana@ucm.es", "Ana", "secreta123", Rol.USUARIO);
         usuarioService.crear("luis@ucm.es", "Luis", "secreta123", Rol.USUARIO);
         usuarioService.crear("eva@ucm.es", "Eva", "secreta123", Rol.USUARIO);
-        usuarios.findByEmail("luis@ucm.es").orElseThrow().abonar(new BigDecimal("500"));
+        usuarios.findByEmail("luis@ucm.es").orElseThrow().abonar(new BigDecimal("500"), TipoMovimiento.RECARGA, "Saldo de prueba", Hora.ahora());
     }
 
     private Liga crear(String nombre) throws Exception {
