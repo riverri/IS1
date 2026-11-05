@@ -30,9 +30,11 @@ public class IntentosLogin {
 
     // Concurrente: pueden llegar varios inicios de sesión a la vez
     private final Map<String, Fallos> fallos = new ConcurrentHashMap<>();
+    private final UsuarioRepository usuarios;
     private final Clock reloj;
 
-    public IntentosLogin(Clock reloj) {
+    public IntentosLogin(UsuarioRepository usuarios, Clock reloj) {
+        this.usuarios = usuarios;
         this.reloj = reloj;
     }
 
@@ -43,12 +45,21 @@ public class IntentosLogin {
      * <p>Email o contraseña incorrectos: suma un fallo. Si el anterior fue hace más de 15 minutos, la cuenta
      * empieza de nuevo. Con la cuenta ya bloqueada Spring publica otro evento, así que esos intentos
      * no alargan el bloqueo.
+     *
+     * <p>Solo se apuntan los fallos de cuentas que existen (con un email sin cuenta no se puede entrar de todas
+     * formas), y cada vez se olvidan los bloqueos ya caducados: así el mapa no crece sin fin aunque alguien
+     * pruebe miles de emails inventados.
      */
     @EventListener
     public void alFallar(AuthenticationFailureBadCredentialsEvent evento) {
         Instant ahora = reloj.instant();
+        fallos.values().removeIf(f -> caducado(f, ahora));
+        String email = clave(evento.getAuthentication().getName());
+        if (!usuarios.existsByEmail(email)) {
+            return;
+        }
         // merge: si no había fallos guarda el nuevo; si los había, los combina con la lambda
-        fallos.merge(clave(evento.getAuthentication().getName()), new Fallos(1, ahora), (antes, nuevo) ->
+        fallos.merge(email, new Fallos(1, ahora), (antes, nuevo) ->
                 caducado(antes, ahora) ? nuevo : new Fallos(antes.seguidos() + 1, ahora));
     }
 
@@ -56,6 +67,11 @@ public class IntentosLogin {
     @EventListener
     public void alEntrar(AuthenticationSuccessEvent evento) {
         fallos.remove(clave(evento.getAuthentication().getName()));
+    }
+
+    /** Cuántos emails tienen fallos apuntados ahora mismo (para las pruebas: el mapa no debe crecer sin fin). */
+    int vigilados() {
+        return fallos.size();
     }
 
     /** Tras recuperar la contraseña (HU-17) se olvidan los fallos: si no, seguiría bloqueado con la nueva. */
