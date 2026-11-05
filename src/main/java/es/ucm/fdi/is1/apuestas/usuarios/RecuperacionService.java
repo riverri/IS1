@@ -39,21 +39,24 @@ public class RecuperacionService {
     private final PasswordEncoder passwordEncoder;
     private final EnvioCorreo correo;
     private final IntentosLogin intentos;
+    private final EnviosRecuperacion envios;
     private final Clock reloj;
 
     public RecuperacionService(UsuarioRepository usuarios, TokenRecuperacionRepository tokens,
                                PasswordEncoder passwordEncoder, EnvioCorreo correo, IntentosLogin intentos,
-                               Clock reloj) {
+                               EnviosRecuperacion envios, Clock reloj) {
         this.usuarios = usuarios;
         this.tokens = tokens;
         this.passwordEncoder = passwordEncoder;
         this.correo = correo;
         this.intentos = intentos;
+        this.envios = envios;
         this.reloj = reloj;
     }
 
     /**
      * Si hay una cuenta con ese email, crea un enlace nuevo (los anteriores dejan de servir) y lo envía.
+     * Como mucho {@value EnviosRecuperacion#MAXIMO} cada media hora por cuenta ({@link EnviosRecuperacion}).
      *
      * @param base dirección de la web, por ejemplo {@code https://apuestas-is1.onrender.com}
      */
@@ -67,6 +70,11 @@ public class RecuperacionService {
             return;
         }
         Usuario usuario = cuenta.get();
+        // Demasiados enlaces seguidos: no se envía otro (y el anterior sigue sirviendo). La respuesta es la misma,
+        // así no se desvela que la cuenta existe
+        if (!envios.permitir(usuario.getEmail())) {
+            return;
+        }
         // Se borran los enlaces anteriores: solo sirve el último que se ha pedido
         tokens.borrarDe(usuario);
         // 32 bytes aleatorios (256 bits), en Base64 apto para URL: se puede poner tal cual en el enlace
