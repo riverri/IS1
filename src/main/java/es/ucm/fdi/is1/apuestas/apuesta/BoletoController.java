@@ -123,6 +123,8 @@ public class BoletoController {
         }
         try {
             Apuesta apuesta = boletos.confirmar(principal.getName(), boleto, importe);
+            // Aquí la transacción de confirmar ya está guardada en la base de datos: ahora sí se vacía el boleto
+            boletos.vaciar(boleto);
             redireccion.addFlashAttribute("mensaje", (apuesta.isCombinada() ? "Combinada" : "Apuesta")
                     + " registrada. Si aciertas cobras "
                     + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
