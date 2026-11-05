@@ -36,6 +36,12 @@
             <span th:text="'Pide, plántate o dobla. El blackjack paga ' + ${configuracion.pagoBlackjack.texto} + '.'">Pide, plántate o dobla. El blackjack paga 3:2.</span>
             <small class="aviso" th:text="'Ventaja de la casa: ≈ ' + ${#numbers.formatDecimal(configuracion.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %'">Ventaja de la casa: ≈ 1,05 %</small>
         </a>
+        <a class="tarjeta juego-casino" th:href="@{/casino/baccarat}">
+            <span class="juego-icono" aria-hidden="true">🎴</span>
+            <strong>Baccarat</strong>
+            <span>Jugador, Banca o Empate. Gana la mano que más se acerque a 9.</span>
+            <small class="aviso">Ventaja de la casa: 1,06 % a la Banca, 1,24 % al Jugador</small>
+        </a>
     </div>
 
     <th:block th:unless="${#lists.isEmpty(ultimas)}">

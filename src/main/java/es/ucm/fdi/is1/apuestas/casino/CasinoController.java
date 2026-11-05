@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.casino;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 
 /**
- * Páginas del casino (HU-56 a HU-58). Todas cuelgan de {@code /casino} y exigen haber iniciado sesión (ver
+ * Páginas del casino (HU-56 a HU-58 y HU-74). Todas cuelgan de {@code /casino} y exigen haber iniciado sesión (ver
  * SeguridadConfig: no están entre las públicas). La lógica está en {@link CasinoService}; aquí se traducen sus
  * errores a mensajes y se redirige, como en los controladores de las apuestas.
  */
@@ -64,6 +65,60 @@ public class CasinoController {
         redireccion.addFlashAttribute("numeroElegido", numero);
         redireccion.addFlashAttribute("importeElegido", importe);
         return "redirect:/casino/ruleta";
+    }
+
+    /** GET /casino/baccarat: la mesa con las tres apuestas y, si se acaba de jugar, las cartas que salieron. */
+    @GetMapping("/baccarat")
+    public String baccarat(Model model) {
+        model.addAttribute("configuracion", casino.configuracion());
+        model.addAttribute("apuestas", ApuestaBaccarat.values());
+        return "casino/baccarat";
+    }
+
+    /** POST /casino/baccarat: una mano entera (CA-74.1 a CA-74.3); el resultado vuelve como mensaje. */
+    @PostMapping("/baccarat")
+    public String jugarBaccarat(@RequestParam(required = false) ApuestaBaccarat apuesta,
+                                @RequestParam(required = false) BigDecimal importe, Principal principal,
+                                RedirectAttributes redireccion) {
+        try {
+            CasinoService.JugadaBaccarat jugada = casino.jugarBaccarat(principal.getName(), apuesta, importe);
+            redireccion.addFlashAttribute("baza", Baza.de(jugada));
+        } catch (SaldoInsuficienteException e) {
+            redireccion.addFlashAttribute("error", "No tienes saldo suficiente para esta apuesta");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        redireccion.addFlashAttribute("apuestaElegida", apuesta);
+        redireccion.addFlashAttribute("importeElegido", importe);
+        return "redirect:/casino/baccarat";
+    }
+
+    /**
+     * Una mano de baccarat ya jugada, para enseñarla tras redirigir. Como {@link Tirada}, es un record serializable con
+     * solo lo que se pinta: las cartas van como texto ("8♥") y si son rojas.
+     */
+    public record Baza(List<String> cartasJugador, List<Boolean> rojasJugador, int valorJugador,
+                       List<String> cartasBanca, List<Boolean> rojasBanca, int valorBanca, String resultado,
+                       String apuesta, BigDecimal apostado, BigDecimal premio) implements Serializable {
+
+        static Baza de(CasinoService.JugadaBaccarat jugada) {
+            ManoBaccarat mano = jugada.mano();
+            Partida p = jugada.partida();
+            return new Baza(mano.getJugador().stream().map(Carta::getTexto).toList(),
+                    mano.getJugador().stream().map(Carta::isRoja).toList(), mano.getValorJugador(),
+                    mano.getBanca().stream().map(Carta::getTexto).toList(),
+                    mano.getBanca().stream().map(Carta::isRoja).toList(), mano.getValorBanca(),
+                    p.getResultado(), p.getApuesta(), p.getApostado(), p.getPremio());
+        }
+
+        /** Ha cobrado algo, aunque sea solo lo apostado (empate apostando a Jugador o a Banca). */
+        public boolean isCobra() {
+            return premio.signum() > 0;
+        }
+
+        public boolean isGanada() {
+            return premio.compareTo(apostado) > 0;
+        }
     }
 
     /**

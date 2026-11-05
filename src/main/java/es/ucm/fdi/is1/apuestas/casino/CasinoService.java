@@ -19,7 +19,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
 /**
- * Casino (HU-56 a HU-59): ruleta europea y blackjack con moneditas.
+ * Casino (HU-56 a HU-59 y HU-74): ruleta europea, blackjack y baccarat con moneditas.
  *
  * <p>Aquí está lo que comparten todos los juegos, en este orden: el casino está abierto, el creador no juega, el
  * importe está dentro de los límites del casino, el juego responsable lo permite (HU-10) y hay saldo. Entonces se
@@ -93,6 +93,40 @@ public class CasinoService {
         pagar(usuario, premio, "Ruleta: salió el " + salido, ahora);
         partida.terminar(premio, "Salió el " + salido + " (" + ApuestaRuleta.color(salido) + ")");
         return partidas.save(partida);
+    }
+
+    /**
+     * Una mano de baccarat (HU-74): cobra, reparte en el servidor según las reglas fijas y paga (CA-74.1 a CA-74.3).
+     * Se juega entera en una petición: el jugador no decide nada después de apostar.
+     *
+     * @throws IllegalArgumentException si no se elige apuesta, el importe está fuera de los límites, el juego
+     *                                  responsable no lo permite o juega el creador
+     * @throws IllegalStateException    si el casino está cerrado
+     * @throws es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException si no hay saldo
+     */
+    @Transactional
+    public JugadaBaccarat jugarBaccarat(String email, ApuestaBaccarat apuesta, BigDecimal importe) {
+        if (apuesta == null) {
+            throw new IllegalArgumentException("Elige a qué apuestas: Jugador, Banca o Empate");
+        }
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        Usuario usuario = cobrar(email, importe, "Baccarat: " + apuesta.getNombre(), ahora);
+        Partida partida = new Partida(usuario, TipoJuego.BACCARAT, importe, apuesta.getNombre(), ahora);
+
+        ManoBaccarat mano = ManoBaccarat.jugar(azar);
+        ApuestaBaccarat ganador = mano.ganador();
+        // Hacia abajo, como en el blackjack: 10,01 a la Banca devuelve 19,51 y no 19,52
+        BigDecimal premio = importe.multiply(apuesta.devuelveSiGana(ganador)).setScale(2, RoundingMode.DOWN);
+        String marcador = "Jugador " + mano.getValorJugador() + ", Banca " + mano.getValorBanca();
+        String comoAcabo = (ganador == ApuestaBaccarat.EMPATE ? "Empate" : "Gana " + ganador.getNombre()) + " ("
+                + marcador + ")";
+        pagar(usuario, premio, "Baccarat: " + comoAcabo.toLowerCase(Locale.ROOT), ahora);
+        partida.terminar(premio, comoAcabo);
+        return new JugadaBaccarat(partidas.save(partida), mano);
+    }
+
+    /** La partida guardada y las cartas que salieron, para enseñarlas. */
+    public record JugadaBaccarat(Partida partida, ManoBaccarat mano) {
     }
 
     /**
