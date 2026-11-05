@@ -20,10 +20,10 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 | Estado | Historias |
 |---|---|
 | **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-52 y HU-54 |
-| **En revisión (14)** | HU-55 (movimientos del saldo), base común de la ampliación; HU-56 a HU-59 (casino); HU-60 a HU-62 (anuncios internos); HU-63 a HU-68 (mercados de predicción) |
+| **En revisión (19)** | HU-55 (movimientos del saldo), base común de la ampliación; HU-56 a HU-59 (casino); HU-60 a HU-62 (anuncios internos); HU-63 a HU-68 (mercados de predicción); HU-69 a HU-73 (cartera de criptomonedas) |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
 
-En total hay **142 criterios de aceptación**; 96 son de historias hechas.
+En total hay **157 criterios de aceptación**; 96 son de historias hechas.
 
 ## Estimación
 

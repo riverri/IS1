@@ -17,7 +17,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 33 de 39 filas hechas, de la 36 a la 39 en revisión y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 40 filas hechas, de la 36 a la 40 en revisión y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|:-:|:-:|---|
@@ -60,6 +60,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 37 | Casino con moneditas: ruleta europea y blackjack, con el azar en el servidor, historial de partidas, límites por apuesta, cada movimiento en el libro del saldo y ventaja de la casa configurable con las reglas (HU-56 a HU-59). *Depende de la fila 36* | 1 sprint | 4 | C | | En revisión (PR) |
 | 38 | Anuncios internos que promocionan otras secciones (largo plazo, ranking, ligas…): componente reutilizable, configuración desde Gestión, prioridad con rotación y registro de impresiones y clics (HU-60 a HU-62) | ½ sprint | 4 | C | | En revisión (PR) |
 | 39 | Mercados de predicción de sí o no (tipo Polymarket) con precio de 0 a 1 calculado por un creador de mercado automático (LMSR): crear y cerrar, comprar y vender, resolver y pagar, estadísticas y posiciones de los compañeros de liga (HU-63 a HU-68). *Depende de las filas 33 y 36* | 1 sprint | 5 | C | | En revisión (PR) |
+| 40 | Cartera de criptomonedas reales a su precio real en euros (CoinGecko), compradas y vendidas con moneditas (1 monedita = 1 €), con las memecoins y las de alto riesgo como protagonistas: precios y gráfico, comprar y vender con comisión, mi cartera con ganancias y pérdidas, y configuración del creador (HU-69 a HU-73). *Depende de la fila 36* | 1 sprint | 4 | C | | En revisión (PR) |
 
 ## Puntos a revisar en equipo
 

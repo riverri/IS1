@@ -43,6 +43,10 @@ public class SeguridadConfig {
                         .requestMatchers("/anuncios/*/ir").permitAll()
                         // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
                         .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
+                        // Criptomonedas (HU-69): la lista y cada cripto son públicas; la cartera, comprar y vender no.
+                        // Va primero la cartera porque "/cripto/*" también la abarcaría
+                        .requestMatchers("/cripto/cartera").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/cripto", "/cripto/*").permitAll()
                         // hasRole("CREADOR") comprueba que el usuario tenga el rol CREADOR (ver usuarios.Rol)
                         // Consola de la base de datos (solo existe en local): únicamente para el creador
                         .requestMatchers("/h2-console/**").hasRole("CREADOR")

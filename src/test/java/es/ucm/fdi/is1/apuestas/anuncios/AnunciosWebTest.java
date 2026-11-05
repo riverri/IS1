@@ -72,6 +72,9 @@ class AnunciosWebTest {
     @Test
     void unVisitanteVeElAnuncioPublicoDeMasPrioridadYCuentaLaImpresion() throws Exception {
         long antes = mercados.getImpresiones();
+        // El de criptomonedas (V15) también es público y de prioridad 5 en la portada: rotaría con el de largo plazo.
+        // Se quita para que la prueba sea determinista
+        anuncios.delete(deDestino("/cripto"));
 
         // CA-60.1 y CA-60.3: en la portada hay dos de prioridad 5, pero el de ligas necesita sesión
         mvc.perform(get("/"))

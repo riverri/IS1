@@ -18,7 +18,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**En revisión:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos) y HU-63 a HU-68 (mercados de predicción), con sus 33 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
+**En revisión:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 48 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -445,3 +445,43 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-68.1 | Se ven las posiciones de quienes comparten liga | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.veoLasPosicionesDeMisCompanerosDeLigaYNoLasDeLosDemas` |
 | CA-68.2 | Quien no comparte liga no las ve | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.veoLasPosicionesDeMisCompanerosDeLigaYNoLasDeLosDemas` |
+
+## HU-69 · Ver criptomonedas a su precio real
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-69.1 | Las memecoins van primero, con su precio y variación, y se destaca la que más se mueve | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laListaEsPublicaConLasMemecoinsPrimeroYElAvisoDeRiesgo`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.lasMemecoinsVanPrimeroYAvisanDeRiesgoMuyAlto` |
+| CA-69.2 | La ficha enseña el gráfico de la semana | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laFichaDibujaElGraficoDeLaSemana` |
+| CA-69.3 | Siempre se ve el aviso de riesgo | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laListaEsPublicaConLasMemecoinsPrimeroYElAvisoDeRiesgo` |
+| CA-69.4 | Los precios se descargan de CoinGecko y se guardan | Automática | [`CoinGeckoClienteTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CoinGeckoClienteTest.java)`.pideTodosLosPreciosEnEurosEnUnaSolaPeticionYLeeLaRespuesta`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.actualizarGuardaElPrecioYLaVariacionDeCadaCripto` |
+
+## HU-70 · Comprar criptomonedas con moneditas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-70.1 | Se ve la previsión y al confirmar se cobra con su movimiento | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarCobraElImporteConComisionYApuntaElMovimiento`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laFichaEsPublicaYEnsenaLaPrevisionDeCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.conMemecoinsDeFraccionesDeCentimoSeCompranMillonesDeUnidades`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarDesdeLaWebYVerLaCartera` |
+| CA-70.2 | Sin saldo, fuera de límites, el creador o el juego responsable: no se compra | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.sinSaldoFueraDeLimitesOEnPausaNoSeCompraNiSeCobra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.loCompradoCuentaEnLosLimitesPersonales`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laCarteraYComprarExigenSesion` |
+| CA-70.3 | Si el precio cambia se pide confirmar otra vez | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.siElPrecioHaCambiadoOnoEstaAlDiaNoSeCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.conElPrecioCambiadoLaWebVuelveALaPrevision` |
+| CA-70.4 | Sin precio al día no se compra | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.siElPrecioHaCambiadoOnoEstaAlDiaNoSeCompra`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.unPrecioSoloSirveDuranteLosMinutosConfigurados` |
+
+## HU-71 · Vender criptomonedas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-71.1 | Se recibe cantidad × precio menos la comisión y el coste baja en proporción | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.venderDevuelveElValorMenosLaComisionYBajaElCosteEnProporcion`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.venderUnaParteBajaElCosteEnProporcionYVenderloTodoLoDejaACero` |
+| CA-71.2 | No se vende más de lo que se tiene | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.noSeVendeMasDeLoQueSeTieneNiLoQueNoSeTiene` |
+
+## HU-72 · Mi cartera de criptomonedas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-72.1 | La cartera enseña cantidad, valor, coste y ganancia | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarDesdeLaWebYVerLaCartera`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.elValorSigueAlPrecioYLaGananciaEsValorMenosCoste` |
+| CA-72.2 | Se ven las últimas operaciones | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarDesdeLaWebYVerLaCartera` |
+
+## HU-73 · Configurar las criptomonedas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-73.1 | La configuración se guarda y con la sección cerrada nadie opera | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.soloElCreadorEntraEnLaGestionYVeLasCuentasEnElPanelDeLaCasa` |
+| CA-73.2 | Una cripto retirada no se compra, pero se puede vender | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.unaCriptoRetiradaNoSeCompraPeroQuienLaTieneLaPuedeVender` |
+| CA-73.3 | Los precios se descargan en el momento y se avisa si CoinGecko falla | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion` |

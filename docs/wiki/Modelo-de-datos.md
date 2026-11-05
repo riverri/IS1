@@ -25,6 +25,11 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **MercadoPrediccion** | pregunta, descripcion, cierre, estado, resultado, liquidez, comision, qSi, qNo, version | Muchas posiciones y operaciones (HU-63 a HU-67) |
 | **PosicionPrediccion** | lado, participaciones, invertido, pagado | Un usuario y un mercado; una por lado (HU-64 a HU-66, HU-68) |
 | **OperacionPrediccion** | lado, tipo (compra o venta), participaciones, importe, comision, precioSiDespues, fecha | Un usuario y un mercado (HU-67) |
+| **Criptomoneda** | simbolo, nombre, idApi (CoinGecko), categoria (memecoin o de referencia), activa, orden, precio, variacion24h, actualizado | Muchos precios guardados, posiciones y operaciones (HU-69) |
+| **PrecioCripto** | precio, fecha | Una cripto. Uno cada 30 minutos como mucho, de los últimos 7 días, para el gráfico (HU-69) |
+| **PosicionCripto** | cantidad, coste | Un usuario y una cripto; una por pareja (HU-70 a HU-72) |
+| **OperacionCripto** | tipo (compra o venta), cantidad, precio, importe, comision, fecha | Un usuario y una cripto (HU-72) |
+| **ConfiguracionCripto** | activo, comision, minutosValidez | Una sola fila (HU-73) |
 | **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 

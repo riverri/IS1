@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Criptomonedas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Criptomonedas</h1>
+        <a class="boton boton-secundario" th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/cripto/cartera}">Mi cartera</a>
+    </div>
+    <!-- Aviso de riesgo (CA-69.3): siempre visible, antes que los precios -->
+    <p class="alerta aviso-riesgo">
+        <strong>Precios reales, dinero de mentira.</strong> Los precios son los de verdad en euros (1 monedita = 1 €),
+        y se mueven igual que en la vida real: una memecoin puede doblar su precio o perder la mitad en un día.
+        Aquí solo juegas con moneditas; cada compra y venta tiene una comisión del
+        <span th:text="${#numbers.formatDecimal(configuracion.comision * 100, 1, 'POINT', 2, 'COMMA')} + ' %'">1,00 %</span>.
+    </p>
+    <p class="alerta alerta-error" th:unless="${configuracion.activo}">La sección está cerrada ahora mismo: se ven los precios, pero no se puede comprar ni vender.</p>
+
+    <!-- La que más se ha movido en 24 horas -->
+    <a class="tarjeta cripto-destacada" th:if="${destacada != null}" th:href="@{/cripto/{s}(s=${destacada.simbolo})}">
+        <span class="cripto-destacada-titulo" th:text="${destacada.variacion24h.signum() >= 0} ? '🚀 La que más sube hoy' : '📉 La que más cae hoy'">🚀 La que más sube hoy</span>
+        <strong th:text="${destacada.nombre} + ' (' + ${destacada.simbolo} + ')'">Pepe (PEPE)</strong>
+        <span class="cripto-variacion" th:classappend="${destacada.variacion24h.signum() >= 0} ? 'positivo' : 'negativo'"
+              th:text="${@formato.variacion(destacada.variacion24h)} + ' en 24 h'">+18,2 % en 24 h</span>
+    </a>
+
+    <th:block th:each="cat : ${categorias}" th:with="lista=${cat.name() == 'MEMECOIN'} ? ${memecoins} : ${referencia}">
+        <th:block th:unless="${#lists.isEmpty(lista)}">
+            <h2 th:text="${cat.icono} + ' ' + ${cat.nombre}">🐸 Memecoins</h2>
+            <p class="aviso" th:text="${cat.riesgo}">Riesgo muy alto</p>
+            <div class="rejilla-cripto">
+                <a class="tarjeta tarjeta-cripto" th:each="c : ${lista}" th:href="@{/cripto/{s}(s=${c.simbolo})}"
+                   th:classappend="${cat.name() == 'MEMECOIN'} ? 'memecoin'">
+                    <span class="cripto-simbolo" th:text="${c.simbolo}">DOGE</span>
+                    <span class="cripto-nombre" th:text="${c.nombre}">Dogecoin</span>
+                    <strong class="cripto-precio" th:text="${@formato.precioCripto(c.precio)} + ' €'">0,1534 €</strong>
+                    <span class="cripto-variacion" th:classappend="${c.variacion24h != null} ? (${c.variacion24h.signum() >= 0} ? 'positivo' : 'negativo')"
+                          th:text="${@formato.variacion(c.variacion24h)}">+2,3 %</span>
+                </a>
+            </div>
+        </th:block>
+    </th:block>
+    <p class="aviso">Precios de <a href="https://www.coingecko.com" rel="noopener" target="_blank">CoinGecko</a>.</p>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

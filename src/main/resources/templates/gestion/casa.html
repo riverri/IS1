@@ -93,6 +93,25 @@
             </tbody>
         </table>
     </div>
+
+    <h2>Criptomonedas</h2>
+    <p class="aviso">La casa hace de contrapartida: compras − ventas − lo que valen ahora las carteras (lo que pagaría si
+        todos vendieran). Sube y baja con los precios, así que es provisional. Las comisiones ya van dentro.</p>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Compras</th><th>Ventas</th><th>Comisiones</th><th>Valor de las carteras</th><th>Beneficio</th></tr></thead>
+            <tbody>
+            <tr>
+                <td th:text="${#numbers.formatDecimal(cripto.compras, 1, 'POINT', 2, 'COMMA')}">100,00</td>
+                <td th:text="${#numbers.formatDecimal(cripto.ventas, 1, 'POINT', 2, 'COMMA')}">20,00</td>
+                <td th:text="${#numbers.formatDecimal(cripto.comisiones, 1, 'POINT', 2, 'COMMA')}">1,20</td>
+                <td th:text="${#numbers.formatDecimal(cripto.carteras, 1, 'POINT', 2, 'COMMA')}">70,00</td>
+                <td><strong th:classappend="${cripto.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(cripto.beneficio, 1, 'POINT', 2, 'COMMA')}">10,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
