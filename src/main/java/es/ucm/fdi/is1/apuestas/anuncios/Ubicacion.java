@@ -21,7 +21,8 @@ public enum Ubicacion {
     MIS_APUESTAS("Mis apuestas", "/apuestas", true),
     LIGAS("Ligas", "/ligas", true),
     CUENTA("Mi cuenta", "/cuenta", true),
-    CASINO("Casino", "/casino", true);
+    CASINO("Casino", "/casino", true),
+    PREDICCIONES("Mercados de predicción", "/predicciones", false);
 
     private final String nombre;
     private final String ruta;

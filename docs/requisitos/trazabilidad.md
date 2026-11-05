@@ -18,7 +18,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**En revisión:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino) y HU-60 a HU-62 (anuncios internos), con sus 20 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
+**En revisión:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos) y HU-63 a HU-68 (mercados de predicción), con sus 33 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -402,3 +402,46 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-59.1 | Los límites y las reglas del blackjack se guardan y se ve la ventaja teórica | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorCambiaLasReglasYPuedeCerrarElCasino`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elMaximoNoPuedeSerMenorQueElMinimo`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laPortadaDelCasinoEnsenaLosJuegosYLaVentaja`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elPanelDeLaCasaIncluyeElCasino` |
 | CA-59.2 | Con el casino cerrado nadie puede jugar | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorCambiaLasReglasYPuedeCerrarElCasino`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCasinoExigeSesionYNoLoVeElCreador` |
+
+## HU-63 · Crear, cerrar y anular mercados de predicción
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-63.1 | Un mercado nuevo queda abierto con los dos lados a 0,50 | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.unMercadoNuevoEmpiezaAlCincuentaPorCiento`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.elCreadorCreaCierraYResuelveDesdeGestion`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.empiezaAlCincuentaPorCientoYLosPreciosSumanUno` |
+| CA-63.2 | Cerrado (o pasada su fecha) no admite compras ni ventas | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.noSeCompraSinSaldoFueraDeLimitesNiEnUnMercadoCerrado`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.elCreadorCreaCierraYResuelveDesdeGestion` |
+| CA-63.3 | Al anular se devuelve lo pagado menos lo recuperado vendiendo | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.alAnularSeDevuelveLoPuestoMenosLoRecuperado` |
+
+## HU-64 · Comprar participaciones
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-64.1 | Se ve la previsión, se cobra el importe y sube el precio | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.comprarCobraElImporteDaParticipacionesYSubeElPrecio`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.laPrevisionEnsenaCuantasParticipacionesSeRecibirian`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.comprarCuestaLoQueSubeLaFuncionDeCoste`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.cadaParticipacionCuestaMenosDeUnaMonedita` |
+| CA-64.2 | Sin saldo, fuera de límites, mercado cerrado o juego responsable: no se compra | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.noSeCompraSinSaldoFueraDeLimitesNiEnUnMercadoCerrado`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.elJuegoResponsableTambienCuenta`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.comprarExigeSesion` |
+| CA-64.3 | Si el precio cambia se pide confirmar otra vez | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.siElPrecioCambiaSePideConfirmarOtraVez` |
+
+## HU-65 · Vender participaciones
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-65.1 | Se recibe el valor menos la comisión y baja el precio | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.venderDevuelveSuValorMenosLaComisionYBajaElPrecio`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.venderLoQueSeAcabaDeComprarDevuelveLoMismo` |
+| CA-65.2 | No se venden más participaciones de las que se tienen | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.noSePuedeVenderMasDeLoQueSeTiene` |
+
+## HU-66 · Resolver el mercado y pagar
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-66.1 | Cada participación ganadora paga 1 monedita, con movimiento y aviso | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.alResolverseCadaParticipacionGanadoraPagaUnaMonedita`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.laCasaNoPierdeMasDeBPorLogaritmoDeDos` |
+| CA-66.2 | Corregir la respuesta ajusta los saldos por la diferencia | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.corregirLaRespuestaAjustaLosSaldosPorLaDiferencia` |
+
+## HU-67 · Estadísticas y evolución del precio
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-67.1 | Cualquiera ve precio, volumen, participantes y el gráfico del precio | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.unVisitanteVeElPrecioLasEstadisticasYElGrafico`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.noSeDesbordaConMuchasParticipaciones` |
+
+## HU-68 · Posiciones de mis compañeros de liga
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-68.1 | Se ven las posiciones de quienes comparten liga | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.veoLasPosicionesDeMisCompanerosDeLigaYNoLasDeLosDemas` |
+| CA-68.2 | Quien no comparte liga no las ve | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.veoLasPosicionesDeMisCompanerosDeLigaYNoLasDeLosDemas` |
