@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Service;
 
+import es.ucm.fdi.is1.apuestas.usuarios.MovimientoSaldoRepository;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
 /**
@@ -24,10 +26,13 @@ public class JuegoResponsableService {
     private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy 'a las' HH:mm");
 
     private final ApuestaRepository apuestas;
+    private final MovimientoSaldoRepository movimientos;
     private final LimitesService limites;
 
-    public JuegoResponsableService(ApuestaRepository apuestas, LimitesService limites) {
+    public JuegoResponsableService(ApuestaRepository apuestas, MovimientoSaldoRepository movimientos,
+                                   LimitesService limites) {
         this.apuestas = apuestas;
+        this.movimientos = movimientos;
         this.limites = limites;
     }
 
@@ -64,11 +69,13 @@ public class JuegoResponsableService {
     }
 
     /**
-     * Lo jugado desde una fecha. Cuentan también las apuestas ya resueltas; las canceladas no
-     * ({@link ApuestaRepository#apostadoDesde}). Los juegos nuevos sumarán aquí lo suyo.
+     * Lo jugado desde una fecha: las apuestas deportivas (también las ya resueltas; las canceladas no, ver
+     * {@link ApuestaRepository#apostadoDesde}) más lo jugado en los otros juegos, que sale del libro de movimientos
+     * ({@link TipoMovimiento#deJuego()}: el casino y los que vengan después).
      */
     BigDecimal apostadoDesde(Usuario usuario, LocalDateTime desde) {
-        return apuestas.apostadoDesde(usuario, desde);
+        return apuestas.apostadoDesde(usuario, desde)
+                .add(movimientos.jugadoDesde(usuario, desde, TipoMovimiento.deJuego()));
     }
 
     private static String monedas(BigDecimal cantidad) {

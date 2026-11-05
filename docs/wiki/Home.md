@@ -45,7 +45,7 @@ El Scrum Master es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/iss
 | Criterios de aceptación | 109 (96 de historias hechas: 93 con prueba automática y 3 que se comprueban a mano) |
 | Código | 144 clases Java en 12 paquetes, 32 plantillas HTML |
 | Pruebas | 283 pruebas automáticas en 46 clases, con H2 y con PostgreSQL |
-| Base de datos | 12 migraciones Flyway (V1–V12) |
+| Base de datos | 13 migraciones Flyway (V1–V13) |
 
 ## Por dónde empezar
 

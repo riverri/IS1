@@ -54,6 +54,27 @@
         </table>
     </div>
     </th:block>
+
+    <h2>Casino</h2>
+    <p class="aviso" th:text="'Margen teórico: ruleta ' + ${#numbers.formatDecimal(configuracionCasino.ventajaRuleta, 1, 'POINT', 2, 'COMMA')} + ' %, blackjack ≈ ' + ${#numbers.formatDecimal(configuracionCasino.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %. Solo cuentan las partidas terminadas.'">
+        Margen teórico: ruleta 2,70 %, blackjack ≈ 1,05 %.</p>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Juego</th><th>Partidas</th><th>Apostado</th><th>Pagado</th><th>Beneficio</th><th>Margen</th></tr></thead>
+            <tbody>
+            <tr th:each="f : ${casino}">
+                <td th:text="${f.juego.icono} + ' ' + ${f.juego.nombre}">🎡 Ruleta europea</td>
+                <td th:text="${f.partidas}">12</td>
+                <td th:text="${#numbers.formatDecimal(f.apostado, 1, 'POINT', 2, 'COMMA')}">120,00</td>
+                <td th:text="${#numbers.formatDecimal(f.pagado, 1, 'POINT', 2, 'COMMA')}">110,00</td>
+                <td><strong th:classappend="${f.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(f.beneficio, 1, 'POINT', 2, 'COMMA')}">10,00</strong></td>
+                <td th:text="${f.margen == null} ? '–' : ${#numbers.formatDecimal(f.margen, 1, 'POINT', 1, 'COMMA')} + ' %'">8,3 %</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(casino)}"><td colspan="6" class="aviso">Todavía no se ha jugado en el casino.</td></tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

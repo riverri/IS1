@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Tabla de partidas del casino (CA-58.1). La usan el historial y la portada del casino: th:replace="~{casino/fragmentos :: partidas(${lista})}" -->
+<div class="tarjeta tabla" th:fragment="partidas(lista)">
+    <table>
+        <thead><tr><th>Fecha</th><th>Juego</th><th>Apuesta</th><th>Resultado</th><th>Importe</th><th>Balance</th></tr></thead>
+        <tbody>
+        <tr th:each="p : ${lista}">
+            <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">24/10/2026 20:00</td>
+            <td th:text="${p.juego.icono} + ' ' + ${p.juego.nombre}">🎡 Ruleta europea</td>
+            <td th:text="${p.apuesta}">Rojo</td>
+            <td th:text="${p.enCurso} ? 'En curso' : ${p.resultado}">Salió el 17 (negro)</td>
+            <td th:text="${#numbers.formatDecimal(p.apostado, 1, 'POINT', 2, 'COMMA')}">10,00</td>
+            <td th:classappend="${p.balance.signum() > 0} ? 'positivo' : (${p.balance.signum() < 0} ? 'negativo')"
+                th:text="${p.balance.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(p.balance, 1, 'POINT', 2, 'COMMA')}">-10,00</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

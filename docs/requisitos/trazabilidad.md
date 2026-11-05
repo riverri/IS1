@@ -18,7 +18,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**En revisión:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos), con sus 9 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
+**En revisión:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino) y HU-60 a HU-62 (anuncios internos), con sus 20 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -371,3 +371,34 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
 | CA-62.1 | Cada clic queda apuntado y en Gestión se ven impresiones, clics y porcentaje | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.alPulsarlo_apuntaElClicYLlevaASuSeccion`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.enGestionSeVenLasImpresionesYLosClicsYSePuedeDesactivar` |
+
+## HU-56 · Ruleta europea
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-56.1 | El servidor elige el número, se cobra y se paga pleno 35:1, color o par/impar 1:1 y docena 2:1 | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.acertarElColorPagaElDobleYQuedaEnLosMovimientos`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unPlenoPaga35a1`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laRuletaDesdeLaPaginaEnsenaElResultadoYElHistorialLoGuarda`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.cadaApuestaGanaConSusNumeros`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.laCasaGanaUnoDeCadaTreintaYSieteALaLarga`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.conMuchasTiradasSaleCadaNumeroMasOMenosLasMismasVeces` |
+| CA-56.2 | Con el 0 se pierden el color, par/impar y la docena | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.conElCeroSePierdeElColor`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.conElCeroSoloGanaElPlenoAlCero` |
+| CA-56.3 | Sin saldo, fuera de límites, en pausa o pasado de los límites personales no se juega ni se cobra | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.fueraDeLimitesSinSaldoOEnPausaNoSeJuegaNiSeCobra`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.loJugadoEnElCasinoCuentaEnLosLimitesPersonales`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorNoJuega` |
+
+## HU-57 · Blackjack
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-57.1 | Se cobra y de la banca solo se ve una carta; la otra no llega al navegador | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoDeBlackjackCobraUnaVezYNoEnsenaLaCartaOculta` |
+| CA-57.2 | Un blackjack paga 3:2 (o lo configurado) | Automática | [`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.unBlackjackAlRepartirTerminaLaMano`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.siLosDosTienenBlackjackEsEmpate`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.alPlantarseSePagaSegunElResultado` |
+| CA-57.3 | Doblar cobra otra vez la apuesta, da una carta y termina la mano | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.doblarCobraOtraVezLaApuestaYTerminaLaMano`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.doblarDaUnaSolaCartaYTerminaLaMano`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.soloSeDoblaConLasDosPrimerasCartasYNoSeJuegaUnaManoTerminada` |
+| CA-57.4 | Pasarse de 21 pierde; al plantarse juega la banca y se paga 1:1 o se devuelve si hay empate | Automática | [`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.siSePasaDeVeintiunoPierdeYLaBancaNoJuega`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.alPlantarseLaBancaPideHastaDiecisiete`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.conDiecisieteBlandoLaBancaSoloPideSiLaReglaLoDice`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.siLaBancaSePasaGanaElJugador`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.losAsesValenOnceMientrasNoSePase`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.alPlantarseSePagaSegunElResultado` |
+| CA-57.5 | Recargar o pulsar dos veces sigue con la misma mano sin cobrar otra vez | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoDeBlackjackCobraUnaVezYNoEnsenaLaCartaOculta`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoTerminadaNoSeSigueJugando`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.laManoSeGuardaYSeRecuperaTalCual` |
+
+## HU-58 · Historial de partidas del casino
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-58.1 | Se ven las partidas con juego, fecha, apuesta, resultado, importe y balance | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laRuletaDesdeLaPaginaEnsenaElResultadoYElHistorialLoGuarda` |
+
+## HU-59 · Configurar el casino
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-59.1 | Los límites y las reglas del blackjack se guardan y se ve la ventaja teórica | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorCambiaLasReglasYPuedeCerrarElCasino`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elMaximoNoPuedeSerMenorQueElMinimo`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laPortadaDelCasinoEnsenaLosJuegosYLaVentaja`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elPanelDeLaCasaIncluyeElCasino` |
+| CA-59.2 | Con el casino cerrado nadie puede jugar | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorCambiaLasReglasYPuedeCerrarElCasino`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCasinoExigeSesionYNoLoVeElCreador` |
