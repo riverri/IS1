@@ -16,7 +16,7 @@ Las apuestas se reevalúan y el saldo se ajusta con la diferencia entre lo que d
 Porque las bases de datos guardadas no tenían las columnas nuevas al cambiar las entidades y la aplicación fallaba. Con Flyway cada cambio es un script numerado que se aplica una vez y en orden, sin perder datos.
 
 **¿Cómo sabéis que funciona?**
-283 pruebas automáticas que se ejecutan en cada pull request con H2 y con PostgreSQL, y la matriz de trazabilidad, que enlaza los 96 criterios de aceptación de las historias hechas con su prueba (93 automáticas y 3 que se comprueban a mano porque dependen del navegador).
+283 pruebas automáticas que se ejecutan en cada pull request con H2 y con PostgreSQL, y la matriz de trazabilidad, que enlaza los 97 criterios de aceptación de las historias hechas con su prueba (93 automáticas y 4 que se comprueban a mano porque dependen del navegador).
 
 **¿Qué es una transacción y dónde la usáis?**
 Un grupo de cambios que se hace entero o no se hace. Al apostar se descuenta el saldo y se guarda la apuesta: si algo falla, no se descuenta nada. En la sincronización con la API se usa una por partido para que un fallo no deshaga los demás.

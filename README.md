@@ -16,7 +16,7 @@ Profesor: Gonzalo Rubén Méndez Pozo.
 
 > El **Scrum Master** es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
 
-**Tablero del sprint:** las tareas y las historias pendientes están en los [issues](https://github.com/riverri/IS1/issues) y en el tablero de GitHub Projects del repositorio (pestaña *Projects*).
+**Tablero del sprint:** desde el Sprint 4, el Sprint Backlog se sigue en el [grafo del equipo](https://grafo-better.vercel.app), que enlaza cada tarea con su issue o pull request ([decisión 0003](docs/decisiones/0003-seguimiento-en-el-grafo.md)). Los [issues](https://github.com/riverri/IS1/issues) siguen en el tablero de GitHub Projects (pestaña *Projects*).
 
 ## ¿Qué es?
 
@@ -40,6 +40,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── requisitos/
 │   │   ├── vision.md                  # Visión del producto
 │   │   ├── historias-de-usuario.md    # Historias de usuario con sus criterios de aceptación
+│   │   ├── historias-ampliacion-propuestas.md  # Historias de la ampliación (HU-55 a HU-84), pendientes del PO
 │   │   └── trazabilidad.md            # Qué prueba comprueba cada criterio de aceptación
 │   ├── scrum/
 │   │   ├── proceso.md                 # Cómo aplicamos Scrum
@@ -52,7 +53,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── wiki/                          # Páginas de la wiki (se publican solas al fusionar en main)
 │   ├── presentaciones/                # Presentaciones del proyecto (PowerPoint y PDF)
 │   ├── Better_Guia_del_proyecto.pdf   # Guía completa del proyecto, para leerla de corrido
-│   ├── decisiones/                    # Decisiones técnicas (stack, arquitectura…)
+│   ├── decisiones/                    # Decisiones (stack, saldo negativo, grafo del equipo)
 │   └── recursos.md                    # Enlaces de teoría y de Git
 ├── src/main/java/                     # Código Java (Spring Boot), un paquete por parte del dominio
 ├── src/main/resources/                # Plantillas HTML, CSS, configuración y migraciones de la base de datos
@@ -165,7 +166,7 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
-| `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-54 |
+| `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-53 |
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 

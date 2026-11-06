@@ -27,13 +27,13 @@ Las actas se editan en el repositorio, en `docs/scrum/sprints/sprint-N.md`, y se
 | Evento | Cuándo y para qué |
 |---|---|
 | Sprint Planning | Al empezar: se elige el objetivo (**Sprint Goal**) y las historias (**Sprint Backlog**) |
-| Daily Scrum | Cada día, 15 minutos: qué hice, qué haré, qué me bloquea |
+| Daily Scrum | Por el chat del grupo, los días que trabajamos en el proyecto: qué hice, qué haré, qué me bloquea |
 | Sprint Review | Al final: se enseña lo hecho al Product Owner |
 | Retrospectiva | Tras la review: qué fue bien, qué mejorar y al menos una mejora para el siguiente sprint |
 
 ## Artefactos en GitHub
 - **Product Backlog:** [`docs/scrum/product-backlog.md`](https://github.com/riverri/IS1/blob/main/docs/scrum/product-backlog.md), 35 filas ordenadas y priorizadas.
-- **Sprint Backlog:** issues con la etiqueta del sprint en el tablero de GitHub Projects. Columnas: Product Backlog → Sprint Backlog → En curso → En revisión → Terminado. Como mucho **1 tarea en curso por persona**.
+- **Sprint Backlog:** desde el Sprint 4, en el [grafo del equipo](https://grafo-better.vercel.app) (ver la [decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)); los issues siguen en el tablero de GitHub Projects. Columnas: Product Backlog → Sprint Backlog → En curso → En revisión → Terminado. Como mucho **1 tarea en curso por persona**.
 - **Incremento:** la rama `main` al terminar el sprint.
 
 ## Definition of Ready

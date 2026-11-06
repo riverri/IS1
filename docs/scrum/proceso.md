@@ -20,7 +20,7 @@ El profesor, como Product Owner, decide el orden del Product Backlog y acepta en
 | Evento | Cuándo | Duración (sprint de 2 semanas) | Resultado |
 |---|---|---|---|
 | **Sprint Planning** | Día 1 | ≤ 2 h | Sprint Goal y **Sprint Backlog**: historias elegidas más el plan, con tareas de ≤ 1 día |
-| **Daily Scrum** | Cada día (o 3 veces por semana, en persona o por chat) | 15 min | ¿Qué hice para el objetivo? ¿Qué haré? ¿Hay impedimentos? |
+| **Daily Scrum** | Los días que trabajamos en el proyecto, por el chat del grupo (ver la nota) | Breve | ¿Qué hice para el objetivo? ¿Qué haré? ¿Hay impedimentos? |
 | **Sprint Review** | Último día | ≤ 1 h | Demo del incremento. El PO dice qué está "Terminado" y se actualiza el Product Backlog |
 | **Sprint Retrospective** | Tras la review | ≤ 45 min | Qué fue bien, qué mejorar y **al menos una mejora** que entra en el siguiente Sprint Backlog |
 
@@ -30,14 +30,15 @@ Las actas de cada sprint van en `docs/scrum/sprints/sprint-N.md` (ver la [planti
 | Artefacto Scrum | En GitHub |
 |---|---|
 | Product Backlog | [product-backlog.md](product-backlog.md) y un **Issue por historia** (plantilla "Historia de usuario"), en la columna `Product Backlog` del tablero |
-| Sprint Backlog | Issues asignados al **Milestone** del sprint ("Sprint 1"…) y a la columna `Sprint Backlog` |
+| Sprint Backlog | Desde el Sprint 4, las tareas del sprint en el [grafo del equipo](https://grafo-better.vercel.app), enlazadas con sus issues y pull requests ([decisión 0003](../decisiones/0003-seguimiento-en-el-grafo.md)). Hasta el Sprint 3 se previeron milestones, pero no se llegaron a crear |
 | Incremento | Rama `main` al final del sprint, marcada con un **tag/release** (`sprint-1`, `sprint-2`…) |
 
 ## Tablero Kanban (GitHub Projects)
-Desde la iteración 12 del Sprint 1 (2/10), cada historia o tarea es un [issue](https://github.com/riverri/IS1/issues) con su etiqueta (`historia`, `tarea`, `documentación`, `sprint-12`…) y está en el tablero de la pestaña *Projects* del repositorio. Un PR que termina un issue lo cierra con `Closes #N` en su descripción.
+Desde la iteración 12 del Sprint 1 (2/10), cada historia o tarea es un [issue](https://github.com/riverri/IS1/issues) con su etiqueta (`historia`, `tarea`, `documentación`, `sprint-12`…) y está en el tablero de la pestaña *Projects* del repositorio. Un PR que termina un issue lo cierra con `Closes #N` en su descripción. Desde el Sprint 4, el estado de cada tarea, sus dependencias y la carga de cada persona se siguen en el [grafo del equipo](https://grafo-better.vercel.app).
 
 Columnas: `Product Backlog` → `Sprint Backlog` → `En curso` → `En revisión (PR)` → `Terminado`
 - **Límite de trabajo en curso (WIP):** como máximo **1 tarea en curso por persona**. No se empieza otra hasta mover la anterior a revisión.
+- **Nota sobre el Daily:** la Scrum Guide pide un Daily cada día. Como el equipo no trabaja todos los días en el proyecto, el Daily se hace por el chat del grupo los días que hay trabajo: cada uno escribe qué hizo, qué hará y si tiene algún bloqueo.
 - El Daily se hace mirando el tablero: ¿qué está bloqueado?, ¿qué avanza más lento de lo esperado?
 
 ## Estimación

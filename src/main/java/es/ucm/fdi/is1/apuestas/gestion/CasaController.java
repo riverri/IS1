@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import es.ucm.fdi.is1.apuestas.apuesta.CuentasCasaService;
 
 /**
- * Controlador del panel de la casa para el creador de apuestas (HU-54). Los cálculos (total apostado,
+ * Controlador del panel de la casa para el creador de apuestas (HU-53). Los cálculos (total apostado,
  * pagado, beneficio y margen real frente al teórico) los hace {@link CuentasCasaService}.
  */
 @Controller

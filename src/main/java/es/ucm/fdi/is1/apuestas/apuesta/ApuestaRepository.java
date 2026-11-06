@@ -27,7 +27,7 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
     /** Igual, pero con varios estados a la vez (historial, HU-34). */
     List<Apuesta> findByUsuarioAndEstadoInOrderByFechaDesc(Usuario usuario, Collection<EstadoApuesta> estados);
 
-    /** Apuestas de todos los usuarios en esos estados (panel de la casa, HU-54). */
+    /** Apuestas de todos los usuarios en esos estados (panel de la casa, HU-53). */
     List<Apuesta> findByEstadoIn(Collection<EstadoApuesta> estados);
 
     /** Cuántas apuestas tiene el usuario en ese estado (apuestas en juego del perfil público, HU-48). */

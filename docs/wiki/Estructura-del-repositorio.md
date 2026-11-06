@@ -17,7 +17,7 @@ IS1/
 │   ├── requisitos/            vision.md · historias-de-usuario.md · trazabilidad.md
 │   ├── scrum/                 proceso.md · product-backlog.md · metricas.md · sprints/
 │   ├── diseno/uml.md          Diagramas UML
-│   └── decisiones/            0001 (tecnologías) y 0002 (saldo negativo)
+│   └── decisiones/            0001 (tecnologías), 0002 (saldo negativo) y 0003 (grafo del equipo)
 └── src/
     ├── main/java/es/ucm/fdi/is1/apuestas/   El código, en 12 paquetes
     ├── main/resources/

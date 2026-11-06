@@ -1229,7 +1229,7 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
 .invitacion .aviso { display: block; }
 .invitacion strong.codigo-liga { font-size: 1.6rem; color: var(--primario-oscuro); }
 
-/* ---------- Cuentas de la casa (HU-54) ---------- */
+/* ---------- Cuentas de la casa (HU-53) ---------- */
 
 .margen-casa { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 24px; padding: 20px; margin: 16px 0; }
 .margen-casa > div { display: flex; flex-direction: column; gap: 4px; }

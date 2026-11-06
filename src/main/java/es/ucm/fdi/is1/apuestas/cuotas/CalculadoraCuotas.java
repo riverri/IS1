@@ -73,7 +73,7 @@ public class CalculadoraCuotas {
     static final double VOLUMEN_REFERENCIA = 1000;
     /**
      * Margen de la casa: las probabilidades se inflan un 7 %, así la suma de 1/cuota ronda 1,07 y la casa
-     * se queda a la larga ≈ 6,5 % de lo apostado (HU-03, HU-54).
+     * se queda a la larga ≈ 6,5 % de lo apostado (HU-03, HU-53).
      */
     static final double MARGEN_CASA = 1.07;
     /** Cuota mínima (CA-03.3): por mucho que se apueste a un resultado, acertarlo siempre da algo de ganancia. */
@@ -156,7 +156,7 @@ public class CalculadoraCuotas {
 
     /**
      * Parte de lo apostado que se queda la casa a la larga si las probabilidades son exactas:
-     * 1 − 1/{@value #MARGEN_CASA} (≈ 6,5 %) en una simple (HU-54).
+     * 1 − 1/{@value #MARGEN_CASA} (≈ 6,5 %) en una simple (HU-53).
      */
     public static double margenTeorico() {
         return 1 - 1 / MARGEN_CASA;
