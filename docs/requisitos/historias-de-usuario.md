@@ -148,6 +148,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-53 | Cuentas de la casa | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-54 | Nombres inapropiados | Hecha| 1 | 4 (Baja) | 2 | 153 | 12 | 1,8 | 1,7 $ |
 | HU-55 | Movimientos del saldo | Pendiente de subir | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-56 | Ruleta europea | Integrada (06/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-57 | Blackjack | Integrada (06/11) | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
@@ -420,6 +421,20 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 |---|---|---|---|
 | CA-14.1 | Soy un usuario nuevo | Completo el registro | Se me asigna automáticamente el saldo de bienvenida. |
 | CA-14.2 | Ha pasado el periodo definido desde mi última recarga gratuita | Inicio sesión o abro mi cuenta | Recibo automáticamente una nueva recarga. |
+
+### HU-54 · Nombres ofensivos
+
+**Como** usuario, **quiero** que el resto de usuarios tengan nombres adecuados, **para** no sentirme ofendido o insultado.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| - | 4 (Baja) | 2 | Hecha | 2 | 153 | 12 | 1,7 | 1,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-54.1 | Un usuario que introduce un username considerado "prohibido" | Crea la cuenta | Se le informa de que el nombre elegido puede resultar ofensivo y se le obliga a cambiarlo. |
 
 ### HU-55 · Movimientos del saldo
 
