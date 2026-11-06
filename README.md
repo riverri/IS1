@@ -166,11 +166,11 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
-| `/cuenta/movimientos` | Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
+| `/cuenta/movimientos` | *(Pendiente de subir)* Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-53 |
-| `/gestion/anuncios` | Anuncios internos: alta, edición, activar o desactivar, con sus impresiones, clics y porcentaje de clics | HU-61, HU-62 |
-| `/anuncios/{id}/ir` | Clic en un anuncio: lo apunta y lleva a su sección (lo pintan las páginas debajo de la cabecera) | HU-60, HU-62 |
+| `/gestion/anuncios` | *(Pendiente de subir)* Anuncios internos: alta, edición, activar o desactivar, con sus impresiones, clics y porcentaje de clics | HU-61, HU-62 |
+| `/anuncios/{id}/ir` | *(Pendiente de subir)* Clic en un anuncio: lo apunta y lleva a su sección (lo pintan las páginas debajo de la cabecera) | HU-60, HU-62 |
 | `/casino` | Casino con moneditas: ruleta europea (`/casino/ruleta`), blackjack (`/casino/blackjack`) y mis partidas (`/casino/historial`) | HU-56, HU-57, HU-58 |
 | `/gestion/casino` | Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
 | `/predicciones` | Mercados de predicción de sí o no: precio de 0 a 1, comprar y vender participaciones, estadísticas, gráfico y posiciones de los compañeros de liga (`/predicciones/{id}`) | HU-64 a HU-68 |

@@ -76,7 +76,7 @@ class CasinoWebTest {
     @BeforeEach
     void preparar() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
-        // Baraja y rotación de anuncios con una semilla fija; la ruleta, con el número que diga cada prueba
+        // Baraja con una semilla fija; la ruleta, con el número que diga cada prueba
         SplittableRandom semilla = new SplittableRandom(3);
         when(azar.nextInt(anyInt())).thenAnswer(i -> semilla.nextInt((int) i.getArgument(0)));
     }

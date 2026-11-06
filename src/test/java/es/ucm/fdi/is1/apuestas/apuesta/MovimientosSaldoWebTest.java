@@ -2,13 +2,6 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.matchesRegex;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.Hora;
@@ -38,14 +29,10 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
 /** HU-55: libro de movimientos del saldo, con apuestas, pagos, cancelaciones, correcciones y baja reales. */
 @SpringBootTest
-@AutoConfigureMockMvc
 @Transactional
 class MovimientosSaldoWebTest {
 
     private static final String ANA = "ana@ucm.es";
-
-    @Autowired
-    private MockMvc mvc;
 
     @Autowired
     private ApuestaService apuestas;
@@ -160,25 +147,5 @@ class MovimientosSaldoWebTest {
         // La apuesta se canceló (se devolvió) y después el saldo pasó a cero
         assertThat(lista).extracting(MovimientoSaldo::getTipo).endsWith(TipoMovimiento.DEVOLUCION, TipoMovimiento.BAJA);
         assertThat(lista.getLast().getSaldoResultante()).isEqualByComparingTo("0");
-    }
-
-    @Test
-    void laPaginaMuestraLosMovimientosDelMasRecienteAlMasAntiguo() throws Exception {
-        apuestas.apostar(ANA, partido.getId(), Resultado.LOCAL, new BigDecimal("10"));
-
-        // CA-55.2
-        mvc.perform(get("/cuenta/movimientos").with(user(ANA).roles("USUARIO")))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Nueva apuesta a Getafe CF (Getafe CF – Sevilla FC)")))
-                .andExpect(content().string(containsString("-10,00")))
-                .andExpect(content().string(containsString("990,00")))
-                .andExpect(content().string(matchesRegex("(?s).*Nueva apuesta.*Saldo de bienvenida.*")));
-        mvc.perform(get("/cuenta").with(user(ANA).roles("USUARIO")))
-                .andExpect(content().string(containsString("/cuenta/movimientos")));
-    }
-
-    @Test
-    void sinSesionLlevaAlLogin() throws Exception {
-        mvc.perform(get("/cuenta/movimientos")).andExpect(redirectedUrl("/login"));
     }
 }

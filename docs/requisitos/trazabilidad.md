@@ -12,14 +12,16 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 19 integradas (HU-55 a HU-73) | 48 | 48 (100 %) | 0 | 0 |
+| 15 integradas (HU-56 a HU-59 y HU-63 a HU-73) | 39 | 39 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas el 06/11:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 48 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
+**Integradas el 06/11:** HU-56 a HU-59 (casino), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 39 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
+
+**Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
