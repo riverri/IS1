@@ -1,6 +1,7 @@
 # Revisión de fallos
 
 Se partió de un informe del proyecto con 14 fallos (**F-01 a F-14**) y una revisión completa del código encontró 20 más (**N-01 a N-20**). Los 34 están corregidos en `main`, con 34 pruebas nuevas, y sus issues (#34–#67) están cerrados.
+En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado.
 
 Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a quien no debe · **media** = comportamiento incorrecto · **baja** = molestia o caso raro.
 
@@ -47,5 +48,29 @@ Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a
 | N-18 · Plantillas | Baja | Iban al equipo equivocado | Solo equipos sin enlazar | [#65](https://github.com/riverri/IS1/issues/65) |
 | N-19 · API colgada | Baja | Sin tiempo máximo | 5 s / 20 s | [#66](https://github.com/riverri/IS1/issues/66) |
 | N-20 · Avisos leídos | Baja | Se marcaban los no vistos | Solo los mostrados | [#67](https://github.com/riverri/IS1/issues/67) |
+
+## Revisión final (noviembre de 2026)
+
+Revisión del código de `main` del 5/11 (**R-01 a R-12**) y de las ramas #86 a #90 de la ampliación (**A-01 a A-04**, encontrados en la revisión del Sprint 3). No tienen issue: cada arreglo es un commit con su prueba, y entraron en `main` el 06/11 en el pull request de la integración. Se ha comprobado que las pruebas de R-01 y de A-01 a A-04 fallan con el código anterior.
+
+| Fallo | Gravedad | Qué pasaba | Cómo se arregló | Prueba |
+|---|---|---|---|---|
+| R-01 · Enlace de recuperación falseable | Alta | El enlace del correo salía de la cabecera `Host`: falseándola, otro podía quedarse con el código de la víctima | Dirección fija (`apuestas.url-publica`) | `RecuperacionWebTest` |
+| R-02 · Resultado y apuesta a la vez | Media | El creador veía «otra operación con tu saldo» | Aviso propio para volver a intentarlo | `ConcurrenciaAdviceTest` |
+| R-03 · Cuota al cambiar el importe | Media | Se guardaba con la cuota nueva sin avisar (HU-29) | Se compara con la cuota vista y se enseña la nueva | `ModificarImporteWebTest` |
+| R-04 · Apostar y cancelar para mover cuotas | Media | Con el tope de 100 por jugador, una cuenta mueve las cuotas como mucho un 2,7 %; solo se nota con muchas cuentas | Se acepta como limitación conocida ([Algoritmo de cuotas](Algoritmo-de-cuotas)) | — |
+| R-05 · Correos de recuperación sin límite | Media | Se podía llenar de correos el buzón de otra persona | Como mucho 3 cada 30 minutos por cuenta | `RecuperacionWebTest` |
+| R-06 · Motivo de no poder cancelar | Baja | Decía siempre «el evento ha empezado» | Dice el motivo real | `LargoPlazoWebTest` |
+| R-07 · Boleto perdido | Baja | Si la apuesta fallaba al confirmarse, el boleto ya se había vaciado | Se vacía cuando la apuesta está guardada | `CombinadaWebTest` |
+| R-08 · Bloqueo por intentos | Baja | Apuntaba también correos sin cuenta y no olvidaba los caducados: la memoria crecía sin fin | Solo cuentas que existen; los caducados se olvidan | `IntentosLoginWebTest` |
+| R-09 · Evento finalizado | Baja | No se podía anular | Se quita el resultado y se recalculan las apuestas | `ResolucionWebTest` |
+| R-10 · Límites sin tope | Baja | Importe × cuota máxima no cabía en el saldo y fallaba la resolución | Tope de 100.000 monedas | `LimitesWebTest` |
+| R-12 · Archivo `ta` | Baja | Salida de `git help` subida por error | Borrado | — |
+| A-01 · Cripto retirada | Media | Solo se descargaban precios de las criptos que se ofrecen: al caducar el de una retirada, nadie podía venderla (CA-73.2) | También se descargan los de las retiradas que alguien tiene | `CriptoWebTest.unaCriptoRetiradaQueAlguienTieneSigueTeniendoPrecio` |
+| A-02 · Precios viejos | Media | Se descargan cada 2 minutos pero servían 15 (hasta 120): si la descarga fallaba, se compraba con un precio viejo sabiendo ya el real | 5 minutos por defecto (migración V15.1) y 30 como mucho | `CriptoWebTest.unPrecioSirveCincoMinutosYComoMuchoTreinta` |
+| A-03 · Doblar con el casino cerrado | Media | Doblar en el blackjack cobraba dinero nuevo aunque el creador hubiera cerrado el casino | No se dobla; pedir y plantarse sí, para acabar la mano | `CasinoWebTest.conElCasinoCerradoNoSeDoblaPeroSePuedeAcabarLaMano` |
+| A-04 · Mercados anulados en el panel | Media | Lo comprado en un mercado anulado contaba como beneficio de la casa, aunque se había devuelto | Columna «Devoluciones», que se resta | `PrediccionWebTest.loDevueltoAlAnularNoCuentaComoBeneficioDeLaCasa` |
+
+R-11 (cambiar el workflow de la wiki) se descartó por decisión del equipo.
 
 Se dejaron como están a propósito: avisar en el registro de que un email ya existe (lo pide HU-11) y recuperar la contraseña, que no era un fallo sino una funcionalidad nueva (HU-17, hecha después).

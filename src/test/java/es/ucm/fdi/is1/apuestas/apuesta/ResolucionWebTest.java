@@ -160,6 +160,33 @@ class ResolucionWebTest {
         assertThat(saldo(LUIS)).isEqualByComparingTo("1000");
     }
 
+    /**
+     * Un resultado metido por error en un partido que luego no vale: anularlo quita el resultado, devuelve el
+     * importe a todos y descuenta lo que ya se había pagado al ganador.
+     */
+    @Test
+    void anularUnEventoFinalizadoDeshaceLosPagos() throws Exception {
+        mvc.perform(post("/gestion/eventos/{id}/resultado", futbol.getId()).with(CREADOR).with(csrf())
+                .param("resultado", "LOCAL"));
+        assertThat(saldo(ANA)).isGreaterThan(new BigDecimal("1000"));
+
+        mvc.perform(post("/gestion/eventos/{id}/anular", futbol.getId()).with(CREADOR).with(csrf()))
+                .andExpect(flash().attributeExists("mensaje"));
+
+        Evento anulado = eventos.findById(futbol.getId()).orElseThrow();
+        assertThat(anulado.getEstado()).isEqualTo(EstadoEvento.ANULADO);
+        assertThat(anulado.getResultado()).isNull();
+        assertThat(deAna.getEstado()).isEqualTo(EstadoApuesta.ANULADA);
+        assertThat(deLuis.getEstado()).isEqualTo(EstadoApuesta.ANULADA);
+        assertThat(saldo(ANA)).isEqualByComparingTo("1000");
+        assertThat(saldo(LUIS)).isEqualByComparingTo("1000");
+
+        // Anularlo otra vez no hace nada más que avisar
+        mvc.perform(post("/gestion/eventos/{id}/anular", futbol.getId()).with(CREADOR).with(csrf()))
+                .andExpect(flash().attribute("error", containsString("ya está anulado")));
+        assertThat(saldo(ANA)).isEqualByComparingTo("1000");
+    }
+
     @Test
     void elCreadorVeCuantoSeHaApostadoACadaResultado() throws Exception {
         mvc.perform(get("/gestion/eventos/{id}", futbol.getId()).with(CREADOR))

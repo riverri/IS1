@@ -2,6 +2,7 @@ package es.ucm.fdi.is1.apuestas.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -38,6 +39,14 @@ public class SeguridadConfig {
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
                         .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login", "/recuperar", "/recuperar/nueva",
                                 "/css/**", "/error").permitAll()
+                        // Clic en un anuncio interno (HU-60): los visitantes también los ven
+                        .requestMatchers("/anuncios/*/ir").permitAll()
+                        // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
+                        .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
+                        // Criptomonedas (HU-69): la lista y cada cripto son públicas; la cartera, comprar y vender no.
+                        // Va primero la cartera porque "/cripto/*" también la abarcaría
+                        .requestMatchers("/cripto/cartera").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/cripto", "/cripto/*").permitAll()
                         // hasRole("CREADOR") comprueba que el usuario tenga el rol CREADOR (ver usuarios.Rol)
                         // Consola de la base de datos (solo existe en local): únicamente para el creador
                         .requestMatchers("/h2-console/**").hasRole("CREADOR")

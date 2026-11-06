@@ -29,9 +29,14 @@ Al principio Hibernate creaba las tablas desde las entidades. Cuando los datos e
 | `V8__ligas_y_mas_apuestas` | Tablas `liga` y `liga_miembro`; goles en el evento; tipo especial en la selección |
 | `V9__concurrencia_y_suspensiones` | `version` en el usuario y `suspendido_por_api` en el evento |
 | `V10__recuperar_contrasena` | Tabla `token_recuperacion` (enlaces para recuperar la contraseña) |
+| `V11__movimientos_saldo` | Tabla `movimiento_saldo` (libro de movimientos del saldo, HU-55), con el saldo que ya tenía cada cuenta |
+| `V12__anuncios` | Tablas `anuncio`, `anuncio_ubicacion` y `clic_anuncio` (HU-60 a HU-62), con cuatro anuncios de partida |
+| `V13__casino` | Tablas `partida` y `configuracion_casino` (HU-56 a HU-59); nuevos tipos de movimiento y la sección CASINO para los anuncios |
+| `V14__mercados_prediccion` | Tablas `mercado_prediccion`, `posicion_prediccion` y `operacion_prediccion` (HU-63 a HU-68), con dos mercados de ejemplo |
+| `V15__cartera_cripto` | Tablas `criptomoneda`, `precio_cripto`, `posicion_cripto`, `operacion_cripto` y `configuracion_cripto` (HU-69 a HU-73), con diez criptos de partida (siete memecoins) y su anuncio; nuevos tipos de movimiento y la sección CRIPTO para los anuncios |
 
 ## Reglas
 - Los scripts están en `db/migration/h2/` y `db/migration/postgresql/`. En PostgreSQL, `V8__esquema_postgresql.sql` crea todo lo de V1–V8 de golpe; desde V9 van los mismos scripts en las dos carpetas.
-- Si cambias una entidad, crea un script nuevo (`V11__descripcion.sql`) **en las dos carpetas**.
+- Si cambias una entidad, crea un script nuevo (`V16__descripcion.sql`) **en las dos carpetas**.
 - **Nunca modifiques un script que ya está en `main`**: otros ordenadores ya lo aplicaron.
 - Con `ddl-auto=validate`, si falta una migración la aplicación no arranca y dice qué columna falta. Las pruebas lo detectan antes.

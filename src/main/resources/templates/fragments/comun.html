@@ -23,9 +23,12 @@
         <nav class="menu" aria-label="Principal">
             <a th:href="@{/eventos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'activo'">Eventos</a>
             <a th:href="@{/mercados}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/mercados')} ? 'activo'">Largo plazo</a>
+            <a th:href="@{/predicciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/predicciones')} ? 'activo'">Predicciones</a>
+            <a th:href="@{/cripto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/cripto')} ? 'activo'">Cripto</a>
             <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
             <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas')} ? 'activo'">Ligas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'">Casino</a>
             <a th:if="${usuarioActual != null}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
             <a th:if="${usuarioActual != null}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>
@@ -52,6 +55,10 @@
     <p class="aviso-pausa" th:if="${pausaHasta != null}">
         <a th:href="@{/cuenta#juego-responsable}" th:text="'Apuestas en pausa hasta el ' + ${#temporals.format(pausaHasta, 'dd/MM/yyyy HH:mm')}">Apuestas en pausa hasta el 09/10/2026 18:00</a>
     </p>
+    <!-- Anuncio interno de otra sección (HU-60): lo elige AnunciosAdvice según la página -->
+    <div class="anuncio-contenedor" th:if="${anuncio != null}">
+        <a th:replace="~{fragments/anuncio :: anuncio(${anuncio})}"></a>
+    </div>
     <p class="aviso-flotante" th:if="${mensajeBoleto != null}" th:text="${mensajeBoleto}">Añadido al boleto</p>
     <p class="aviso-flotante aviso-flotante-error" th:if="${errorBoleto != null}" th:text="${errorBoleto}">Error</p>
     <a class="barra-boleto" th:if="${boletoResumen != null and !#lists.isEmpty(boletoResumen.lineas) and ocultarBarraBoleto == null}" th:href="@{/boleto}">

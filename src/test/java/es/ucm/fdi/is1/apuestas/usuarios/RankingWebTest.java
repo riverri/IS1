@@ -17,6 +17,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.Hora;
+
 /** HU-36: ranking de usuarios. */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,7 +37,7 @@ class RankingWebTest {
     @Test
     void ordenaPorSaldoYNoIncluyeAlCreador() throws Exception {
         usuarios.crear("rica@ucm.es", "Rica", "secreta123", Rol.USUARIO);
-        repositorio.findByEmail("rica@ucm.es").orElseThrow().abonar(new BigDecimal("500"));
+        repositorio.findByEmail("rica@ucm.es").orElseThrow().abonar(new BigDecimal("500"), TipoMovimiento.RECARGA, "Saldo de prueba", Hora.ahora());
 
         mvc.perform(get("/ranking"))
                 .andExpect(status().isOk())

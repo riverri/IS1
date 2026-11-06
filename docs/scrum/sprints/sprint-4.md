@@ -23,7 +23,9 @@
 | — | Revisión de la documentación frente a la teoría de la asignatura | — | | David Ortega |
 | | **Total** | **47** | | |
 
-Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Igual que HU-55 a HU-73, son una propuesta: su código no se sube a `main` hasta que el Product Owner las apruebe y otro miembro del equipo lo revise.
+Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: su código no se sube a `main` hasta que el Product Owner las apruebe y otro miembro del equipo lo revise.
+
+**Cambio del 06/11:** David Ortega decidió integrar en `main` el código de los PR #86 a #90 (HU-55 a HU-73) sin esperar a que el Product Owner aprobara sus historias ni a la revisión de otro miembro. Antes se arreglaron, cada uno con su prueba, los cuatro fallos que la revisión del Sprint 3 había encontrado en ese código (ver [Revisión de fallos](https://github.com/riverri/IS1/wiki/Revisi%C3%B3n-de-fallos)). Las 19 historias quedan como **integradas**: en `main` y probadas, pero sin aceptar en una review.
 
 El plan de riesgos pedía revisar el código pendiente antes de añadir funcionalidades nuevas (R20, R21). Por eso las correcciones de la revisión se suben antes que cualquier historia nueva.
 
@@ -35,8 +37,8 @@ Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https:
 ## Sprint Review (17/11)
 > Se completa en la review. A 06/11 consta en el repositorio:
 
-- **Historias completadas:** ninguna en `main` todavía.
-- **Preparado para revisar:** las correcciones de la revisión de código, las ramas #86 a #90 integradas, el código de HU-74 a HU-84 y esta documentación. Cada parte se sube en su propio pull request.
+- **Historias completadas:** ninguna aceptada todavía. HU-55 a HU-73 están integradas en `main` desde el 06/11, junto con las correcciones de la revisión de código, en un solo pull request.
+- **Preparado para revisar:** las 19 historias integradas, el código de HU-74 a HU-84 (aún no subido) y esta documentación.
 - **Horas reales frente a estimadas:** _cada responsable_
 - **Comentarios del Product Owner:** _en la review_
 
@@ -45,7 +47,7 @@ Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https:
 ### Seguimiento de las acciones del Sprint 3
 | Acción del Sprint 3 | ¿Se cumplió? |
 |---|---|
-| Ningún pull request entra en `main` sin la aprobación de otro miembro | **No, por ahora.** El 04/11 entraron en `main` tres cambios del acta del Sprint 3 sin pull request, y el 06/11 esta revisión de la documentación. Se vuelve a comprobar al cerrar el sprint |
+| Ningún pull request entra en `main` sin la aprobación de otro miembro | **No, por ahora.** El 04/11 entraron en `main` tres cambios del acta del Sprint 3 sin pull request; el 06/11, esta revisión de la documentación, también sin pull request, y el pull request de la integración de #86 a #90, sin la aprobación de otro miembro. Se vuelve a comprobar al cerrar el sprint |
 | Issues con milestone, responsable y horas; horas reales; dailies en el acta | Los milestones se sustituyen por el grafo del equipo ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)). Horas reales y dailies: _al cerrar el sprint_ |
 | Apuntar en el acta los riesgos que suben o bajan | **Sí.** Ver el apartado siguiente |
 | Primer simulacro de defensa | _En la review del 17/11_ |
@@ -57,7 +59,8 @@ Según el [plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgo
 |---|---|---|---|
 | R21 · Perder la noción de lo que desarrolla la IA | Sube | En este sprint se han programado con IA 11 historias nuevas, unas 4.500 líneas | No se suben sin la revisión de otro miembro que sepa explicarlas |
 | R01 · Participación desigual | Sube | Hasta ahora, todo el trabajo del sprint es de una persona | Repartir entre los cinco la revisión de los pull requests de código |
-| R04 · Alcance excesivo | Sube | Hay 30 historias propuestas (HU-55 a HU-84) pendientes del Product Owner | Que el Product Owner elija cuáles entran antes de subir su código |
+| R04 · Alcance excesivo | Sube | 19 historias integradas sin aprobar (HU-55 a HU-73) y 11 propuestas (HU-74 a HU-84) | Que el Product Owner elija cuáles entran antes de subir el código de HU-74 a HU-84 |
+| R16 · Algo que el Product Owner no valora | Sube | HU-55 a HU-73 están en `main` sin que el Product Owner las haya aprobado | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
 | R10 · Directo y cash-out difíciles | Baja | El cash-out (HU-75) está programado sin apuestas en directo | — |
 | R06 · Documentación que no refleja la realidad | Baja | Se han corregido las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
 

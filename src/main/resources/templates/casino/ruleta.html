@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Ruleta')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <div class="tarjeta tarjeta-formulario">
+        <h1>🎡 Ruleta europea</h1>
+        <p class="subtitulo">37 números (del 0 al 36). Pleno 35 a 1; color, par o impar 1 a 1; docena 2 a 1.
+            Si sale el 0, solo gana un pleno al 0.</p>
+
+        <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+        <div class="resultado-ruleta tarjeta" th:if="${tirada != null}" th:classappend="${tirada.ganada} ? 'gana' : 'pierde'">
+            <strong th:text="${tirada.resultado}">Salió el 17 (negro)</strong>
+            <span th:if="${tirada.ganada}"
+                  th:text="'¡Has ganado! Cobras ' + ${#numbers.formatDecimal(tirada.premio, 1, 'POINT', 2, 'COMMA')} + ' monedas.'">¡Has ganado! Cobras 20,00 monedas.</span>
+            <span th:unless="${tirada.ganada}"
+                  th:text="'Tu apuesta (' + ${tirada.apuesta} + ') no ha salido. Pierdes ' + ${#numbers.formatDecimal(tirada.apostado, 1, 'POINT', 2, 'COMMA')} + ' monedas.'">Tu apuesta (Rojo) no ha salido.</span>
+        </div>
+
+        <form class="formulario" th:action="@{/casino/ruleta}" method="post">
+            <fieldset>
+                <legend>Apuesta</legend>
+                <label class="casilla" th:each="a : ${apuestas}">
+                    <input type="radio" name="tipo" th:value="${a}" th:checked="${tipoElegido == a}">
+                    <span th:text="${a.nombre}">Rojo</span>
+                </label>
+            </fieldset>
+            <label for="numero">Número (solo para el pleno)</label>
+            <input id="numero" name="numero" type="number" min="0" max="36" th:value="${numeroElegido}">
+            <label for="importe" th:text="'Importe (de ' + ${#numbers.formatDecimal(configuracion.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' a ' + ${#numbers.formatDecimal(configuracion.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ')'">Importe</label>
+            <input id="importe" name="importe" type="number" step="0.01" min="0.01" th:value="${importeElegido}" required>
+            <div class="acciones-formulario">
+                <button class="boton" type="submit">Girar la ruleta</button>
+                <a class="boton boton-secundario" th:href="@{/casino}">Volver</a>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

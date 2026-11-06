@@ -172,7 +172,8 @@ public class ApuestaController {
             redireccion.addFlashAttribute("mensaje", "Apuesta cancelada. Se te han devuelto "
                     + apuesta.getImporte().toPlainString().replace('.', ',') + " monedas.");
         } catch (IllegalStateException e) {
-            redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede cancelar: el evento ha empezado.");
+            // El mensaje lo da Apuesta.motivoNoCancelable: partido empezado, mercado cerrado o apuesta no activa
+            redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede cancelar: " + e.getMessage() + ".");
         }
         return "redirect:/apuestas";
     }
@@ -180,9 +181,12 @@ public class ApuestaController {
     /**
      * POST /apuestas/{id}/importe: cambia el importe de una apuesta activa (HU-27) y vuelve a Mis apuestas
      * con la nueva cuota y la nueva ganancia potencial, o con el error.
+     * {@code cuotaVista} es la cuota total que el usuario tenía en pantalla: si la actual es otra, no se cambia
+     * nada y se le enseña la nueva; al volver a guardar, el formulario ya lleva la nueva (HU-29).
      */
     @PostMapping("/apuestas/{id}/importe")
     public String modificarImporte(@PathVariable Long id, @RequestParam(required = false) BigDecimal importe,
+                                   @RequestParam(required = false) BigDecimal cuotaVista,
                                    Principal principal, RedirectAttributes redireccion) {
         // Las mismas reglas que @DecimalMin y @Digits de ApuestaForm, a mano porque aquí no hay formulario.
         // stripTrailingZeros().scale() = número de decimales sin contar los ceros finales (5,10 → 1 decimal)
@@ -191,15 +195,23 @@ public class ApuestaController {
             return "redirect:/apuestas";
         }
         try {
-            Apuesta apuesta = apuestas.modificarImporte(principal.getName(), id, importe);
+            Apuesta apuesta = apuestas.modificarImporte(principal.getName(), id, importe, cuotaVista);
             redireccion.addFlashAttribute("mensaje", "Importe cambiado a "
                     + apuesta.getImporte().toPlainString().replace('.', ',') + " monedas con cuota "
                     + apuesta.getCuota().toPlainString().replace('.', ',') + ". Si aciertas cobras "
                     + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
+        } catch (CuotaApuestaCambiadaException e) {
+            // Se le enseña la cuota nueva; la plantilla la pone en el formulario de esa apuesta (y lo deja abierto)
+            redireccion.addFlashAttribute("aviso", "La cuota de tu apuesta ha cambiado: ahora es "
+                    + e.getCuotaNueva().toPlainString().replace('.', ',')
+                    + ". Si te parece bien, vuelve a guardar el importe.");
+            redireccion.addFlashAttribute("cuotaNuevaId", id);
+            redireccion.addFlashAttribute("cuotaNueva", e.getCuotaNueva());
+            redireccion.addFlashAttribute("importeNuevo", importe);
         } catch (SaldoInsuficienteException e) {
             redireccion.addFlashAttribute("error", "No tienes saldo suficiente para subir el importe");
         } catch (IllegalStateException e) {
-            redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede modificar: el evento ha empezado.");
+            redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede modificar: " + e.getMessage() + ".");
         } catch (IllegalArgumentException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }

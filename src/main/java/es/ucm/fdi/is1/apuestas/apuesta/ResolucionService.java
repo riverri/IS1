@@ -1,6 +1,8 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +31,16 @@ public class ResolucionService {
     private final SeleccionRepository selecciones;
     private final AvisosApuestas avisos;
     private final CalculadoraCuotas calculadora;
+    /** Fecha de los movimientos de saldo que dejan los pagos (HU-55). */
+    private final Clock reloj;
 
     public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones, AvisosApuestas avisos,
-                             CalculadoraCuotas calculadora) {
+                             CalculadoraCuotas calculadora, Clock reloj) {
         this.eventos = eventos;
         this.selecciones = selecciones;
         this.avisos = avisos;
         this.calculadora = calculadora;
+        this.reloj = reloj;
     }
 
     /** El evento en cualquier estado; EventoNoDisponibleException si no existe. */
@@ -79,12 +84,13 @@ public class ResolucionService {
     private int resolverApuestas(Evento evento) {
         // Por selección y no por apuesta: así salen también las combinadas que incluyen este evento
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
         // for-each: "para cada selección de la lista afectadas"
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             // Se guarda el estado anterior para avisar solo si cambia (HU-37)
             EstadoApuesta antes = apuesta.getEstado();
-            apuesta.resolver(evento, evento.getResultado());
+            apuesta.resolver(evento, evento.getResultado(), ahora);
             avisos.siCambia(apuesta, antes);
         }
         return afectadas.size();
@@ -110,20 +116,22 @@ public class ResolucionService {
 
     /**
      * Anula el evento y devuelve el importe de sus apuestas simples activas (HU-05). En una combinada, la
-     * selección cuenta con cuota 1,00 y el resto sigue en juego (CA-30.3).
+     * selección cuenta con cuota 1,00 y el resto sigue en juego (CA-30.3). Si el evento ya estaba finalizado,
+     * las apuestas ya resueltas se recalculan igual: lo ya pagado se ajusta con {@code Apuesta.pagado}.
      *
-     * @throws IllegalStateException si el evento ya estaba finalizado o anulado
+     * @throws IllegalStateException si el evento ya estaba anulado
      */
     @Transactional
     public int anular(Long eventoId) {
         Evento evento = evento(eventoId);
         evento.anular();
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
         // Cada apuesta decide: devuelve el importe si es simple, o sigue con cuota 1,00 si es combinada
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             EstadoApuesta antes = apuesta.getEstado();
-            apuesta.anular(evento);
+            apuesta.anular(evento, ahora);
             avisos.siCambia(apuesta, antes);
         }
         return afectadas.size();

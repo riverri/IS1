@@ -40,7 +40,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── requisitos/
 │   │   ├── vision.md                  # Visión del producto
 │   │   ├── historias-de-usuario.md    # Historias de usuario con sus criterios de aceptación
-│   │   ├── historias-ampliacion-propuestas.md  # Historias de la ampliación (HU-55 a HU-84), pendientes del PO
+│   │   ├── historias-ampliacion-propuestas.md  # Historias del Sprint 4 (HU-74 a HU-84), pendientes del PO
 │   │   └── trazabilidad.md            # Qué prueba comprueba cada criterio de aceptación
 │   ├── scrum/
 │   │   ├── proceso.md                 # Cómo aplicamos Scrum
@@ -132,6 +132,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | `USUARIO_PASSWORD` | Opcional: crea también `usuario@apuestas.es` con esta contraseña. |
 | `FOOTBALL_DATA_TOKEN` | Opcional: la clave de la API para los partidos reales. |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: servidor de correo para enviar el enlace de recuperar la contraseña (ver abajo). |
+| `URL_PUBLICA` | Opcional: dirección de la web para el enlace de recuperar la contraseña. En Render no hace falta (se usa la que da Render). |
 
 3. Despliega. La primera vez tarda unos minutos. Las tablas las crea Flyway solo, y queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
 
@@ -165,8 +166,17 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
+| `/cuenta/movimientos` | Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-53 |
+| `/gestion/anuncios` | Anuncios internos: alta, edición, activar o desactivar, con sus impresiones, clics y porcentaje de clics | HU-61, HU-62 |
+| `/anuncios/{id}/ir` | Clic en un anuncio: lo apunta y lleva a su sección (lo pintan las páginas debajo de la cabecera) | HU-60, HU-62 |
+| `/casino` | Casino con moneditas: ruleta europea (`/casino/ruleta`), blackjack (`/casino/blackjack`) y mis partidas (`/casino/historial`) | HU-56, HU-57, HU-58 |
+| `/gestion/casino` | Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
+| `/predicciones` | Mercados de predicción de sí o no: precio de 0 a 1, comprar y vender participaciones, estadísticas, gráfico y posiciones de los compañeros de liga (`/predicciones/{id}`) | HU-64 a HU-68 |
+| `/gestion/predicciones` | Crear, cerrar, anular y resolver los mercados de predicción | HU-63, HU-66 |
+| `/cripto` | Criptomonedas a su precio real en euros (CoinGecko), memecoins primero; comprar y vender con moneditas y gráfico de la semana (`/cripto/{símbolo}`), y mi cartera (`/cripto/cartera`) | HU-69 a HU-72 |
+| `/gestion/cripto` | Abrir o cerrar las criptomonedas, comisión, validez de los precios, qué criptos se ofrecen y descargar los precios en el momento | HU-73 |
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 
@@ -187,8 +197,8 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 ## Base de datos y migraciones (Flyway)
 
 Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar. Hay una carpeta por base de datos:
-- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V10__recuperar_contrasena.sql`.
-- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`, `V10__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
+- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V15__cartera_cripto.sql`.
+- `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`, `V10__…`, `V11__…`, `V12__…`, `V13__…`, `V14__…`, `V15__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):
 1. Crea un script nuevo con el número siguiente, por ejemplo `V11__descripcion_del_cambio.sql`, con el `alter table` o `create table` necesario, **en las dos carpetas** (`h2/` y `postgresql/`). La sintaxis puede cambiar un poco: H2 usa `enum (...)` y PostgreSQL `varchar` con `check`.
@@ -224,6 +234,7 @@ En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para c
   1. Crea una *contraseña de aplicación* en https://myaccount.google.com/apppasswords.
   2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación` (en IntelliJ o en Render).
 - La respuesta al pedir el enlace es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
+- El enlace apunta siempre a la dirección configurada (`apuestas.url-publica`), nunca a la que llega en la petición: así nadie puede falsear las cabeceras para que el correo lleve a otra web. En local es `http://localhost:8080`; en Render, la de Render; con el túnel, define `URL_PUBLICA` con el enlace `https://…trycloudflare.com`.
 
 ## Cómo empezar
 

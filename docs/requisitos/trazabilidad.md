@@ -9,14 +9,17 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 ## Resumen
 
-| Historias hechas | Criterios | Automática | Manual | Sin prueba |
+| Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 45 | 97 | 93 (96 %) | 4 | 0 |
+| 45 hechas | 97 | 93 (96 %) | 4 | 0 |
+| 19 integradas (HU-55 a HU-73) | 48 | 48 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
+
+**Integradas el 06/11:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 48 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -116,6 +119,14 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-14.1 | Al registrarse se recibe el saldo de bienvenida | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroCreaLaCuentaConElSaldoDeBienvenida`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.empiezaConElSaldoDeBienvenida` |
 | CA-14.2 | Pasado el periodo se recibe una recarga, una sola vez | Automática | [`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.noRecargaAntesDeQuePaseElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.recargaCuandoHaPasadoElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.soloRecargaUnaVezPorPeriodo` |
+
+## HU-55 · Movimientos del saldo
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-55.1 | Cada cambio del saldo deja un movimiento con tipo, importe con signo, saldo resultante, concepto y fecha | Automática | [`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.cadaCambioApuntaSuImporteConSignoYElSaldoQueQueda`<br>[`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.elSaldoDeBienvenidaEsElPrimerMovimiento`<br>[`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.laBajaDejaElSaldoACeroConSuMovimientoYDespuesNoEntraNada`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.apostarYCobrarDejanSusMovimientos`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.cancelarYCorregirUnResultadoTambienSeApuntan`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.laBajaDejaElSaldoACeroEnElLibro` |
+| CA-55.2 | En Mi cuenta → Movimientos se ven del más reciente al más antiguo y el último cuadra con el saldo | Automática | [`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.laPaginaMuestraLosMovimientosDelMasRecienteAlMasAntiguo`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.sinSesionLlevaAlLogin` |
+| CA-55.3 | Si la operación falla, no queda movimiento ni cambia el saldo | Automática | [`MovimientoSaldoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/MovimientoSaldoTest.java)`.sinSaldoNoSeCobraNiQuedaMovimiento`<br>[`MovimientosSaldoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/MovimientosSaldoWebTest.java)`.unaApuestaQueFallaNoDejaMovimiento` |
 
 ## HU-17 · Recuperar la contraseña
 
@@ -341,3 +352,138 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-53.1 | Se ven el apostado, el pagado, el beneficio y el margen real frente al teórico | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio`<br>[`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.elCreadorVeElPanelYUnUsuarioNo` |
 | CA-53.2 | Se ve el desglose por tipo de apuesta y por deporte | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio` |
+
+## HU-60 · Anuncios de otras secciones
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-60.1 | Sale uno de los de prioridad más alta y se turnan entre los de la misma prioridad | Automática | [`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.seEligeUnoDeLosDePrioridadMasAltaYSeTurnan`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.unVisitanteVeElAnuncioPublicoDeMasPrioridadYCuentaLaImpresion` |
+| CA-60.2 | Nunca sale el anuncio de la sección en la que se está | Automática | [`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.nuncaSeMuestraElDeLaSeccionEnLaQueEstas`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.enUnaSeccionNuncaSaleSuPropioAnuncio` |
+| CA-60.3 | Al pulsarlo se va a su sección; los de secciones con sesión no se enseñan a los visitantes | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.alPulsarlo_apuntaElClicYLlevaASuSeccion`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.unVisitanteTambienPuedePulsarlo`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.losQueLlevanASeccionesConSesionNoSeEnsenanALosVisitantes` |
+
+## HU-61 · Gestionar los anuncios
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-61.1 | Un anuncio nuevo sale en sus secciones mientras esté activo y en fechas | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.elCreadorCreaUnAnuncioQueSaleEnSusSecciones`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.unAnuncioDesactivadoNoSaleNiCuenta`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.respetaLasFechasYSiEstaActivo` |
+| CA-61.2 | Un destino de otra web o desconocido se rechaza | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.noSeAdmitenDestinosDeFueraNiSinSecciones`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.soloLlevaASeccionesDeLaWeb`<br>[`AnuncioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnuncioTest.java)`.cadaRutaPerteneceASuSeccion` |
+
+## HU-62 · Medir los clics de cada anuncio
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-62.1 | Cada clic queda apuntado y en Gestión se ven impresiones, clics y porcentaje | Automática | [`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.alPulsarlo_apuntaElClicYLlevaASuSeccion`<br>[`AnunciosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/anuncios/AnunciosWebTest.java)`.enGestionSeVenLasImpresionesYLosClicsYSePuedeDesactivar` |
+
+## HU-56 · Ruleta europea
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-56.1 | El servidor elige el número, se cobra y se paga pleno 35:1, color o par/impar 1:1 y docena 2:1 | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.acertarElColorPagaElDobleYQuedaEnLosMovimientos`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unPlenoPaga35a1`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laRuletaDesdeLaPaginaEnsenaElResultadoYElHistorialLoGuarda`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.cadaApuestaGanaConSusNumeros`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.laCasaGanaUnoDeCadaTreintaYSieteALaLarga`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.conMuchasTiradasSaleCadaNumeroMasOMenosLasMismasVeces` |
+| CA-56.2 | Con el 0 se pierden el color, par/impar y la docena | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.conElCeroSePierdeElColor`<br>[`RuletaTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/RuletaTest.java)`.conElCeroSoloGanaElPlenoAlCero` |
+| CA-56.3 | Sin saldo, fuera de límites, en pausa o pasado de los límites personales no se juega ni se cobra | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.fueraDeLimitesSinSaldoOEnPausaNoSeJuegaNiSeCobra`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.loJugadoEnElCasinoCuentaEnLosLimitesPersonales`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorNoJuega` |
+
+## HU-57 · Blackjack
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-57.1 | Se cobra y de la banca solo se ve una carta; la otra no llega al navegador | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoDeBlackjackCobraUnaVezYNoEnsenaLaCartaOculta` |
+| CA-57.2 | Un blackjack paga 3:2 (o lo configurado) | Automática | [`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.unBlackjackAlRepartirTerminaLaMano`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.siLosDosTienenBlackjackEsEmpate`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.alPlantarseSePagaSegunElResultado` |
+| CA-57.3 | Doblar cobra otra vez la apuesta, da una carta y termina la mano | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.doblarCobraOtraVezLaApuestaYTerminaLaMano`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.doblarDaUnaSolaCartaYTerminaLaMano`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.soloSeDoblaConLasDosPrimerasCartasYNoSeJuegaUnaManoTerminada` |
+| CA-57.4 | Pasarse de 21 pierde; al plantarse juega la banca y se paga 1:1 o se devuelve si hay empate | Automática | [`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.siSePasaDeVeintiunoPierdeYLaBancaNoJuega`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.alPlantarseLaBancaPideHastaDiecisiete`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.conDiecisieteBlandoLaBancaSoloPideSiLaReglaLoDice`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.siLaBancaSePasaGanaElJugador`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.losAsesValenOnceMientrasNoSePase`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.alPlantarseSePagaSegunElResultado` |
+| CA-57.5 | Recargar o pulsar dos veces sigue con la misma mano sin cobrar otra vez | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoDeBlackjackCobraUnaVezYNoEnsenaLaCartaOculta`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoTerminadaNoSeSigueJugando`<br>[`ManoBlackjackTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBlackjackTest.java)`.laManoSeGuardaYSeRecuperaTalCual` |
+
+## HU-58 · Historial de partidas del casino
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-58.1 | Se ven las partidas con juego, fecha, apuesta, resultado, importe y balance | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laRuletaDesdeLaPaginaEnsenaElResultadoYElHistorialLoGuarda` |
+
+## HU-59 · Configurar el casino
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-59.1 | Los límites y las reglas del blackjack se guardan y se ve la ventaja teórica | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorCambiaLasReglasYPuedeCerrarElCasino`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elMaximoNoPuedeSerMenorQueElMinimo`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.laPortadaDelCasinoEnsenaLosJuegosYLaVentaja`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elPanelDeLaCasaIncluyeElCasino` |
+| CA-59.2 | Con el casino cerrado nadie puede jugar | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCreadorCambiaLasReglasYPuedeCerrarElCasino`<br>[`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elCasinoExigeSesionYNoLoVeElCreador` |
+
+## HU-63 · Crear, cerrar y anular mercados de predicción
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-63.1 | Un mercado nuevo queda abierto con los dos lados a 0,50 | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.unMercadoNuevoEmpiezaAlCincuentaPorCiento`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.elCreadorCreaCierraYResuelveDesdeGestion`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.empiezaAlCincuentaPorCientoYLosPreciosSumanUno` |
+| CA-63.2 | Cerrado (o pasada su fecha) no admite compras ni ventas | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.noSeCompraSinSaldoFueraDeLimitesNiEnUnMercadoCerrado`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.elCreadorCreaCierraYResuelveDesdeGestion` |
+| CA-63.3 | Al anular se devuelve lo pagado menos lo recuperado vendiendo | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.alAnularSeDevuelveLoPuestoMenosLoRecuperado` |
+
+## HU-64 · Comprar participaciones
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-64.1 | Se ve la previsión, se cobra el importe y sube el precio | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.comprarCobraElImporteDaParticipacionesYSubeElPrecio`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.laPrevisionEnsenaCuantasParticipacionesSeRecibirian`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.comprarCuestaLoQueSubeLaFuncionDeCoste`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.cadaParticipacionCuestaMenosDeUnaMonedita` |
+| CA-64.2 | Sin saldo, fuera de límites, mercado cerrado o juego responsable: no se compra | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.noSeCompraSinSaldoFueraDeLimitesNiEnUnMercadoCerrado`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.elJuegoResponsableTambienCuenta`<br>[`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.comprarExigeSesion` |
+| CA-64.3 | Si el precio cambia se pide confirmar otra vez | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.siElPrecioCambiaSePideConfirmarOtraVez` |
+
+## HU-65 · Vender participaciones
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-65.1 | Se recibe el valor menos la comisión y baja el precio | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.venderDevuelveSuValorMenosLaComisionYBajaElPrecio`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.venderLoQueSeAcabaDeComprarDevuelveLoMismo` |
+| CA-65.2 | No se venden más participaciones de las que se tienen | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.noSePuedeVenderMasDeLoQueSeTiene` |
+
+## HU-66 · Resolver el mercado y pagar
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-66.1 | Cada participación ganadora paga 1 monedita, con movimiento y aviso | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.alResolverseCadaParticipacionGanadoraPagaUnaMonedita`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.laCasaNoPierdeMasDeBPorLogaritmoDeDos` |
+| CA-66.2 | Corregir la respuesta ajusta los saldos por la diferencia | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.corregirLaRespuestaAjustaLosSaldosPorLaDiferencia` |
+
+## HU-67 · Estadísticas y evolución del precio
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-67.1 | Cualquiera ve precio, volumen, participantes y el gráfico del precio | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.unVisitanteVeElPrecioLasEstadisticasYElGrafico`<br>[`LmsrTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/LmsrTest.java)`.noSeDesbordaConMuchasParticipaciones` |
+
+## HU-68 · Posiciones de mis compañeros de liga
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-68.1 | Se ven las posiciones de quienes comparten liga | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.veoLasPosicionesDeMisCompanerosDeLigaYNoLasDeLosDemas` |
+| CA-68.2 | Quien no comparte liga no las ve | Automática | [`PrediccionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/prediccion/PrediccionWebTest.java)`.veoLasPosicionesDeMisCompanerosDeLigaYNoLasDeLosDemas` |
+
+## HU-69 · Ver criptomonedas a su precio real
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-69.1 | Las memecoins van primero, con su precio y variación, y se destaca la que más se mueve | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laListaEsPublicaConLasMemecoinsPrimeroYElAvisoDeRiesgo`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.lasMemecoinsVanPrimeroYAvisanDeRiesgoMuyAlto` |
+| CA-69.2 | La ficha enseña el gráfico de la semana | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laFichaDibujaElGraficoDeLaSemana` |
+| CA-69.3 | Siempre se ve el aviso de riesgo | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laListaEsPublicaConLasMemecoinsPrimeroYElAvisoDeRiesgo` |
+| CA-69.4 | Los precios se descargan de CoinGecko y se guardan | Automática | [`CoinGeckoClienteTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CoinGeckoClienteTest.java)`.pideTodosLosPreciosEnEurosEnUnaSolaPeticionYLeeLaRespuesta`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.actualizarGuardaElPrecioYLaVariacionDeCadaCripto` |
+
+## HU-70 · Comprar criptomonedas con moneditas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-70.1 | Se ve la previsión y al confirmar se cobra con su movimiento | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarCobraElImporteConComisionYApuntaElMovimiento`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laFichaEsPublicaYEnsenaLaPrevisionDeCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.conMemecoinsDeFraccionesDeCentimoSeCompranMillonesDeUnidades`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarDesdeLaWebYVerLaCartera` |
+| CA-70.2 | Sin saldo, fuera de límites, el creador o el juego responsable: no se compra | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.sinSaldoFueraDeLimitesOEnPausaNoSeCompraNiSeCobra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.loCompradoCuentaEnLosLimitesPersonales`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.laCarteraYComprarExigenSesion` |
+| CA-70.3 | Si el precio cambia se pide confirmar otra vez | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.siElPrecioHaCambiadoOnoEstaAlDiaNoSeCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.conElPrecioCambiadoLaWebVuelveALaPrevision` |
+| CA-70.4 | Sin precio al día no se compra | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.siElPrecioHaCambiadoOnoEstaAlDiaNoSeCompra`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.unPrecioSoloSirveDuranteLosMinutosConfigurados` |
+
+## HU-71 · Vender criptomonedas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-71.1 | Se recibe cantidad × precio menos la comisión y el coste baja en proporción | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.venderDevuelveElValorMenosLaComisionYBajaElCosteEnProporcion`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.venderUnaParteBajaElCosteEnProporcionYVenderloTodoLoDejaACero` |
+| CA-71.2 | No se vende más de lo que se tiene | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.noSeVendeMasDeLoQueSeTieneNiLoQueNoSeTiene` |
+
+## HU-72 · Mi cartera de criptomonedas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-72.1 | La cartera enseña cantidad, valor, coste y ganancia | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarDesdeLaWebYVerLaCartera`<br>[`PosicionCriptoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/PosicionCriptoTest.java)`.elValorSigueAlPrecioYLaGananciaEsValorMenosCoste` |
+| CA-72.2 | Se ven las últimas operaciones | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.comprarDesdeLaWebYVerLaCartera` |
+
+## HU-73 · Configurar las criptomonedas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-73.1 | La configuración se guarda y con la sección cerrada nadie opera | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.soloElCreadorEntraEnLaGestionYVeLasCuentasEnElPanelDeLaCasa` |
+| CA-73.2 | Una cripto retirada no se compra, pero se puede vender | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.unaCriptoRetiradaNoSeCompraPeroQuienLaTieneLaPuedeVender` |
+| CA-73.3 | Los precios se descargan en el momento y se avisa si CoinGecko falla | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion` |
