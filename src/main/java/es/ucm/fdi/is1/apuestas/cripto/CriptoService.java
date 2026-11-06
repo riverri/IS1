@@ -72,20 +72,21 @@ public class CriptoService {
     // --- Precios ---
 
     /**
-     * Descarga los precios de las criptomonedas activas y los guarda (HU-69). La llamada a la API va fuera de la
+     * Descarga los precios de las criptomonedas activas y de las retiradas que alguien tiene todavía, y los guarda
+     * (HU-69). Sin precio al día, nadie podría vender una cripto retirada (CA-73.2). La llamada a la API va fuera de la
      * transacción: si tarda, no deja la base de datos esperando.
      *
      * @return cuántas criptomonedas tienen precio nuevo
      * @throws org.springframework.web.client.RestClientException si la API da error o no responde
      */
     public int actualizarPrecios() {
-        List<String> ids = transaccion.execute(estado -> criptos.findByActivaTrue().stream()
+        List<String> ids = transaccion.execute(estado -> criptos.conPrecio().stream()
                 .map(Criptomoneda::getIdApi).toList());
         Map<String, FuentePrecios.Precio> precios = fuente.precios(ids);
         LocalDateTime ahora = LocalDateTime.now(reloj);
         Integer actualizadas = transaccion.execute(estado -> {
             int cuantas = 0;
-            for (Criptomoneda cripto : criptos.findByActivaTrue()) {
+            for (Criptomoneda cripto : criptos.conPrecio()) {
                 FuentePrecios.Precio precio = precios.get(cripto.getIdApi());
                 if (precio == null || precio.eur() == null || precio.eur().signum() <= 0) {
                     continue;

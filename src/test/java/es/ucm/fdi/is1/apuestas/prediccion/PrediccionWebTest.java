@@ -234,6 +234,20 @@ class PrediccionWebTest {
     }
 
     @Test
+    void loDevueltoAlAnularNoCuentaComoBeneficioDeLaCasa() {
+        // Panel de la casa (HU-53): lo comprado en un mercado anulado se devuelve, no se lo queda la casa
+        BigDecimal antes = predicciones.cuentas().getBeneficio();
+        PosicionPrediccion posicion = predicciones.comprar(ANA, id(), Lado.SI, new BigDecimal("20"), null);
+        predicciones.vender(ANA, id(), Lado.SI, posicion.getParticipaciones().divide(BigDecimal.valueOf(4)), null);
+
+        predicciones.anular(id());
+
+        PrediccionService.CuentasPrediccion cuentas = predicciones.cuentas();
+        assertThat(cuentas.devoluciones()).isPositive();
+        assertThat(cuentas.getBeneficio()).isEqualByComparingTo(antes);
+    }
+
+    @Test
     void unVisitanteVeElPrecioLasEstadisticasYElGrafico() throws Exception {
         // HU-67, CA-67.1
         predicciones.comprar(ANA, id(), Lado.SI, new BigDecimal("20"), null);

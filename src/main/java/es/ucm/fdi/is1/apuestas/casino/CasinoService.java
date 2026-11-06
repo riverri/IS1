@@ -29,6 +29,8 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 @Service
 public class CasinoService {
 
+    private static final String CERRADO = "El casino está cerrado ahora mismo";
+
     private final PartidaRepository partidas;
     private final ConfiguracionCasinoRepository configuraciones;
     private final UsuarioRepository usuarios;
@@ -134,12 +136,18 @@ public class CasinoService {
 
     /**
      * Dobla: se cobra otra vez el mismo importe, recibe una carta y termina la mano (CA-57.3). Lo doblado cuenta para el
-     * juego responsable, pero no tiene que respetar el máximo por apuesta: es la misma apuesta.
+     * juego responsable, pero no tiene que respetar el máximo por apuesta: es la misma apuesta. Como cobra dinero nuevo,
+     * no se puede con el casino cerrado (CA-59.2); pedir carta y plantarse sí, para acabar la mano.
+     *
+     * @throws IllegalStateException si el casino está cerrado o la mano ya no tiene solo dos cartas
      */
     @Transactional
     public Partida doblar(String email, Long partidaId) {
         Partida partida = manoDe(email, partidaId);
         ManoBlackjack mano = partida.mano();
+        if (!configuracion().isActivo()) {
+            throw new IllegalStateException(CERRADO);
+        }
         if (!mano.isPuedeDoblar()) {
             throw new IllegalStateException("Solo se puede doblar con las dos primeras cartas");
         }
@@ -208,7 +216,7 @@ public class CasinoService {
     private Usuario cobrar(String email, BigDecimal importe, String concepto, LocalDateTime ahora) {
         ConfiguracionCasino configuracion = configuracion();
         if (!configuracion.isActivo()) {
-            throw new IllegalStateException("El casino está cerrado ahora mismo");
+            throw new IllegalStateException(CERRADO);
         }
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         if (usuario.isCreador()) {
