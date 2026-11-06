@@ -223,6 +223,24 @@ class CasinoWebTest {
     }
 
     @Test
+    void conElCasinoCerradoNoSeDoblaPeroSePuedeAcabarLaMano() {
+        // CA-59.2: doblar cobra dinero nuevo, así que no se puede con el casino cerrado; plantarse sí
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+        ConfiguracionCasino actual = casino.configuracion();
+        casino.cambiarConfiguracion(false, actual.getImporteMinimo(), actual.getImporteMaximo(), actual.getBarajas(),
+                actual.isBancaPideCon17Blando(), actual.getPagoBlackjack());
+        BigDecimal antes = saldo();
+
+        assertThatThrownBy(() -> casino.doblar(ANA, partida.getId()))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("cerrado");
+        assertThat(saldo()).isEqualByComparingTo(antes);
+        assertThat(partida.getApostado()).isEqualByComparingTo("10");
+
+        casino.plantarse(ANA, partida.getId());
+        assertThat(partida.isEnCurso()).isFalse();
+    }
+
+    @Test
     void unaManoTerminadaNoSeSigueJugando() throws Exception {
         // CA-57.5: un doble clic en "pedir" después de terminar no reparte otra carta
         Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));

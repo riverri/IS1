@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,11 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -262,6 +266,32 @@ class CriptoWebTest {
         assertThatThrownBy(() -> cripto.comprar(ANA, "DOGE", new BigDecimal("10"), null))
                 .isInstanceOf(IllegalStateException.class);
         assertThat(cripto.vender(ANA, "DOGE", null, null)).isPositive();
+    }
+
+    @Test
+    void unaCriptoRetiradaQueAlguienTieneSigueTeniendoPrecio() {
+        // CA-73.2: si no se descargara su precio, al caducar nadie podría venderla
+        cripto.comprar(ANA, "DOGE", new BigDecimal("10"), null);
+        cripto.activar("DOGE", false);
+        cripto.activar("BTC", false);
+
+        precios("0.30", "0.0000123456789");
+
+        assertThat(cripto.cripto("DOGE").getPrecio()).isEqualByComparingTo("0.30");
+        ArgumentCaptor<Collection<String>> ids = ArgumentCaptor.captor();
+        then(fuente).should(atLeastOnce()).precios(ids.capture());
+        // BTC está retirada y nadie la tiene: no hace falta su precio
+        assertThat(ids.getValue()).contains("dogecoin", "pepe").doesNotContain("bitcoin");
+    }
+
+    @Test
+    void unPrecioSirveCincoMinutosYComoMuchoTreinta() {
+        // CA-73.1: los precios se descargan cada 2 minutos; uno de más de media hora no se usa nunca
+        assertThat(cripto.configuracion().getMinutosValidez()).isEqualTo(5);
+        assertThatThrownBy(() -> cripto.configurar(true, BigDecimal.ONE, 31))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("30 minutos");
+        cripto.configurar(true, BigDecimal.ONE, 30);
+        assertThat(cripto.configuracion().getMinutosValidez()).isEqualTo(30);
     }
 
     @Test

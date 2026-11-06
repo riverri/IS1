@@ -14,6 +14,9 @@ import jakarta.persistence.Id;
 @Entity
 public class ConfiguracionCripto {
 
+    /** Validez máxima de un precio: 15 descargas fallidas seguidas. */
+    public static final int MAX_MINUTOS_VALIDEZ = 30;
+
     static final Long ID = 1L;
 
     @Id
@@ -26,7 +29,10 @@ public class ConfiguracionCripto {
     @Column(nullable = false, precision = 5, scale = 4)
     private BigDecimal comision;
 
-    /** Minutos que sirve un precio descargado; con uno más viejo no se compra ni se vende. */
+    /**
+     * Minutos que sirve un precio descargado; con uno más viejo no se compra ni se vende. Los precios se descargan cada 2
+     * minutos: si la descarga falla, quien viera el precio real en otra web podría comprar sabiendo ya que ha subido.
+     */
     @Column(nullable = false)
     private int minutosValidez;
 
@@ -35,14 +41,14 @@ public class ConfiguracionCripto {
     }
 
     /**
-     * @throws IllegalArgumentException si la comisión no está entre 0 y 10 % o la validez no está entre 1 y 120 minutos
+     * @throws IllegalArgumentException si la comisión no está entre 0 y 10 % o la validez no está entre 1 y 30 minutos
      */
     void cambiar(boolean nuevoActivo, BigDecimal nuevaComision, int minutos) {
         if (nuevaComision.signum() < 0 || nuevaComision.compareTo(new BigDecimal("0.10")) > 0) {
             throw new IllegalArgumentException("La comisión va del 0 al 10 %");
         }
-        if (minutos < 1 || minutos > 120) {
-            throw new IllegalArgumentException("Un precio puede servir entre 1 y 120 minutos");
+        if (minutos < 1 || minutos > MAX_MINUTOS_VALIDEZ) {
+            throw new IllegalArgumentException("Un precio puede servir entre 1 y " + MAX_MINUTOS_VALIDEZ + " minutos");
         }
         activo = nuevoActivo;
         comision = nuevaComision;

@@ -298,7 +298,7 @@ public class PrediccionService {
         return devueltas;
     }
 
-    /** Para el panel de la casa: lo cobrado en compras, lo pagado en ventas y lo pagado al resolver. */
+    /** Para el panel de la casa: lo cobrado en compras y lo pagado en ventas, al resolver y al anular. */
     @Transactional(readOnly = true)
     public CuentasPrediccion cuentas() {
         BigDecimal compras = BigDecimal.ZERO;
@@ -312,14 +312,19 @@ public class PrediccionService {
         }
         BigDecimal pagos = posiciones.findAll().stream().map(PosicionPrediccion::getPagado)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new CuentasPrediccion(mercados.count(), compras, ventas, pagos);
+        return new CuentasPrediccion(mercados.count(), compras, ventas, pagos,
+                posiciones.devuelto(EstadoPrediccion.ANULADO));
     }
 
-    /** Lo que se queda la casa: compras − ventas − pagos (con los mercados aún abiertos, provisional). */
-    public record CuentasPrediccion(long mercados, BigDecimal compras, BigDecimal ventas, BigDecimal pagos) {
+    /**
+     * Lo que se queda la casa: compras − ventas − pagos − devoluciones (con los mercados aún abiertos, provisional). Las
+     * compras de un mercado anulado se devuelven: sin restarlas, contarían como beneficio.
+     */
+    public record CuentasPrediccion(long mercados, BigDecimal compras, BigDecimal ventas, BigDecimal pagos,
+                                    BigDecimal devoluciones) {
 
         public BigDecimal getBeneficio() {
-            return compras.subtract(ventas).subtract(pagos);
+            return compras.subtract(ventas).subtract(pagos).subtract(devoluciones);
         }
     }
 
