@@ -68,7 +68,8 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (19) | 71 | 5.822 | 420 | 68 | 0,5 millones | 69 $ |
+| Historias integradas (15) | 58 | 4.756 | 343 | 55 | 0,4 millones | 56 $ |
+| Historias pendientes de subir (4) | 13 | 1.066 | 77 | 13 | 0,1 millones | 13 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -147,14 +148,14 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-53 | Cuentas de la casa | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-55 | Movimientos del saldo | Integrada (06/11) | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-55 | Movimientos del saldo | Pendiente de subir | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-56 | Ruleta europea | Integrada (06/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-57 | Blackjack | Integrada (06/11) | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 | HU-58 | Historial de partidas del casino | Integrada (06/11) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-59 | Configurar el casino | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-60 | Anuncios de otras secciones | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-61 | Gestionar los anuncios | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-62 | Medir los clics de cada anuncio | Integrada (06/11) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-60 | Anuncios de otras secciones | Pendiente de subir | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-61 | Gestionar los anuncios | Pendiente de subir | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-62 | Medir los clics de cada anuncio | Pendiente de subir | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-63 | Crear, cerrar y anular mercados de predicción | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-64 | Comprar participaciones | Integrada (06/11) | 3 | 4 (Baja) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-65 | Vender participaciones | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
@@ -167,7 +168,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 
-**72 historias**: 45 hechas, 19 integradas en `main` el 06/11 (HU-55 a HU-73) y 8 descartadas. Las integradas están probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **158 criterios de aceptación** en total; 97 son de historias hechas y 48 de las integradas.
+**72 historias**: 45 hechas, 15 integradas en `main` el 06/11 (HU-56 a HU-59 y HU-63 a HU-73), 4 pendientes de subir (HU-55 y HU-60 a HU-62) y 8 descartadas. Las integradas están probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, el casino, las predicciones, la cripto y el juego responsable, pero no la página que lo enseña. **158 criterios de aceptación** en total; 97 son de historias hechas, 39 de las integradas y 9 de las pendientes de subir.
 
 ---
 
@@ -426,7 +427,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 36 | 3 (Media) | 3 | Integrada (06/11) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 36 | 3 (Media) | 3 | Pendiente de subir | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1109,7 +1110,7 @@ La ventaja de la casa se controla con reglas reales: la ruleta europea siempre t
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 38 | 4 (Baja) | 3 | Integrada (06/11) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 38 | 4 (Baja) | 3 | Pendiente de subir | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1125,7 +1126,7 @@ La ventaja de la casa se controla con reglas reales: la ruleta europea siempre t
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 38 | 4 (Baja) | 3 | Integrada (06/11) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 38 | 4 (Baja) | 3 | Pendiente de subir | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1140,7 +1141,7 @@ La ventaja de la casa se controla con reglas reales: la ruleta europea siempre t
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 38 | 4 (Baja) | 3 | Integrada (06/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 38 | 4 (Baja) | 3 | Pendiente de subir | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
