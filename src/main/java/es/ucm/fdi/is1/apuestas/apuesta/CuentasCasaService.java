@@ -15,7 +15,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 
 /**
- * Panel de la casa (HU-54): cuánto se ha apostado y pagado, y el margen real frente al teórico.
+ * Panel de la casa (HU-53): cuánto se ha apostado y pagado, y el margen real frente al teórico.
  * Las apuestas canceladas no cuentan, porque se devolvió el importe antes de jugarse.
  */
 @Service

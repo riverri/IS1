@@ -44,7 +44,6 @@ Las historias que se desarrollaron de forma adicional fueron:
 - HU-07: Límites de apuesta
 - HU-21: Cargar eventos
 - HU-25: Resolución automática
-- HU-26: Cancelar una apuesta
 - HU-27: Cambiar Importe
 - HU-31: Ficha del equipo
 - HU-33: Cara a cara
@@ -53,7 +52,7 @@ Las historias que se desarrollaron de forma adicional fueron:
 - HU-45: Gestión de mercados
   
 ### Trabajo integrado en el código durante el sprint (según el repositorio)
-El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull requests #1 a #30). Cada iteración tiene su acta, con lo que se planificó, lo que se hizo y las decisiones tomadas. En el código quedaron integradas **44 historias**: las 16 de la lista anterior y 28 más.
+El código se desarrolló en **doce iteraciones** el 1 y el 2 de octubre (pull requests #1 a #30). Cada iteración tiene su acta, con lo que se planificó, lo que se hizo y las decisiones tomadas. En el código quedaron integradas **44 historias**: las 20 de la lista anterior y 24 más.
 
 | Iteración | Fecha | Lo que se integró | Puntos |
 |---:|---|---|---:|

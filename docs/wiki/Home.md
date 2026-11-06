@@ -41,8 +41,8 @@ El Scrum Master es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/iss
 
 | | |
 |---|---|
-| Historias de usuario | 53 escritas: 45 hechas y 8 descartadas |
-| Criterios de aceptación | 109 (96 de historias hechas: 93 con prueba automática y 3 que se comprueban a mano) |
+| Historias de usuario | 72 escritas: 45 hechas, 19 integradas el 06/11 (HU-55 a HU-73) y 8 descartadas; 11 más propuestas para el Sprint 4 (HU-74 a HU-84) |
+| Criterios de aceptación | 110 (97 de historias hechas: 93 con prueba automática y 4 que se comprueban a mano) |
 | Código | 144 clases Java en 12 paquetes, 32 plantillas HTML |
 | Pruebas | 283 pruebas automáticas en 46 clases, con H2 y con PostgreSQL |
 | Base de datos | 15 migraciones Flyway (V1–V15) |
@@ -56,6 +56,6 @@ El Scrum Master es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/iss
 5. [Ejecutar y desplegar](Ejecutar-y-desplegar): arrancarla en tu ordenador.
 6. [Cómo contribuir](Cómo-contribuir): ramas, commits y pull requests.
 
-Para leerlo todo de corrido está la [guía completa del proyecto en PDF](https://github.com/riverri/IS1/blob/main/docs/Better_Guia_del_proyecto.pdf) (43 páginas): qué se ha hecho, cómo está organizado y por qué.
+Para leerlo todo de corrido está la [guía completa del proyecto en PDF](https://github.com/riverri/IS1/blob/main/docs/Better_Guia_del_proyecto.pdf) (44 páginas): qué se ha hecho, cómo está organizado y por qué.
 
 Las palabras técnicas están explicadas en el [Glosario](Glosario).
