@@ -139,15 +139,159 @@ classDiagram
         -BigDecimal limiteSemanal
         -LocalDateTime pausaHasta
         -boolean eliminado
-        +cargar(importe)
-        +abonar(importe)
-        +ajustar(diferencia)
+        +cargar(importe, tipo, concepto, ahora)
+        +abonar(importe, tipo, concepto, ahora)
+        +ajustar(diferencia, tipo, concepto, ahora)
+        -mover(importe, tipo, concepto, fecha)
         +aplicarRecargaPeriodica(ahora, periodo, importe) bool
         +cambiarNombre(nombre)
         +fijarLimites(diario, semanal)
         +pausarHasta(fecha)
         +enPausa(ahora) bool
-        +eliminar(hash)
+        +eliminar(hash, ahora)
+    }
+
+    class MovimientoSaldo {
+        -TipoMovimiento tipo
+        -BigDecimal importe
+        -BigDecimal saldoResultante
+        -String concepto
+        -LocalDateTime fecha
+    }
+
+    class Anuncio {
+        -String titulo
+        -String texto
+        -String destino
+        -Set~Ubicacion~ ubicaciones
+        -int prioridad
+        -boolean activo
+        -LocalDateTime desde
+        -LocalDateTime hasta
+        -long impresiones
+        +seMuestra(donde, conSesion, ahora) bool
+        +cambiar(...)
+        +activar(activo)
+    }
+
+    class ClicAnuncio {
+        -String origen
+        -LocalDateTime fecha
+    }
+
+    class Partida {
+        -long version
+        -TipoJuego juego
+        -BigDecimal apostado
+        -BigDecimal premio
+        -EstadoPartida estado
+        -String apuesta
+        -String resultado
+        -String estadoJuego
+        +getBalance() BigDecimal
+    }
+
+    class ConfiguracionCasino {
+        -boolean activo
+        -BigDecimal importeMinimo
+        -BigDecimal importeMaximo
+        -int barajas
+        -boolean bancaPideCon17Blando
+        -PagoBlackjack pagoBlackjack
+        +cambiar(...)
+        +getVentajaRuleta() BigDecimal
+        +getVentajaBlackjack() BigDecimal
+    }
+
+    class ManoBlackjack {
+        +repartir(barajas, azar)$ ManoBlackjack
+        +pedir(pideCon17Blando)
+        +plantarse(pideCon17Blando)
+        +doblar(pideCon17Blando)
+        +resultado() ResultadoMano
+        +valor(cartas)$ int
+    }
+
+    class MercadoPrediccion {
+        -long version
+        -String pregunta
+        -LocalDateTime cierre
+        -EstadoPrediccion estado
+        -Lado resultado
+        -BigDecimal liquidez
+        -BigDecimal comision
+        -BigDecimal qSi
+        -BigDecimal qNo
+        +admiteOperaciones(ahora) bool
+        +precio(lado) double
+    }
+
+    class PosicionPrediccion {
+        -Lado lado
+        -BigDecimal participaciones
+        -BigDecimal invertido
+        -BigDecimal pagado
+        +getValorActual() BigDecimal
+    }
+
+    class OperacionPrediccion {
+        -Lado lado
+        -Tipo tipo
+        -BigDecimal participaciones
+        -BigDecimal importe
+        -BigDecimal comision
+        -BigDecimal precioSiDespues
+    }
+
+    class Lmsr {
+        <<utilidad>>
+        +coste(qSi, qNo, b)$ double
+        +precioSi(qSi, qNo, b)$ double
+        +participacionesPorDinero(si, dinero, qSi, qNo, b)$ double
+        +dineroPorVenta(si, participaciones, qSi, qNo, b)$ double
+    }
+
+    class Criptomoneda {
+        -String simbolo
+        -String nombre
+        -String idApi
+        -CategoriaCripto categoria
+        -boolean activa
+        -BigDecimal precio
+        -BigDecimal variacion24h
+        -LocalDateTime actualizado
+        +precioAlDia(ahora, minutos) bool
+    }
+
+    class PosicionCripto {
+        -BigDecimal cantidad
+        -BigDecimal coste
+        +getValor() BigDecimal
+        +getGanancia() BigDecimal
+    }
+
+    class OperacionCripto {
+        -Tipo tipo
+        -BigDecimal cantidad
+        -BigDecimal precio
+        -BigDecimal importe
+        -BigDecimal comision
+    }
+
+    class FuentePrecios {
+        <<interface>>
+        +precios(ids) Map
+    }
+
+    class CoinGeckoCliente
+
+    class CasinoService {
+        <<service>>
+        +girarRuleta(email, tipo, numero, importe) Partida
+        +empezarBlackjack(email, importe) Partida
+        +pedir(email, id) Partida
+        +plantarse(email, id) Partida
+        +doblar(email, id) Partida
     }
 
     class Competicion {
@@ -314,6 +458,24 @@ classDiagram
 
     Usuario "1" --> "*" Apuesta : hace
     Usuario "1" --> "*" Notificacion : recibe
+    Usuario "1" *-- "*" MovimientoSaldo : movimientos del saldo
+    ClicAnuncio "*" --> "1" Anuncio : en
+    ClicAnuncio "*" --> "0..1" Usuario : pulsado por
+    Partida "*" --> "1" Usuario : juega
+    Partida ..> ManoBlackjack : guarda en estadoJuego
+    CasinoService ..> ConfiguracionCasino : límites y reglas
+    CasinoService ..> Partida : crea y paga
+    PosicionPrediccion "*" --> "1" MercadoPrediccion : en
+    PosicionPrediccion "*" --> "1" Usuario : de
+    OperacionPrediccion "*" --> "1" MercadoPrediccion : en
+    OperacionPrediccion "*" --> "1" Usuario : de
+    MercadoPrediccion ..> Lmsr : precio
+    PosicionCripto "*" --> "1" Criptomoneda : de
+    PosicionCripto "*" --> "1" Usuario : de
+    OperacionCripto "*" --> "1" Criptomoneda : de
+    OperacionCripto "*" --> "1" Usuario : de
+    CoinGeckoCliente ..|> FuentePrecios
+    FuentePrecios ..> Criptomoneda : precio real
     TokenRecuperacion "*" --> "1" Usuario : recupera
     Liga "*" --> "1" Usuario : creador
     Liga "*" --> "*" Usuario : miembros
@@ -335,7 +497,7 @@ classDiagram
     Boleto ..> Apuesta : al confirmar crea
 ```
 
-**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion` y `EstadoMercado`.
+**Enumerados:** `Posicion` (PORTERO, DEFENSA, CENTROCAMPISTA, DELANTERO), `Deporte` (FUTBOL, BALONCESTO, TENIS, AUTOMOVILISMO, MOTOCICLISMO), `Forma` (MUY_MALA … MUY_BUENA), `Rol` (USUARIO, CREADOR), `Resultado` (LOCAL, EMPATE, VISITANTE), `Especial` (doble oportunidad, goles y ambos marcan), `EstadoEvento`, `EstadoApuesta`, `EstadoSeleccion`, `EstadoMercado`, `Ubicacion` (secciones donde sale un anuncio y a las que lleva) y `TipoMovimiento` (BIENVENIDA, RECARGA, APUESTA, PREMIO, DEVOLUCION, CORRECCION, BAJA, SALDO_INICIAL).
 
 **Decisiones de diseño:**
 - **Una apuesta simple es una combinada de una sola selección,** así hay una única forma de guardar, pagar y mostrar las apuestas.
@@ -344,6 +506,11 @@ classDiagram
 - **El ranking de una liga es el ranking general filtrado por sus miembros,** así los criterios y las cifras son siempre los mismos.
 - **La cuota se guarda en cada selección al apostar:** los cambios posteriores (forma, dinero apostado, cuotas del creador) no afectan a las apuestas ya hechas.
 - **`pagado` guarda lo que ya se ha abonado,** así una corrección de resultado paga o retira solo la diferencia.
+- **El saldo solo cambia en `Usuario.mover`, que apunta cada cambio en el libro de movimientos (HU-55):** así ningún camino puede mover el saldo sin dejar rastro, y el último saldo resultante coincide siempre con el saldo.
+- **El precio de los mercados de predicción lo pone un LMSR:** siempre hay contrapartida, los precios están entre 0 y 1 y suman 1, y la casa pierde como mucho b · ln 2 por mercado. Son cuentas en `double`; el dinero se redondea a favor de la casa (comisión hacia arriba, pagos hacia abajo). Se llama `MercadoPrediccion` para no confundirlo con el `Mercado` a largo plazo.
+- **En las criptomonedas solo el precio es real:** se descarga de CoinGecko (`FuentePrecios`, que las pruebas sustituyen por una falsa) y 1 monedita = 1 €. La casa hace de contrapartida, como en el casino. Un precio solo sirve unos minutos y se comprueba que no haya cambiado al confirmar, para que nadie compre sabiendo ya que ha subido. La llamada a la API va fuera de la transacción. La cantidad se redondea hacia abajo y la comisión hacia arriba. Lo comprado cuenta en el juego responsable, pero la cartera no cuenta en el ranking (que mira el saldo).
+- **El casino es un módulo de juego genérico ligero:** `Partida` guarda lo común (quién, cuánto, cómo acabó) y `CasinoService` hace el cobro, el pago, los límites y el juego responsable una sola vez; cada juego solo aporta sus reglas (`ApuestaRuleta`, `ManoBlackjack`). El azar lo decide el servidor y la mano de blackjack se guarda en la partida, nunca en el navegador.
+- **Los anuncios son datos, no código:** el creador decide en Gestión qué se promociona y dónde; las plantillas solo pintan el que elige `AnunciosAdvice` en la cabecera común, y el azar (`RandomGenerator`) se inyecta como el reloj.
 - **Eliminar una cuenta la anonimiza en lugar de borrarla:** desaparecen el email, el nombre y los avisos, pero la fila se conserva para que las apuestas ya hechas sigan cuadrando.
 
 ## 4. Estados
@@ -483,6 +650,20 @@ erDiagram
     USUARIO ||--o{ APUESTA : hace
     USUARIO ||--o{ NOTIFICACION : recibe
     USUARIO ||--o{ TOKEN_RECUPERACION : "recupera la contraseña"
+    USUARIO ||--o{ MOVIMIENTO_SALDO : "movimientos del saldo"
+    ANUNCIO ||--|{ ANUNCIO_UBICACION : "se muestra en"
+    ANUNCIO ||--o{ CLIC_ANUNCIO : recibe
+    USUARIO |o--o{ CLIC_ANUNCIO : pulsa
+    USUARIO ||--o{ PARTIDA : juega
+    MERCADO_PREDICCION ||--o{ POSICION_PREDICCION : tiene
+    MERCADO_PREDICCION ||--o{ OPERACION_PREDICCION : registra
+    USUARIO ||--o{ POSICION_PREDICCION : "tiene participaciones"
+    USUARIO ||--o{ OPERACION_PREDICCION : "compra y vende"
+    CRIPTOMONEDA ||--o{ PRECIO_CRIPTO : "histórico"
+    CRIPTOMONEDA ||--o{ POSICION_CRIPTO : "en carteras"
+    CRIPTOMONEDA ||--o{ OPERACION_CRIPTO : registra
+    USUARIO ||--o{ POSICION_CRIPTO : tiene
+    USUARIO ||--o{ OPERACION_CRIPTO : "compra y vende"
     APUESTA ||--|{ SELECCION : contiene
     EVENTO ||--o{ SELECCION : "pronóstico sobre"
     CANDIDATO ||--o{ SELECCION : "apuesta a"
@@ -608,6 +789,134 @@ erDiagram
         varchar hash UK "SHA-256 del código"
         timestamp caduca
         boolean usado
+    }
+    MERCADO_PREDICCION {
+        bigint id PK
+        bigint version
+        varchar pregunta
+        timestamp cierre
+        varchar estado
+        varchar resultado
+        numeric liquidez "b del LMSR"
+        numeric comision
+        numeric q_si
+        numeric q_no
+    }
+    POSICION_PREDICCION {
+        bigint id PK
+        bigint usuario_id FK
+        bigint mercado_id FK
+        varchar lado "único por usuario, mercado y lado"
+        numeric participaciones
+        numeric invertido
+        numeric pagado
+    }
+    OPERACION_PREDICCION {
+        bigint id PK
+        bigint usuario_id FK
+        bigint mercado_id FK
+        varchar lado
+        varchar tipo
+        numeric participaciones
+        numeric importe
+        numeric comision
+        numeric precio_si_despues
+        timestamp fecha
+    }
+    CRIPTOMONEDA {
+        bigint id PK
+        varchar simbolo "único"
+        varchar nombre
+        varchar id_api "id en CoinGecko"
+        varchar categoria
+        boolean activa
+        integer orden
+        numeric precio "en euros"
+        numeric variacion24h
+        timestamp actualizado
+    }
+    PRECIO_CRIPTO {
+        bigint id PK
+        bigint cripto_id FK
+        numeric precio
+        timestamp fecha
+    }
+    POSICION_CRIPTO {
+        bigint id PK
+        bigint usuario_id FK
+        bigint cripto_id FK "único por usuario y cripto"
+        numeric cantidad
+        numeric coste
+    }
+    OPERACION_CRIPTO {
+        bigint id PK
+        bigint usuario_id FK
+        bigint cripto_id FK
+        varchar tipo
+        numeric cantidad
+        numeric precio
+        numeric importe
+        numeric comision
+        timestamp fecha
+    }
+    CONFIGURACION_CRIPTO {
+        bigint id PK
+        boolean activo
+        numeric comision
+        integer minutos_validez
+    }
+    PARTIDA {
+        bigint id PK
+        bigint version
+        bigint usuario_id FK
+        varchar juego
+        numeric apostado
+        numeric premio
+        varchar estado
+        varchar apuesta
+        varchar resultado
+        varchar estado_juego "mano y baraja del blackjack"
+        timestamp fecha
+    }
+    CONFIGURACION_CASINO {
+        bigint id PK "una sola fila"
+        boolean activo
+        numeric importe_minimo
+        numeric importe_maximo
+        integer barajas
+        boolean banca_pide_con17_blando
+        varchar pago_blackjack
+    }
+    ANUNCIO {
+        bigint id PK
+        varchar titulo
+        varchar texto
+        varchar destino "sección de la web"
+        integer prioridad
+        boolean activo
+        timestamp desde
+        timestamp hasta
+        bigint impresiones
+    }
+    ANUNCIO_UBICACION {
+        bigint anuncio_id FK
+        varchar ubicacion
+    }
+    CLIC_ANUNCIO {
+        bigint id PK
+        bigint anuncio_id FK
+        bigint usuario_id FK "null si es un visitante"
+        varchar origen
+        timestamp fecha
+    }
+    MOVIMIENTO_SALDO {
+        bigint id PK
+        bigint usuario_id FK
+        varchar tipo
+        numeric importe "con signo"
+        numeric saldo_resultante
+        varchar concepto
+        timestamp fecha
     }
     LIMITES {
         bigint id PK

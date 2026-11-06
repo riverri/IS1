@@ -17,6 +17,7 @@ Spring Security con el formulario `/login`. Tras 5 contraseñas incorrectas, la 
 - El saldo se ve siempre en la cabecera.
 - Cada **7 días** se suman **200 moneditas** gratis (al iniciar sesión o abrir *Mi cuenta*). No se acumulan.
 - El saldo cambia con `cargar` (al apostar; si no hay saldo, `SaldoInsuficienteException`), `abonar` (cancelar, cobrar) y `ajustar` (resolver o corregir).
+- Cada cambio queda apuntado en *Mi cuenta → Movimientos* con su motivo, el importe y el saldo que dejó (HU-55).
 - Si dos operaciones cambian el mismo saldo a la vez, la segunda se rechaza con un aviso (bloqueo optimista).
 
 ### Recuperar la contraseña (HU-17)
@@ -104,3 +105,33 @@ Un **mercado** ("¿Quién ganará el Balón de Oro?") tiene varios **candidatos*
 - **Límites personales** (HU-10): máximo apostado en 24 horas y en 7 días.
 - **Pausa:** 1, 7 o 30 días sin apostar. El creador puede desactivar el juego responsable.
 - **Eliminar la cuenta** (HU-18): pide la contraseña. Se cancelan las apuestas cancelables, se borran avisos y ligas propias, se cierran las otras sesiones y la cuenta se **anonimiza** (email `eliminado-<id>@apuestas.invalid`, nombre "Usuario eliminado", saldo 0). La fila se conserva para que las cuentas de la casa cuadren.
+
+## Anuncios internos (HU-60 a HU-62)
+- Debajo de la cabecera sale, en cada sección, un anuncio de **otra** sección (largo plazo, ranking, ligas, equipos…). Al pulsarlo se va a ella.
+- Se elige uno de los de **prioridad más alta** (1–10) que se pueden mostrar allí; si hay varios con esa prioridad, se turnan al azar. Nunca sale el de la sección en la que estás, y los que llevan a secciones con sesión no se enseñan a los visitantes. El creador de apuestas no ve anuncios.
+- El creador los gestiona en *Gestión → Anuncios*: texto, icono, destino (siempre una sección de la web), secciones donde salen, prioridad y fechas. Ve las **impresiones**, los **clics** y el **porcentaje de clics** de cada uno, y puede desactivarlos sin perder sus cifras.
+
+## Casino (HU-56 a HU-59)
+- **Ruleta europea** (0–36): pleno 35:1, rojo/negro y par/impar 1:1, docenas 2:1. Si sale el 0, solo gana un pleno al 0. Ventaja de la casa fija: 2,70 %.
+- **Blackjack:** pedir, plantarse y doblar (con las dos primeras cartas). La banca pide hasta 17 y, si el creador lo configura, también con 17 blando. El blackjack paga 3:2 o 6:5. No se puede dividir ni asegurar.
+- El **azar lo decide el servidor**; la mano de blackjack se guarda en la partida y la página nunca recibe la carta oculta de la banca. Recargar o pulsar dos veces no reparte otra mano ni cobra dos veces.
+- Cada apuesta y cada premio son **movimientos del saldo** (`CASINO_APUESTA`, `CASINO_PREMIO`) y lo jugado **cuenta en los límites de juego responsable** (HU-10).
+- *Mis partidas* (`/casino/historial`) enseña las 50 últimas con su balance.
+- El creador lo abre o lo cierra y fija los límites por apuesta y las reglas del blackjack en *Gestión → Casino*, viendo la ventaja teórica de cada juego. El *panel de la casa* suma lo apostado y pagado en el casino.
+
+## Mercados de predicción (HU-63 a HU-68)
+- Preguntas de **sí o no** ("¿Ganará el FC Barcelona LaLiga?"). El precio de cada respuesta va de **0 a 1** y es la probabilidad que le da la comunidad; cada participación ganadora paga **1 monedita**.
+- El precio lo calcula un **creador de mercado automático LMSR**: siempre se puede comprar y vender, los dos precios suman 1 y la casa pierde como mucho *liquidez × ln 2* por mercado. Con más liquidez, el precio se mueve menos en cada compra.
+- **Comprar:** primero se ve cuántas participaciones se recibirían y a qué precio medio; si el precio cambia antes de confirmar, se pide aceptarlo otra vez. **Vender:** antes del cierre, recibiendo el valor menos la comisión.
+- Mismas comprobaciones que al apostar: saldo, límites de apuesta, mercado abierto y juego responsable. Cada compra, venta y pago es un movimiento del saldo.
+- **Estadísticas** públicas: precio, volumen, participantes y gráfico del precio del «Sí». Con sesión, también tus participaciones y las de tus **compañeros de liga** (no salen en el perfil público).
+- El creador los crea, cierra, anula (devolviendo lo invertido) y resuelve en *Gestión → Predicciones*; corregir la respuesta ajusta los saldos por la diferencia.
+
+## Cartera de criptomonedas (HU-69 a HU-73)
+- Criptomonedas **reales a su precio real** en euros, compradas y vendidas con moneditas: **1 monedita = 1 €**. Solo el precio es real; nadie tiene criptomonedas de verdad.
+- Las protagonistas son las **memecoins** (DOGE, SHIB, PEPE, WIF, BONK, FLOKI, FARTCOIN), con aviso de **riesgo muy alto**; BTC, ETH y SOL quedan como referencia. Se destaca la que más se ha movido en 24 horas.
+- Los precios vienen de la **API pública de CoinGecko** y se descargan solos cada 2 minutos. Un precio solo sirve 15 minutos: sin precio al día no se compra ni se vende. Si el precio cambia mientras decides, se pide confirmar otra vez.
+- **Comprar:** primero se ve cuánta cripto se recibiría; se cobra el importe con una comisión del 1 %. Con memecoins de fracciones de céntimo se compran millones de unidades. **Vender:** una parte o todo, recibiendo cantidad × precio menos la comisión.
+- Mismas comprobaciones que al apostar: saldo, límites de apuesta y juego responsable (lo comprado cuenta como jugado). Cada compra y venta es un **movimiento del saldo** (`CRIPTO_COMPRA`, `CRIPTO_VENTA`).
+- *Mi cartera* (`/cripto/cartera`) enseña cantidad, valor, coste y ganancia o pérdida de cada cripto, y las últimas operaciones. **No cuenta en el ranking**, que solo mira el saldo: para que cuente hay que vender.
+- El creador abre o cierra la sección, fija la comisión y la validez de los precios, retira criptos (quien las tenga puede venderlas) y descarga los precios en el momento en *Gestión → Criptomonedas*. El *panel de la casa* enseña compras, ventas, comisiones y lo que valen las carteras.

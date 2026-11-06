@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Mis partidas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Mis partidas del casino</h1>
+    </div>
+    <p class="aviso">Las 50 últimas, de la más reciente a la más antigua. El balance es lo que ganaste o perdiste en cada una.</p>
+    <div class="vacio" th:if="${#lists.isEmpty(partidas)}">
+        <p>Aquí aparecerán tus partidas.</p>
+        <a class="boton" th:href="@{/casino}">Ir al casino</a>
+    </div>
+    <th:block th:unless="${#lists.isEmpty(partidas)}">
+        <div th:replace="~{casino/fragmentos :: partidas(${partidas})}"></div>
+    </th:block>
+    <a class="enlace-volver" th:href="@{/casino}">← Volver al casino</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

@@ -22,7 +22,7 @@ El sprint no tiene historias de usuario nuevas: son tareas para entender el cód
 | — | Acta del Sprint 3 y retrospectiva del Sprint 2 | — | 2 | Jaime Martín |
 | | **Total** | | **20** | |
 
-**Fuera de la planificación:** David Ortega abrió los pull requests #86 a #90 (libro de movimientos del saldo, anuncios, casino, mercados de predicción y criptomonedas). Sus 19 historias están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md), pendientes de revisar por el equipo y de aprobar por el Product Owner.
+**Fuera de la planificación:** David Ortega abrió los pull requests #86 a #90 (libro de movimientos del saldo, anuncios, casino, mercados de predicción y criptomonedas). Sus 19 historias están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md), pendientes de revisar por el equipo y de aprobar por el Product Owner. El 06/11 se integraron en `main` sin esa aprobación (ver el [Sprint 4](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/sprint-4.md)).
 
 ## Daily scrums
 _Por completar por el equipo: una línea por persona en cada daily (qué hice, qué haré, qué me bloquea)._

@@ -45,6 +45,7 @@ Solo funciona con tu ordenador encendido y las dos ventanas abiertas, y el enlac
 | `SPRING_DATASOURCE_PASSWORD` | Contraseña de Neon |
 | `FOOTBALL_DATA_TOKEN` | Opcional |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: correo para el enlace de recuperar la contraseña |
+| `URL_PUBLICA` | Opcional: dirección de la web en el enlace de recuperar la contraseña (en Render se usa la suya) |
 
 3. **UptimeRobot:** monitor HTTP(s) con el enlace de Render cada 5 minutos.
 

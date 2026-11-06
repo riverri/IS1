@@ -34,6 +34,8 @@ Con 1.000 moneditas apostadas al local en el ejemplo, el peso es 0,15 y las cuot
 
 Para que nadie pueda mover las cuotas a su favor, cada jugador cuenta como máximo **100 moneditas por resultado**, y el importe de una combinada se reparte entre sus selecciones.
 
+**Limitación conocida.** Apostar y cancelar es gratis antes del partido, así que alguien podría apostar a un resultado para subir la cuota de los otros, apostar a uno de ellos con la cuota inflada y cancelar lo primero. Con el tope de 100 moneditas, una sola cuenta mueve el peso como mucho 0,30 × 100 / 1.100 ≈ **2,7 %**, que apenas cambia las cuotas. Solo se notaría con muchas cuentas a la vez. Lo aceptamos porque las monedas son virtuales y cerrarlo del todo obligaría a cambiar reglas del juego (cobrar por cancelar o calcular cuotas distintas para cada jugador).
+
 Las cuotas no se guardan en el evento: se calculan cada vez que se muestran. La que cuenta para una apuesta es la que se guarda en su selección al apostar.
 
 ## Otros mercados de fútbol

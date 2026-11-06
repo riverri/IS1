@@ -104,6 +104,21 @@ class LimitesWebTest {
         assertThat(limites.actuales().getImporteMaximo()).isEqualByComparingTo("500");
     }
 
+    /** Con un máximo enorme, la ganancia (importe × cuota de hasta 1.000) no cabría en el saldo. */
+    @Test
+    void elImporteMaximoTieneTopeDe100000() throws Exception {
+        mvc.perform(post("/gestion/limites").with(CREADOR).with(csrf())
+                        .param("importeMinimo", "1")
+                        .param("importeMaximo", "100000.01")
+                        .param("maxSelecciones", "5"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Como mucho 100.000 monedas")));
+        assertThat(limites.actuales().getImporteMaximo()).isEqualByComparingTo("500");
+
+        cambiarLimites("1", "100000", "5");
+        assertThat(limites.actuales().getImporteMaximo()).isEqualByComparingTo("100000");
+    }
+
     @Test
     void unUsuarioNormalNoCambiaLosLimites() throws Exception {
         mvc.perform(post("/gestion/limites").with(USUARIO).with(csrf())

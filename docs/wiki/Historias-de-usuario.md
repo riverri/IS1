@@ -20,10 +20,11 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 | Estado | Historias |
 |---|---|
 | **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-53 |
+| **Integradas (19)** | HU-55 (movimientos del saldo), base común de la ampliación; HU-56 a HU-59 (casino); HU-60 a HU-62 (anuncios internos); HU-63 a HU-68 (mercados de predicción); HU-69 a HU-73 (cartera de criptomonedas). En `main` desde el 06/11; falta que el Product Owner las acepte en la review |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
-| **Propuestas (30)** | HU-55 a HU-84, pendientes del Product Owner: las 19 de los PR #86 a #90 y las 11 del Sprint 4 ([propuestas](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md)) |
+| **Propuestas (11)** | HU-74 a HU-84, del Sprint 4, pendientes del Product Owner ([propuestas](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md)) |
 
-En total hay **110 criterios de aceptación**; 97 son de historias hechas.
+En total hay **158 criterios de aceptación**; 97 son de historias hechas y 48 de las integradas.
 
 ## Estimación
 
@@ -32,6 +33,7 @@ Cada historia tiene su **tamaño** (puntos de historia y líneas de código), la
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---:|---:|---:|---:|---:|
 | Historias hechas (45) | 185 | 15.170 | 1.091 | 178 | 179 $ |
+| Historias integradas (19) | 71 | 5.822 | 420 | 68 | 69 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 28 $ |
 
 - **Tamaño:** las líneas de la tabla son puntos × 82 (185 × 82 = 15.170). Medidas en el repositorio son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.

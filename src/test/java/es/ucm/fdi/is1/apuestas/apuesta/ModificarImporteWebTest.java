@@ -31,6 +31,7 @@ import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
@@ -116,7 +117,7 @@ class ModificarImporteWebTest {
     void respetaLosLimitesYElSaldo() throws Exception {
         mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf()).param("importe", "501"))
                 .andExpect(flash().attribute("error", containsString("entre 1 y 500")));
-        usuarios.findByEmail(ANA).orElseThrow().cargar(saldo().subtract(BigDecimal.TEN));
+        usuarios.findByEmail(ANA).orElseThrow().cargar(saldo().subtract(BigDecimal.TEN), TipoMovimiento.APUESTA, "Gasto de prueba", Hora.ahora());
         mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf()).param("importe", "40"))
                 .andExpect(flash().attribute("error", containsString("saldo suficiente")));
         assertThat(apuesta.getImporte()).isEqualByComparingTo("20");
@@ -129,6 +130,39 @@ class ModificarImporteWebTest {
         mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf()).param("importe", "30"))
                 .andExpect(flash().attribute("error", containsString("ya no se puede modificar")));
         assertThat(apuesta.getImporte()).isEqualByComparingTo("20");
+    }
+
+    /** HU-29 también al cambiar el importe: si la cuota no es la que vio, no se cambia nada y se le enseña la nueva. */
+    @Test
+    void siLaCuotaHaCambiadoAvisaYNoCambiaNadaHastaQueLaAcepta() throws Exception {
+        BigDecimal antes = saldo();
+        BigDecimal actual = calculadora.calcular(partido).local();
+
+        // El usuario vio una cuota que ya no es la de ahora
+        mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf())
+                        .param("importe", "30").param("cuotaVista", "1.01"))
+                .andExpect(redirectedUrl("/apuestas"))
+                .andExpect(flash().attribute("aviso", containsString("ha cambiado")))
+                .andExpect(flash().attribute("cuotaNueva", actual))
+                .andExpect(flash().attribute("cuotaNuevaId", apuesta.getId()));
+        assertThat(apuesta.getImporte()).isEqualByComparingTo("20");
+        assertThat(saldo()).isEqualByComparingTo(antes);
+
+        // La acepta: vuelve a guardar con la cuota nueva y ahora sí se cambia
+        mvc.perform(post("/apuestas/{id}/importe", apuesta.getId()).with(COMO_ANA).with(csrf())
+                        .param("importe", "30").param("cuotaVista", actual.toPlainString()))
+                .andExpect(flash().attribute("mensaje", containsString("Importe cambiado a 30")));
+        assertThat(apuesta.getImporte()).isEqualByComparingTo("30");
+        assertThat(apuesta.getCuota()).isEqualByComparingTo(actual);
+    }
+
+    @Test
+    void elMensajeDiceQueElPartidoHaEmpezadoOSeHaSuspendido() throws Exception {
+        partido.suspender();
+
+        mvc.perform(post("/apuestas/{id}/cancelar", apuesta.getId()).with(COMO_ANA).with(csrf()))
+                .andExpect(flash().attribute("error",
+                        "Esa apuesta ya no se puede cancelar: el partido ya ha empezado o se ha suspendido."));
     }
 
     @Test

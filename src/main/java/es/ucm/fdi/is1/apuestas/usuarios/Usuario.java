@@ -3,13 +3,18 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Version;
 
 /**
@@ -24,6 +29,9 @@ import jakarta.persistence.Version;
  * Así no hace falta escribir SQL para guardarlo o leerlo: lo hace el {@link UsuarioRepository}.
  * Los atributos son {@code private}: solo se cambian a través de los métodos de esta clase, que son los que
  * conocen las reglas (por ejemplo, que el saldo no puede quedar negativo al apostar).
+ *
+ * <p>Cada cambio del saldo deja un {@link MovimientoSaldo} con su motivo (HU-55): como el saldo solo cambia
+ * dentro de esta clase, ningún camino puede moverlo sin dejar rastro.
  */
 @Entity
 public class Usuario {
@@ -90,6 +98,14 @@ public class Usuario {
     @Column(nullable = false)
     private boolean eliminado;
 
+    /**
+     * Libro de movimientos del saldo (HU-55). Solo se añaden: los nuevos se guardan con el usuario al terminar la
+     * transacción (cascade PERSIST). No se cargan al leer el usuario (LAZY por defecto); para consultarlos está
+     * {@link MovimientoSaldoRepository}.
+     */
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    private List<MovimientoSaldo> movimientos = new ArrayList<>();
+
     protected Usuario() {
         // requerido por JPA: al leer de la base de datos crea el objeto vacío y luego rellena los atributos.
         // Es protected para que el resto del código use el constructor de abajo, que deja el usuario completo
@@ -106,8 +122,10 @@ public class Usuario {
         this.nombre = nombre;
         this.passwordHash = passwordHash;
         this.rol = rol;
-        this.saldo = saldoBienvenida;
+        this.saldo = BigDecimal.ZERO;
         this.ultimaRecarga = fechaAlta;
+        // El saldo de bienvenida es el primer movimiento de la cuenta
+        mover(saldoBienvenida, TipoMovimiento.BIENVENIDA, TipoMovimiento.BIENVENIDA.getDescripcion(), fechaAlta);
     }
 
     /**
@@ -119,7 +137,7 @@ public class Usuario {
         if (ahora.isBefore(proximaRecarga(periodo))) {
             return false;
         }
-        saldo = saldo.add(importe);
+        mover(importe, TipoMovimiento.RECARGA, TipoMovimiento.RECARGA.getDescripcion(), ahora);
         // El periodo vuelve a contar desde hoy: si pasa varias semanas sin entrar, recibe una sola recarga
         ultimaRecarga = ahora;
         return true;
@@ -128,14 +146,16 @@ public class Usuario {
     /**
      * Descuenta el importe de una apuesta (HU-23). El saldo nunca queda negativo por apostar.
      *
+     * @param tipo     motivo del movimiento, normalmente {@link TipoMovimiento#APUESTA}
+     * @param concepto detalle que verá el usuario en sus movimientos (HU-55)
      * @throws SaldoInsuficienteException si el saldo no llega al importe
      */
-    public void cargar(BigDecimal importe) {
+    public void cargar(BigDecimal importe, TipoMovimiento tipo, String concepto, LocalDateTime ahora) {
         // compareTo devuelve un número negativo si saldo < importe, 0 si son iguales y positivo si saldo > importe
         if (saldo.compareTo(importe) < 0) {
             throw new SaldoInsuficienteException(saldo, importe);
         }
-        saldo = saldo.subtract(importe);
+        mover(importe.negate(), tipo, concepto, ahora);
     }
 
     /**
@@ -143,19 +163,31 @@ public class Usuario {
      * A diferencia de {@link #cargar}, permite que el saldo quede negativo.
      * Una cuenta eliminada no recibe dinero: sus apuestas se resuelven igual, pero sin abonarle nada.
      */
-    public void ajustar(BigDecimal diferencia) {
+    public void ajustar(BigDecimal diferencia, TipoMovimiento tipo, String concepto, LocalDateTime ahora) {
         if (eliminado) {
             return;
         }
-        saldo = saldo.add(diferencia);
+        mover(diferencia, tipo, concepto, ahora);
     }
 
     /** Devuelve o abona un importe al saldo (cancelaciones y ganancias). Si la cuenta está eliminada, nada. */
-    public void abonar(BigDecimal importe) {
+    public void abonar(BigDecimal importe, TipoMovimiento tipo, String concepto, LocalDateTime ahora) {
         if (eliminado) {
             return;
         }
+        mover(importe, tipo, concepto, ahora);
+    }
+
+    /**
+     * Único sitio donde cambia el saldo: suma el importe (negativo si sale dinero) y apunta el movimiento con el
+     * saldo que queda (HU-55, CA-55.1). Un importe de cero no cambia nada y no deja movimiento.
+     */
+    private void mover(BigDecimal importe, TipoMovimiento tipo, String concepto, LocalDateTime fecha) {
+        if (importe.signum() == 0) {
+            return;
+        }
         saldo = saldo.add(importe);
+        movimientos.add(new MovimientoSaldo(this, tipo, importe, saldo, concepto, fecha));
     }
 
     /** Cambia el nombre visible (HU-47). */
@@ -200,12 +232,13 @@ public class Usuario {
      *
      * @param hashInutilizable resumen BCrypt de una contraseña aleatoria que nadie conoce
      */
-    public void eliminar(String hashInutilizable) {
+    public void eliminar(String hashInutilizable, LocalDateTime ahora) {
         // El id hace que el email siga siendo único (la columna lo exige)
         email = "eliminado-" + id + DOMINIO_ELIMINADOS;
         nombre = "Usuario eliminado";
         passwordHash = hashInutilizable;
-        saldo = BigDecimal.ZERO;
+        // El saldo pasa a cero (también si era negativo por una corrección) y queda apuntado en el libro
+        mover(saldo.negate(), TipoMovimiento.BAJA, TipoMovimiento.BAJA.getDescripcion(), ahora);
         limiteDiario = null;
         limiteSemanal = null;
         pausaHasta = null;
@@ -214,6 +247,14 @@ public class Usuario {
 
     // Getters: dan acceso de solo lectura a los atributos. Las plantillas HTML (Thymeleaf) los usan también:
     // ${usuario.saldo} llama a getSaldo(), y ${usuario.creador} a isCreador() (los boolean empiezan por "is")
+
+    /**
+     * Movimientos añadidos a este objeto, en el orden en que se hicieron. Lo usan las pruebas sin base de datos;
+     * con base de datos, los movimientos se consultan con {@link MovimientoSaldoRepository}.
+     */
+    List<MovimientoSaldo> movimientosNuevos() {
+        return Collections.unmodifiableList(movimientos);
+    }
 
     public BigDecimal getLimiteDiario() {
         return limiteDiario;

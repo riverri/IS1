@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Casino')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Casino</h1>
+        <a class="boton boton-secundario" th:href="@{/casino/historial}">Mis partidas</a>
+    </div>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="alerta alerta-error" th:unless="${configuracion.activo}">El casino está cerrado ahora mismo.</p>
+    <p class="aviso">Solo con moneditas virtuales. El azar lo decide el servidor, cada partida queda en tus
+        movimientos del saldo y tus límites de juego responsable también cuentan aquí. Cada apuesta, entre
+        <strong th:text="${#numbers.formatDecimal(configuracion.importeMinimo, 1, 'POINT', 2, 'COMMA')}">1,00</strong> y
+        <strong th:text="${#numbers.formatDecimal(configuracion.importeMaximo, 1, 'POINT', 2, 'COMMA')}">200,00</strong> monedas.</p>
+
+    <div class="tarjeta api-estado" th:if="${manoEnCurso != null}">
+        <div>
+            <strong>Tienes una mano de blackjack a medias</strong>
+            <p class="aviso">Termínala antes de empezar otra.</p>
+        </div>
+        <a class="boton" th:href="@{/casino/blackjack(mano=${manoEnCurso.id})}">Seguir jugando</a>
+    </div>
+
+    <div class="juegos-casino">
+        <a class="tarjeta juego-casino" th:href="@{/casino/ruleta}">
+            <span class="juego-icono" aria-hidden="true">🎡</span>
+            <strong>Ruleta europea</strong>
+            <span>Pleno, color, par o impar y docenas. Un solo 0.</span>
+            <small class="aviso" th:text="'Ventaja de la casa: ' + ${#numbers.formatDecimal(configuracion.ventajaRuleta, 1, 'POINT', 2, 'COMMA')} + ' %'">Ventaja de la casa: 2,70 %</small>
+        </a>
+        <a class="tarjeta juego-casino" th:href="@{/casino/blackjack}">
+            <span class="juego-icono" aria-hidden="true">🃏</span>
+            <strong>Blackjack</strong>
+            <span th:text="'Pide, plántate o dobla. El blackjack paga ' + ${configuracion.pagoBlackjack.texto} + '.'">Pide, plántate o dobla. El blackjack paga 3:2.</span>
+            <small class="aviso" th:text="'Ventaja de la casa: ≈ ' + ${#numbers.formatDecimal(configuracion.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %'">Ventaja de la casa: ≈ 1,05 %</small>
+        </a>
+    </div>
+
+    <th:block th:unless="${#lists.isEmpty(ultimas)}">
+        <h2>Tus últimas partidas</h2>
+        <div th:replace="~{casino/fragmentos :: partidas(${ultimas})}"></div>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

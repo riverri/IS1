@@ -6,7 +6,7 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 
 | Entidad | Campos principales | Relaciones |
 |---|---|---|
-| **Usuario** | email, nombre, passwordHash, rol, saldo, ultimaRecarga, limiteDiario, limiteSemanal, pausaHasta, eliminado, version | Muchas apuestas, notificaciones y ligas |
+| **Usuario** | email, nombre, passwordHash, rol, saldo, ultimaRecarga, limiteDiario, limiteSemanal, pausaHasta, eliminado, version | Muchas apuestas, notificaciones, ligas y movimientos del saldo |
 | **Competicion** | nombre, deporte | Muchos equipos (`equipo_competiciones`) |
 | **Equipo** | nombre, deporte, calidad, forma, escudoUrl, idExterno | Varias competiciones; muchos jugadores |
 | **Jugador** | nombre, posicion, dorsal, nacionalidad, fechaNacimiento, nota, idExterno | Un equipo |
@@ -17,6 +17,19 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 | **Candidato** | nombre, cuota | Un mercado; opcionalmente un equipo |
 | **Liga** | nombre, codigo, creada | Un creador y muchos miembros (`liga_miembro`) |
 | **Notificacion** | texto, tipo, fecha, leida | Un usuario |
+| **MovimientoSaldo** | tipo, importe (con signo), saldoResultante, concepto, fecha | Un usuario. Cada cambio del saldo deja uno (HU-55) |
+| **Anuncio** | titulo, texto, icono, destino, prioridad, activo, desde, hasta, impresiones | Varias secciones donde se muestra (`anuncio_ubicacion`); muchos clics (HU-60, HU-61) |
+| **ClicAnuncio** | origen, fecha | Un anuncio y, si había sesión, un usuario (HU-62) |
+| **Partida** | juego, apostado, premio, estado, apuesta, resultado, estadoJuego, fecha, version | Un usuario. Una por tirada de ruleta o mano de blackjack (HU-56 a HU-58) |
+| **ConfiguracionCasino** | activo, importeMinimo, importeMaximo, barajas, bancaPideCon17Blando, pagoBlackjack | Una sola fila (HU-59) |
+| **MercadoPrediccion** | pregunta, descripcion, cierre, estado, resultado, liquidez, comision, qSi, qNo, version | Muchas posiciones y operaciones (HU-63 a HU-67) |
+| **PosicionPrediccion** | lado, participaciones, invertido, pagado | Un usuario y un mercado; una por lado (HU-64 a HU-66, HU-68) |
+| **OperacionPrediccion** | lado, tipo (compra o venta), participaciones, importe, comision, precioSiDespues, fecha | Un usuario y un mercado (HU-67) |
+| **Criptomoneda** | simbolo, nombre, idApi (CoinGecko), categoria (memecoin o de referencia), activa, orden, precio, variacion24h, actualizado | Muchos precios guardados, posiciones y operaciones (HU-69) |
+| **PrecioCripto** | precio, fecha | Una cripto. Uno cada 30 minutos como mucho, de los últimos 7 días, para el gráfico (HU-69) |
+| **PosicionCripto** | cantidad, coste | Un usuario y una cripto; una por pareja (HU-70 a HU-72) |
+| **OperacionCripto** | tipo (compra o venta), cantidad, precio, importe, comision, fecha | Un usuario y una cripto (HU-72) |
+| **ConfiguracionCripto** | activo, comision, minutosValidez | Una sola fila (HU-73) |
 | **TokenRecuperacion** | hash (SHA-256 del código), caduca, usado | Un usuario |
 | **Limites** | importeMinimo, importeMaximo, maxSelecciones, juegoResponsable | Una sola fila |
 
@@ -39,5 +52,12 @@ Cada entidad es una tabla. Las relaciones "muchos a muchos" usan una tabla inter
 
 ### Mercado
 `ABIERTO`, `CERRADO`, `RESUELTO`, `ANULADO`.
+
+### Mercado de predicción
+`ABIERTO` (hasta su fecha de cierre), `CERRADO`, `RESUELTO` (se puede corregir), `ANULADO`.
+
+### Partida del casino
+- **EN_CURSO** → solo una mano de blackjack a medias (una por usuario).
+- **TERMINADA** → la ruleta termina al girar; el blackjack, al pasarse, plantarse, doblar o con un blackjack al repartir.
 
 Los diagramas UML (casos de uso, clases, estados, secuencias y modelo de datos) están en [`docs/diseno/uml.md`](https://github.com/riverri/IS1/blob/main/docs/diseno/uml.md).

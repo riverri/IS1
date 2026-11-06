@@ -1236,3 +1236,80 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
 .margen-casa .aviso { grid-column: 1 / -1; margin: 0; }
 .margen-cifra { font-size: 2rem; font-weight: 800; }
 .tabla .opcion-simbolo { min-width: 28px; width: auto; padding: 0 6px; }
+
+/* ==========================================================================
+   Anuncios internos de otras secciones (HU-60)
+   ========================================================================== */
+
+.anuncio-contenedor { max-width: 1180px; margin: 12px auto 0; padding: 0 16px; }
+.anuncio {
+    display: flex; align-items: center; gap: 14px; padding: 12px 18px;
+    background: linear-gradient(90deg, var(--primario-suave), #fff8e1);
+    border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra);
+    color: var(--texto); text-decoration: none;
+}
+.anuncio:hover, .anuncio:focus-visible { border-color: var(--primario); }
+.anuncio-icono { font-size: 1.6rem; line-height: 1; }
+.anuncio-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.anuncio-texto span { color: var(--texto-suave); font-size: .92rem; }
+.anuncio-flecha { color: var(--primario-oscuro); font-weight: 800; font-size: 1.2rem; }
+tr.inactivo td { color: var(--texto-suave); }
+
+/* ==========================================================================
+   Casino: ruleta europea y blackjack (HU-56, HU-57)
+   ========================================================================== */
+
+.juegos-casino { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 16px 0; }
+.juego-casino { display: flex; flex-direction: column; gap: 6px; padding: 20px; color: var(--texto); text-decoration: none; }
+.juego-casino:hover, .juego-casino:focus-visible { border-color: var(--primario); }
+.juego-icono { font-size: 2.2rem; line-height: 1; }
+.resultado-ruleta { display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; margin: 12px 0; }
+.resultado-ruleta.gana { background: var(--exito-suave); border-color: var(--exito); }
+.resultado-ruleta.pierde { background: var(--error-suave); border-color: var(--error); }
+.mesa-blackjack { display: flex; flex-direction: column; gap: 14px; margin: 12px 0; padding: 18px; border-radius: var(--radio);
+    background: #0b5d3b; color: #fff; }
+.mesa-blackjack .aviso { color: #d1fae5; }
+.mano-titulo { font-weight: 700; }
+.cartas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.carta { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 72px; border-radius: 8px;
+    background: #fff; color: var(--texto); font-weight: 800; font-size: 1.15rem; box-shadow: var(--sombra); }
+.carta.roja { color: var(--error); }
+.carta.oculta { background: repeating-linear-gradient(45deg, #1e3a8a, #1e3a8a 6px, #2563eb 6px, #2563eb 12px); color: #fff; }
+
+/* ==========================================================================
+   Mercados de predicción (HU-63 a HU-68)
+   ========================================================================== */
+
+.mercado-prediccion { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; margin: 12px 0;
+    color: var(--texto); text-decoration: none; }
+.mercado-prediccion:hover, .mercado-prediccion:focus-visible { border-color: var(--primario); }
+.barra-prediccion { display: flex; overflow: hidden; border-radius: 999px; background: var(--error-suave); margin: 8px 0;
+    font-weight: 700; font-size: .9rem; }
+.barra-prediccion .lado-si { background: var(--primario); color: #fff; padding: 6px 12px; white-space: nowrap; min-width: 70px; }
+.barra-prediccion .lado-no { color: var(--error); padding: 6px 12px; margin-left: auto; white-space: nowrap; }
+.grafico-precio { padding: 16px; margin: 12px 0; }
+.grafico-precio svg { width: 100%; height: auto; }
+.grafico-precio .linea { fill: none; stroke: var(--primario); stroke-width: 3; }
+.grafico-precio .rejilla { stroke: var(--borde); stroke-dasharray: 4 4; }
+.cotizacion, .posicion { padding: 14px 18px; margin: 10px 0; }
+.posicion { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.posicion input { width: 140px; }
+
+/* ==========================================================================
+   Criptomonedas (HU-69 a HU-73): las memecoins, protagonistas
+   ========================================================================== */
+
+.aviso-riesgo { background: #fff7ed; border: 1px solid #fb923c; color: #7c2d12; }
+.cripto-destacada { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 16px 20px; margin: 12px 0;
+    color: var(--texto); text-decoration: none; background: linear-gradient(90deg, #ecfccb, #fef9c3); }
+.cripto-destacada:hover, .cripto-destacada:focus-visible { border-color: var(--primario); }
+.cripto-destacada-titulo { font-weight: 800; }
+.cripto-destacada .cripto-variacion { margin-left: auto; font-size: 1.2rem; }
+.rejilla-cripto { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin: 12px 0 20px; }
+.tarjeta-cripto { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; color: var(--texto); text-decoration: none; }
+.tarjeta-cripto:hover, .tarjeta-cripto:focus-visible { border-color: var(--primario); }
+.tarjeta-cripto.memecoin { border-left: 4px solid #84cc16; }
+.cripto-simbolo { font-weight: 800; letter-spacing: .04em; }
+.cripto-nombre { color: var(--texto-suave); font-size: .9rem; }
+.cripto-precio { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.cripto-variacion { font-weight: 700; font-variant-numeric: tabular-nums; }

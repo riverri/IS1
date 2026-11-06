@@ -54,6 +54,65 @@
         </table>
     </div>
     </th:block>
+
+    <h2>Casino</h2>
+    <p class="aviso" th:text="'Margen teórico: ruleta ' + ${#numbers.formatDecimal(configuracionCasino.ventajaRuleta, 1, 'POINT', 2, 'COMMA')} + ' %, blackjack ≈ ' + ${#numbers.formatDecimal(configuracionCasino.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %. Solo cuentan las partidas terminadas.'">
+        Margen teórico: ruleta 2,70 %, blackjack ≈ 1,05 %.</p>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Juego</th><th>Partidas</th><th>Apostado</th><th>Pagado</th><th>Beneficio</th><th>Margen</th></tr></thead>
+            <tbody>
+            <tr th:each="f : ${casino}">
+                <td th:text="${f.juego.icono} + ' ' + ${f.juego.nombre}">🎡 Ruleta europea</td>
+                <td th:text="${f.partidas}">12</td>
+                <td th:text="${#numbers.formatDecimal(f.apostado, 1, 'POINT', 2, 'COMMA')}">120,00</td>
+                <td th:text="${#numbers.formatDecimal(f.pagado, 1, 'POINT', 2, 'COMMA')}">110,00</td>
+                <td><strong th:classappend="${f.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(f.beneficio, 1, 'POINT', 2, 'COMMA')}">10,00</strong></td>
+                <td th:text="${f.margen == null} ? '–' : ${#numbers.formatDecimal(f.margen, 1, 'POINT', 1, 'COMMA')} + ' %'">8,3 %</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(casino)}"><td colspan="6" class="aviso">Todavía no se ha jugado en el casino.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Mercados de predicción</h2>
+    <p class="aviso">Lo que se queda la casa: compras − ventas − pagos a los ganadores − lo devuelto al anular. Con mercados aún sin resolver la cifra es provisional.</p>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Mercados</th><th>Compras</th><th>Ventas</th><th>Pagos</th><th>Devoluciones</th><th>Beneficio</th></tr></thead>
+            <tbody>
+            <tr>
+                <td th:text="${predicciones.mercados}">2</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.compras, 1, 'POINT', 2, 'COMMA')}">100,00</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.ventas, 1, 'POINT', 2, 'COMMA')}">20,00</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.pagos, 1, 'POINT', 2, 'COMMA')}">70,00</td>
+                <td th:text="${#numbers.formatDecimal(predicciones.devoluciones, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                <td><strong th:classappend="${predicciones.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(predicciones.beneficio, 1, 'POINT', 2, 'COMMA')}">10,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Criptomonedas</h2>
+    <p class="aviso">La casa hace de contrapartida: compras − ventas − lo que valen ahora las carteras (lo que pagaría si
+        todos vendieran). Sube y baja con los precios, así que es provisional. Las comisiones ya van dentro.</p>
+    <div class="tarjeta tabla">
+        <table>
+            <thead><tr><th>Compras</th><th>Ventas</th><th>Comisiones</th><th>Valor de las carteras</th><th>Beneficio</th></tr></thead>
+            <tbody>
+            <tr>
+                <td th:text="${#numbers.formatDecimal(cripto.compras, 1, 'POINT', 2, 'COMMA')}">100,00</td>
+                <td th:text="${#numbers.formatDecimal(cripto.ventas, 1, 'POINT', 2, 'COMMA')}">20,00</td>
+                <td th:text="${#numbers.formatDecimal(cripto.comisiones, 1, 'POINT', 2, 'COMMA')}">1,20</td>
+                <td th:text="${#numbers.formatDecimal(cripto.carteras, 1, 'POINT', 2, 'COMMA')}">70,00</td>
+                <td><strong th:classappend="${cripto.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(cripto.beneficio, 1, 'POINT', 2, 'COMMA')}">10,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

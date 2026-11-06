@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Movimientos del saldo')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Movimientos del saldo</h1>
+    </div>
+    <p class="aviso">Cada entrada y salida de moneditas, de la más reciente a la más antigua (se muestran las 100 últimas).
+        La columna <strong>Saldo</strong> es lo que te quedó después de cada movimiento.</p>
+    <div class="vacio" th:if="${#lists.isEmpty(movimientos)}">
+        <p>Todavía no tienes movimientos.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(movimientos)}">
+        <table>
+            <thead><tr><th>Fecha</th><th>Concepto</th><th>Importe</th><th>Saldo</th></tr></thead>
+            <tbody>
+            <tr th:each="m : ${movimientos}">
+                <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">01/10/2026 21:00</td>
+                <td>
+                    <span th:text="${m.concepto}">Nueva apuesta a Real Madrid (Real Madrid – Getafe CF)</span>
+                    <br><small class="aviso" th:text="${m.tipo.descripcion}">Apuesta</small>
+                </td>
+                <td th:classappend="${m.importe.signum() > 0} ? 'positivo' : 'negativo'"
+                    th:text="${m.importe.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(m.importe, 1, 'POINT', 2, 'COMMA')}">-10,00</td>
+                <td th:text="${#numbers.formatDecimal(m.saldoResultante, 1, 'POINT', 2, 'COMMA')}">990,00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="enlace-volver" th:href="@{/cuenta}">← Volver a Mi cuenta</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>
