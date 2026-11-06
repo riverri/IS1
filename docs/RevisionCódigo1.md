@@ -2,11 +2,13 @@
 
 
 
-En este documento podrás buscar información sobre como funciona el código en los paquetes cuotas, equipos, eventos, ligas y mercados.
+En este documento podrás buscar información sobre como funciona el código del paquete equipos. Quedan pendientes cuotas, eventos, ligas y mercados (ver el final).
 
 
 
 ## Cuotas
+
+_Pendiente._
 
 
 
@@ -45,7 +47,9 @@ En este otro caso la estructura del código se parece mas a lo que estamos viend
 
 \----------------------------------------------------------------------------
 
-CONTINUAR 
+## Pendiente
+
+- Cuotas, Eventos, Ligas y Mercados. Responsable: Carlos Martín-Salas.
 
 
 

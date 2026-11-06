@@ -18,7 +18,7 @@ public interface PartidaRepository extends JpaRepository<Partida, Long> {
     List<Partida> findTop50ByUsuarioOrderByFechaDescIdDesc(Usuario usuario);
 
     /**
-     * Para el panel de la casa (HU-54): por juego, [juego, partidas, apostado, pagado] de las partidas terminadas.
+     * Para el panel de la casa (HU-53): por juego, [juego, partidas, apostado, pagado] de las partidas terminadas.
      */
     @Query("""
             select p.juego, count(p), coalesce(sum(p.apostado), 0), coalesce(sum(p.premio), 0) from Partida p

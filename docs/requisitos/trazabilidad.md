@@ -9,16 +9,17 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 ## Resumen
 
-| Historias hechas | Criterios | Automática | Manual | Sin prueba |
+| Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 45 | 96 | 93 (97 %) | 3 | 0 |
+| 45 hechas | 97 | 93 (96 %) | 4 | 0 |
+| 19 integradas (HU-55 a HU-73) | 48 | 48 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**En revisión:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 48 criterios cubiertos por pruebas automáticas. Se sumarán al resumen cuando se fusionen sus pull requests.
+**Integradas el 06/11:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino), HU-60 a HU-62 (anuncios internos), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 48 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -80,7 +81,8 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-09.1 | Todas las páginas se ven y se usan bien en el móvil | Manual | Capturas a 390 px de ancho en cada sprint con cambios de pantallas (Playwright). |
+| CA-09.1 | A 390 px de ancho ninguna página tiene desplazamiento horizontal | Manual | Capturas a 390 px de ancho en cada sprint con cambios de pantallas (Playwright). |
+| CA-09.2 | La apuesta simple se completa en el móvil sin zoom ni desplazamiento horizontal | Manual | Se comprueba a mano a 390 px de ancho en cada sprint con cambios de pantallas. |
 
 ## HU-10 · Juego responsable
 
@@ -342,7 +344,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-52.1 | En los partidos de fútbol se ven sus cuotas | Automática | [`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.laPaginaDelPartidoMuestraLosOtrosTiposSoloEnFutbol`<br>[`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.enBaloncestoNoSePuedenHacer`<br>[`EspecialTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cuotas/EspecialTest.java)`.laCasaTieneMargenEnCadaParDeOpciones` |
 | CA-52.2 | Se pueden apostar solas o en una combinada | Automática | [`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.conElMarcadorSeResuelvenLasDeGoles`<br>[`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.seCombinanConOtrosPartidos` |
-| CA-52.3 | Con el marcador se resuelven solas; sin él, las de goles se anulan | Automática | [`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.conElMarcadorSeResuelvenLasDeGoles`<br>[`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.sinMarcadorLasDeGolesSeAnulanYLasDeDobleOportunidadSeResuelven`<br>[`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.corregirElMarcadorVuelveAResolver`<br>[`EspecialTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cuotas/EspecialTest.java)`.golesYAmbosMarcanNecesitanElMarcador`<br>[`SincronizacionServiceTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/api/SincronizacionServiceTest.java)`.conElMarcadorSeResuelvenTambienLasApuestasDeGoles`<br>[`SincronizacionServiceTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/api/SincronizacionServiceTest.java)`.conProrrogaSoloSeUsaElGanador` |
+| CA-52.3 | Con el marcador se resuelven solas; sin él, las de goles se anulan | Automática | [`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.conElMarcadorSeResuelvenLasDeGoles`<br>[`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.sinMarcadorLasDeGolesSeAnulanYLasDeDobleOportunidadSeResuelven`<br>[`OtrasApuestasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/OtrasApuestasWebTest.java)`.corregirElMarcadorVuelveAResolver`<br>[`EspecialTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cuotas/EspecialTest.java)`.golesYAmbosMarcanNecesitanElMarcador`<br>[`SincronizacionServiceTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/api/SincronizacionServiceTest.java)`.conElMarcadorSeResuelvenTambienLasApuestasDeGoles` |
 
 ## HU-53 · Cuentas de la casa
 

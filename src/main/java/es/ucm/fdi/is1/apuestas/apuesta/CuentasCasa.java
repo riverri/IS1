@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 /**
- * Lo que se ha apostado, pagado y ganado la casa (HU-54), en total y desglosado.
+ * Lo que se ha apostado, pagado y ganado la casa (HU-53), en total y desglosado.
  * Lo construye {@link CuentasCasaService} y lo pinta el panel de la casa.
  *
  * @param porTipo       simples 1X2, simples de doble oportunidad y goles, combinadas y a largo plazo

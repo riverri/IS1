@@ -179,7 +179,7 @@ public class CasinoService {
         return partidas.findTop50ByUsuarioOrderByFechaDescIdDesc(usuarios.findByEmail(email).orElseThrow());
     }
 
-    /** Cuentas del casino para el panel de la casa (HU-54): partidas, apostado y pagado por juego. */
+    /** Cuentas del casino para el panel de la casa (HU-53): partidas, apostado y pagado por juego. */
     @Transactional(readOnly = true)
     public List<ResumenJuego> resumenCasa() {
         List<ResumenJuego> filas = new ArrayList<>();
