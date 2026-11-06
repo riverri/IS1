@@ -10,8 +10,8 @@
     </div>
     <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
     <p class="alerta alerta-error" th:unless="${configuracion.activo}">El casino está cerrado ahora mismo.</p>
-    <p class="aviso">Solo con moneditas virtuales. El azar lo decide el servidor, cada partida queda en tus
-        movimientos del saldo y tus límites de juego responsable también cuentan aquí. Cada apuesta, entre
+    <p class="aviso">Solo con moneditas virtuales. El azar lo decide el servidor y tus límites de juego
+        responsable también cuentan aquí. Cada apuesta, entre
         <strong th:text="${#numbers.formatDecimal(configuracion.importeMinimo, 1, 'POINT', 2, 'COMMA')}">1,00</strong> y
         <strong th:text="${#numbers.formatDecimal(configuracion.importeMaximo, 1, 'POINT', 2, 'COMMA')}">200,00</strong> monedas.</p>
 

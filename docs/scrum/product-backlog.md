@@ -15,10 +15,10 @@
 
 Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida del MVP y del valor de cada fila.
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
-Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 282 en total: 182 de las filas hechas, 71 de las integradas (36 a 40) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
+Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 282 en total: 182 de las filas hechas, 58 de las integradas (37, 39 y 40), 13 de las pendientes de subir (36 y 38) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 33 de 40 filas hechas, de la 36 a la 40 integradas en `main` el 06/11 (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)) y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 40 filas hechas; la 37, la 39 y la 40, integradas en `main` el 06/11 (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36 y la 38, pendientes de subir, y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Puntos | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|---|:-:|:-:|---|
@@ -57,9 +57,9 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 33 | Ligas privadas entre amigos con código de invitación y ranking propio (HU-51). *Depende de la fila 31* | ½ sprint | 5 (HU-51) | 5 | C | | Hecho (it. 11) |
 | 34 | Más tipos de apuesta en fútbol: doble oportunidad, más/menos 2,5 goles y ambos marcan (HU-52). *Depende de las filas 6 y 17* | ½ sprint | 8 (HU-52) | 7 | S | | Hecho (it. 11) |
 | 35 | Panel de la casa para el creador: apostado, pagado, beneficio y margen real (HU-53) | ¼ sprint | 3 (HU-53) | 5 | S | | Hecho (it. 11) |
-| 36 | Libro de movimientos del saldo: cada cambio del saldo queda apuntado con su motivo y el saldo resultante (HU-55). Base común del casino y de los mercados de predicción | ½ sprint | 5 (HU-55) | 6 | S | | Integrada (06/11) |
+| 36 | Libro de movimientos del saldo: cada cambio del saldo queda apuntado con su motivo y el saldo resultante (HU-55). Base común del casino y de los mercados de predicción | ½ sprint | 5 (HU-55) | 6 | S | | Pendiente de subir |
 | 37 | Casino con moneditas: ruleta europea y blackjack, con el azar en el servidor, historial de partidas, límites por apuesta, cada movimiento en el libro del saldo y ventaja de la casa configurable con las reglas (HU-56 a HU-59). *Depende de la fila 36* | 1 sprint | 18 (HU-56 a HU-59) | 4 | C | | Integrada (06/11) |
-| 38 | Anuncios internos que promocionan otras secciones (largo plazo, ranking, ligas…): componente reutilizable, configuración desde Gestión, prioridad con rotación y registro de impresiones y clics (HU-60 a HU-62) | ½ sprint | 8 (HU-60 a HU-62) | 4 | C | | Integrada (06/11) |
+| 38 | Anuncios internos que promocionan otras secciones (largo plazo, ranking, ligas…): componente reutilizable, configuración desde Gestión, prioridad con rotación y registro de impresiones y clics (HU-60 a HU-62) | ½ sprint | 8 (HU-60 a HU-62) | 4 | C | | Pendiente de subir |
 | 39 | Mercados de predicción de sí o no (tipo Polymarket) con precio de 0 a 1 calculado por un creador de mercado automático (LMSR): crear y cerrar, comprar y vender, resolver y pagar, estadísticas y posiciones de los compañeros de liga (HU-63 a HU-68). *Depende de las filas 33 y 36* | 1 sprint | 22 (HU-63 a HU-68) | 5 | C | | Integrada (06/11) |
 | 40 | Cartera de criptomonedas reales a su precio real en euros (CoinGecko), compradas y vendidas con moneditas (1 monedita = 1 €), con las memecoins y las de alto riesgo como protagonistas: precios y gráfico, comprar y vender con comisión, mi cartera con ganancias y pérdidas, y configuración del creador (HU-69 a HU-73). *Depende de la fila 36* | 1 sprint | 18 (HU-69 a HU-73) | 4 | C | | Integrada (06/11) |
 

@@ -27,6 +27,8 @@ Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https
 
 **Cambio del 06/11:** David Ortega decidió integrar en `main` el código de los PR #86 a #90 (HU-55 a HU-73) sin esperar a que el Product Owner aprobara sus historias ni a la revisión de otro miembro. Antes se arreglaron, cada uno con su prueba, los cuatro fallos que la revisión del Sprint 3 había encontrado en ese código (ver [Revisión de fallos](https://github.com/riverri/IS1/wiki/Revisi%C3%B3n-de-fallos)). Las 19 historias quedan como **integradas**: en `main` y probadas, pero sin aceptar en una review.
 
+**Cambio del 06/11 (después):** se quitó de `main` lo que se ve de HU-55 (la página de movimientos del saldo) y de HU-60 a HU-62 (los anuncios internos), para subirlo más adelante. Quedan **pendientes de subir**. De HU-55 se queda el libro de movimientos interno, porque lo usan las apuestas, el casino, las predicciones, la cripto y el juego responsable; de los anuncios, sus tablas, porque las migraciones del casino, las predicciones y la cripto meten anuncios en ellas. Las otras 15 siguen integradas.
+
 El plan de riesgos pedía revisar el código pendiente antes de añadir funcionalidades nuevas (R20, R21). Por eso las correcciones de la revisión se suben antes que cualquier historia nueva.
 
 ## Daily scrums
@@ -37,8 +39,8 @@ Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https:
 ## Sprint Review (17/11)
 > Se completa en la review. A 06/11 consta en el repositorio:
 
-- **Historias completadas:** ninguna aceptada todavía. HU-55 a HU-73 están integradas en `main` desde el 06/11, junto con las correcciones de la revisión de código, en un solo pull request.
-- **Preparado para revisar:** las 19 historias integradas, el código de HU-74 a HU-84 (aún no subido) y esta documentación.
+- **Historias completadas:** ninguna aceptada todavía. HU-56 a HU-59 y HU-63 a HU-73 están integradas en `main` desde el 06/11, junto con las correcciones de la revisión de código, en un solo pull request.
+- **Preparado para revisar:** las 15 historias integradas, el código de HU-55, HU-60 a HU-62 y HU-74 a HU-84 (aún no subido) y esta documentación.
 - **Horas reales frente a estimadas:** _cada responsable_
 - **Comentarios del Product Owner:** _en la review_
 
@@ -59,8 +61,8 @@ Según el [plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgo
 |---|---|---|---|
 | R21 · Perder la noción de lo que desarrolla la IA | Sube | En este sprint se han programado con IA 11 historias nuevas, unas 4.500 líneas | No se suben sin la revisión de otro miembro que sepa explicarlas |
 | R01 · Participación desigual | Sube | Hasta ahora, todo el trabajo del sprint es de una persona | Repartir entre los cinco la revisión de los pull requests de código |
-| R04 · Alcance excesivo | Sube | 19 historias integradas sin aprobar (HU-55 a HU-73) y 11 propuestas (HU-74 a HU-84) | Que el Product Owner elija cuáles entran antes de subir el código de HU-74 a HU-84 |
-| R16 · Algo que el Product Owner no valora | Sube | HU-55 a HU-73 están en `main` sin que el Product Owner las haya aprobado | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
+| R04 · Alcance excesivo | Sube | 15 historias integradas sin aprobar (HU-56 a HU-59 y HU-63 a HU-73), 4 pendientes de subir (HU-55 y HU-60 a HU-62) y 11 propuestas (HU-74 a HU-84) | Que el Product Owner elija cuáles entran antes de subir el código de HU-74 a HU-84 |
+| R16 · Algo que el Product Owner no valora | Sube | HU-56 a HU-59 y HU-63 a HU-73 están en `main` sin que el Product Owner las haya aprobado | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
 | R10 · Directo y cash-out difíciles | Baja | El cash-out (HU-75) está programado sin apuestas en directo | — |
 | R06 · Documentación que no refleja la realidad | Baja | Se han corregido las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
 
