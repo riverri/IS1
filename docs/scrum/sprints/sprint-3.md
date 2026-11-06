@@ -15,7 +15,7 @@ El sprint no tiene historias de usuario nuevas: son tareas para entender el cód
 | — | Comentar el código para saber con certeza lo que ha hecho la IA | — | 3 | David Ortega |
 | — | Esquema de la carpeta `src`: dónde está el código y la interfaz (`docs/ResumenCodigo.md`) | — | 2 | Carlos Martín-Salas |
 | — | Resumen de cada paquete y clase del código (`docs/RevisionCódigo1.md`) | — | 4 | Carlos Martín-Salas |
-| [#75](https://github.com/riverri/IS1/issues/75) | Arreglo de errores: prohibir nombres de usuario ofensivos | — | 2 | Jaime Martín · Jing Li |
+| [#75](https://github.com/riverri/IS1/issues/75) | Arreglo de errores: prohibir nombres de usuario ofensivos | HU-54 | 2 | Jaime Martín · Jing Li |
 | [#73](https://github.com/riverri/IS1/issues/73) | Gestión de riesgos: nueva versión del plan RSGR | — | 4 | Carlos Jurado · Jing Li |
 | [#91](https://github.com/riverri/IS1/issues/91) | Quitar la documentación con erratas (la de los 12 sprints) | — | 1 | Carlos Jurado |
 | [#92](https://github.com/riverri/IS1/issues/92) | Reconfigurar el Sprint Backlog del Sprint 1 | — | 2 | Carlos Jurado |
