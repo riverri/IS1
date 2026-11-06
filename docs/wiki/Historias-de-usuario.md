@@ -19,10 +19,11 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 
 | Estado | Historias |
 |---|---|
-| **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-52 y HU-54 |
+| **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-53 |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
+| **Propuestas (30)** | HU-55 a HU-84, pendientes del Product Owner: las 19 de los PR #86 a #90 y las 11 del Sprint 4 ([propuestas](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md)) |
 
-En total hay **109 criterios de aceptación**; 96 son de historias hechas.
+En total hay **110 criterios de aceptación**; 97 son de historias hechas.
 
 ## Estimación
 
@@ -33,7 +34,7 @@ Cada historia tiene su **tamaño** (puntos de historia y líneas de código), la
 | Historias hechas (45) | 185 | 15.170 | 1.091 | 178 | 179 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 28 $ |
 
-- **Tamaño:** medido en el repositorio. Son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.
+- **Tamaño:** las líneas de la tabla son puntos × 82 (185 × 82 = 15.170). Medidas en el repositorio son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.
 - **Sin IA:** unas 14 líneas terminadas por hora. Sale de valores de referencia en tres puntos (25, 15 y 8 líneas/h).
 - **Con IA:** se suman cuatro partes.
   - **Dirigir a la IA:** medido.
@@ -48,7 +49,7 @@ Cada historia tiene su **tamaño** (puntos de historia y líneas de código), la
 
 | Tema | Historias |
 |---|---|
-| Creador de apuestas | HU-01 a HU-07, HU-46, HU-54 |
+| Creador de apuestas | HU-01 a HU-07, HU-46, HU-53 |
 | General | HU-08 a HU-10 |
 | Gestión de usuarios | HU-11 a HU-18, HU-47 |
 | Catálogo de eventos | HU-19 a HU-22 |

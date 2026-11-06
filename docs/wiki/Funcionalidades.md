@@ -85,7 +85,7 @@ Un **mercado** ("¿Quién ganará el Balón de Oro?") tiene varios **candidatos*
 | Detalle de un evento (HU-04, HU-05, HU-06) | Dinero apostado a cada resultado; resultado o marcador (debe coincidir); suspender, reactivar o anular |
 | Límites (HU-07) | Importe mínimo y máximo, selecciones por combinada, interruptor del juego responsable |
 | Mercados (HU-45) | Crear, candidatos, cuotas, cerrar, ganador, anular |
-| Cuentas de la casa (HU-54) | Apostado, pagado, beneficio, en juego; margen real frente al teórico (6,5 %); por tipo y por deporte |
+| Cuentas de la casa (HU-53) | Apostado, pagado, beneficio, en juego; margen real frente al teórico (6,5 %); por tipo y por deporte |
 | Sincronizar ahora / Descargar plantillas | Lanza a mano la sincronización con la API |
 
 ## Estadísticas de equipos

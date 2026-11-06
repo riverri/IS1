@@ -51,4 +51,4 @@
 ## Resultado (02/10)
 - **Historias completadas:** HU-49 y HU-50, más la migración V7 (11 puntos), y la corrección de la ficha para los visitantes.
 - **Historias no completadas:** ninguna.
-- **Peticiones añadidas durante la iteración:** entran en el backlog las ligas privadas entre amigos (fila 33, HU-51), más tipos de apuesta en fútbol (fila 34, HU-52) y un panel con las cuentas de la casa (fila 35, HU-54). La recuperación de contraseña (HU-17) se deja para más adelante.
+- **Peticiones añadidas durante la iteración:** entran en el backlog las ligas privadas entre amigos (fila 33, HU-51), más tipos de apuesta en fútbol (fila 34, HU-52) y un panel con las cuentas de la casa (fila 35, HU-53). La recuperación de contraseña (HU-17) se deja para más adelante.

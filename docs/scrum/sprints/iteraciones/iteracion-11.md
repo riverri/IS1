@@ -11,7 +11,7 @@
 |---|---|---|---|---|---|
 | HU-51 | Ligas privadas con código de invitación y ranking propio | 33 | 5 | Jing Li | Hecho |
 | HU-52 | Doble oportunidad, más/menos de 2,5 goles y ambos marcan | 34 | 8 | Jing Li | Hecho |
-| HU-54 | Cuentas de la casa para el creador | 35 | 3 | Jing Li | Hecho |
+| HU-53 | Cuentas de la casa para el creador | 35 | 3 | Jing Li | Hecho |
 | — | Migración V8 de la base de datos | — | 1 | Jing Li | Hecho |
 
 ### Ligas privadas (HU-51)
@@ -42,7 +42,7 @@
   - Con la API, el marcador entra solo si el partido acabó en los 90 minutos. Si hubo prórroga o penaltis, solo se usa el ganador, porque la API suma esos goles. _(Cambiado después: ahora se usa el marcador de los 90 minutos; ver la revisión de fallos.)_
 - **Corrección hecha durante la iteración:** las apuestas de estos tipos no tienen resultado 1X2 y rompían el cálculo del dinero apostado a cada resultado. Ahora no entran en ese cálculo, y hay una prueba que lo comprueba.
 
-### Cuentas de la casa (HU-54)
+### Cuentas de la casa (HU-53)
 - Nueva página **Gestión → Cuentas de la casa**, con:
   - el total apostado, el pagado, el beneficio y lo que hay en juego;
   - el **margen real** (beneficio / apostado) frente al **teórico** (6,5 %, que es lo que deja el margen de 1,07 en una simple);
@@ -56,9 +56,9 @@
 - Las bases de datos de la iteración 10 se actualizan solas al arrancar (comprobado con una apuesta ya hecha).
 
 ## Registro del trabajo
-- **16/10**: ligas, nuevos tipos de apuesta con sus cuotas y su resolución, marcador desde Gestión y desde la API, cuentas de la casa, migración V8 y pruebas.
+- **02/10**: ligas, nuevos tipos de apuesta con sus cuotas y su resolución, marcador desde Gestión y desde la API, cuentas de la casa, migración V8 y pruebas.
 
 ## Resultado (02/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+- **Historias completadas:** HU-51, HU-52 y HU-53, más la migración V8 (17 puntos).
+- **Historias no completadas:** ninguna.
+- **Feedback del PO/profesor:** no hubo review por iteración; la review con el Product Owner es la del [Sprint 1](../sprint-1.md).

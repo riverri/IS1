@@ -62,9 +62,9 @@ Es la primera prueba con una clave real de football-data.org; hasta ahora solo s
 - El plan gratuito no da dorsales.
 
 ## Registro del trabajo
-- **30/10**: issues y tablero, matriz de trazabilidad, tabla de dinero apostado, soporte de PostgreSQL y pruebas.
+- **02/10**: issues y tablero, matriz de trazabilidad, tabla de dinero apostado, soporte de PostgreSQL y pruebas.
 
 ## Resultado (02/10)
-- Historias completadas:
-- Historias no completadas (vuelven al backlog):
-- Feedback del PO/profesor:
+- **Completadas:** #24 (matriz de trazabilidad), #25 (dinero apostado a todos los tipos) y #26 (PostgreSQL), 10 puntos; además, plantillas desde la API real y Scrum Master elegido (#28).
+- **No completadas:** #29 (retrospectivas), que se cerró el 6/10 en el Sprint 2.
+- **Feedback del PO/profesor:** no hubo review por iteración; la review con el Product Owner es la del [Sprint 1](../sprint-1.md).

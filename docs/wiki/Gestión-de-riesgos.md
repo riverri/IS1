@@ -243,10 +243,10 @@ Las fechas de los sprints 4 a 7 son orientativas (sprints de dos semanas desde e
 | Sprint | Fechas | Acciones | Riesgos |
 |---|---|---|---|
 | **Cierre del Sprint 3** | hasta el 3/11 | Aprobar esta versión del plan. Acordar las reglas de revisión: ningún pull request sin revisar y uno por historia. Apuntar en la siguiente planning los exámenes de todos. | R21, R19, R22 |
-| **Sprint 4** | 3/11 – 17/11 | Revisar el código pendiente de integrar antes de añadir funcionalidades nuevas. Planificar con horas reales y horas estimadas. Primer simulacro de defensa. Revisión completa de este plan. | R21, R20, R03, R07 |
-| **Sprint 5** | 17/11 – 1/12 | Comprobar los pull requests por persona del Sprint 4 y corregir el reparto. Ajustar la capacidad a los exámenes. Recalcular el plan con las horas reales. | R01, R03, R22, R02 |
-| **Sprint 6** | 1/12 – 15/12 | Congelar el alcance: solo se termina y se arregla. Segundo simulacro de defensa. Ensayo de la demo final con el servidor. | R04, R07, R12 |
-| **Sprint 7** | 15/12 – 18/12 | Repaso por parejas. Cierre de este plan: qué riesgos se dieron y qué se aprendió. | R07, R21 |
+| **Sprint 4** | 4/11 – 17/11 | Revisar el código pendiente de integrar antes de añadir funcionalidades nuevas. Planificar con horas reales y horas estimadas. Primer simulacro de defensa. Revisión completa de este plan. | R21, R20, R03, R07 |
+| **Sprint 5** | 18/11 – 1/12 | Comprobar los pull requests por persona del Sprint 4 y corregir el reparto. Ajustar la capacidad a los exámenes. Recalcular el plan con las horas reales. | R01, R03, R22, R02 |
+| **Sprint 6** | 2/12 – 15/12 | Congelar el alcance: solo se termina y se arregla. Segundo simulacro de defensa. Ensayo de la demo final con el servidor. | R04, R07, R12 |
+| **Sprint 7** | 16/12 – 18/12 | Repaso por parejas. Cierre de este plan: qué riesgos se dieron y qué se aprendió. | R07, R21 |
 
 **Monitorización continua:**
 - **En cada daily:** el Scrum Master repasa los 4 intolerables: ¿alguno se está haciendo real?

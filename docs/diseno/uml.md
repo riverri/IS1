@@ -41,17 +41,31 @@ flowchart LR
         cu13(["Introducir resultado o marcador, suspender o anular (HU-04, HU-05, HU-06, HU-52)"])
         cu14(["Gestionar mercados a largo plazo (HU-45)"])
         cu15(["Fijar límites de apuesta y activar el juego responsable (HU-07, HU-10)"])
-        cu20(["Ver las cuentas de la casa (HU-54)"])
+        cu20(["Ver las cuentas de la casa (HU-53)"])
         cu16(["Sincronizar partidos, resultados y plantillas (HU-21, HU-25, HU-50)"])
+        cu21(["Resolver y pagar las apuestas (HU-25, HU-30)"])
+        cu22(["Calcular las cuotas (HU-03, HU-20)"])
     end
+
+    usuario -- «hereda» --> visitante
+    creador -- «hereda» --> visitante
 
     visitante --- cu1 & cu2 & cu3 & cu4
     usuario --- cu5 & cu6 & cu7 & cu8 & cu9 & cu10 & cu17 & cu18 & cu19
     creador --- cu11 & cu12 & cu13 & cu14 & cu15 & cu20
     api --- cu16
+
+    cu1 -. «include» .-> cu22
+    cu5 -. «include» .-> cu22
+    cu13 -. «include» .-> cu21
+    cu16 -. «include» .-> cu21
+    cu9 -. «extend» .-> cu21
+    cu7 -. «extend» .-> cu8
 ```
 
-El usuario hereda los casos del visitante, y el creador los del usuario salvo apostar y las ligas (el creador no aparece en el ranking).
+- **«hereda»** es una generalización: el usuario y el creador pueden hacer todo lo del visitante. El creador hereda del visitante y no del usuario porque no puede apostar ni entrar en ligas.
+- **«include»**: el caso de uso siempre usa el otro (apostar siempre calcula las cuotas; introducir un resultado siempre resuelve las apuestas).
+- **«extend»**: el caso de uso amplía el otro solo a veces (el aviso solo sale si la apuesta cambia de estado; cancelar o cambiar el importe se hace desde *Mis apuestas*).
 
 ## 2. Arquitectura por capas
 
