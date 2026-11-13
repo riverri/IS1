@@ -150,10 +150,10 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-53 | Cuentas de la casa | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-54 | Nombres inapropiados | Hecha| 1 | 4 (Baja) | 2 | 153 | 12 | 1,8 | 1,7 $ |
 | HU-55 | Movimientos del saldo | Pendiente de subir | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
-| HU-56 | Ruleta europea | Integrada (06/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
-| HU-57 | Blackjack | Integrada (06/11) | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
-| HU-58 | Historial de partidas del casino | Integrada (06/11) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-59 | Configurar el casino | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-56 | Ruleta europea | Pendiente de subir | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-57 | Blackjack | Pendiente de subir | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-58 | Historial de partidas del casino | Pendiente de subir | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-59 | Configurar el casino | Pendiente de subir | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-60 | Anuncios de otras secciones | Pendiente de subir | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-61 | Gestionar los anuncios | Pendiente de subir | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-62 | Medir los clics de cada anuncio | Pendiente de subir | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
