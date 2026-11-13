@@ -28,9 +28,10 @@ _Por completar por el equipo: una línea por persona en cada daily (qué hice, q
 
 ## Sprint Review (03/11)
 - **Tareas completadas** (según el repositorio): nombres ofensivos prohibidos ([#75](https://github.com/riverri/IS1/issues/75), PR #84, 22/10) · documentación con erratas retirada ([#91](https://github.com/riverri/IS1/issues/91), 26/10) · comentarios en el código (PR #85, 26/10) · esquema de la carpeta `src` (`docs/ResumenCodigo.md`, 27/10) · nueva versión del plan RSGR ([#73](https://github.com/riverri/IS1/issues/73), PR #95, 1/11) · Sprint Backlog del Sprint 1 reconfigurado ([#92](https://github.com/riverri/IS1/issues/92), 1/11)
-- **Tareas no completadas (vuelven al Product Backlog):** resumen de cada paquete (`docs/RevisionCódigo1.md` solo cubre el paquete `equipos`) · esta acta (faltan las dailies, la review y qué fue bien)
-- **Horas reales frente a estimadas:**
-- **Comentarios del Product Owner:**
+- **Tareas no completadas (vuelven al Product Backlog):** resumen de cada paquete (`docs/RevisionCódigo1.md` solo cubre el paquete `equipos`).
+- Se descartan las ideas de los daily scrums debido a la incompatibilidad de horarios y a diversos temas personales, por lo que se sustituye por un mayor compromiso por parte de todos los integrantes del equipo a la comunicación de cambios e ideas mediante el grupo de Whatsapp conjunto.
+- Por último, se sustituyen la creación de issues y su documentación por un grafo accesible por parte de todos los miembros del equipo, que se creyó mucho más accesible y conveniente por todos los miembros del equipo.
+
 
 ## Sprint Retrospective (02/11)
 
@@ -38,8 +39,8 @@ _Por completar por el equipo: una línea por persona en cada daily (qué hice, q
 | Acción del Sprint 2 | ¿Se cumplió? |
 |---|---|
 | Cada historia del Sprint Backlog es un issue con milestone «Sprint 3», responsable y estimación (puntos y horas) | **No.** No se crearon milestones y 4 de las 8 tareas no tienen issue. Desde el Sprint 4 el seguimiento se hace en el grafo del equipo |
-| Al cerrar cada historia, apuntar en su issue las horas reales y compararlas en la Sprint Review | **No.** La review no tiene horas reales |
-| Dejar constancia de cada daily scrum en el acta | **No.** El acta no tiene dailies |
+| Al cerrar cada historia, apuntar en su issue las horas reales y compararlas en la Sprint Review | **No.** La review no tiene horas reales, sin embargo se añadieron estimaciones del tiempo real dedicado a el Product Backlog para cada una de las Historias de usuario que lo conforman |
+| Dejar constancia de cada daily scrum en el acta | **No.** El acta no tiene dailies pero se sustituyen por una mayor comunicación por parte de todos los miembros del equipo |
 
 Las tareas del Sprint 3 (comentar el código, esquema de `src`, resumen de las clases, fallos e issues) están en la Sprint Review.
 
@@ -52,7 +53,7 @@ Por último, hemos visto que le ritmo de desarrollo de los dos primeros sprints 
 ### Acciones de mejora para el Sprint 4
 | Acción | Responsable | Cómo se comprueba |
 |---|---|---|
-| Ningún pull request entra en `main` sin la aprobación de otro miembro (proteger la rama `main` en GitHub) | Scrum Master (Carlos Jurado) | Todos los pull requests del Sprint 4 tienen una revisión «Approved» |
-| Repetir las tres acciones no cumplidas del Sprint 2: issues con milestone, responsable y horas; horas reales en la review; dailies en el acta | Scrum Master (Carlos Jurado) | El acta del Sprint 4 tiene sus dailies y las horas reales frente a las estimadas |
+| Ningún pull request entra en `main` sin la aprobación de otro miembro (proteger la rama `main` en GitHub) | Todos los miembros del equipo | Todos los pull requests del Sprint 4 tienen una revisión «Approved» |
+| Repetir las tres acciones no cumplidas del Sprint 2: issues con milestone, responsable y horas; horas reales en la review; dailies en el acta | Scrum Master (Carlos Jurado) | El acta del Sprint 4 tiene uan comparación entre las horas reales y las estimadas |
 | Apuntar en el acta los riesgos que suben, bajan o se han hecho reales ([plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgos)) | Scrum Master (Carlos Jurado) | El acta del Sprint 4 tiene un apartado «Seguimiento de riesgos» |
 | Primer simulacro de defensa: cada uno explica una parte que no ha programado | Todo el equipo | Se hace en la review del Sprint 4 |
