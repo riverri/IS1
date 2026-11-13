@@ -3,13 +3,15 @@
 > Acta del sprint, en curso. Lo que sale del repositorio está rellenado; lo que pasa en las reuniones lo completa el equipo. Esta página se publica sola en la wiki desde `docs/scrum/sprints/sprint-4.md`: para cambiarla, edita ese archivo.
 
 ## Sprint Planning (05/11)
-- **Hecha por:** David Ortega. Pendiente de revisar con el resto del equipo y con el Product Owner.
-- **Sprint Goal:** que `main` no tenga los fallos encontrados en la revisión de código y que la ampliación quede escrita y lista para que el Product Owner decida qué entra. Se comprueba en la review: las correcciones están fusionadas con su prueba, las historias HU-74 a HU-84 tienen sus criterios de aceptación y el Product Owner ha dicho cuáles entran.
-- **Capacidad del equipo (horas):** _por completar por el equipo_
+- **Sprint Goal:** Nuestro principal objetico es que `main` no tenga los fallos encontrados en la revisión de código y que la ampliación quede escrita y lista para que el Product Owner decida qué entra. Se amplía el Product Backlog con las nuevas historias de usuario (de HU-74 hasta HU-84) provisionalmente en un archivo. Además se desarrollan algunas de las ampliaciones del proyecto ya redactadas 
+
 - **Acciones de la retrospectiva anterior que se incluyen:** las cuatro del [Sprint 3](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/sprint-3.md): revisión de cada pull request, issues con horas y dailies, seguimiento de riesgos en el acta y primer simulacro de defensa.
 
+## Sprint Backlog
+Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
+
 | Issue | Historia o tarea | Puntos | Horas estimadas | Responsable |
-|---|---|---:|---:|---|
+|---|---|---|---|---|
 | — | Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | | David Ortega |
 | — | Integrar en orden las ramas de la ampliación ([#86](https://github.com/riverri/IS1/pull/86) a [#90](https://github.com/riverri/IS1/pull/90)) | — | | David Ortega |
 | — | HU-74 · Baccarat | 5 | | David Ortega |
@@ -23,18 +25,14 @@
 | — | Revisión de la documentación frente a la teoría de la asignatura | — | | David Ortega |
 | | **Total** | **47** | | |
 
-Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: su código no se sube a `main` hasta que el Product Owner las apruebe y otro miembro del equipo lo revise.
+Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: no se empieza su desarrollo hasta que el Product Owner las apruebe y otro miembro del equipo lo revise. Queda pendiente de hacer la fusión del archivo original con el de las nuevas propuestas en el siguiente Spint (Sprint 5) ya que se ha decido exponer las nuevas propuestas al Product Owner en la presentación final del Sprint.
 
-**Cambio del 06/11:** David Ortega decidió integrar en `main` el código de los PR #86 a #90 (HU-55 a HU-73) sin esperar a que el Product Owner aprobara sus historias ni a la revisión de otro miembro. Antes se arreglaron, cada uno con su prueba, los cuatro fallos que la revisión del Sprint 3 había encontrado en ese código (ver [Revisión de fallos](https://github.com/riverri/IS1/wiki/Revisi%C3%B3n-de-fallos)). Las 19 historias quedan como **integradas**: en `main` y probadas, pero sin aceptar en una review.
-
-**Cambio del 06/11 (después):** se quitó de `main` lo que se ve de HU-55 (la página de movimientos del saldo) y de HU-60 a HU-62 (los anuncios internos), para subirlo más adelante. Quedan **pendientes de subir**. De HU-55 se queda el libro de movimientos interno, porque lo usan las apuestas, el casino, las predicciones, la cripto y el juego responsable; de los anuncios, sus tablas, porque las migraciones del casino, las predicciones y la cripto meten anuncios en ellas. Las otras 15 siguen integradas.
-
-El plan de riesgos pedía revisar el código pendiente antes de añadir funcionalidades nuevas (R20, R21). Por eso las correcciones de la revisión se suben antes que cualquier historia nueva.
 
 ## Daily scrums
 Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md)). Una línea por persona: qué hice, qué haré y qué me bloquea.
+Además es la manera que tienen los miembros del equipo de comunicar los avances o cambios que se realizan durante el desarrollo del proyecto. 
 
-- _Por completar por el equipo._
+
 
 ## Sprint Review (17/11)
 > Se completa en la review. A 06/11 consta en el repositorio:
@@ -61,7 +59,6 @@ Según el [plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgo
 |---|---|---|---|
 | R21 · Perder la noción de lo que desarrolla la IA | Sube | En este sprint se han programado con IA 11 historias nuevas, unas 4.500 líneas | No se suben sin la revisión de otro miembro que sepa explicarlas |
 | R01 · Participación desigual | Sube | Hasta ahora, todo el trabajo del sprint es de una persona | Repartir entre los cinco la revisión de los pull requests de código |
-| R04 · Alcance excesivo | Sube | 15 historias integradas sin aprobar (HU-56 a HU-59 y HU-63 a HU-73), 4 pendientes de subir (HU-55 y HU-60 a HU-62) y 11 propuestas (HU-74 a HU-84) | Que el Product Owner elija cuáles entran antes de subir el código de HU-74 a HU-84 |
 | R16 · Algo que el Product Owner no valora | Sube | HU-56 a HU-59 y HU-63 a HU-73 están en `main` sin que el Product Owner las haya aprobado | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
 | R10 · Directo y cash-out difíciles | Baja | El cash-out (HU-75) está programado sin apuestas en directo | — |
 | R06 · Documentación que no refleja la realidad | Baja | Se han corregido las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
