@@ -3,9 +3,8 @@
 > Acta del sprint, por completar por el equipo. Esta página se publica sola en la wiki desde `docs/scrum/sprints/sprint-3.md`: para cambiarla, edita ese archivo.
 
 ## Sprint Planning (21/10)
-- **Asistentes: Carlos Jurado, Jing Li, David Ortega, Carlos Martín-Salas, Jaime Martín**
-- **Sprint Goal: cada miembro sabe explicar al menos un paquete del código.** Se comprueba en la review: cada uno explica el suyo, `RevisionCódigo1.md` cubre los paquetes que anuncia y los issues #75, #91 y #92 están cerrados.
-- **Capacidad del equipo (horas): 20**
+- **Sprint Goal: cada miembro sabe explicar al menos un paquete del código.** Se comprueba en la review: cada uno explica el suyo, `RevisionCódigo1.md` cubre los paquetes que anuncia y los issues #75, #91 y #92 están cerrados. Además de desarrolla la HU-54 que quedó pendiente de otros Sprints, se reconfigura la gestión de riesgos (pues la versión anterior era demasiado general y poco enfocada en el proyecto en sí).
+- 
 - **Acciones de la retrospectiva anterior que se incluyen: ser más conscientes del posible uso excesivo de la Inteligencia Artificial**
 
 El sprint no tiene historias de usuario nuevas: son tareas para entender el código, arreglar errores y completar la documentación, así que no llevan puntos.
