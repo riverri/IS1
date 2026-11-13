@@ -3,44 +3,32 @@
 > Acta del sprint, en curso. Lo que sale del repositorio está rellenado; lo que pasa en las reuniones lo completa el equipo. Esta página se publica sola en la wiki desde `docs/scrum/sprints/sprint-4.md`: para cambiarla, edita ese archivo.
 
 ## Sprint Planning (05/11)
-- **Sprint Goal:** Nuestro principal objetico es que `main` no tenga los fallos encontrados en la revisión de código y que la ampliación quede escrita y lista para que el Product Owner decida qué entra. Se amplía el Product Backlog con las nuevas historias de usuario (de HU-74 hasta HU-84) provisionalmente en un archivo. Además se desarrollan algunas de las ampliaciones del proyecto ya redactadas 
+- **Sprint Goal:** Nuestro principal objetico es que `main` no tenga los fallos encontrados en la revisión de código y que la primera parte de la ampliación quede escrita y lista para que el Product Owner decida qué entra. Se amplía el Product Backlog con las nuevas historias de usuario (de HU-74 hasta HU-84) provisionalmente en un archivo. Además se desarrollan algunas de las ampliaciones del proyecto ya redactadas en concreto nos centraremos en el desarrollo de las historias de la HU-63 a la HU-73. Referidas al mercado de valores y a la cartera de criptomonedas ficticia.
 
-- **Acciones de la retrospectiva anterior que se incluyen:** las cuatro del [Sprint 3](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/sprint-3.md): revisión de cada pull request, issues con horas y dailies, seguimiento de riesgos en el acta y primer simulacro de defensa.
+- **Acciones de la retrospectiva anterior que se incluyen:** las cuatro del [Sprint 3](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/sprint-3.md): revisión de cada pull request, issues con horas, seguimiento de riesgos en el acta y primer simulacro de defensa (presentaciones en el aula).
 
 ## Sprint Backlog
 Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 
-| Issue | Historia o tarea | Puntos | Horas estimadas | Responsable |
-|---|---|---|---|---|
-| — | Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | | David Ortega |
-| — | Integrar en orden las ramas de la ampliación ([#86](https://github.com/riverri/IS1/pull/86) a [#90](https://github.com/riverri/IS1/pull/90)) | — | | David Ortega |
-| — | HU-74 · Baccarat | 5 | | David Ortega |
-| — | HU-75 · Cobrar antes de tiempo (cash-out) | 8 | | David Ortega |
-| — | HU-76 · Riesgo de la casa por evento | 5 | | David Ortega |
-| — | HU-77 · Correo al ganar una apuesta | 3 | | David Ortega |
-| — | HU-78 a HU-80 · Quiniela entre jugadores | 11 | | David Ortega |
-| — | HU-81 a HU-83 · Liga fantasy | 12 | | David Ortega |
-| — | HU-84 · Ranking por tipo de juego | 3 | | David Ortega |
-| — | Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | — | | David Ortega |
-| — | Revisión de la documentación frente a la teoría de la asignatura | — | | David Ortega |
-| | **Total** | **47** | | |
+| Historia o tarea | Horas Reales | Horas estimadas |
+|---|---|---|
+| Desarrollo de las historias HU-63 a HU-68 (mercados de prediccion y valores) | - | |
+| Desarrollo de las historias HU-68 a HU-74 (cartera de criptomonedas ficticia) | - | |
+| Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | | 
+| Integrar en orden las ramas de la ampliación ([#86](https://github.com/riverri/IS1/pull/86) a [#90](https://github.com/riverri/IS1/pull/90)) | — | |
+| Diseño de HU para las nuevas ampliaciones (Hu-74 a HU-84) | 3 | 
+| Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | — | | 
+| Revisión de la documentación frente a la teoría de la asignatura | — | | 
+| **Total** | | | 
 
 Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: no se empieza su desarrollo hasta que el Product Owner las apruebe y otro miembro del equipo lo revise. Queda pendiente de hacer la fusión del archivo original con el de las nuevas propuestas en el siguiente Spint (Sprint 5) ya que se ha decido exponer las nuevas propuestas al Product Owner en la presentación final del Sprint.
 
 
 ## Daily scrums
-Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md)). Una línea por persona: qué hice, qué haré y qué me bloquea.
-Además es la manera que tienen los miembros del equipo de comunicar los avances o cambios que se realizan durante el desarrollo del proyecto. 
-
-
+Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md)). Se abandona la idea de la línea por persona: qué hice, qué haré y qué me bloquea, y se enfoca a una manera más práctica donde los integrantes del grupo detallan los cambios que se van haciendo al proyecto, así como ideas, avances, problemas, dudas y conflictos técnicos. Se mantendrá está tónica durante los siguientes Sprints.
 
 ## Sprint Review (17/11)
-> Se completa en la review. A 06/11 consta en el repositorio:
-
-- **Historias completadas:** ninguna aceptada todavía. HU-56 a HU-59 y HU-63 a HU-73 están integradas en `main` desde el 06/11, junto con las correcciones de la revisión de código, en un solo pull request.
-- **Preparado para revisar:** las 15 historias integradas, el código de HU-55, HU-60 a HU-62 y HU-74 a HU-84 (aún no subido) y esta documentación.
-- **Horas reales frente a estimadas:** _cada responsable_
-- **Comentarios del Product Owner:** _en la review_
+Se han alcanzado los objetivos
 
 ## Sprint Retrospective (_fecha_)
 
