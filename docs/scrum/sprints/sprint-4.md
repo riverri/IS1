@@ -15,10 +15,10 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 | Desarrollo de las historias HU-63 a HU-68 (mercados de prediccion y valores) | - | 8h |
 | Desarrollo de las historias HU-68 a HU-73 (cartera de criptomonedas ficticia) | - | 8h |
 | Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | 3h | 
-| Integrar en orden las ramas de la ampliación ([#86](https://github.com/riverri/IS1/pull/86) a [#90](https://github.com/riverri/IS1/pull/90)) | — |  |
+| Integrar en orden las ramas de la ampliación ([#89](https://github.com/riverri/IS1/pull/89) a [#90](https://github.com/riverri/IS1/pull/90)) | — | 1h |
 | Diseño de HU para las nuevas ampliaciones (Hu-74 a HU-84) | 3 | 4h |
-| Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | — | | 
-| Revisión de la documentación frente a la teoría de la asignatura | — | | 
+| Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | — | 1h | 
+| Revisión de la documentación frente a la teoría de la asignatura | 3h | 3h | 
 | **Total** | | | 
 
 Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: no se empieza su desarrollo hasta que el Product Owner las apruebe y otro miembro del equipo lo revise. Queda pendiente de hacer la fusión del archivo original con el de las nuevas propuestas en el siguiente Spint (Sprint 5) ya que se ha decido exponer las nuevas propuestas al Product Owner en la presentación final del Sprint.
@@ -28,19 +28,18 @@ Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https
 Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md)). Se abandona la idea de la línea por persona: qué hice, qué haré y qué me bloquea, y se enfoca a una manera más práctica donde los integrantes del grupo detallan los cambios que se van haciendo al proyecto, así como ideas, avances, problemas, dudas y conflictos técnicos. Se mantendrá está tónica durante los siguientes Sprints.
 
 ## Sprint Review (17/11)
-Se han alcanzado los objetivos planeados en el Sprint Planning haciendo hincapié en las facetas detectadas en anteriores Sprints como mejorables. En concreto se ha realizado una revisión de los riesgos decidiendo si ha cambiado su posible impacto sobre el proyecto y se han actualizado los medios de comunicación entre los miembros del proyecto ya que los propuestos en un primer lugar se han considerado ineficientes.
+Se han alcanzado los objetivos planeados en el Sprint Planning haciendo hincapié en las facetas detectadas en anteriores Sprints como mejorables. En concreto se ha realizado una revisión de los riesgos decidiendo si ha cambiado su posible impacto sobre el proyecto y se han actualizado los medios de comunicación entre los miembros del proyecto ya que los propuestos en un primer lugar se han considerado ineficientes. Por último, se ha decido poner y dedicar más tiempo a la preparación de la presentación ya que es cuando podemos exponerle al Product Owner nuestro progreso y que él nos de el feedback necesario para el correcto desarrollo del mismo.
 
 ## Sprint Retrospective (_fecha_)
+Se ha llegado a ala conclusión de que en líneas generales el progreso realizado en este Sprint ha sido satisfactorio, se ha cumplido con todas las expectativas y se ha realizado todo lo planeado intentando cumplir con los requisitos de mejora en los Sprints anteriores. Además hemos conseguido mejorar la comunicación y coordinación del equipo gracias a la implementación del grafo y a dar mayor prioridad a hablar y exponer nuestras ideas/problemas por el grupo de Whatsapp ya que al hacer daily scrums presenciales muchas veces alguno de los miembros no podía acudir y luego no tenía información de lo debatido en los dailies. Por último hemos notado todos un cambio en la manera de realizar las cosas ya que ahora trabajamos con una mayor coordinación y mucho más conscientes de lo que hacemos. 
 
-
-Además hemos conseguido mejorar la comunicación y coordinación del equipo gracias a la implementación del grafo y a dafr mayor prioridad a hablar y exponer nuestras ideas/problemas por el grupo de Whatsapp ya que al hacer daily scrums presenciales muchas veces alguno de los miembros no podía acudir y luego no tenía información de lo debatido en los dailies. 
 ### Seguimiento de las acciones del Sprint 3
 | Acción del Sprint 3 | ¿Se cumplió? |
 |---|---|
-| Ningún pull request entra en `main` sin la aprobación de otro miembro | **No, por ahora.** El 04/11 entraron en `main` tres cambios del acta del Sprint 3 sin pull request; el 06/11, esta revisión de la documentación, también sin pull request, y el pull request de la integración de #86 a #90, sin la aprobación de otro miembro. Se vuelve a comprobar al cerrar el sprint |
-| Issues con milestone, responsable y horas; horas reales; dailies en el acta | Los milestones se sustituyen por el grafo del equipo ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)). Horas reales y dailies: _al cerrar el sprint_ |
-| Apuntar en el acta los riesgos que suben o bajan | **Sí.** Ver el apartado siguiente |
-| Primer simulacro de defensa | _En la review del 17/11_ |
+| Ningún pull request entra en `main` sin la aprobación de otro miembro | **A medias** Todos los pull request que han entrado en este Sprint han sido comprobados y verificados por algún compañero y por la IA, de hecho varios pull request se rechazaron por no cumplir este requisito, aunque lo ideal sería que todos los integrantes del grupo leyeran y comprendieran el código |
+| Issues con milestone, responsable y horas; horas reales; dailies en el acta | Los milestones se sustituyen por el grafo del equipo ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)). Se ha decidido incorporar la comparación de horas en el Sprint Backlog y sustituir la creación de issues por actualizaciones del proyecto tanto en el propio grafo como en el grupo de Whatsapp |
+| Apuntar en el acta los riesgos que suben o bajan | **Sí.** (Ver el apartado siguiente) |
+| Primer simulacro de defensa | Se ha sustituido por una mejor preparación de la presentación (compaginar los horarios de los 5 era complicado) y por una división más equitativa del tiempo de explicación de la presentación |
 
 ### Seguimiento de riesgos
 Según el [plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgos).
