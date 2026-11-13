@@ -12,14 +12,14 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 
 | Historia o tarea | Horas Reales | Horas estimadas |
 |---|---|---|
-| Desarrollo de las historias HU-63 a HU-68 (mercados de prediccion y valores) | - | 8h |
-| Desarrollo de las historias HU-68 a HU-73 (cartera de criptomonedas ficticia) | - | 8h |
-| Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | 3h | 
-| Integrar en orden las ramas de la ampliación ([#89](https://github.com/riverri/IS1/pull/89) a [#90](https://github.com/riverri/IS1/pull/90)) | — | 1h |
+| Desarrollo de las historias HU-63 a HU-68 (mercados de prediccion y valores) | 10h | 8h |
+| Desarrollo de las historias HU-68 a HU-73 (cartera de criptomonedas ficticia) | 8h | 8h |
+| Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | 3h | 3h | 
+| Integrar en orden las ramas de la ampliación ([#89](https://github.com/riverri/IS1/pull/89) a [#90](https://github.com/riverri/IS1/pull/90)) | 2h | 1h |
 | Diseño de HU para las nuevas ampliaciones (Hu-74 a HU-84) | 3 | 4h |
-| Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | — | 1h | 
+| Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | 5,5h | 1h | 
 | Revisión de la documentación frente a la teoría de la asignatura | 3h | 3h | 
-| **Total** | | | 
+| **Total** | **34,5h** | **28h** | 
 
 Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: no se empieza su desarrollo hasta que el Product Owner las apruebe y otro miembro del equipo lo revise. Queda pendiente de hacer la fusión del archivo original con el de las nuevas propuestas en el siguiente Spint (Sprint 5) ya que se ha decido exponer las nuevas propuestas al Product Owner en la presentación final del Sprint.
 
