@@ -9,7 +9,7 @@
 - Solucionar aquellos problemas o errores detectados.
 - Completar las historias de usuario con las estimaciones de coste y prioridades entre ellas (lo que nos comentó el profe en la presentación).
 - Búsqueda/creación de una API (probablemente con IA) que actualice los resultados deportivos sobre los que se basan nuestras apuestas (e intentar que eso se produzca en tiempo real).
-- Añadir detalles estéticos, organizar la IDE de la aplicación y diseñar y colocar los botones donde se accederá a las funciones aún no implementadas.
+
 
 ## Sprint Backlog (según el repositorio)
 | Objetivo de la planificación | Qué se hizo | Dónde |
@@ -18,7 +18,7 @@
 | Solucionar los errores | Los 34 fallos corregidos, con una prueba cada uno; issues cerrados | [PR #70](https://github.com/riverri/IS1/pull/70) |
 | Estimaciones y prioridades de las historias | Criterios de aceptación de todas las historias en formato Dado / Cuando / Entonces (PR #70). Prioridad del 1 al 5 de cada historia (Carlos Jurado, 16/10). La estimación de horas se hizo ya en el Sprint 3 | [PR #70](https://github.com/riverri/IS1/pull/70), commits del 16/10 en `historias-de-usuario.md` |
 | API de resultados deportivos | Ya estaba hecha desde el Sprint 1 (HU-21, iteración 5): sincroniza cada 30 minutos con football-data.org. No da resultados en tiempo real | [iteración 5](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/iteraciones/iteracion-05.md) |
-| Detalles estéticos y botones de lo no implementado | No hay cambios registrados en el repositorio durante el sprint | — |
+
 
 También se hizo, fuera de la planificación:
 - **HU-17, recuperar la contraseña** (5 puntos), con correo y enlace de un solo uso: [PR #72](https://github.com/riverri/IS1/pull/72).
