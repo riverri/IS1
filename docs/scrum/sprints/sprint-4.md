@@ -12,11 +12,11 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 
 | Historia o tarea | Horas Reales | Horas estimadas |
 |---|---|---|
-| Desarrollo de las historias HU-63 a HU-68 (mercados de prediccion y valores) | - | |
-| Desarrollo de las historias HU-68 a HU-74 (cartera de criptomonedas ficticia) | - | |
-| Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | | 
-| Integrar en orden las ramas de la ampliación ([#86](https://github.com/riverri/IS1/pull/86) a [#90](https://github.com/riverri/IS1/pull/90)) | — | |
-| Diseño de HU para las nuevas ampliaciones (Hu-74 a HU-84) | 3 | 
+| Desarrollo de las historias HU-63 a HU-68 (mercados de prediccion y valores) | - | 8h |
+| Desarrollo de las historias HU-68 a HU-73 (cartera de criptomonedas ficticia) | - | 8h |
+| Revisión del código de `main`: un arreglo con su prueba por cada fallo encontrado | — | 3h | 
+| Integrar en orden las ramas de la ampliación ([#86](https://github.com/riverri/IS1/pull/86) a [#90](https://github.com/riverri/IS1/pull/90)) | — |  |
+| Diseño de HU para las nuevas ampliaciones (Hu-74 a HU-84) | 3 | 4h |
 | Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | — | | 
 | Revisión de la documentación frente a la teoría de la asignatura | — | | 
 | **Total** | | | 
@@ -28,10 +28,12 @@ Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https
 Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md)). Se abandona la idea de la línea por persona: qué hice, qué haré y qué me bloquea, y se enfoca a una manera más práctica donde los integrantes del grupo detallan los cambios que se van haciendo al proyecto, así como ideas, avances, problemas, dudas y conflictos técnicos. Se mantendrá está tónica durante los siguientes Sprints.
 
 ## Sprint Review (17/11)
-Se han alcanzado los objetivos
+Se han alcanzado los objetivos planeados en el Sprint Planning haciendo hincapié en las facetas detectadas en anteriores Sprints como mejorables. En concreto se ha realizado una revisión de los riesgos decidiendo si ha cambiado su posible impacto sobre el proyecto y se han actualizado los medios de comunicación entre los miembros del proyecto ya que los propuestos en un primer lugar se han considerado ineficientes.
 
 ## Sprint Retrospective (_fecha_)
 
+
+Además hemos conseguido mejorar la comunicación y coordinación del equipo gracias a la implementación del grafo y a dafr mayor prioridad a hablar y exponer nuestras ideas/problemas por el grupo de Whatsapp ya que al hacer daily scrums presenciales muchas veces alguno de los miembros no podía acudir y luego no tenía información de lo debatido en los dailies. 
 ### Seguimiento de las acciones del Sprint 3
 | Acción del Sprint 3 | ¿Se cumplió? |
 |---|---|
@@ -45,12 +47,12 @@ Según el [plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgo
 
 | Riesgo | Cambio | Por qué | Acción |
 |---|---|---|---|
-| R21 · Perder la noción de lo que desarrolla la IA | Sube | En este sprint se han programado con IA 11 historias nuevas, unas 4.500 líneas | No se suben sin la revisión de otro miembro que sepa explicarlas |
-| R01 · Participación desigual | Sube | Hasta ahora, todo el trabajo del sprint es de una persona | Repartir entre los cinco la revisión de los pull requests de código |
-| R16 · Algo que el Product Owner no valora | Sube | HU-56 a HU-59 y HU-63 a HU-73 están en `main` sin que el Product Owner las haya aprobado | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
-| R10 · Directo y cash-out difíciles | Baja | El cash-out (HU-75) está programado sin apuestas en directo | — |
-| R06 · Documentación que no refleja la realidad | Baja | Se han corregido las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
-
+| R21 - Perder la noción de lo que desarrolla la IA | Sube | En este sprint se han programado con IA 11 historias nuevas, unas 4.500 líneas | No se suben sin la revisión de otro miembro que sepa explicarlas |
+| R01 - Participación desigual | Sube | Hasta ahora, todo el trabajo del sprint lo han realizado 2 o 3 personas| Repartir entre los cinco la revisión de los pull requests de código |
+| R16 - Algo que el Product Owner no conoce | Sube | Se han decido crear HU de nuevas ampliaciones sin consultar al Product Owner | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
+| R10 - Directo y cash-out difíciles | Baja | El cash-out (HU-75) se ha decidido programarlo sin apuestas en directo | — |
+| R06 - Documentación que no refleja la realidad | Baja | Se han corregido las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
+| R03 - Planificación poco realista| Baja | Se ha realizado una planificación más centrada en las horas de trabajo que se ha cumplido | Continuar con la 
 ### Qué fue bien y qué mejorar
 _Por completar por el equipo en la retrospectiva._
 
