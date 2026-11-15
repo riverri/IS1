@@ -14,7 +14,8 @@ COPY --from=compilacion /app/target/apuestas-0.1.0-SNAPSHOT.jar app.jar
 ENV SPRING_PROFILES_ACTIVE=nube
 # La aplicación ya fija su zona horaria; esto evita sorpresas en los registros del servidor
 ENV TZ=Europe/Madrid
-# El plan gratuito tiene 512 MB de memoria
-ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k"
+# El plan gratuito tiene 512 MB de memoria. preferIPv4Stack: que el servidor escuche en IPv4 (0.0.0.0),
+# que es donde Render busca el puerto (ver server.address en application-nube.properties)
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k -Djava.net.preferIPv4Stack=true"
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
