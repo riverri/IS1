@@ -6,7 +6,8 @@ services:
     plan: free
     region: frankfurt
     branch: main
-    healthCheckPath: /
+    # /ping responde sin base de datos ni plantilla (HU-85): el health check del deploy no depende de la portada
+    healthCheckPath: /ping
     envVars:
       # Contraseña del creador de apuestas (obligatoria): Render la pide al crear el servicio
       - key: CREADOR_PASSWORD
