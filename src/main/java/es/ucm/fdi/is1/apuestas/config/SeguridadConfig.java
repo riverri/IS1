@@ -39,6 +39,8 @@ public class SeguridadConfig {
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
                         .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login", "/recuperar", "/recuperar/nueva",
                                 "/css/**", "/error").permitAll()
+                        // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
+                        .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
                         .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
                         // Criptomonedas (HU-69): la lista y cada cripto son públicas; la cartera, comprar y vender no.

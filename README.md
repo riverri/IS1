@@ -113,7 +113,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 |---|---|
 | [Render](https://render.com) | Ejecuta la aplicación. El repositorio ya trae el `Dockerfile` y `render.yaml`. |
 | [Neon](https://neon.tech) | Base de datos PostgreSQL permanente (0,5 GB, de sobra para el proyecto). |
-| [UptimeRobot](https://uptimerobot.com) (opcional) | Visita la web cada 5 minutos para que Render no la apague. |
+| [UptimeRobot](https://uptimerobot.com) (opcional) | Avisa si la web se cae. Para que Render no la apague ya no hace falta: la aplicación se visita sola (keep-alive). |
 
 **1. Base de datos (Neon)**
 1. Entra en https://neon.tech con tu cuenta de GitHub y crea un proyecto (región *Europe (Frankfurt)*).
@@ -138,9 +138,9 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 
 Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los datos siguen en Neon.
 
-**3. Que no se apague (UptimeRobot, opcional)**
+**3. Que no se apague (keep-alive)**
 
-Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, crea en UptimeRobot un monitor *HTTP(s)* con el enlace de Render cada 5 minutos. El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
+Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (HU-85). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. Si además quieres un aviso cuando la web se caiga, crea en UptimeRobot un monitor *HTTP(s)* a `https://TU-WEB.onrender.com/ping`. El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
 
 **Notas**
 - Sin las variables `SPRING_DATASOURCE_*` funciona igual, pero con H2: los datos se borran en cada reinicio.
