@@ -32,7 +32,7 @@ Solo funciona con tu ordenador encendido y las dos ventanas abiertas, y el enlac
 |---|---|
 | [Render](https://render.com) | Ejecuta la aplicación con el `Dockerfile` y `render.yaml` |
 | [Neon](https://neon.tech) | PostgreSQL permanente (0,5 GB) |
-| [UptimeRobot](https://uptimerobot.com) | Visita la web cada 5 minutos para que Render no la apague |
+| [UptimeRobot](https://uptimerobot.com) | Opcional: avisa si la web se cae. Ya no hace falta para que Render no la apague (keep-alive, abajo) |
 
 1. **Neon:** crea un proyecto (región Frankfurt), desactiva *Connection pooling* y copia los datos de conexión.
 2. **Render:** *Web Service* con el repositorio `riverri/IS1`, rama `main`, Docker, instancia Free. Variables:
@@ -44,10 +44,12 @@ Solo funciona con tu ordenador encendido y las dos ventanas abiertas, y el enlac
 | `SPRING_DATASOURCE_USERNAME` | Usuario de Neon |
 | `SPRING_DATASOURCE_PASSWORD` | Contraseña de Neon |
 | `FOOTBALL_DATA_TOKEN` | Opcional |
+| `KEEP_ALIVE_URL` | Opcional: dirección a la que se hace el keep-alive. Si no se define, se usa la que da Render (`RENDER_EXTERNAL_URL`) |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: correo para el enlace de recuperar la contraseña |
 | `URL_PUBLICA` | Opcional: dirección de la web en el enlace de recuperar la contraseña (en Render se usa la suya) |
 
-3. **UptimeRobot:** monitor HTTP(s) con el enlace de Render cada 5 minutos.
+3. **Keep-alive (HU-85):** Render apaga la web gratuita tras 15 minutos sin peticiones, y la siguiente visita espera de 30 a 60 segundos a que arranque. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (`web.KeepAlive`, solo con el perfil `nube`). No hay que configurar nada: Render da la dirección en `RENDER_EXTERNAL_URL`. En los registros se ve `Keep-alive: … no responde` si falla.
+4. **UptimeRobot (opcional):** monitor HTTP(s) a `https://TU-WEB.onrender.com/ping` cada 5 minutos. Despierta la web si se llegara a apagar (por ejemplo, si se acaban las 750 horas gratuitas del mes) y avisa por correo si se cae.
 
 ## Correo para recuperar la contraseña
 Sin servidor de correo, el enlace de *¿Has olvidado tu contraseña?* se escribe en la consola de la aplicación (línea `Enlace para recuperar la contraseña de …`). Para enviarlo de verdad, por ejemplo con Gmail:

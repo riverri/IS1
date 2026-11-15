@@ -10,18 +10,20 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 
 | Paquete | Clases de prueba (número de pruebas) |
 |---|---|
-| `api` | FootballDataClienteTest (2), SincronizacionServiceTest (13), SincronizacionPlantillasTest (5) |
-| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (1), EliminarCuentaWebTest (5), EstadisticasTest (2), JuegoResponsableWebTest (10), LargoPlazoWebTest (12), LimitesWebTest (6), ModificarImporteWebTest (6), NotificacionesWebTest (5), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), ResolucionWebTest (10), RevisionFallosWebTest (23) |
+| `api` | FootballDataClienteTest (2), SincronizacionPlantillasTest (5), SincronizacionServiceTest (13) |
+| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (1), EliminarCuentaWebTest (5), EstadisticasTest (2), JuegoResponsableWebTest (10), LargoPlazoWebTest (13), LimitesWebTest (7), ModificarImporteWebTest (8), MovimientosSaldoWebTest (4), NotificacionesWebTest (5), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), ResolucionWebTest (11), RevisionFallosWebTest (23) |
 | `config` | ContrasenasPruebaTest (1), DatosInicialesTest (7), PasswordCreadorFijaTest (1) |
+| `cripto` | CoinGeckoClienteTest (2), CriptoWebTest (20), PosicionCriptoTest (4) |
 | `cuotas` | CalculadoraCuotasTest (12), EspecialTest (5), FormaYVolumenWebTest (4) |
 | `equipos` | AlineacionTest (5), EquipoTest (3), EquiposWebTest (4), PlantillaWebTest (8) |
 | `eventos` | BusquedaWebTest (5), CatalogoWebTest (5), EventoTest (2), FichaEquipoWebTest (10) |
 | `gestion` | CasaWebTest (2), EditarEventoWebTest (8), GestionWebTest (15) |
-| `ligas` | LigasWebTest (7), LigasSinTransaccionTest (1) |
-| `usuarios` | CuentaWebTest (7), NombresProhibidosTest (5), RankingWebTest (2), RecuperacionWebTest (7), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (8) |
-| `web` | FormatoTest (5) |
+| `ligas` | LigasSinTransaccionTest (1), LigasWebTest (7) |
+| `prediccion` | LmsrTest (6), PrediccionWebTest (16) |
+| `usuarios` | CuentaWebTest (7), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), RankingWebTest (2), RecuperacionWebTest (9), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (8) |
+| `web` | CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (5), KeepAliveTest (3), RendimientoWebTest (2) |
 
-**Total: 283 pruebas en 46 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca.
+**Total: 359 pruebas en 58 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
