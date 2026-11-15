@@ -13,6 +13,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
 | 15 integradas (HU-56 a HU-59 y HU-63 a HU-73) | 39 | 39 (100 %) | 0 | 0 |
+| 1 en revisión (HU-85) | 3 | 3 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
@@ -489,3 +490,11 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-73.1 | La configuración se guarda y con la sección cerrada nadie opera | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.soloElCreadorEntraEnLaGestionYVeLasCuentasEnElPanelDeLaCasa` |
 | CA-73.2 | Una cripto retirada no se compra, pero se puede vender | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.unaCriptoRetiradaNoSeCompraPeroQuienLaTieneLaPuedeVender` |
 | CA-73.3 | Los precios se descargan en el momento y se avisa si CoinGecko falla | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion` |
+
+## HU-85 · Tiempo de carga mínimo
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-85.1 | La aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
+| CA-85.2 | Las páginas llegan comprimidas con gzip si el navegador lo acepta | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
+| CA-85.3 | La hoja de estilos lleva la huella de su contenido en el nombre y se guarda un año en la caché | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |

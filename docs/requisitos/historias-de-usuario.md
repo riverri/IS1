@@ -168,8 +168,9 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-71 | Vender criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
+| HU-85 | Tiempo de carga mínimo | En revisión (PR) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
-**72 historias**: 45 hechas, 15 integradas en `main` el 06/11 (HU-56 a HU-59 y HU-63 a HU-73), 4 pendientes de subir (HU-55 y HU-60 a HU-62) y 8 descartadas. Las integradas están probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, el casino, las predicciones, la cripto y el juego responsable, pero no la página que lo enseña. **158 criterios de aceptación** en total; 97 son de historias hechas, 39 de las integradas y 9 de las pendientes de subir.
+**73 historias**: 45 hechas, 15 integradas en `main` el 06/11 (HU-56 a HU-59 y HU-63 a HU-73), 1 en revisión (HU-85), 4 pendientes de subir (HU-55 y HU-60 a HU-62) y 8 descartadas. Las integradas están probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, el casino, las predicciones, la cripto y el juego responsable, pero no la página que lo enseña. **161 criterios de aceptación** en total; 97 son de historias hechas, 39 de las integradas, 3 de la que está en revisión y 9 de las pendientes de subir.
 
 ---
 
@@ -356,6 +357,24 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 |---|---|---|---|
 | CA-10.1 | He fijado un límite diario | Lo alcanzo | No puedo apostar más hasta el día siguiente. |
 | CA-10.2 | He activado una pausa | Intento apostar antes de que termine | No puedo apostar hasta que termine, aunque sí puedo consultar mi cuenta. |
+
+### HU-85 · Tiempo de carga mínimo
+
+**Como** cliente, **quiero** que las páginas de la web carguen en el menor tiempo posible, **para** que los usuarios no esperen ni abandonen la web.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 41 | 2 (Alta) | 4 | En revisión (PR) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-85.1 | Nadie ha visitado la web en más de 15 minutos | Un usuario la abre | Carga sin esperar a que el servidor arranque: la propia aplicación hace un GET a `/ping` cada 10 minutos (keep-alive) para que Render no la apague. |
+| CA-85.2 | Mi navegador acepta compresión | Pido una página | La respuesta llega comprimida con gzip. |
+| CA-85.3 | Ya he visitado la web | Abro otra página | La hoja de estilos sale de la caché del navegador; si la hoja cambia, se descarga la nueva. |
+
+Medido en local antes y después del cambio: la portada pasa de 4,5 KB a 1,5 KB, la lista de equipos de 122 KB a 6,5 KB y la hoja de estilos de 50 KB a 10 KB, que además se descarga una sola vez. Antes, la primera visita tras 15 minutos sin uso esperaba de 30 a 60 segundos a que Render volviera a arrancar la web.
 
 ---
 
