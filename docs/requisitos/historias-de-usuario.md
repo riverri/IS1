@@ -68,9 +68,9 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (18) | 65 | 5.330 | 385 | 63 | 0,5 millones | 63 $ |
+| Historias integradas (30) | 107 | 8.774 | 634 | 103 | 0,8 millones | 103 $ |
 | Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 0,2 millones | 30 $ |
-| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 0,2 millones | 24 $ |
+| Historias por hacer (4) | 17 | 1.394 | 99 | 16 | 0,1 millones | 16 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -170,7 +170,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 | HU-74 | Baccarat | Por hacer | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
-| HU-75 | Cobrar antes de tiempo (cash-out) | Por hacer | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-75 | Cobrar antes de tiempo (cash-out) | Integrada (16/11) | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 | HU-76 | Riesgo de la casa por evento | Integrada (16/11) | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-77 | Correo al ganar una apuesta | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-78 | Montar una quiniela | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
@@ -181,8 +181,19 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-83 | Clasificación fantasy | Por hacer | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-84 | Ranking por tipo de juego | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-85 | Tiempo de carga mínimo | Integrada (15/11) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-86 | Equipos favoritos | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-87 | Supercuota | Integrada (16/11) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-88 | Logros | Integrada (16/11) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-89 | Reto 1 contra 1 | Integrada (16/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-90 | Alerta de cuota | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-91 | Evolución de la cuota | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-92 | Resumen semanal por correo | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-93 | Exportar mi historial | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-94 | Modo oscuro | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-95 | Beneficio de la casa por día | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-96 | Estadísticas por competición | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**85 historias**: 46 hechas, 18 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela y el juego responsable, pero no la página que lo enseña. **191 criterios de aceptación** en total; 97 son de historias hechas, 47 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer y 13 de las descartadas.
+**96 historias**: 46 hechas, 30 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-75, HU-76 a HU-80 y HU-84 a HU-96 el 16/11), 8 pendientes de subir (HU-55 a HU-62), 4 por hacer (HU-74 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **217 criterios de aceptación** en total; 97 son de historias hechas, 77 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
 
 ---
 
@@ -341,6 +352,43 @@ El peor caso cuenta las combinadas enteras y supone que las de goles y ambos mar
 
 **Pruebas:** `RiesgoWebTest` (CA-76.1 a CA-76.3).
 
+### HU-87 · Supercuota
+
+**Como** creador de apuestas, **quiero** mejorar durante unas horas la cuota de un resultado con un importe máximo por apuesta, **para** atraer apuestas a un partido.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 49 | 3 (Media) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-87.1 | Un evento que admite apuestas | Publico una supercuota con resultado, cuota, importe máximo y horas | Queda vigente esas horas o hasta que empiece el partido. Tiene que mejorar la cuota normal sin pasar del doble; una nueva sustituye a la anterior. |
+| CA-87.2 | Hay una supercuota | Un usuario hace una simple a ese resultado | Se le aplica la supercuota hasta el importe máximo; por encima no se admite. En las combinadas vale la cuota normal. |
+| CA-87.3 | Hay supercuotas vigentes | Abro la portada o la página del partido | Salen destacadas, con su importe máximo y cuándo acaban. |
+
+Si después se cambia el importe de una apuesta hecha con supercuota, se recalcula con la cuota normal, como cualquier otra (HU-27).
+
+**Pruebas:** `SupercuotaWebTest`.
+
+### HU-95 · Beneficio de la casa por día
+
+**Como** creador de apuestas, **quiero** ver el beneficio de la casa en cada uno de los últimos 30 días, **para** ver la tendencia.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 55 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-95.1 | Se ha jugado en los últimos 30 días | Abro el panel de la casa | Veo el beneficio de cada día en un gráfico y en una tabla, y el total. |
+| CA-95.2 | Un día cualquiera | Los jugadores pagan y cobran en apuestas, casino, predicciones o quiniela | Lo que pagan suma y lo que cobran resta. Las recargas, el saldo de bienvenida, los retos y la cripto no cuentan. |
+
+**Pruebas:** `BeneficioDiarioWebTest`.
+
 ---
 
 ## General
@@ -407,6 +455,25 @@ El peor caso cuenta las combinadas enteras y supone que las de goles y ambos mar
 | CA-85.3 | Ya he visitado la web | Abro otra página | La hoja de estilos sale de la caché del navegador; si la hoja cambia, se descarga la nueva. |
 
 Medido en local antes y después del cambio: la portada pasa de 4,5 KB a 1,5 KB, la lista de equipos de 122 KB a 6,5 KB y la hoja de estilos de 50 KB a 10 KB, que además se descarga una sola vez. Antes, la primera visita tras 15 minutos sin uso esperaba de 30 a 60 segundos a que Render volviera a arrancar la web.
+
+### HU-94 · Modo oscuro
+
+**Como** usuario, **quiero** cambiar la web a colores oscuros, **para** usarla de noche.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 54 | 4 (Baja) | 4 | Integrada (16/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-94.1 | Cualquier página, con sesión o sin ella | Pulso la luna de la cabecera | La web pasa a colores oscuros y vuelvo a la misma página; con el sol, vuelven los claros. |
+| CA-94.2 | He elegido el modo oscuro | Vuelvo otro día | Se recuerda: se guarda en una cookie durante un año. |
+
+Es un enlace y no un formulario para no crear una sesión a cada visitante.
+
+**Pruebas:** `TemaWebTest`.
 
 ---
 
@@ -748,7 +815,7 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 42 | 3 (Media) | 4 | Por hacer | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| 42 | 3 (Media) | 4 | Integrada (16/11) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -759,7 +826,9 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-75.3 | He cobrado una apuesta | Después se juegan sus partidos | La apuesta queda «Cobrada» y el resultado ya no la cambia. |
 | CA-75.4 | Las cuotas cambian mientras decido | Pulso «Cobrar ya» | No se cobra y se me enseña la oferta nueva. |
 
-La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto.
+La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto. Las de largo plazo no se pueden cobrar antes: su cuota la fija el creador.
+
+**Pruebas:** `CashOutWebTest`.
 
 ---
 
@@ -944,6 +1013,25 @@ La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que 
 | CA-36.3 | Se resuelve una apuesta | Vuelvo a consultar el ranking | Está actualizado. |
 | CA-36.4 | No estoy entre los primeros puestos | Consulto el ranking | Veo mi posición destacada igualmente. |
 
+### HU-88 · Logros
+
+**Como** usuario, **quiero** ganar insignias por mis hitos, **para** que se vean en mi perfil público.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 50 | 4 (Baja) | 4 | Integrada (16/11) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-88.1 | Un jugador | Abro su perfil público | Veo sus 8 logros, los conseguidos y los que le faltan, y cuántos lleva. |
+| CA-88.2 | Cumplo un hito: primera apuesta, primer acierto, combinada ganadora, 5 ganadas seguidas, ganar con cuota de 5 o más, ir en positivo con 10 resueltas, ganar una quiniela o acertar un mercado de predicción | Se resuelve | El logro sale conseguido. Una perdida corta la racha. |
+
+Se calculan con lo que ya hay guardado, así que no hay que apuntarlos aparte.
+
+**Pruebas:** `LogrosWebTest`.
+
 ### HU-84 · Ranking por tipo de juego
 
 **Como** usuario, **quiero** filtrar el ranking por tipo de juego (deportes, predicciones, casino, cripto, memecoins y quiniela), **para** compararme con quienes juegan a lo mismo que yo.
@@ -999,6 +1087,45 @@ En cripto y memecoins el beneficio es lo vendido más lo que vale hoy lo que se 
 El correo se envía cuando el resultado ya está guardado, para no avisar de premios que se deshacen. Al corregir un resultado no se envía. Sin servidor de correo, se escribe en la consola, como el de recuperar la contraseña (HU-17).
 
 **Pruebas:** `CorreoPremioWebTest` (CA-77.1 y CA-77.2) y `CorreoTrasGuardarTest` (el correo sale al guardar y no sale si se deshace).
+
+### HU-92 · Resumen semanal por correo
+
+**Como** usuario, **quiero** recibir cada lunes un correo con mi semana, **para** saber cómo voy sin entrar en la web.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 52 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-92.1 | He jugado en los últimos 7 días | Llega el lunes | Recibo un correo con lo jugado, lo cobrado, mi saldo, mi puesto en el ranking y el enlace a *Mis apuestas*. Si no he jugado, no llega. |
+| CA-92.2 | Lo he desactivado en *Mi cuenta* | Llega el lunes | No me llega. |
+
+Sale a las 9:00 (hora de Madrid). Sin servidor de correo, se escribe en la consola, como el de HU-77.
+
+**Pruebas:** `ResumenSemanalTest`.
+
+### HU-89 · Reto 1 contra 1
+
+**Como** miembro de una liga, **quiero** retar a un compañero en un partido con el mismo importe cada uno, **para** que el que acierte se lleve todo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 51 | 4 (Baja) | 4 | Integrada (16/11) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-89.1 | Comparto liga con alguien | Le reto en un partido con un resultado y un importe | Se me cobra el importe y le llega un aviso. Solo se reta a compañeros de liga. |
+| CA-89.2 | Me han retado | Acepto con otro resultado, o rechazo | Si acepto, se me cobra lo mismo; si rechazo, o el retador lo retira, se le devuelve al retador. |
+| CA-89.3 | Termina el partido | Se resuelve | El que acierta se lleva los dos importes. Si no acierta ninguno, se anula el partido o el reto no se había aceptado, se devuelve a cada uno lo suyo. |
+
+La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
+
+**Pruebas:** `RetoWebTest`.
 
 ### HU-38 · Seguir a otro usuario
 
@@ -1592,6 +1719,101 @@ No hay estadísticas de cada jugador (goles, tarjetas…): todo sale del resulta
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
 | CA-83.1 | Hay varios equipos | Abro la clasificación | Salen de más a menos puntos; con los mismos puntos va delante el que se creó antes. Si el creador corrige un resultado, la clasificación se corrige sola. |
+
+## Seguimiento de equipos y cuotas
+
+Seguir a unos equipos y vigilar las cuotas sin tener que entrar a mirarlas.
+
+### HU-86 · Equipos favoritos
+
+**Como** usuario, **quiero** marcar equipos como favoritos, **para** ver sus partidos los primeros y enterarme cuando se publique uno nuevo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 48 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-86.1 | Estoy en la ficha de un equipo | Pulso «Añadir a favoritos» | Queda en mis favoritos; si lo vuelvo a pulsar, se quita. El creador de apuestas no sigue equipos. |
+| CA-86.2 | Tengo equipos favoritos | Abro el catálogo sin filtros ni búsqueda | Sus próximos partidos salen arriba, en «Tus equipos». |
+| CA-86.3 | Sigo a un equipo | Se publica un partido suyo, a mano o desde la API | Me llega un aviso con el partido y la fecha, uno solo aunque siga a los dos equipos. |
+
+**Pruebas:** `SeguimientoWebTest`.
+
+### HU-90 · Alerta de cuota
+
+**Como** usuario, **quiero** que me avisen cuando la cuota de un resultado llegue al valor que elija, **para** apostar en ese momento.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 48 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-90.1 | Un partido que admite apuestas | Pongo una alerta con un resultado y una cuota mayor que la actual | Se guarda (hasta 3 por partido); con una cuota igual o menor que la actual, no. |
+| CA-90.2 | Tengo una alerta | La cuota llega a ese valor | Me llega un aviso, una sola vez. |
+| CA-90.3 | Tengo una alerta | Empieza el partido sin que llegue | La alerta se borra. |
+
+Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por otro motivo, cada 10 minutos.
+
+**Pruebas:** `SeguimientoWebTest`.
+
+### HU-91 · Evolución de la cuota
+
+**Como** usuario, **quiero** ver cómo ha cambiado la cuota de cada resultado, **para** decidir cuándo apostar.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 48 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-91.1 | Las cuotas de un partido han cambiado | Abro el partido | Veo un gráfico con una línea por resultado y de cuánto a cuánto ha ido cada una. |
+| CA-91.2 | Se apuesta, se cancela o se cambia un importe | Cambian las cuotas | Queda apuntado el valor nuevo; si no cambian, no se repite. |
+
+**Pruebas:** `EvolucionCuotaWebTest`.
+
+## Mis datos
+
+### HU-93 · Exportar mi historial
+
+**Como** usuario, **quiero** descargar mis apuestas y mis movimientos en CSV, **para** tener mis datos fuera de la web.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 53 | 4 (Baja) | 4 | Integrada (16/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-93.1 | Tengo apuestas | Pulso «Descargar» en *Mis apuestas* | Me baja un CSV con todas: fecha, apuesta, importe, cuota, estado y cobrado. Se abre con Excel (punto y coma y coma decimal). |
+| CA-93.2 | Estoy en *Mi cuenta* | Descargo mis movimientos | Me baja un CSV con cada cambio del saldo, su motivo y el saldo que dejó. Sin sesión no se descarga nada. |
+
+**Pruebas:** `ExportacionWebTest`.
+
+### HU-96 · Estadísticas por competición
+
+**Como** usuario, **quiero** ver mis aciertos y mi balance en cada competición, **para** saber en qué acierto más.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 56 | 4 (Baja) | 4 | Integrada (16/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-96.1 | Tengo apuestas resueltas | Abro *Mis apuestas* | Veo, por cada competición, cuántas, el porcentaje de aciertos y el balance. Las combinadas y las de largo plazo van aparte. |
+| CA-96.2 | Una apuesta sigue activa | Abro *Mis apuestas* | No cuenta. |
+
+**Pruebas:** `EstadisticasCompeticionWebTest`.
 
 ---
 
