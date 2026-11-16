@@ -20,7 +20,7 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 | Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | 5,5h | 1h | 
 | Revisión de la documentación frente a la teoría de la asignatura | 3h | 3h | 
 | HU-85: tiempo de carga mínimo y keep-alive para que Render no apague la web ([#102](https://github.com/riverri/IS1/pull/102)) | _por rellenar_ | 3h |
-| HU-75 (cash-out), HU-76 a HU-80, HU-84 y HU-86 a HU-96 ([#106](https://github.com/riverri/IS1/pull/106) y siguiente) | _por rellenar_ | _por rellenar_ |
+| HU-75 (cash-out), HU-76 a HU-80, HU-84 y HU-86 a HU-96 ([#106](https://github.com/riverri/IS1/pull/106) y [#108](https://github.com/riverri/IS1/pull/108)) | _por rellenar_ | _por rellenar_ |
 | Arreglo del despliegue en Render: desde el 04/11 fallaban todos los deploys porque no detectaba el puerto ([#103](https://github.com/riverri/IS1/pull/103), [#104](https://github.com/riverri/IS1/pull/104)) | _por rellenar_ | 1h |
 | **Total** | **34,5h** + las dos últimas | **32h** | 
 
