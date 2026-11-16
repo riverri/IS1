@@ -53,6 +53,29 @@
         </table>
     </div>
 
+    <!-- HU-87: supercuota -->
+    <th:block th:if="${!empezado and evento.estado.name() == 'PROGRAMADO'}">
+    <h2 id="supercuota">Supercuota</h2>
+    <div class="tarjeta tarjeta-formulario">
+        <p class="aviso" th:if="${supercuota != null}"
+           th:text="'Vigente: «' + ${supercuota.resultado.descripcion} + '» a ' + ${@formato.cuota(supercuota.cuota)} + ', hasta ' + ${#numbers.formatDecimal(supercuota.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas por apuesta, hasta el ' + ${#temporals.format(supercuota.hasta, 'dd/MM HH:mm')} + '.'">Vigente</p>
+        <form th:if="${supercuota != null}" th:action="@{/gestion/eventos/{id}/supercuota/quitar(id=${evento.id})}" method="post">
+            <button class="boton boton-secundario" type="submit">Retirar la supercuota</button>
+        </form>
+        <form th:action="@{/gestion/eventos/{id}/supercuota(id=${evento.id})}" method="post" class="alerta-cuota">
+            <select name="resultado" aria-label="Resultado" required>
+                <option th:each="r : ${resultados}" th:if="${r.name() != 'EMPATE' or evento.deporte.admiteEmpate}"
+                        th:value="${r}" th:text="${r.simbolo} + ' · ' + ${r.descripcion}">1 · Gana el local</option>
+            </select>
+            <label>Cuota <input name="cuota" type="number" step="0.01" min="1.01" required></label>
+            <label>Hasta <input name="importeMaximo" type="number" step="0.01" min="0.01" value="50" required> monedas</label>
+            <label>Durante <input name="horas" type="number" min="1" max="72" value="24" required> horas</label>
+            <button class="boton" type="submit">Publicar supercuota</button>
+        </form>
+        <p class="aviso">Solo vale en apuestas simples. Como mucho, el doble de la cuota normal; se acaba al empezar el partido.</p>
+    </div>
+    </th:block>
+
     <h2 id="riesgo">Riesgo de la casa</h2>
     <p class="alerta alerta-error" th:if="${riesgo.alerta}"
        th:text="'Riesgo alto: con el peor resultado la casa perdería ' + ${#numbers.formatDecimal(riesgo.peorSaldo.negate(), 1, 'POINT', 2, 'COMMA')} + ' monedas, más que el límite de alerta (' + ${#numbers.formatDecimal(riesgo.limite, 1, 'POINT', 2, 'COMMA')} + ').'">Riesgo alto</p>

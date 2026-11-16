@@ -5,6 +5,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import es.ucm.fdi.is1.apuestas.apuesta.Boleto;
@@ -49,6 +50,13 @@ public class UsuarioActualAdvice {
     @ModelAttribute("ruta")
     public String ruta(HttpServletRequest peticion) {
         return peticion.getRequestURI();
+    }
+
+    /** Si se ha elegido el modo oscuro (HU-94); la cabecera carga entonces oscuro.css. */
+    @ModelAttribute("temaOscuro")
+    public boolean temaOscuro(@CookieValue(name = TemaController.COOKIE,
+            required = false) String tema) {
+        return TemaController.OSCURO.equals(tema);
     }
 
     /** Si el creador ha desactivado el juego responsable, Mi cuenta no lo muestra (HU-10). */

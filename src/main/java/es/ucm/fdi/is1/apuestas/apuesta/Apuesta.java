@@ -145,7 +145,7 @@ public class Apuesta {
             return;
         }
         seleccionDe(mercado).resolver(ganador);
-        reevaluar(ahora);
+        reevaluarSiSigue(ahora);
     }
 
     /** El mercado se ha anulado: se devuelve el importe. */
@@ -154,7 +154,7 @@ public class Apuesta {
             return;
         }
         seleccionDe(mercado).anular();
-        reevaluar(ahora);
+        reevaluarSiSigue(ahora);
     }
 
     /** Resultado de uno de sus eventos: se resuelve la selección y se recalcula la apuesta (HU-25, HU-30). */
@@ -164,7 +164,7 @@ public class Apuesta {
             return;
         }
         seleccionDe(evento).resolver(resultado, evento.getGolesLocal(), evento.getGolesVisitante());
-        reevaluar(ahora);
+        reevaluarSiSigue(ahora);
     }
 
     /** Uno de sus eventos se ha anulado: esa selección cuenta con cuota 1,00 (HU-05, HU-30). */
@@ -173,7 +173,28 @@ public class Apuesta {
             return;
         }
         seleccionDe(evento).anular();
-        reevaluar(ahora);
+        reevaluarSiSigue(ahora);
+    }
+
+    /** Una apuesta cobrada antes de tiempo (HU-75, CA-75.3) apunta el resultado de la selección, pero ya no cambia. */
+    private void reevaluarSiSigue(LocalDateTime ahora) {
+        if (estado != EstadoApuesta.COBRADA) {
+            reevaluar(ahora);
+        }
+    }
+
+    /**
+     * Cash-out (HU-75): se cierra ya y se abona {@code valor}. Lo calcula y lo comprueba {@link CashOutService}.
+     *
+     * @throws IllegalStateException si no está activa
+     */
+    void cobrar(BigDecimal valor, LocalDateTime ahora) {
+        if (estado != EstadoApuesta.ACTIVA) {
+            throw new IllegalStateException("Esta apuesta ya no está activa");
+        }
+        estado = EstadoApuesta.COBRADA;
+        pagado = valor;
+        usuario.abonar(valor, TipoMovimiento.COBRO_ANTICIPADO, "Cash-out: " + descripcion(), ahora);
     }
 
     /**
@@ -294,9 +315,12 @@ public class Apuesta {
         return importe.multiply(getCuotaEfectiva()).setScale(2, RoundingMode.DOWN);
     }
 
-    /** Ganada o perdida. Las anuladas y canceladas no cuentan en las estadísticas (HU-35). */
+    /**
+     * Ganada, perdida o cobrada antes de tiempo (HU-75). Las anuladas y canceladas no cuentan en las estadísticas
+     * (HU-35); las cobradas sí, con lo que se cobró, pero no como acierto.
+     */
     public boolean isResuelta() {
-        return estado == EstadoApuesta.GANADA || estado == EstadoApuesta.PERDIDA;
+        return estado == EstadoApuesta.GANADA || estado == EstadoApuesta.PERDIDA || estado == EstadoApuesta.COBRADA;
     }
 
     public boolean isCombinada() {
@@ -308,6 +332,7 @@ public class Apuesta {
         return switch (estado) {
             case GANADA -> getGananciaPotencial().subtract(importe);
             case PERDIDA -> importe.negate();
+            case COBRADA -> pagado.subtract(importe);
             default -> BigDecimal.ZERO;
         };
     }

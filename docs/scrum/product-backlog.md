@@ -15,10 +15,10 @@
 
 Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida del MVP y del valor de cada fila.
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
-Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 332 en total: 182 de las filas hechas, 65 de las integradas (39, 40, 41, 43, 44, 45 y 47), 36 de las pendientes de subir (36, 37 y 38; 5 de ellos son del baccarat, que está por hacer), 20 de las que están por hacer (42 y 46) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
+Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 374 en total: 182 de las filas hechas, 107 de las integradas (39 a 45 y 47 a 56), 36 de las pendientes de subir (36, 37 y 38; 5 de ellos son del baccarat, que está por hacer), 12 de la que está por hacer (46) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 33 de 47 filas hechas; la 39, la 40, la 41, la 43, la 44, la 45 y la 47, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36, la 37 y la 38, pendientes de subir (de la 37, el baccarat está por hacer); la 42 y la 46, por hacer, y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 56 filas hechas; la 39 a la 45 y la 47 a la 56, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36, la 37 y la 38, pendientes de subir (de la 37, el baccarat está por hacer); la 46, por hacer, y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Puntos | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|---|:-:|:-:|---|
@@ -63,12 +63,21 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 39 | Mercados de predicción de sí o no (tipo Polymarket) con precio de 0 a 1 calculado por un creador de mercado automático (LMSR): crear y cerrar, comprar y vender, resolver y pagar, estadísticas y posiciones de los compañeros de liga (HU-63 a HU-68). *Depende de las filas 33 y 36* | 1 sprint | 22 (HU-63 a HU-68) | 5 | C | | Integrada (06/11) |
 | 40 | Cartera de criptomonedas reales a su precio real en euros (CoinGecko), compradas y vendidas con moneditas (1 monedita = 1 €), con las memecoins y las de alto riesgo como protagonistas: precios y gráfico, comprar y vender con comisión, mi cartera con ganancias y pérdidas, y configuración del creador (HU-69 a HU-73). *Depende de la fila 36* | 1 sprint | 18 (HU-69 a HU-73) | 4 | C | | Integrada (06/11) |
 | 41 | Tiempo de carga mínimo: la web no se apaga por inactividad en Render (keep-alive: la aplicación se visita a sí misma cada 10 minutos), las páginas viajan comprimidas y la hoja de estilos se guarda en la caché del navegador (HU-85) | ¼ sprint | 3 (HU-85) | 7 | S | | Integrada (15/11) |
-| 42 | Cobrar una apuesta antes de tiempo (cash-out), sin apuestas en directo (HU-75) | ½ sprint | 8 (HU-75) | 5 | C | | Por hacer |
+| 42 | Cobrar una apuesta antes de tiempo (cash-out), sin apuestas en directo (HU-75) | ½ sprint | 8 (HU-75) | 5 | C | | Integrada (16/11) |
 | 43 | Riesgo de la casa por evento: lo que pagaría con cada resultado, aviso por encima de un límite y eventos marcados en el panel (HU-76) | ¼ sprint | 5 (HU-76) | 6 | S | | Integrada (16/11) |
 | 44 | Correo al ganar una apuesta, con opción de desactivarlo en Mi cuenta (HU-77) | ¼ sprint | 3 (HU-77) | 4 | C | | Integrada (16/11) |
 | 45 | Quiniela: montarla con 3 a 15 partidos, echar un boleto y repartir el bote entre los que más aciertan (HU-78 a HU-80) | ½ sprint | 11 (HU-78 a HU-80) | 4 | C | | Integrada (16/11) |
 | 46 | Fantasy: equipo con jugadores reales, puntos por jornada y clasificación (HU-81 a HU-83) | ½ sprint | 12 (HU-81 a HU-83) | 3 | C | | Por hacer |
 | 47 | Ranking por tipo de juego: deportes, predicciones, cripto, memecoins y quiniela (HU-84). *Depende de las filas 39, 40 y 45* | ¼ sprint | 3 (HU-84) | 4 | C | | Integrada (16/11) |
+| 48 | Seguimiento: equipos favoritos con sus partidos primero y aviso de los nuevos, alertas de cuota y evolución de la cuota de cada resultado (HU-86, HU-90 y HU-91) | ½ sprint | 9 (HU-86, HU-90 y HU-91) | 4 | C | | Integrada (16/11) |
+| 49 | Supercuota: cuota mejorada por el creador durante unas horas, con importe máximo y destacada en la portada (HU-87) | ¼ sprint | 3 (HU-87) | 5 | C | | Integrada (16/11) |
+| 50 | Logros en el perfil público (HU-88) | ¼ sprint | 5 (HU-88) | 3 | C | | Integrada (16/11) |
+| 51 | Reto 1 contra 1 entre compañeros de liga, sin comisión de la casa (HU-89). *Depende de la fila 33* | ¼ sprint | 5 (HU-89) | 4 | C | | Integrada (16/11) |
+| 52 | Resumen semanal por correo, desactivable en Mi cuenta (HU-92). *Depende de la fila 44* | ¼ sprint | 3 (HU-92) | 3 | C | | Integrada (16/11) |
+| 53 | Exportar mis apuestas y mis movimientos en CSV (HU-93) | ¼ sprint | 2 (HU-93) | 3 | C | | Integrada (16/11) |
+| 54 | Modo oscuro, recordado en una cookie (HU-94) | ¼ sprint | 2 (HU-94) | 3 | C | | Integrada (16/11) |
+| 55 | Beneficio de la casa en cada uno de los últimos 30 días (HU-95). *Depende de la fila 35* | ¼ sprint | 3 (HU-95) | 4 | C | | Integrada (16/11) |
+| 56 | Mis estadísticas por competición en Mis apuestas (HU-96) | ¼ sprint | 2 (HU-96) | 3 | C | | Integrada (16/11) |
 
 ## Puntos a revisar en equipo
 

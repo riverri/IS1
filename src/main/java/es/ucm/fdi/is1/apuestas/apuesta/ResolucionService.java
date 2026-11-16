@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.eventos.EventoResuelto;
 
 /**
  * Acciones del creador de apuestas sobre un evento y sus apuestas (HU-04, HU-05, HU-06, HU-25).
@@ -32,14 +34,16 @@ public class ResolucionService {
     private final AvisosApuestas avisos;
     private final CalculadoraCuotas calculadora;
     /** Fecha de los movimientos de saldo que dejan los pagos (HU-55). */
+    private final ApplicationEventPublisher publicador;
     private final Clock reloj;
 
     public ResolucionService(EventoRepository eventos, SeleccionRepository selecciones, AvisosApuestas avisos,
-                             CalculadoraCuotas calculadora, Clock reloj) {
+                             CalculadoraCuotas calculadora, ApplicationEventPublisher publicador, Clock reloj) {
         this.eventos = eventos;
         this.selecciones = selecciones;
         this.avisos = avisos;
         this.calculadora = calculadora;
+        this.publicador = publicador;
         this.reloj = reloj;
     }
 
@@ -93,6 +97,8 @@ public class ResolucionService {
             apuesta.resolver(evento, evento.getResultado(), ahora);
             avisos.siCambia(apuesta, antes);
         }
+        // HU-89: los retos 1 contra 1 a este partido se resuelven también
+        publicador.publishEvent(new EventoResuelto(evento));
         return afectadas.size();
     }
 
@@ -134,6 +140,7 @@ public class ResolucionService {
             apuesta.anular(evento, ahora);
             avisos.siCambia(apuesta, antes);
         }
+        publicador.publishEvent(new EventoResuelto(evento));
         return afectadas.size();
     }
 
