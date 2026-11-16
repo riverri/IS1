@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Quiniela')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Quiniela</h1>
+    </div>
+    <p class="aviso">Pon 1, X o 2 en cada partido. Todos pagan lo mismo por el boleto y, cuando se han jugado los
+        partidos, el bote (lo pagado menos el 10 % de la casa) se reparte a partes iguales entre los que más aciertan.</p>
+    <div class="vacio" th:if="${#lists.isEmpty(abiertas)}">
+        <p>Ahora mismo no hay quinielas abiertas.</p>
+    </div>
+    <a class="tarjeta mercado-prediccion" th:each="r : ${abiertas}" th:href="@{/quinielas/{id}(id=${r.quiniela.id})}">
+        <strong th:text="${r.quiniela.nombre}">Jornada 14</strong>
+        <span th:text="${r.quiniela.partidos.size()} + ' partidos · boleto a ' + ${#numbers.formatDecimal(r.quiniela.precio, 1, 'POINT', 2, 'COMMA')} + ' monedas · bote de ' + ${#numbers.formatDecimal(r.bote, 1, 'POINT', 2, 'COMMA')}">8 partidos</span>
+        <small class="aviso" th:text="'Cierra el ' + ${#temporals.format(r.quiniela.cierre, 'dd/MM/yyyy HH:mm')}">Cierra el 22/11/2026 16:15</small>
+    </a>
+    <th:block th:unless="${#lists.isEmpty(otras)}">
+        <h2>Cerradas y repartidas</h2>
+        <a class="tarjeta mercado-prediccion" th:each="r : ${otras}" th:href="@{/quinielas/{id}(id=${r.quiniela.id})}">
+            <strong th:text="${r.quiniela.nombre}">Jornada 13</strong>
+            <span class="chip" th:text="${r.quiniela.estado.name() == 'REPARTIDA'} ? 'Repartida' : 'Cerrada, pendiente de reparto'">Repartida</span>
+        </a>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

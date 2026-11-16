@@ -44,7 +44,11 @@ public enum TipoMovimiento {
     /** Compra de una criptomoneda, con la comisión (HU-70). */
     CRIPTO_COMPRA("Cripto: compra", true),
     /** Lo que se recupera al vender una criptomoneda, ya sin la comisión (HU-71). */
-    CRIPTO_VENTA("Cripto: venta");
+    CRIPTO_VENTA("Cripto: venta"),
+    /** Precio del boleto de una quiniela (HU-79). */
+    QUINIELA_BOLETO("Quiniela: boleto", true),
+    /** Parte del bote de una quiniela que le toca a un boleto ganador (HU-80). */
+    QUINIELA_PREMIO("Quiniela: premio");
 
     private final String descripcion;
     private final boolean juego;

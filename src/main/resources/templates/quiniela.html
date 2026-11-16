@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza(${quiniela.nombre})}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <h1 th:text="${quiniela.nombre}">Jornada 14</h1>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <div class="estadisticas">
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(quiniela.precio, 1, 'POINT', 2, 'COMMA')}">2,00</span>monedas el boleto</div>
+        <div class="tarjeta estadistica"><span th:text="${resumen.boletos}">0</span>boletos</div>
+        <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(resumen.bote, 1, 'POINT', 2, 'COMMA')}">0,00</span>monedas de bote</div>
+    </div>
+    <p class="aviso" th:if="${quiniela.estado.name() == 'ANULADA'}">Esta quiniela se anuló: se devolvió el precio de todos los boletos.</p>
+    <p class="aviso" th:if="${quiniela.estado.name() == 'ABIERTA' and !resumen.admiteBoletos}">La quiniela está cerrada: ya no se admiten boletos. El bote se reparte cuando se hayan jugado todos los partidos.</p>
+
+    <!-- Echar el boleto (HU-79) -->
+    <form class="tarjeta formulario" th:if="${resumen.admiteBoletos and miBoleto == null and (usuarioActual == null or !usuarioActual.creador)}"
+          th:action="@{/quinielas/{id}/boleto(id=${quiniela.id})}" method="post">
+        <h2>Tu boleto</h2>
+        <p class="aviso" th:if="${usuarioActual == null}"><a th:href="@{/login}">Inicia sesión</a> para echar un boleto.</p>
+        <fieldset class="opciones opciones-quiniela" th:each="p : ${quiniela.partidos}">
+            <legend th:text="${p.orden + 1} + '. ' + ${p.evento.local.nombre} + ' – ' + ${p.evento.visitante.nombre} + ' · ' + ${#temporals.format(p.evento.fechaHora, 'dd/MM HH:mm')}">1. Getafe CF – Sevilla FC</legend>
+            <label class="opcion" th:each="r : ${resultados}">
+                <input type="radio" th:name="'p' + ${p.orden}" th:value="${r}" required>
+                <span class="opcion-simbolo" th:text="${r.simbolo}">1</span>
+            </label>
+        </fieldset>
+        <button class="boton" type="submit" th:if="${usuarioActual != null}"
+                th:text="'Echar el boleto (' + ${#numbers.formatDecimal(quiniela.precio, 1, 'POINT', 2, 'COMMA')} + ' monedas)'">Echar el boleto</button>
+    </form>
+    <p class="aviso" th:if="${usuarioActual != null and usuarioActual.creador}">El creador de apuestas no juega a la quiniela.</p>
+
+    <!-- Partidos, con mi pronóstico y el resultado -->
+    <h2 th:unless="${resumen.admiteBoletos and miBoleto == null}">Partidos</h2>
+    <div class="tarjeta tabla" th:unless="${resumen.admiteBoletos and miBoleto == null}">
+        <table>
+            <thead><tr><th>#</th><th>Partido</th><th>Resultado</th><th th:if="${miBoleto != null}">Mi pronóstico</th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${quiniela.partidos}">
+                <td th:text="${p.orden + 1}">1</td>
+                <td th:text="${p.evento.local.nombre} + ' – ' + ${p.evento.visitante.nombre}">Getafe CF – Sevilla FC</td>
+                <td th:text="${p.evento.estado.name() == 'ANULADO'} ? 'Anulado (acierto para todos)' : (${p.evento.resultado != null} ? ${p.evento.resultado.simbolo} : '–')">1</td>
+                <td th:if="${miBoleto != null}">
+                    <strong th:text="${miBoleto.pronostico(p.orden).simbolo}"
+                            th:classappend="${p.jugado} ? (${p.acierta(miBoleto.pronostico(p.orden))} ? 'positivo' : 'negativo')">X</strong>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="alerta alerta-exito" th:if="${miBoleto != null and miBoleto.ganador}"
+       th:text="'¡Has ganado ' + ${#numbers.formatDecimal(miBoleto.premio, 1, 'POINT', 2, 'COMMA')} + ' monedas con ' + ${miBoleto.aciertos} + ' aciertos!'">¡Has ganado!</p>
+    <p class="aviso" th:if="${miBoleto != null and miBoleto.devuelto}">Te hemos devuelto el precio del boleto.</p>
+
+    <!-- Reparto (HU-80) -->
+    <th:block th:if="${boletos != null and !#lists.isEmpty(boletos)}">
+        <h2>Reparto</h2>
+        <div class="tarjeta tabla">
+            <table>
+                <thead><tr><th>Jugador</th><th>Aciertos</th><th>Cobra</th></tr></thead>
+                <tbody>
+                <tr th:each="b : ${boletos}">
+                    <td th:text="${b.usuario.nombre}">Ana</td>
+                    <td th:text="${b.aciertos} + ' de ' + ${quiniela.partidos.size()}">5 de 8</td>
+                    <td th:text="${b.devuelto} ? 'Devuelto' : ${#numbers.formatDecimal(b.premio, 1, 'POINT', 2, 'COMMA')}">9,00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+    <a class="enlace-volver" th:href="@{/quinielas}">← Todas las quinielas</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

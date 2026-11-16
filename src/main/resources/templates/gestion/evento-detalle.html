@@ -53,6 +53,27 @@
         </table>
     </div>
 
+    <h2 id="riesgo">Riesgo de la casa</h2>
+    <p class="alerta alerta-error" th:if="${riesgo.alerta}"
+       th:text="'Riesgo alto: con el peor resultado la casa perdería ' + ${#numbers.formatDecimal(riesgo.peorSaldo.negate(), 1, 'POINT', 2, 'COMMA')} + ' monedas, más que el límite de alerta (' + ${#numbers.formatDecimal(riesgo.limite, 1, 'POINT', 2, 'COMMA')} + ').'">Riesgo alto</p>
+    <p class="aviso" th:if="${riesgo.sinApuestas}">Nadie ha apostado todavía a este evento.</p>
+    <div class="tarjeta tabla" th:unless="${riesgo.sinApuestas}">
+        <table>
+            <thead><tr><th>Si sale</th><th>La casa paga</th><th>Le queda a la casa</th></tr></thead>
+            <tbody>
+            <tr th:each="r : ${riesgo.resultados}">
+                <td><span class="opcion-simbolo" th:text="${r.simbolo}">1</span>
+                    <span th:text="${r.descripcion}">Gana el local</span></td>
+                <td th:text="${#numbers.formatDecimal(r.pago, 1, 'POINT', 2, 'COMMA')}">185,00</td>
+                <td><strong th:classappend="${r.saldoCasa.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(r.saldoCasa, 1, 'POINT', 2, 'COMMA')}">-65,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="aviso" th:unless="${riesgo.sinApuestas}"
+       th:text="'Apostado al evento: ' + ${#numbers.formatDecimal(riesgo.apostado, 1, 'POINT', 2, 'COMMA')} + ' monedas. Las combinadas cuentan enteras y las de goles y ambos marcan se suponen ganadas con cualquier resultado; las canceladas no cuentan.'">Apostado</p>
+
     <th:block th:if="${evento.estado.name() != 'ANULADO'}">
         <h2 th:text="${evento.resultado == null} ? 'Introducir resultado' : 'Corregir resultado'">Introducir resultado</h2>
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/gestion/eventos/{id}/resultado(id=${evento.id})}" method="post"
