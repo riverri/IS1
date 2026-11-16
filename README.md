@@ -40,7 +40,6 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── requisitos/
 │   │   ├── vision.md                  # Visión del producto
 │   │   ├── historias-de-usuario.md    # Historias de usuario con sus criterios de aceptación
-│   │   ├── historias-ampliacion-propuestas.md  # Historias del Sprint 4 (HU-74 a HU-84), pendientes del PO
 │   │   └── trazabilidad.md            # Qué prueba comprueba cada criterio de aceptación
 │   ├── scrum/
 │   │   ├── proceso.md                 # Cómo aplicamos Scrum

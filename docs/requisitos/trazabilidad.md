@@ -12,15 +12,14 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 15 integradas (HU-56 a HU-59 y HU-63 a HU-73) | 39 | 39 (100 %) | 0 | 0 |
-| 1 en revisión (HU-85) | 3 | 3 (100 %) | 0 | 0 |
+| 18 integradas (HU-63 a HU-73, HU-76 a HU-80, HU-84 y HU-85) | 47 | 47 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas el 06/11:** HU-56 a HU-59 (casino), HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas), con sus 39 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11 y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, con sus 47 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
@@ -490,6 +489,52 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-73.1 | La configuración se guarda y con la sección cerrada nadie opera | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.soloElCreadorEntraEnLaGestionYVeLasCuentasEnElPanelDeLaCasa` |
 | CA-73.2 | Una cripto retirada no se compra, pero se puede vender | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.unaCriptoRetiradaNoSeCompraPeroQuienLaTieneLaPuedeVender` |
 | CA-73.3 | Los precios se descargan en el momento y se avisa si CoinGecko falla | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion` |
+
+## HU-76 · Riesgo de la casa por evento
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-76.1 | Lo que pagaría la casa con cada resultado; las canceladas no cuentan | Automática | [`RiesgoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RiesgoWebTest.java)`.cadaResultadoPagaSusApuestasYLasCanceladasNoCuentan`, `.lasDeGolesSeSuponenGanadasYLaDobleOportunidadSegunElResultado`, `.unaCombinadaCuentaEnteraHastaQueFallaOtraSeleccion` |
+| CA-76.2 | Aviso de riesgo si el peor caso supera el límite de alerta | Automática | [`RiesgoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RiesgoWebTest.java)`.siLaCasaPuedePerderMasQueElLimiteSaleElAvisoYElEventoMarcadoEnElPanel` |
+| CA-76.3 | Los eventos en alerta salen marcados en el panel y el límite se cambia en Límites | Automática | [`RiesgoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RiesgoWebTest.java)`.siLaCasaPuedePerderMasQueElLimiteSaleElAvisoYElEventoMarcadoEnElPanel`, `.elLimiteDeAlertaNoPuedeSerNegativo` |
+
+## HU-77 · Correo al ganar una apuesta
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-77.1 | Al ganar llega un correo con el texto del aviso y el enlace a Mis apuestas; al perder, no | Automática | [`CorreoPremioWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CorreoPremioWebTest.java)`.alGanarSePideUnCorreoConElTextoDelAviso`, `.alPerderNoHayCorreo`, `.alCorregirElResultadoNoSeMandaCorreo`; [`CorreoTrasGuardarTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CorreoTrasGuardarTest.java)`.alGuardarSeMandaConElEnlaceAMisApuestas`, `.siLaTransaccionSeDeshaceNoSale` |
+| CA-77.2 | Con los correos desactivados no llega correo, pero sí el aviso de la web | Automática | [`CorreoPremioWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CorreoPremioWebTest.java)`.conLosCorreosDesactivadosSoloQuedaElAvisoDeLaWeb`, `.losCorreosSeDesactivanYActivanDesdeMiCuenta` |
+
+## HU-78 · Montar una quiniela
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-78.1 | Se crea con los partidos en orden de fecha | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.elCreadorMontaLaQuinielaConLosPartidosEnOrdenDeFecha`, `.noValenPartidosDeDeportesSinEmpateNiYaEmpezados` |
+| CA-78.2 | Con menos de 3 partidos no se crea y se dice por qué | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.conMenosDeTresPartidosNoSeCrea` |
+| CA-78.3 | Un usuario sin rol de creador no entra en la gestión de quinielas | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.unUsuarioNoEntraEnLaGestionDeQuinielas` |
+
+## HU-79 · Echar un boleto
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-79.1 | Se cobra el precio, se ve el boleto y solo se echa uno | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.echoMiBoletoYSeCobraElPrecioUnaSolaVez`, `.faltaUnPronosticoYNoSeAdmite` |
+| CA-79.2 | Con un partido empezado, suspendido o anulado la quiniela está cerrada | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.siEmpiezaOSeSuspendeUnPartidoLaQuinielaSeCierra` |
+| CA-79.3 | El creador no puede jugar | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.elCreadorNoPuedeJugar` |
+
+## HU-80 · Repartir el bote de la quiniela
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-80.1 | El bote menos el 10 % se reparte entre los que más aciertan y todos reciben aviso | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.elBoteSeRepartePorIgualEntreLosQueMasAciertanYTodosRecibenAviso` |
+| CA-80.2 | Un partido anulado cuenta como acierto para todos | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.unPartidoAnuladoCuentaComoAciertoParaTodos` |
+| CA-80.3 | Si nadie acierta ninguno o se anula, se devuelve el precio | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.siNadieAciertaNingunoSeDevuelveTodo`, `.alAnularlaAntesDeRepartirSeDevuelveElPrecio` |
+
+## HU-84 · Ranking por tipo de juego
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-84.1 | Solo salen los que han jugado a ese tipo, con sus estadísticas de ese tipo | Automática | [`RankingPorJuegoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RankingPorJuegoWebTest.java)`.enPrediccionesSoloSalenLosQueHanJugadoConSusCifras`, `.cadaCategoriaDeCriptoVaPorSeparadoYSinAciertos`, `.enLaQuinielaCuentanLosBoletosRepartidos` |
+| CA-84.2 | No se ordena por saldo y en cripto no hay porcentaje de aciertos | Automática | [`RankingPorJuegoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RankingPorJuegoWebTest.java)`.conUnTipoDeJuegoNoSeOrdenaPorSaldo`, `.cadaCategoriaDeCriptoVaPorSeparadoYSinAciertos` |
 
 ## HU-85 · Tiempo de carga mínimo
 
