@@ -19,13 +19,13 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 
 | Estado | Historias |
 |---|---|
-| **Hechas (45)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-53 |
-| **Integradas (15)** | HU-56 a HU-59 (casino); HU-63 a HU-68 (mercados de predicción); HU-69 a HU-73 (cartera de criptomonedas). En `main` desde el 06/11; falta que el Product Owner las acepte en la review |
-| **Pendientes de subir (4)** | HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante |
+| **Hechas (46)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-54 |
+| **Integradas (18)** | HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11; HU-85 (tiempo de carga) el 15/11; HU-76 (riesgo de la casa), HU-77 (correo al ganar), HU-78 a HU-80 (quiniela) y HU-84 (ranking por tipo de juego) el 16/11. Están en `main`; falta que el Product Owner las acepte en la review |
+| **Pendientes de subir (8)** | HU-55 (movimientos del saldo), HU-56 a HU-59 (casino) y HU-60 a HU-62 (anuncios internos). Hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante |
+| **Por hacer (5)** | HU-74 (baccarat), HU-75 (cash-out) y HU-81 a HU-83 (fantasy), del Sprint 4 |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
-| **Propuestas (11)** | HU-74 a HU-84, del Sprint 4, pendientes del Product Owner ([propuestas](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md)) |
 
-En total hay **158 criterios de aceptación**; 97 son de historias hechas, 39 de las integradas y 9 de las pendientes de subir.
+En total hay **85 historias y 191 criterios de aceptación**; 97 son de historias hechas, 47 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer y 13 de las descartadas.
 
 ## Estimación
 
@@ -34,8 +34,9 @@ Cada historia tiene su **tamaño** (puntos de historia y líneas de código), la
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---:|---:|---:|---:|---:|
 | Historias hechas (45) | 185 | 15.170 | 1.091 | 178 | 179 $ |
-| Historias integradas (15) | 58 | 4.756 | 343 | 55 | 56 $ |
-| Historias pendientes de subir (4) | 13 | 1.066 | 77 | 13 | 13 $ |
+| Historias integradas (18) | 65 | 5.330 | 385 | 63 | 63 $ |
+| Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 30 $ |
+| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 24 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 28 $ |
 
 - **Tamaño:** las líneas de la tabla son puntos × 82 (185 × 82 = 15.170). Medidas en el repositorio son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.
