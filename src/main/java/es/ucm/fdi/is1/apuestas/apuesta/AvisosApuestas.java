@@ -5,22 +5,27 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
+import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
 /**
  * Avisa al usuario cuando una de sus apuestas se gana, se pierde o se anula (HU-37). La usan
  * {@link ResolucionService} y {@link ResolucionMercadosService} después de resolver cada apuesta;
- * el aviso se guarda con {@link NotificacionService}. Solo es visible dentro del paquete.
+ * el aviso se guarda con {@link NotificacionService}. Al ganar, además, se manda un correo (HU-77, {@link AvisoPorCorreo}).
+ * Solo es visible dentro del paquete.
  */
 @Component
 class AvisosApuestas {
 
     private final NotificacionService notificaciones;
+    private final ApplicationEventPublisher eventos;
 
-    AvisosApuestas(NotificacionService notificaciones) {
+    AvisosApuestas(NotificacionService notificaciones, ApplicationEventPublisher eventos) {
         this.notificaciones = notificaciones;
+        this.eventos = eventos;
     }
 
     /** Solo si el estado ha cambiado; una combinada que sigue pendiente de otros partidos no avisa. */
@@ -40,6 +45,12 @@ class AvisosApuestas {
         };
         // El tipo del aviso es el estado en minúsculas: "ganada", "perdida" o "anulada"
         notificaciones.avisar(apuesta.getUsuario(), ahora.name().toLowerCase(Locale.ROOT), texto);
+        // HU-77: correo solo al ganar por primera vez, no al corregir, y si el usuario no lo ha desactivado.
+        // AvisoPorCorreo lo manda cuando se guarde la transacción
+        Usuario usuario = apuesta.getUsuario();
+        if (ahora == EstadoApuesta.GANADA && antes == EstadoApuesta.ACTIVA && usuario.isCorreosActivados()) {
+            eventos.publishEvent(new PremioGanado(usuario.getEmail(), usuario.getNombre(), texto));
+        }
     }
 
     /** "tu apuesta a Real Madrid (Real Madrid – Getafe CF)" o "tu combinada de 3 selecciones". */

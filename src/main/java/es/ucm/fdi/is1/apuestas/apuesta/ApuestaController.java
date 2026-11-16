@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -134,20 +135,28 @@ public class ApuestaController {
     }
 
     /**
-     * GET /ranking?orden=...: ranking público, por saldo si no se indica criterio. Muestra el top 20 y,
-     * si no estás entre ellos, también tu posición (HU-36, CA-36.4). Sin sesión no hay "tu posición".
+     * GET /ranking?orden=...&amp;juego=...: ranking público, por saldo si no se indica criterio. Muestra el top 20 y,
+     * si no estás entre ellos, también tu posición (HU-36, CA-36.4). Sin sesión no hay "tu posición". Con
+     * {@code juego}, solo los que han jugado a ese tipo de juego y con sus estadísticas de ese tipo (HU-84).
      */
     @GetMapping("/ranking")
-    public String ranking(@RequestParam(defaultValue = "SALDO") CriterioRanking orden, Principal principal,
-                          Model model) {
-        List<PuestoRanking> todos = rankings.ranking(principal == null ? null : principal.getName(), orden);
+    public String ranking(@RequestParam(defaultValue = "SALDO") CriterioRanking orden,
+                          @RequestParam(required = false) TipoJuego juego, Principal principal, Model model) {
+        // HU-84: en un tipo de juego no se ordena por saldo, ni por aciertos en cripto (CA-84.2)
+        if (juego != null && !juego.admite(orden)) {
+            orden = CriterioRanking.GANANCIAS;
+        }
+        List<PuestoRanking> todos = rankings.ranking(principal == null ? null : principal.getName(), orden, null, juego);
         model.addAttribute("primeros", todos.stream().limit(20).toList());
         // Tu fila aparte solo si no sale ya en el top 20
         model.addAttribute("mio", todos.stream().filter(PuestoRanking::soyYo)
                 .filter(p -> p.posicion() > 20).findFirst().orElse(null));
         model.addAttribute("total", todos.size());
         model.addAttribute("orden", orden);
-        model.addAttribute("criterios", CriterioRanking.values());
+        model.addAttribute("juego", juego);
+        model.addAttribute("juegos", TipoJuego.values());
+        model.addAttribute("criterios", juego == null ? List.of(CriterioRanking.values())
+                : Arrays.stream(CriterioRanking.values()).filter(juego::admite).toList());
         return "ranking";
     }
 

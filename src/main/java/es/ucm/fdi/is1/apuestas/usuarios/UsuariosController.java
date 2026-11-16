@@ -143,6 +143,16 @@ public class UsuariosController {
         return "redirect:/cuenta#juego-responsable";
     }
 
+    /** POST /cuenta/correos: activa o desactiva el correo al ganar una apuesta (HU-77, CA-77.2). */
+    @PostMapping("/cuenta/correos")
+    public String correos(@RequestParam boolean activados, Principal principal, RedirectAttributes redireccion) {
+        usuarios.activarCorreos(principal.getName(), activados);
+        redireccion.addFlashAttribute("mensaje", activados
+                ? "Te avisaremos por correo cuando ganes una apuesta."
+                : "Ya no recibirás correos al ganar; los avisos de la web siguen igual.");
+        return "redirect:/cuenta#correos";
+    }
+
     /** POST /cuenta/nombre: cambia el nombre visible (HU-47). */
     @PostMapping("/cuenta/nombre")
     public String cambiarNombre(@Valid @ModelAttribute("datosNombre") NombreForm form, BindingResult errores,

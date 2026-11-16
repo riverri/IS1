@@ -1,6 +1,8 @@
 # Historias de usuario propuestas para la ampliación
 
 > **Propuesta pendiente de aprobar.** Estas 11 historias (HU-74 a HU-84) se acordaron en la planificación del [Sprint 4](../scrum/sprints/sprint-4.md) (05/11). Todavía no las han revisado el equipo ni el Product Owner, así que no forman parte del Product Backlog aprobado ni de [historias-de-usuario.md](historias-de-usuario.md).
+>
+> HU-76 a HU-80 y HU-84 tienen ya el código y las pruebas en un pull request que no se integra en `main` hasta que el Product Owner las apruebe. Si en la review se cambia algún criterio, se ajusta el código en ese mismo pull request. Cuando se aprueben, pasan a [historias-de-usuario.md](historias-de-usuario.md) y a sus filas del Product Backlog. HU-74 (baccarat), HU-75 (cash-out) y HU-81 a HU-83 (fantasy) siguen sin hacer.
 
 **HU-55 a HU-73 ya no están aquí.** Eran las 19 historias de los pull requests #86 a #90 (23 y 24 de octubre de 2026). El 06/11 se integró su código en `main` sin esperar a la aprobación del Product Owner, y sus historias pasaron a [historias-de-usuario.md](historias-de-usuario.md) con el estado «Integrada» y a las filas 36 a 40 del [Product Backlog](../scrum/product-backlog.md). Se mantiene su numeración; la quiniela de la [discusión #74](https://github.com/riverri/IS1/discussions/74), que allí era HU-55, es ahora HU-78 a HU-80.
 
@@ -14,17 +16,17 @@ Mismas columnas que en [historias-de-usuario.md](historias-de-usuario.md#resumen
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | HU-74 | Baccarat | Propuesta (Sprint 4) | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
 | HU-75 | Cobrar antes de tiempo (cash-out) | Propuesta (Sprint 4) | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
-| HU-76 | Riesgo de la casa por evento | Propuesta (Sprint 4) | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-77 | Correo al ganar una apuesta | Propuesta (Sprint 4) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-78 | Montar una quiniela | Propuesta (Sprint 4) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-79 | Echar un boleto | Propuesta (Sprint 4) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-80 | Repartir el bote de la quiniela | Propuesta (Sprint 4) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-76 | Riesgo de la casa por evento | Hecha en PR, sin aprobar | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-77 | Correo al ganar una apuesta | Hecha en PR, sin aprobar | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-78 | Montar una quiniela | Hecha en PR, sin aprobar | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-79 | Echar un boleto | Hecha en PR, sin aprobar | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-80 | Repartir el bote de la quiniela | Hecha en PR, sin aprobar | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-81 | Crear un equipo fantasy y fichar | Propuesta (Sprint 4) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-82 | Puntos de los jugadores fantasy | Propuesta (Sprint 4) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-83 | Clasificación fantasy | Propuesta (Sprint 4) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-84 | Ranking por tipo de juego | Propuesta (Sprint 4) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-84 | Ranking por tipo de juego | Hecha en PR, sin aprobar | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
-**11 historias** y 30 criterios de aceptación.
+**11 historias** y 30 criterios de aceptación. 6 tienen el código en un pull request pendiente de aprobar (16 criterios, todos con prueba automática) y 5 están sin hacer.
 
 ## Sprint 4 (HU-74 a HU-84)
 
@@ -84,7 +86,9 @@ La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que 
 | CA-76.2 | En el peor caso la casa pierde más que el límite de alerta | Abro la ficha del evento | Sale un aviso de riesgo. |
 | CA-76.3 | Hay eventos en alerta | Abro el panel de *Gestión* | Esos eventos salen marcados. El límite (2.000 monedas al empezar) se cambia en *Límites de apuesta*. |
 
-El peor caso cuenta las combinadas enteras y supone que las de goles y ambos marcan se cobran con cualquier resultado.
+El peor caso cuenta las combinadas enteras y supone que las de goles y ambos marcan se cobran con cualquier resultado. Una combinada con otra selección ya fallada no cuenta, porque ya no se va a pagar.
+
+**Pruebas:** `RiesgoWebTest` (CA-76.1 a CA-76.3).
 
 ### HU-77 · Correo al ganar una apuesta
 
@@ -103,6 +107,8 @@ El peor caso cuenta las combinadas enteras y supone que las de goles y ambos mar
 
 El correo se envía cuando el resultado ya está guardado, para no avisar de premios que se deshacen. Al corregir un resultado no se envía. Sin servidor de correo, se escribe en la consola, como el de recuperar la contraseña (HU-17).
 
+**Pruebas:** `CorreoPremioWebTest` (CA-77.1 y CA-77.2) y `CorreoTrasGuardarTest` (el correo sale al guardar y no sale si se deshace).
+
 ### HU-78 · Montar una quiniela
 
 **Como** creador de apuestas, **quiero** montar una quiniela con varios partidos y un precio por boleto, **para** que los jugadores compitan entre ellos sin jugar contra la casa.
@@ -119,7 +125,9 @@ El correo se envía cuando el resultado ya está guardado, para no avisar de pre
 | CA-78.2 | Elijo menos de 3 partidos | Intento crearla | No se crea y se dice por qué. |
 | CA-78.3 | Soy un usuario sin rol de creador | Intento entrar en la gestión de quinielas | No puedo. |
 
-No tiene cuotas: el bote sale de lo que pagan los jugadores y la casa solo se queda un 10 % de comisión.
+No tiene cuotas: el bote sale de lo que pagan los jugadores y la casa solo se queda un 10 % de comisión. Un evento que está en una quiniela no se puede borrar ni cambiar de equipos; si está mal, se anula.
+
+**Pruebas:** `QuinielaWebTest` (CA-78.1 a CA-78.3).
 
 ### HU-79 · Echar un boleto
 
@@ -137,6 +145,10 @@ No tiene cuotas: el bote sale de lo que pagan los jugadores y la casa solo se qu
 | CA-79.2 | Ha empezado un partido, o alguno está suspendido o anulado | Intento echar un boleto | La quiniela está cerrada y no se admite. |
 | CA-79.3 | Soy el creador de apuestas | Abro la quiniela | No puedo jugar. |
 
+El boleto cuenta para los límites del juego responsable (HU-10), como una apuesta.
+
+**Pruebas:** `QuinielaWebTest` (CA-79.1 a CA-79.3).
+
 ### HU-80 · Repartir el bote de la quiniela
 
 **Como** creador de apuestas, **quiero** repartir el bote cuando se han jugado todos los partidos, **para** pagar a quienes más aciertan.
@@ -152,6 +164,10 @@ No tiene cuotas: el bote sale de lo que pagan los jugadores y la casa solo se qu
 | CA-80.1 | Se han jugado todos los partidos | Reparto el bote | El bote (lo pagado menos el 10 % de la casa) se reparte a partes iguales entre los boletos con más aciertos, y cada jugador recibe un aviso. |
 | CA-80.2 | Se ha anulado un partido | Se cuentan los aciertos | Ese partido cuenta como acierto para todos. |
 | CA-80.3 | Nadie ha acertado ninguno, o anulo la quiniela antes de repartirla | Se reparte o se anula | Se devuelve el precio de todos los boletos. |
+
+El bote y cada parte se redondean hacia abajo; los céntimos que no se pueden repartir se quedan en la casa.
+
+**Pruebas:** `QuinielaWebTest` (CA-80.1 a CA-80.3).
 
 ### HU-81 · Crear un equipo fantasy y fichar
 
@@ -217,4 +233,8 @@ No hay estadísticas de cada jugador (goles, tarjetas…): todo sale del resulta
 | CA-84.1 | Elijo un tipo de juego en el ranking | Se carga | Solo salen los que han jugado a ese tipo, con sus estadísticas de ese tipo. |
 | CA-84.2 | He elegido un tipo de juego | Ordeno el ranking | No se puede ordenar por saldo, que es común a todos los juegos, y en cripto no hay porcentaje de aciertos. |
 
-Depende del casino, los mercados de predicción y la cartera (HU-56 a HU-73) y de la quiniela (HU-78 a HU-80).
+Depende del casino, los mercados de predicción y la cartera (HU-56 a HU-73) y de la quiniela (HU-78 a HU-80). El casino no está ahora en `main`, así que de momento no sale como tipo de juego.
+
+En cripto y memecoins el beneficio es lo vendido más lo que vale hoy lo que se tiene, menos lo comprado. En predicciones cuentan los mercados resueltos, y en la quiniela las repartidas, sin los boletos devueltos.
+
+**Pruebas:** `RankingPorJuegoWebTest` (CA-84.1 y CA-84.2).

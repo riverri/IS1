@@ -47,4 +47,13 @@ public class LimitesService {
         actuales.cambiar(importeMinimo, importeMaximo, maxSelecciones);
         return actuales;
     }
+
+    /** Cambia los límites (HU-07) y la pérdida a partir de la cual se avisa del riesgo de un evento (HU-76). */
+    @Transactional
+    public Limites cambiar(BigDecimal importeMinimo, BigDecimal importeMaximo, int maxSelecciones,
+                           BigDecimal alertaRiesgo) {
+        Limites actuales = cambiar(importeMinimo, importeMaximo, maxSelecciones);
+        actuales.cambiarAlertaRiesgo(alertaRiesgo);
+        return actuales;
+    }
 }

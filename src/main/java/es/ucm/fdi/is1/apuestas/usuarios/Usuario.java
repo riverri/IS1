@@ -98,6 +98,10 @@ public class Usuario {
     @Column(nullable = false)
     private boolean eliminado;
 
+    /** Si recibe un correo al ganar una apuesta (HU-77); se cambia en Mi cuenta. */
+    @Column(nullable = false)
+    private boolean correosActivados = true;
+
     /**
      * Libro de movimientos del saldo (HU-55). Solo se añaden: los nuevos se guardan con el usuario al terminar la
      * transacción (cascade PERSIST). No se cargan al leer el usuario (LAZY por defecto); para consultarlos está
@@ -222,6 +226,15 @@ public class Usuario {
     }
 
     /** HU-10: si tiene una pausa que aún no ha terminado. */
+    /** Activa o desactiva los correos de premios (HU-77, CA-77.2). */
+    public void activarCorreos(boolean activados) {
+        correosActivados = activados;
+    }
+
+    public boolean isCorreosActivados() {
+        return correosActivados;
+    }
+
     public boolean enPausa(LocalDateTime ahora) {
         return pausaHasta != null && pausaHasta.isAfter(ahora);
     }

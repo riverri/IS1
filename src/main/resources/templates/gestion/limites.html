@@ -20,6 +20,11 @@
             <input id="maxSelecciones" type="number" step="1" min="2" max="30" th:field="*{maxSelecciones}" th:errorclass="con-error">
             <span class="error-campo" th:if="${#fields.hasErrors('maxSelecciones')}" th:text="${#fields.errors('maxSelecciones')[0]}"></span>
 
+            <label for="alertaRiesgo">Aviso de riesgo: pérdida de la casa en un evento</label>
+            <input id="alertaRiesgo" type="number" step="0.01" min="0" max="1000000000" th:field="*{alertaRiesgo}" th:errorclass="con-error">
+            <span class="error-campo" th:if="${#fields.hasErrors('alertaRiesgo')}" th:text="${#fields.errors('alertaRiesgo')[0]}"></span>
+            <p class="aviso">Si con el peor resultado de un evento la casa pierde más que esto, el evento sale marcado en el panel.</p>
+
             <div class="acciones-formulario">
                 <button class="boton" type="submit">Guardar</button>
                 <a class="boton boton-secundario" th:href="@{/gestion}">Cancelar</a>

@@ -933,6 +933,7 @@ tbody tr:hover { background: #f8fafc; }
 .estado.abierto { background: var(--primario-suave); color: var(--primario-oscuro); }
 .estado.cerrado { background: #fffaeb; color: #b54708; }
 .estado.resuelto { background: #eef2ff; color: #3538cd; }
+.estado.riesgo { background: var(--error-suave); color: var(--error); }
 .positivo { color: var(--exito) !important; font-weight: 700; }
 .negativo { color: var(--error) !important; font-weight: 700; }
 .boton-peligro { background: var(--error); }
@@ -1207,6 +1208,10 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
 .opciones-especiales legend { grid-column: 1 / -1; }
 .opciones-especiales .opcion { padding: 10px 12px; }
 .opciones-especiales .opcion-simbolo { min-width: 40px; width: auto; padding: 0 6px; font-size: .85rem; }
+/* Quiniela (HU-79): 1, X y 2 en una fila por partido, también en el móvil */
+.opciones-quiniela { grid-template-columns: repeat(3, 1fr); margin-top: 12px !important; }
+.opciones-quiniela legend { grid-column: 1 / -1; font-weight: 600; }
+.opciones-quiniela .opcion { justify-content: center; padding: 8px; }
 .boleto .boton-secundario { margin-top: 8px; }
 
 .marcador-final { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; border: 0 !important; padding: 0 !important; }
