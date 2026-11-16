@@ -68,8 +68,9 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (15) | 58 | 4.756 | 343 | 55 | 0,4 millones | 56 $ |
-| Historias pendientes de subir (4) | 13 | 1.066 | 77 | 13 | 0,1 millones | 13 $ |
+| Historias integradas (18) | 65 | 5.330 | 385 | 63 | 0,5 millones | 63 $ |
+| Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 0,2 millones | 30 $ |
+| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 0,2 millones | 24 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -168,9 +169,20 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-71 | Vender criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
-| HU-85 | Tiempo de carga mínimo | En revisión (PR) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-74 | Baccarat | Por hacer | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
+| HU-75 | Cobrar antes de tiempo (cash-out) | Por hacer | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-76 | Riesgo de la casa por evento | Integrada (16/11) | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-77 | Correo al ganar una apuesta | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-78 | Montar una quiniela | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-79 | Echar un boleto | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-80 | Repartir el bote de la quiniela | Integrada (16/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-81 | Crear un equipo fantasy y fichar | Por hacer | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-82 | Puntos de los jugadores fantasy | Por hacer | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-83 | Clasificación fantasy | Por hacer | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-84 | Ranking por tipo de juego | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-85 | Tiempo de carga mínimo | Integrada (15/11) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
-**73 historias**: 45 hechas, 15 integradas en `main` el 06/11 (HU-56 a HU-59 y HU-63 a HU-73), 1 en revisión (HU-85), 4 pendientes de subir (HU-55 y HU-60 a HU-62) y 8 descartadas. Las integradas están probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, el casino, las predicciones, la cripto y el juego responsable, pero no la página que lo enseña. **161 criterios de aceptación** en total; 97 son de historias hechas, 39 de las integradas, 3 de la que está en revisión y 9 de las pendientes de subir.
+**85 historias**: 46 hechas, 18 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela y el juego responsable, pero no la página que lo enseña. **191 criterios de aceptación** en total; 97 son de historias hechas, 47 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer y 13 de las descartadas.
 
 ---
 
@@ -309,6 +321,26 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | CA-53.1 | Hay apuestas resueltas | Entro en el panel de la casa | Veo el total apostado, el total pagado, el beneficio y el margen real frente al margen teórico. |
 | CA-53.2 | Hay apuestas de varios tipos y deportes | Entro en el panel de la casa | Veo el desglose por tipo de apuesta (simples, combinadas y largo plazo) y por deporte. |
 
+### HU-76 · Riesgo de la casa por evento
+
+**Como** creador de apuestas, **quiero** ver cuánto pagaría la casa con cada resultado de un evento, **para** detectar a tiempo los partidos en los que puede perder mucho dinero.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 43 | 3 (Media) | 4 | Integrada (16/11) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-76.1 | Un evento con apuestas | Abro su ficha en *Gestión* | Veo lo que habría que pagar con cada resultado y lo que le quedaría a la casa. Las apuestas canceladas no cuentan. |
+| CA-76.2 | En el peor caso la casa pierde más que el límite de alerta | Abro la ficha del evento | Sale un aviso de riesgo. |
+| CA-76.3 | Hay eventos en alerta | Abro el panel de *Gestión* | Esos eventos salen marcados. El límite (2.000 monedas al empezar) se cambia en *Límites de apuesta*. |
+
+El peor caso cuenta las combinadas enteras y supone que las de goles y ambos marcan se cobran con cualquier resultado. Una combinada con otra selección ya fallada no cuenta, porque ya no se va a pagar.
+
+**Pruebas:** `RiesgoWebTest` (CA-76.1 a CA-76.3).
+
 ---
 
 ## General
@@ -364,7 +396,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 41 | 2 (Alta) | 4 | En revisión (PR) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| 41 | 2 (Alta) | 4 | Integrada (15/11) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -710,6 +742,25 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-52.2 | Estoy en un partido de fútbol | Añado una de estas selecciones al boleto | Puedo apostarla sola o en una combinada. |
 | CA-52.3 | Hay apuestas de estos tipos en un partido | El creador introduce el marcador final | Estas selecciones se resuelven solas; si solo se conoce el ganador, las de goles se anulan (cuota 1,00). |
 
+### HU-75 · Cobrar antes de tiempo (cash-out)
+
+**Como** usuario, **quiero** cobrar una apuesta antes de que terminen sus partidos, **para** asegurarme una ganancia o limitar lo que pierdo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 42 | 3 (Media) | 4 | Por hacer | 8 | 656 | 47 | 7,6 | 7,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-75.1 | Una apuesta activa cuyos partidos pendientes no han empezado | Abro *Mis apuestas* | Veo «Cobrar ya» con lo que vale ahora: importe × cuotas ya acertadas × (cuota apostada / cuota actual) de las pendientes, sin pasar de lo que cobraría acertando. Recién hecha vale lo apostado. |
+| CA-75.2 | Algún partido pendiente ha empezado o está suspendido | Abro *Mis apuestas* | No se ofrece cobrar. |
+| CA-75.3 | He cobrado una apuesta | Después se juegan sus partidos | La apuesta queda «Cobrada» y el resultado ya no la cambia. |
+| CA-75.4 | Las cuotas cambian mientras decido | Pulso «Cobrar ya» | No se cobra y se me enseña la oferta nueva. |
+
+La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto.
+
 ---
 
 ## Apuestas combinadas
@@ -893,6 +944,27 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-36.3 | Se resuelve una apuesta | Vuelvo a consultar el ranking | Está actualizado. |
 | CA-36.4 | No estoy entre los primeros puestos | Consulto el ranking | Veo mi posición destacada igualmente. |
 
+### HU-84 · Ranking por tipo de juego
+
+**Como** usuario, **quiero** filtrar el ranking por tipo de juego (deportes, predicciones, casino, cripto, memecoins y quiniela), **para** compararme con quienes juegan a lo mismo que yo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 47 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-84.1 | Elijo un tipo de juego en el ranking | Se carga | Solo salen los que han jugado a ese tipo, con sus estadísticas de ese tipo. |
+| CA-84.2 | He elegido un tipo de juego | Ordeno el ranking | No se puede ordenar por saldo, que es común a todos los juegos, y en cripto no hay porcentaje de aciertos. |
+
+Depende del casino, los mercados de predicción y la cartera (HU-56 a HU-73) y de la quiniela (HU-78 a HU-80). El casino no está ahora en `main` (HU-56 a HU-59, pendientes de subir), así que de momento no sale como tipo de juego.
+
+En cripto y memecoins el beneficio es lo vendido más lo que vale hoy lo que se tiene, menos lo comprado. En predicciones cuentan los mercados resueltos, y en la quiniela las repartidas, sin los boletos devueltos.
+
+**Pruebas:** `RankingPorJuegoWebTest` (CA-84.1 y CA-84.2).
+
 ### HU-37 · Avisos
 
 **Como** usuario, **quiero** recibir una notificación cuando se resuelve una de mis apuestas, **para** saber si he ganado o perdido sin tener que revisar la aplicación constantemente.
@@ -908,6 +980,25 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-37.1 | Tengo una apuesta activa | Se resuelve | Recibo una notificación automática. |
 | CA-37.2 | Una de mis apuestas se ha resuelto | Abro la notificación | Indica claramente el evento, el resultado y si gané o perdí. |
 | CA-37.3 | He descartado una notificación | Entro en mi historial de notificaciones | Puedo consultarla igualmente. |
+
+### HU-77 · Correo al ganar una apuesta
+
+**Como** usuario, **quiero** recibir un correo cuando gano una apuesta, **para** enterarme aunque no entre en la web.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 44 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-77.1 | Tengo los correos activados | Una apuesta mía se resuelve como ganada | Recibo un correo con el mismo texto que el aviso de la web y el enlace a *Mis apuestas*. Si pierdo, no llega ninguno. |
+| CA-77.2 | He desactivado los correos en *Mi cuenta* | Gano una apuesta | No recibo correo; el aviso de la web sigue saliendo. |
+
+El correo se envía cuando el resultado ya está guardado, para no avisar de premios que se deshacen. Al corregir un resultado no se envía. Sin servidor de correo, se escribe en la consola, como el de recuperar la contraseña (HU-17).
+
+**Pruebas:** `CorreoPremioWebTest` (CA-77.1 y CA-77.2) y `CorreoTrasGuardarTest` (el correo sale al guardar y no sale si se deshace).
 
 ### HU-38 · Seguir a otro usuario
 
@@ -1073,7 +1164,7 @@ Juegos de azar con moneditas virtuales. El azar lo decide siempre el servidor; c
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Integrada (06/11) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 37 | 4 (Baja) | 3 | Pendiente de subir | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1089,7 +1180,7 @@ Juegos de azar con moneditas virtuales. El azar lo decide siempre el servidor; c
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Integrada (06/11) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| 37 | 4 (Baja) | 3 | Pendiente de subir | 8 | 656 | 47 | 7,6 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -1109,7 +1200,7 @@ Sin dividir parejas ni seguro (fuera del alcance).
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Integrada (06/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 37 | 4 (Baja) | 3 | Pendiente de subir | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -1123,7 +1214,7 @@ Sin dividir parejas ni seguro (fuera del alcance).
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Integrada (06/11) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 37 | 4 (Baja) | 3 | Pendiente de subir | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1133,6 +1224,25 @@ Sin dividir parejas ni seguro (fuera del alcance).
 | CA-59.2 | Cierro el casino | Un usuario intenta jugar | No puede. |
 
 La ventaja de la casa se controla con reglas reales: la ruleta europea siempre tiene un 2,70 % (un 0 entre 37 números); la del blackjack es aproximada, con estrategia básica.
+
+### HU-74 · Baccarat
+
+**Como** usuario, **quiero** jugar al baccarat Punto Banco en el casino, **para** tener un juego de cartas en el que no hay que decidir nada después de apostar.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 37 | 4 (Baja) | 4 | Por hacer | 5 | 410 | 29 | 5,0 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-74.1 | Tengo saldo y elijo Jugador, Banca o Empate con un importe | Reparto la mano | Se cobra el importe, las cartas se reparten solas y se paga: Jugador 1 a 1, Banca 1 a 1 menos un 5 % de comisión y Empate 8 a 1. La mano queda en el historial del casino. |
+| CA-74.2 | No elijo a qué apuesto | Intento repartir | Se me pide elegir y no se cobra nada. |
+| CA-74.3 | La mano acaba en empate | Había apostado a Jugador o a Banca | Se me devuelve lo apostado. |
+| CA-74.4 | Las cartas de una mano | Se juega | Se siguen las reglas del Punto Banco: figuras y dieces valen 0 y solo cuentan las unidades; con 8 o 9 nadie pide; el jugador pide con 5 o menos y se planta con 6 o 7; la banca sigue la tabla de la tercera carta. |
+
+Se juega con 8 barajas y va junto al blackjack (HU-57), en la misma página del casino.
 
 ---
 
@@ -1365,6 +1475,123 @@ Criptomonedas reales a su precio real en euros, compradas y vendidas con monedit
 | CA-73.1 | Estoy en *Gestión → Criptomonedas* | Guardo si está abierta, la comisión (0–10 %) y los minutos que sirve un precio (1–120) | Se aplica a las compras y ventas siguientes; con la sección cerrada se ven los precios pero nadie opera. |
 | CA-73.2 | Retiro una cripto | Un usuario la busca | Ya no aparece ni se puede comprar, pero quien la tenga puede venderla. |
 | CA-73.3 | Quiero precios ya | Pulso *Actualizar precios ahora* | Se descargan en el momento; si CoinGecko no responde, se me avisa. |
+
+## Quiniela
+
+Varios partidos con 1, X o 2 y un precio por boleto. Sin cuotas: el bote sale de lo que pagan los jugadores y se reparte entre los que más aciertan; la casa solo se queda la comisión. Es la propuesta de la [discusión #74](https://github.com/riverri/IS1/discussions/74).
+
+### HU-78 · Montar una quiniela
+
+**Como** creador de apuestas, **quiero** montar una quiniela con varios partidos y un precio por boleto, **para** que los jugadores compitan entre ellos sin jugar contra la casa.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 45 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-78.1 | Hay partidos programados de deportes con empate | Elijo de 3 a 15 y el precio del boleto | Se crea la quiniela con los partidos en orden de fecha. |
+| CA-78.2 | Elijo menos de 3 partidos | Intento crearla | No se crea y se dice por qué. |
+| CA-78.3 | Soy un usuario sin rol de creador | Intento entrar en la gestión de quinielas | No puedo. |
+
+No tiene cuotas: el bote sale de lo que pagan los jugadores y la casa solo se queda un 10 % de comisión. Un evento que está en una quiniela no se puede borrar ni cambiar de equipos; si está mal, se anula.
+
+**Pruebas:** `QuinielaWebTest` (CA-78.1 a CA-78.3).
+
+### HU-79 · Echar un boleto
+
+**Como** usuario, **quiero** rellenar un boleto con 1, X o 2 en cada partido de la quiniela, **para** optar al bote.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 45 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-79.1 | Una quiniela abierta y saldo suficiente | Echo mi boleto con un pronóstico en cada partido | Se cobra el precio y veo mi boleto en la página. Solo puedo echar uno. |
+| CA-79.2 | Ha empezado un partido, o alguno está suspendido o anulado | Intento echar un boleto | La quiniela está cerrada y no se admite. |
+| CA-79.3 | Soy el creador de apuestas | Abro la quiniela | No puedo jugar. |
+
+El boleto cuenta para los límites del juego responsable (HU-10), como una apuesta.
+
+**Pruebas:** `QuinielaWebTest` (CA-79.1 a CA-79.3).
+
+### HU-80 · Repartir el bote de la quiniela
+
+**Como** creador de apuestas, **quiero** repartir el bote cuando se han jugado todos los partidos, **para** pagar a quienes más aciertan.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 45 | 4 (Baja) | 4 | Integrada (16/11) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-80.1 | Se han jugado todos los partidos | Reparto el bote | El bote (lo pagado menos el 10 % de la casa) se reparte a partes iguales entre los boletos con más aciertos, y cada jugador recibe un aviso. |
+| CA-80.2 | Se ha anulado un partido | Se cuentan los aciertos | Ese partido cuenta como acierto para todos. |
+| CA-80.3 | Nadie ha acertado ninguno, o anulo la quiniela antes de repartirla | Se reparte o se anula | Se devuelve el precio de todos los boletos. |
+
+El bote y cada parte se redondean hacia abajo; los céntimos que no se pueden repartir se quedan en la casa.
+
+**Pruebas:** `QuinielaWebTest` (CA-80.1 a CA-80.3).
+
+## Fantasy
+
+Cada usuario se hace un equipo con jugadores reales de las plantillas (HU-49 y HU-50) y suma puntos según cómo jueguen.
+
+### HU-81 · Crear un equipo fantasy y fichar
+
+**Como** usuario, **quiero** montar un equipo de siete futbolistas reales con un presupuesto, **para** competir con lo que sé de fútbol sin gastar moneditas.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 46 | 4 (Baja) | 4 | Por hacer | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-81.1 | No tengo equipo | Entro en *Fantasy* | Se me pide crearlo, y después ficho con un presupuesto de 90 millones ficticios. |
+| CA-81.2 | Tengo equipo | Intento fichar a un jugador | Solo se puede si hay hueco en su posición (1 portero, 2 defensas, 2 centrocampistas y 2 delanteros), como mucho 2 del mismo club y sin pasar del presupuesto. El mercado filtra por posición y dice por qué no se puede fichar a alguien. |
+| CA-81.3 | Soy el creador de apuestas | Entro en *Fantasy* | No puedo crear un equipo. |
+
+El precio de cada jugador sale de su nota y de la calidad de su equipo (de unos 7 a unos 20 millones). Al vender a un jugador se recupera lo que costó.
+
+### HU-82 · Puntos de los jugadores fantasy
+
+**Como** usuario, **quiero** que mis jugadores sumen puntos con los partidos de sus clubes, **para** seguir cómo va mi equipo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 46 | 4 (Baja) | 4 | Por hacer | 5 | 410 | 29 | 4,7 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-82.1 | Ficho a un jugador | Se juegan partidos de su club | Solo le cuentan los que empiezan después de ficharlo. Si lo vendo, lo que ya sumó se queda. |
+| CA-82.2 | Un partido de su club ha terminado | Se calculan sus puntos | Victoria 3 y empate 1. Portería a cero: portero +4, defensa +3 y centrocampista +1. Cada gol de su club: delantero +2 y centrocampista +1. Si su club encaja 3 o más, portero y defensa −1. Sin marcador, solo cuentan la victoria y el empate. |
+
+No hay estadísticas de cada jugador (goles, tarjetas…): todo sale del resultado de su club y de su posición.
+
+### HU-83 · Clasificación fantasy
+
+**Como** usuario, **quiero** ver la clasificación de todos los equipos fantasy, **para** saber cómo voy frente a los demás.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 46 | 4 (Baja) | 4 | Por hacer | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-83.1 | Hay varios equipos | Abro la clasificación | Salen de más a menos puntos; con los mismos puntos va delante el que se creó antes. Si el creador corrige un resultado, la clasificación se corrige sola. |
 
 ---
 

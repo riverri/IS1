@@ -23,7 +23,7 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 | Arreglo del despliegue en Render: desde el 04/11 fallaban todos los deploys porque no detectaba el puerto ([#103](https://github.com/riverri/IS1/pull/103), [#104](https://github.com/riverri/IS1/pull/104)) | _por rellenar_ | 1h |
 | **Total** | **34,5h** + las dos últimas | **32h** | 
 
-Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: no se empieza su desarrollo hasta que el Product Owner las apruebe y otro miembro del equipo lo revise. Queda pendiente de hacer la fusión del archivo original con el de las nuevas propuestas en el siguiente Spint (Sprint 5) ya que se ha decido exponer las nuevas propuestas al Product Owner en la presentación final del Sprint.
+Las historias HU-74 a HU-84 se escribieron primero en un archivo aparte de propuestas. El 16/11 se fusionó con [historias-de-usuario.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-de-usuario.md) y se añadieron las filas 42 a 47 del [Product Backlog](https://github.com/riverri/IS1/blob/main/docs/scrum/product-backlog.md) (el baccarat va en la 37, la del casino). Ese mismo día se integraron en `main` HU-76 a HU-80 y HU-84 ([#106](https://github.com/riverri/IS1/pull/106)) sin esperar a la review; HU-74, HU-75 y HU-81 a HU-83 quedan por hacer.
 
 
 ## Daily scrums
