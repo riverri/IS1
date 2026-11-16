@@ -45,7 +45,8 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
                    sum(a.importe), sum(a.pagado)
             from Apuesta a
             where a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
-                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA)
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)
             group by a.usuario.id""")
     List<Object[]> resumenResueltasPorUsuario();
 

@@ -42,7 +42,9 @@ public class RiesgoService {
         Evento evento = eventos.findById(eventoId).orElseThrow();
         List<Seleccion> delEvento = selecciones.findByEvento(evento).stream()
                 .filter(s -> s.getApuesta().getEstado() != EstadoApuesta.CANCELADA
-                        && s.getApuesta().getEstado() != EstadoApuesta.ANULADA)
+                        && s.getApuesta().getEstado() != EstadoApuesta.ANULADA
+                        // Una cobrada antes de tiempo (HU-75) ya no se paga
+                        && s.getApuesta().getEstado() != EstadoApuesta.COBRADA)
                 .toList();
         return calcular(evento, delEvento, limites.actuales().getAlertaRiesgo());
     }

@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.web;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.EquiposService;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
+import es.ucm.fdi.is1.apuestas.apuesta.SupercuotaService;
+import es.ucm.fdi.is1.apuestas.seguimiento.FavoritosService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoProperties;
 
 /**
@@ -25,13 +28,18 @@ public class InicioController {
     private final CatalogoService catalogo;
     private final FichaEquipoService fichas;
     private final SaldoProperties saldo;
+    private final FavoritosService favoritos;
+    private final SupercuotaService supercuotas;
 
     public InicioController(EquiposService equipos, CatalogoService catalogo, FichaEquipoService fichas,
-                            SaldoProperties saldo) {
+                            SaldoProperties saldo,
+                            FavoritosService favoritos, SupercuotaService supercuotas) {
         this.equipos = equipos;
         this.catalogo = catalogo;
         this.fichas = fichas;
         this.saldo = saldo;
+        this.favoritos = favoritos;
+        this.supercuotas = supercuotas;
     }
 
     /**
@@ -44,6 +52,7 @@ public class InicioController {
         model.addAttribute("destacado", catalogo.destacado());
         model.addAttribute("recuento", catalogo.recuentoPorDeporte());
         model.addAttribute("bienvenida", saldo.bienvenida());
+        model.addAttribute("supercuotas", supercuotas.vigentes());
         return "index";
     }
 
@@ -67,8 +76,10 @@ public class InicioController {
 
     /** GET /equipos/{id}: ficha pública de un equipo o deportista (HU-31). */
     @GetMapping("/equipos/{id}")
-    public String ficha(@PathVariable Long id, Model model) {
+    public String ficha(@PathVariable Long id, Principal principal, Model model) {
         model.addAttribute("ficha", fichas.ficha(id));
+        // HU-86: si lo sigo, el botón dice «Quitar de favoritos»
+        model.addAttribute("favorito", principal != null && favoritos.esFavorito(principal.getName(), id));
         return "equipo";
     }
 }

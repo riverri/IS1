@@ -1,0 +1,38 @@
+/* Modo oscuro (HU-94). Se carga después de estilos.css solo si el usuario lo ha elegido (cookie "tema"):
+   cambia las variables de color y los pocos fondos claros que estilos.css escribe a mano. */
+:root {
+    --fondo: #0b1220;
+    --superficie: #131d31;
+    --texto: #e2e8f0;
+    --texto-suave: #94a3b8;
+    --borde: #24324d;
+
+    --oscuro: #050a14;
+    --oscuro-2: #0b1424;
+    --primario: #22c58b;
+    --primario-oscuro: #5eead4;
+    --primario-suave: #123b2e;
+
+    --error: #f97066;
+    --error-suave: #3b1716;
+    --exito: #4ade80;
+    --exito-suave: #12301f;
+
+    --sombra: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 20px rgba(0, 0, 0, .35);
+    --sombra-fuerte: 0 12px 36px rgba(0, 0, 0, .55);
+    color-scheme: dark;
+}
+
+th, tbody tr:hover { background: #18243b; }
+input, select, textarea { background: var(--superficie); color: var(--texto); }
+
+/* Avisos y estados con fondo claro fijo */
+.alerta-aviso, .aviso-pausa, .estado.suspendido, .estado.pendiente, .estado.cerrado, .nota-media {
+    background: #3a2a0a; color: #fdb022;
+}
+.estado.finalizado, .estado.resuelto { background: #1e2552; color: #a4bcfd; }
+.aviso-riesgo { background: #3a1f0e; border-color: #c2410c; color: #fdba74; }
+.cripto-destacada, .invitacion { background: linear-gradient(135deg, #123b2e, #2b2a12); }
+.supercuota-aviso { background: #3a300a; color: #fde68a; }
+.cuota { background: #18243b; }
+.cuota small { color: var(--texto-suave); }
