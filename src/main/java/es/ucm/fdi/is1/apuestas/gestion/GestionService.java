@@ -16,6 +16,7 @@ import es.ucm.fdi.is1.apuestas.eventos.EquipoNoEncontradoException;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.quiniela.PartidoQuinielaRepository;
 
 /**
  * Servicio del panel de gestión: alta de competiciones, equipos y eventos por parte del creador de apuestas
@@ -30,14 +31,16 @@ public class GestionService {
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
     private final SeleccionRepository selecciones;
+    private final PartidoQuinielaRepository partidosQuiniela;
     private final Clock reloj;
 
     public GestionService(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
-                          SeleccionRepository selecciones, Clock reloj) {
+                          SeleccionRepository selecciones, PartidoQuinielaRepository partidosQuiniela, Clock reloj) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
         this.selecciones = selecciones;
+        this.partidosQuiniela = partidosQuiniela;
         this.reloj = reloj;
     }
 
@@ -150,6 +153,11 @@ public class GestionService {
             throw new DatosInvalidosException("localId",
                     "El evento ya tiene apuestas: no se pueden cambiar los equipos. Si está mal, anúlalo.");
         }
+        // Los boletos de la quiniela (HU-79) se echaron con estos equipos
+        if (cambianEquipos && partidosQuiniela.existsByEvento(evento)) {
+            throw new DatosInvalidosException("localId",
+                    "El evento está en una quiniela: no se pueden cambiar los equipos. Si está mal, anúlalo.");
+        }
         String fase = form.getFase() == null || form.getFase().isBlank() ? null : form.getFase().trim();
         // El propio evento comprueba que aún no ha empezado; su error se convierte en un error del formulario
         // (se "traduce" una excepción en otra para que el controlador sepa a qué campo asociarla)
@@ -173,6 +181,10 @@ public class GestionService {
         if (selecciones.existsByEvento(evento)) {
             throw new IllegalStateException("El evento tiene apuestas: no se puede borrar, solo anular "
                     + "(se devuelve el importe).");
+        }
+        if (partidosQuiniela.existsByEvento(evento)) {
+            throw new IllegalStateException("El evento está en una quiniela: no se puede borrar, solo anular "
+                    + "(en la quiniela cuenta como acierto para todos).");
         }
         eventos.delete(evento);
     }

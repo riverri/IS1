@@ -43,6 +43,8 @@ public class SeguridadConfig {
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
                         .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
+                        // Quiniela (HU-79): cualquiera ve las quinielas; echar un boleto exige sesión
+                        .requestMatchers(HttpMethod.GET, "/quinielas", "/quinielas/*").permitAll()
                         // Criptomonedas (HU-69): la lista y cada cripto son públicas; la cartera, comprar y vender no.
                         // Va primero la cartera porque "/cripto/*" también la abarcaría
                         .requestMatchers("/cripto/cartera").authenticated()

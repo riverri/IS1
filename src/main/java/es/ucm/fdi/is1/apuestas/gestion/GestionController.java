@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.gestion;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ import es.ucm.fdi.is1.apuestas.api.SincronizacionPlantillas;
 import es.ucm.fdi.is1.apuestas.api.SincronizacionService;
 import es.ucm.fdi.is1.apuestas.apuesta.Limites;
 import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
+import es.ucm.fdi.is1.apuestas.apuesta.RiesgoService;
 import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
@@ -52,14 +54,15 @@ public class GestionController {
     private final SincronizacionPlantillas sincronizacionPlantillas;
     private final MercadoService mercados;
     private final LimitesService limites;
+    private final RiesgoService riesgo;
     private final PlantillaService plantillas;
     private final ApiProperties api;
     private final Clock reloj;
 
     public GestionController(GestionService gestion, ResolucionService resolucion,
                              SincronizacionService sincronizacion, SincronizacionPlantillas sincronizacionPlantillas,
-                             MercadoService mercados, LimitesService limites, PlantillaService plantillas,
-                             ApiProperties api, Clock reloj) {
+                             MercadoService mercados, LimitesService limites, RiesgoService riesgo,
+                             PlantillaService plantillas, ApiProperties api, Clock reloj) {
         this.gestion = gestion;
         this.resolucion = resolucion;
         this.sincronizacion = sincronizacion;
@@ -67,6 +70,7 @@ public class GestionController {
         this.plantillas = plantillas;
         this.mercados = mercados;
         this.limites = limites;
+        this.riesgo = riesgo;
         this.api = api;
         this.reloj = reloj;
     }
@@ -183,6 +187,7 @@ public class GestionController {
         model.addAttribute("eventos", gestion.eventos());
         model.addAttribute("mercados", mercados.todos());
         model.addAttribute("limites", limites.actuales());
+        model.addAttribute("riesgo", riesgo.eventosEnAlerta());
         model.addAttribute("ahora", LocalDateTime.now(reloj));
         model.addAttribute("apiConfigurada", api.configurada());
         return "gestion/panel";
@@ -198,6 +203,7 @@ public class GestionController {
         form.setImporteMinimo(actuales.getImporteMinimo());
         form.setImporteMaximo(actuales.getImporteMaximo());
         form.setMaxSelecciones(actuales.getMaxSelecciones());
+        form.setAlertaRiesgo(actuales.getAlertaRiesgo());
         model.addAttribute("limites", form);
         return "gestion/limites";
     }
@@ -211,7 +217,9 @@ public class GestionController {
                                  RedirectAttributes redireccion) {
         if (!errores.hasErrors()) {
             try {
-                limites.cambiar(form.getImporteMinimo(), form.getImporteMaximo(), form.getMaxSelecciones());
+                BigDecimal alerta = form.getAlertaRiesgo() != null ? form.getAlertaRiesgo()
+                        : limites.actuales().getAlertaRiesgo();
+                limites.cambiar(form.getImporteMinimo(), form.getImporteMaximo(), form.getMaxSelecciones(), alerta);
                 redireccion.addFlashAttribute("mensaje", "Límites de apuesta actualizados");
                 return "redirect:/gestion";
             } catch (IllegalArgumentException e) {
@@ -409,7 +417,8 @@ public class GestionController {
     }
 
     /**
-     * GET /gestion/eventos/{id}: ficha del evento para el creador, con el dinero apostado a cada opción (HU-06)
+     * GET /gestion/eventos/{id}: ficha del evento para el creador, con el dinero apostado a cada opción (HU-06),
+     * lo que pagaría la casa con cada resultado (HU-76)
      * y los botones de resultado, suspender, reactivar, anular, editar y borrar.
      */
     @GetMapping("/eventos/{id}")
@@ -417,6 +426,7 @@ public class GestionController {
         Evento evento = resolucion.evento(id);
         model.addAttribute("evento", evento);
         model.addAttribute("volumen", resolucion.volumen(id));
+        model.addAttribute("riesgo", riesgo.delEvento(id));
         model.addAttribute("empezado", evento.haEmpezado(LocalDateTime.now(reloj)));
         model.addAttribute("editable", evento.editable(LocalDateTime.now(reloj)));
         return "gestion/evento-detalle";

@@ -30,4 +30,9 @@ public interface PosicionPrediccionRepository extends JpaRepository<PosicionPred
 
     /** Posiciones de algunos usuarios en un mercado: las de los compañeros de liga (HU-68). */
     List<PosicionPrediccion> findByMercadoAndUsuarioIdIn(MercadoPrediccion mercado, Collection<Long> usuarios);
+
+    /** Posiciones en mercados resueltos, con su mercado y su usuario: ranking por tipo de juego (HU-84). */
+    @Query("select p from PosicionPrediccion p join fetch p.mercado m join fetch p.usuario"
+            + " where m.estado = es.ucm.fdi.is1.apuestas.prediccion.EstadoPrediccion.RESUELTO")
+    List<PosicionPrediccion> deMercadosResueltos();
 }

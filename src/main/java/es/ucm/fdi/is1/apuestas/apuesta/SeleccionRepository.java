@@ -36,4 +36,10 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
             where s.evento = :evento and s.pronostico is not null
               and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA""")
     List<Object[]> seleccionesActivasPorPronostico(Evento evento);
+
+    /** Selecciones a eventos (no a mercados) de apuestas activas, con su apuesta y su evento: riesgo (HU-76). */
+    @Query("""
+            select s from Seleccion s join fetch s.apuesta a join fetch s.evento
+            where a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA""")
+    List<Seleccion> activasDeEventos();
 }

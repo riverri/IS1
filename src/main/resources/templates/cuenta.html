@@ -49,6 +49,19 @@
         <button class="boton boton-secundario" type="submit">Cambiar contraseña</button>
     </form>
 
+    <th:block th:unless="${usuario.creador}">
+        <h2 id="correos">Correos</h2>
+        <div class="tarjeta tarjeta-formulario">
+            <p class="aviso" th:if="${usuario.correosActivados}">Recibes un correo cada vez que ganas una apuesta. Los avisos de la web te llegan igual.</p>
+            <p class="aviso" th:unless="${usuario.correosActivados}">No recibes correos al ganar. Los avisos de la web te siguen llegando.</p>
+            <form th:action="@{/cuenta/correos}" method="post">
+                <input type="hidden" name="activados" th:value="${!usuario.correosActivados}">
+                <button class="boton boton-secundario" type="submit"
+                        th:text="${usuario.correosActivados} ? 'Desactivar los correos' : 'Activar los correos'">Desactivar los correos</button>
+            </form>
+        </div>
+    </th:block>
+
     <th:block th:if="${juegoResponsableActivo}">
         <h2 id="juego-responsable">Juego responsable</h2>
         <p class="aviso">Aunque aquí no se juega con dinero real, puedes ponerte límites o tomarte un descanso.</p>
