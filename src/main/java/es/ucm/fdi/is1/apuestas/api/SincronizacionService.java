@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -26,6 +27,7 @@ import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Nombres;
 import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.eventos.EventoCreado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 
 /**
@@ -63,13 +65,15 @@ public class SincronizacionService {
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
     private final ResolucionService resolucion;
+    private final ApplicationEventPublisher publicador;
     private final Clock reloj;
     private final TransactionTemplate transacciones;
 
     public SincronizacionService(FuenteDatosDeportivos fuente, ApiProperties propiedades,
                                  CompeticionRepository competiciones, EquipoRepository equipos,
                                  EventoRepository eventos, ResolucionService resolucion, Clock reloj,
-                                 PlatformTransactionManager transacciones) {
+                                 PlatformTransactionManager transacciones,
+                                 ApplicationEventPublisher publicador) {
         this.fuente = fuente;
         this.propiedades = propiedades;
         this.competiciones = competiciones;
@@ -77,6 +81,7 @@ public class SincronizacionService {
         this.eventos = eventos;
         this.resolucion = resolucion;
         this.reloj = reloj;
+        this.publicador = publicador;
         // TransactionTemplate en vez de @Transactional: permite abrir una transacción por partido dentro del bucle
         this.transacciones = new TransactionTemplate(transacciones);
     }
@@ -148,6 +153,8 @@ public class SincronizacionService {
                 .orElse(null);
         if (evento == null) {
             evento = eventos.save(new Evento(competicion, local, visitante, fecha));
+            // HU-86: aviso a quien sigue a alguno de los dos equipos
+            publicador.publishEvent(new EventoCreado(evento));
             resumen.eventoNuevo();
         } else if (!fecha.equals(evento.getFechaHora()) || evento.getIdExterno() == null) {
             // Ha cambiado la hora o es la primera vez que se enlaza. Evento solo cambia la fecha si aún no se ha jugado

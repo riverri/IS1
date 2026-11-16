@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <meta name="color-scheme" th:content="${temaOscuro} ? 'dark' : 'light'">
+    <link th:if="${temaOscuro}" rel="stylesheet" th:href="@{/css/oscuro.css}">
 </head>
 <body>
 <header class="cabecera" th:fragment="cabecera">
@@ -37,6 +39,8 @@
                th:title="${avisosSinLeer > 0} ? ${avisosSinLeer} + ' avisos sin leer' : 'Avisos'">
                 <span aria-hidden="true">🔔</span><span class="solo-lectores">Avisos</span>
                 <span class="contador" th:if="${avisosSinLeer > 0}" th:text="${avisosSinLeer}">2</span></a>
+            <a class="boton-tema" th:href="@{/tema}" rel="nofollow" th:title="${temaOscuro} ? 'Colores claros' : 'Modo oscuro'"
+               th:attr="aria-label=${temaOscuro} ? 'Colores claros' : 'Modo oscuro'" th:text="${temaOscuro} ? '☀️' : '🌙'">🌙</a>
             <th:block th:if="${usuarioActual == null}">
                 <a th:href="@{/login}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/login')} ? 'activo'">Entrar</a>
                 <a class="boton boton-pequeno" th:href="@{/registro}">Registrarse</a>

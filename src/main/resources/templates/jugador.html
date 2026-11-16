@@ -37,6 +37,16 @@
     </div>
     <p class="vacio" th:unless="${est.tieneDatos}">Todavía no tiene apuestas resueltas.</p>
     <p class="aviso">Las apuestas de cada jugador son privadas: aquí solo se ven sus cifras.</p>
+    <!-- HU-88 -->
+    <h2 th:text="'Logros · ' + ${#lists.size(logros.?[conseguido])} + ' de ' + ${#lists.size(logros)}">Logros · 3 de 8</h2>
+    <ul class="logros">
+        <li class="tarjeta logro" th:each="l : ${logros}" th:classappend="${l.conseguido} ? 'conseguido' : 'pendiente'"
+            th:title="${l.descripcion}">
+            <span class="logro-icono" aria-hidden="true" th:text="${l.icono}">🏆</span>
+            <strong th:text="${l.nombre}">Primer acierto</strong>
+            <small th:text="${l.conseguido} ? 'Conseguido' : ${l.descripcion}">Ganar una apuesta.</small>
+        </li>
+    </ul>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

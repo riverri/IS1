@@ -153,6 +153,16 @@ public class UsuariosController {
         return "redirect:/cuenta#correos";
     }
 
+    /** POST /cuenta/resumen: activa o desactiva el resumen semanal por correo (HU-92, CA-92.2). */
+    @PostMapping("/cuenta/resumen")
+    public String resumen(@RequestParam boolean activado, Principal principal, RedirectAttributes redireccion) {
+        usuarios.activarResumen(principal.getName(), activado);
+        redireccion.addFlashAttribute("mensaje", activado
+                ? "Te mandaremos cada lunes el resumen de tu semana."
+                : "Ya no recibirás el resumen semanal.");
+        return "redirect:/cuenta#correos";
+    }
+
     /** POST /cuenta/nombre: cambia el nombre visible (HU-47). */
     @PostMapping("/cuenta/nombre")
     public String cambiarNombre(@Valid @ModelAttribute("datosNombre") NombreForm form, BindingResult errores,

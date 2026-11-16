@@ -26,6 +26,8 @@
         </p>
       </div>
 
+        <p class="alerta supercuota-aviso" th:if="${supercuota != null}"
+           th:text="'🔥 Supercuota: «' + ${supercuota.resultado.descripcion} + '» paga ' + ${@formato.cuota(supercuota.cuota)} + ' en apuestas simples de hasta ' + ${#numbers.formatDecimal(supercuota.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas, hasta el ' + ${#temporals.format(supercuota.hasta, 'dd/MM HH:mm')} + '.'">Supercuota</p>
         <form class="formulario boleto" th:action="@{/eventos/{id}/apostar(id=${evento.id})}" th:object="${apuesta}" method="post">
             <fieldset class="opciones">
                 <legend>Tu pronóstico</legend>
@@ -90,6 +92,48 @@
         </form>
         <a class="enlace-volver" th:href="@{/eventos}">← Volver al catálogo</a>
     </div>
+
+    <!-- HU-91: cómo se han movido las cuotas -->
+    <section class="tarjeta grafico-precio evolucion-cuotas" th:if="${evolucion != null}" th:with="v=${evolucion}">
+        <h2>Evolución de la cuota</h2>
+        <svg th:attr="viewBox='0 0 ' + ${v.local.ancho} + ' ' + ${v.local.alto}" role="img" aria-label="Evolución de las cuotas">
+            <path th:attr="d=${v.local.linea}" class="linea linea-local"/>
+            <path th:if="${v.empate != null}" th:attr="d=${v.empate.linea}" class="linea linea-empate"/>
+            <path th:attr="d=${v.visitante.linea}" class="linea linea-visitante"/>
+        </svg>
+        <p class="leyenda-cuotas">
+            <span class="linea-local" th:text="'1 · de ' + ${@formato.cuota(v.primeras.local)} + ' a ' + ${@formato.cuota(v.ultimas.local)}">1 · de 2,10 a 1,95</span>
+            <span class="linea-empate" th:if="${v.empate != null}" th:text="'X · de ' + ${@formato.cuota(v.primeras.empate)} + ' a ' + ${@formato.cuota(v.ultimas.empate)}">X · de 3,40 a 3,50</span>
+            <span class="linea-visitante" th:text="'2 · de ' + ${@formato.cuota(v.primeras.visitante)} + ' a ' + ${@formato.cuota(v.ultimas.visitante)}">2 · de 3,20 a 3,40</span>
+        </p>
+        <small class="aviso" th:text="${v.cambios} + ' valores apuntados. Las cuotas se mueven con el dinero que se apuesta a cada resultado.'">5 valores</small>
+    </section>
+
+    <!-- HU-90: avísame cuando la cuota llegue a... -->
+    <section class="tarjeta tarjeta-formulario" id="alertas" th:if="${usuarioActual != null and !usuarioActual.creador}">
+        <h2>Alerta de cuota</h2>
+        <p class="alerta alerta-exito" th:if="${mensajeAlerta}" th:text="${mensajeAlerta}">Alerta guardada</p>
+        <p class="alerta alerta-error" th:if="${errorAlerta}" th:text="${errorAlerta}">Error</p>
+        <form th:action="@{/eventos/{id}/alertas(id=${evento.id})}" method="post" class="alerta-cuota">
+            <label for="alerta-resultado">Avísame cuando</label>
+            <select id="alerta-resultado" name="resultado" required>
+                <option value="LOCAL" th:text="${evento.local.nombre} + ' (1) pague'">Real Madrid (1) pague</option>
+                <option value="EMPATE" th:if="${cuotas.empate != null}">el empate (X) pague</option>
+                <option value="VISITANTE" th:text="${evento.visitante.nombre} + ' (2) pague'">Getafe CF (2) pague</option>
+            </select>
+            <label for="alerta-cuota">a una cuota de</label>
+            <input id="alerta-cuota" name="cuota" type="number" step="0.01" min="1.01" max="1000" required>
+            <button class="boton boton-secundario" type="submit">Guardar alerta</button>
+        </form>
+        <ul class="lista-alertas" th:unless="${#lists.isEmpty(misAlertas)}">
+            <li th:each="a : ${misAlertas}">
+                <span th:text="${a.resultado.simbolo} + ' a ' + ${@formato.cuota(a.cuota)} + (${a.pendiente} ? ' · pendiente' : ' · avisada')">1 a 2,20 · pendiente</span>
+                <form th:action="@{/alertas/{id}/borrar(id=${a.id})}" method="post" class="en-linea">
+                    <button class="enlace" type="submit">Borrar</button>
+                </form>
+            </li>
+        </ul>
+    </section>
 
     <section class="tarjeta cara-a-cara" th:with="cc=${caraACara}">
         <h2>Cara a cara</h2>
