@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Quinielas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main>
+    <div class="titulo-pagina">
+        <h1>Quinielas</h1>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="aviso">Sin cuotas: el bote sale de lo que pagan los jugadores y la casa solo se queda el 10 %. Los partidos
+        tienen que estar programados y ser de un deporte con empate.</p>
+
+    <form class="tarjeta formulario" th:action="@{/gestion/quinielas}" method="post">
+        <h2>Nueva quiniela</h2>
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" maxlength="100" required placeholder="Jornada 14">
+        <label for="precio">Precio del boleto</label>
+        <input id="precio" name="precio" type="number" step="0.01" min="0.01" max="100000" value="2" required>
+        <fieldset>
+            <legend>Partidos (de 3 a 15)</legend>
+            <p class="aviso" th:if="${#lists.isEmpty(disponibles)}">No hay partidos programados de deportes con empate.</p>
+            <label class="casilla" th:each="e : ${disponibles}">
+                <input type="checkbox" name="eventos" th:value="${e.id}">
+                <span th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.competicion.nombre} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 16:15 · LaLiga · Getafe CF – Sevilla FC</span>
+            </label>
+        </fieldset>
+        <button class="boton" type="submit">Crear quiniela</button>
+    </form>
+
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(quinielas)}">
+        <table>
+            <thead><tr><th>Quiniela</th><th>Partidos</th><th>Boletos</th><th>Bote</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>
+            <tr th:each="r : ${quinielas}">
+                <td><a th:href="@{/quinielas/{id}(id=${r.quiniela.id})}" th:text="${r.quiniela.nombre}">Jornada 14</a></td>
+                <td th:text="${r.quiniela.partidos.size()}">8</td>
+                <td th:text="${r.boletos}">12</td>
+                <td th:text="${#numbers.formatDecimal(r.bote, 1, 'POINT', 2, 'COMMA')}">21,60</td>
+                <td th:text="${r.quiniela.estado.name() == 'ABIERTA'} ? (${r.admiteBoletos} ? 'Admite boletos' : (${r.quiniela.listaParaRepartir} ? 'Lista para repartir' : 'En juego')) : ${r.quiniela.estado}">Admite boletos</td>
+                <td class="acciones">
+                    <form th:if="${r.quiniela.listaParaRepartir}" th:action="@{/gestion/quinielas/{id}/repartir(id=${r.quiniela.id})}" method="post" class="en-linea">
+                        <button class="enlace" type="submit">Repartir el bote</button>
+                    </form>
+                    <form th:if="${r.quiniela.estado.name() == 'ABIERTA'}" th:action="@{/gestion/quinielas/{id}/anular(id=${r.quiniela.id})}" method="post" class="en-linea"
+                          onsubmit="return confirm('¿Anular la quiniela y devolver el precio de todos los boletos?')">
+                        <button class="enlace" type="submit">Anular</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="enlace-volver" th:href="@{/gestion}">← Volver al panel</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

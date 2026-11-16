@@ -40,6 +40,10 @@ public class Limites {
     @Column(nullable = false)
     private boolean juegoResponsable = true;
 
+    /** Pérdida de la casa en un evento a partir de la cual se avisa en Gestión (HU-76). */
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal alertaRiesgo = new BigDecimal("2000");
+
     protected Limites() {
         // requerido por JPA
     }
@@ -77,6 +81,18 @@ public class Limites {
         if (selecciones > maxSelecciones) {
             throw new IllegalArgumentException("Una combinada admite como máximo " + maxSelecciones + " selecciones");
         }
+    }
+
+    /** @throws IllegalArgumentException si el límite de alerta es negativo */
+    public void cambiarAlertaRiesgo(BigDecimal alerta) {
+        if (alerta.signum() < 0) {
+            throw new IllegalArgumentException("El límite de alerta no puede ser negativo");
+        }
+        alertaRiesgo = alerta;
+    }
+
+    public BigDecimal getAlertaRiesgo() {
+        return alertaRiesgo;
     }
 
     public void activarJuegoResponsable(boolean activo) {

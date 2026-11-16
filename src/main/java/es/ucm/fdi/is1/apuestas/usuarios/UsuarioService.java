@@ -129,6 +129,12 @@ public class UsuarioService {
         usuarios.findByEmail(normalizar(email)).orElseThrow().fijarLimites(diario, semanal);
     }
 
+    /** Activa o desactiva el correo que llega al ganar una apuesta (HU-77). */
+    @Transactional
+    public void activarCorreos(String email, boolean activados) {
+        usuarios.findByEmail(normalizar(email)).orElseThrow().activarCorreos(activados);
+    }
+
     /**
      * Pausa las apuestas durante unos días; no se puede deshacer antes de tiempo (HU-10).
      *

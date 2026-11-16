@@ -8,14 +8,21 @@
         <h1>Ranking</h1>
     </div>
     <p class="subtitulo" th:text="${total} + ' jugadores'">12 jugadores</p>
+    <nav class="pestanas" aria-label="Tipo de juego">
+        <a class="pestana" th:classappend="${juego == null} ? 'activa'" th:href="@{/ranking(orden=${orden})}">Todos</a>
+        <a class="pestana" th:each="j : ${juegos}" th:classappend="${juego == j} ? 'activa'"
+           th:href="@{/ranking(juego=${j}, orden=${orden})}" th:text="${j.nombre}">Deportes</a>
+    </nav>
     <nav class="pestanas" aria-label="Ordenar por">
         <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
-           th:href="@{/ranking(orden=${c})}" th:text="${c.nombre}">Saldo</a>
+           th:href="@{/ranking(orden=${c}, juego=${juego})}" th:text="${c.nombre}">Saldo</a>
     </nav>
-    <p class="aviso" th:if="${orden.name() == 'ACIERTOS'}">Primero los jugadores con al menos 5 apuestas resueltas: acertar 1 de 1 no cuenta como un 100 % comparable.</p>
+    <p class="aviso" th:if="${juego != null}"
+       th:text="'Solo los que han jugado a ' + ${#strings.toLowerCase(juego.nombre)} + ', con sus cifras de ese juego.' + (${juego.conAciertos} ? '' : ' Aquí no se acierta ni se falla: cuenta lo ganado, con lo que se tiene valorado a precio de hoy.')">Solo los que han jugado</p>
+    <p class="aviso" th:if="${orden.name() == 'ACIERTOS'}">Primero los jugadores con al menos 5 jugadas resueltas: acertar 1 de 1 no cuenta como un 100 % comparable.</p>
 
     <div class="vacio" th:if="${#lists.isEmpty(primeros)}">
-        <p>Todavía no hay jugadores.</p>
+        <p th:text="${juego == null} ? 'Todavía no hay jugadores.' : 'Todavía nadie ha jugado a esto.'">Todavía no hay jugadores.</p>
     </div>
 
     <div class="podio" th:if="${podio}">

@@ -37,6 +37,20 @@ public class LimitesForm {
     @Max(value = 30, message = "Como mucho 30")
     private Integer maxSelecciones;
 
+    /** Pérdida de la casa en un evento a partir de la cual se avisa (HU-76). Si no llega, se deja como estaba. */
+    @DecimalMin(value = "0", message = "No puede ser negativo")
+    @DecimalMax(value = "1000000000", message = "Como mucho 1.000.000.000 monedas")
+    @Digits(integer = 10, fraction = 2, message = "Como mucho 2 decimales")
+    private BigDecimal alertaRiesgo;
+
+    public BigDecimal getAlertaRiesgo() {
+        return alertaRiesgo;
+    }
+
+    public void setAlertaRiesgo(BigDecimal alertaRiesgo) {
+        this.alertaRiesgo = alertaRiesgo;
+    }
+
     public BigDecimal getImporteMinimo() {
         return importeMinimo;
     }

@@ -1,9 +1,7 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,10 +27,12 @@ public class RankingService {
 
     private final UsuarioRepository usuarios;
     private final ApuestaRepository apuestas;
+    private final EstadisticasPorJuego porJuego;
 
-    public RankingService(UsuarioRepository usuarios, ApuestaRepository apuestas) {
+    public RankingService(UsuarioRepository usuarios, ApuestaRepository apuestas, EstadisticasPorJuego porJuego) {
         this.usuarios = usuarios;
         this.apuestas = apuestas;
+        this.porJuego = porJuego;
     }
 
     /** Ranking de todos los jugadores; {@code emailActual} (null sin sesión) marca la fila propia. */
@@ -44,17 +44,24 @@ public class RankingService {
     /** Ranking solo entre algunos jugadores, como los miembros de una liga privada (HU-51). Null = todos. */
     @Transactional(readOnly = true)
     public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio, Set<Long> soloUsuarios) {
+        return ranking(emailActual, criterio, soloUsuarios, null);
+    }
+
+    /**
+     * Ranking de un tipo de juego (HU-84): solo los que han jugado a ese tipo, con sus estadísticas de ese tipo
+     * (CA-84.1). No se ordena por saldo, que es común a todos los juegos, ni por aciertos en cripto (CA-84.2): esos
+     * criterios pasan a ganancias. Con {@code juego} null es el ranking general.
+     */
+    @Transactional(readOnly = true)
+    public List<PuestoRanking> ranking(String emailActual, CriterioRanking criterio, Set<Long> soloUsuarios,
+                                       TipoJuego juego) {
+        if (juego != null && !juego.admite(criterio)) {
+            criterio = CriterioRanking.GANANCIAS;
+        }
         // Los emails se guardan en minúsculas: se normaliza para compararlo
         String yo = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
-        // Una sola consulta agregada para todos: fila = [id, resueltas, ganadas, apostado, pagado]
-        // HashMap: diccionario id del usuario → sus estadísticas, para encontrarlas al instante después
-        Map<Long, Estadisticas> porUsuario = new HashMap<>();
-        for (Object[] fila : apuestas.resumenResueltasPorUsuario()) {
-            // El tipo exacto de count y sum (Long, Integer…) depende de la consulta: se leen como Number.
-            // (Long) fila[0] es un "cast": le dice a Java de qué tipo es realmente ese Object
-            porUsuario.put((Long) fila[0], Estadisticas.de(((Number) fila[1]).longValue(),
-                    ((Number) fila[2]).longValue(), (BigDecimal) fila[3], (BigDecimal) fila[4]));
-        }
+        // Diccionario id del usuario → sus estadísticas, para encontrarlas al instante después
+        Map<Long, Estadisticas> porUsuario = porJuego.de(juego);
 
         // Record local: un tipo auxiliar que solo existe dentro de este método, para juntar usuario y estadísticas
         record Fila(Usuario usuario, Estadisticas estadisticas) {
@@ -63,6 +70,8 @@ public class RankingService {
         List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
                 .filter(u -> !u.isEliminado())
                 .filter(u -> soloUsuarios == null || soloUsuarios.contains(u.getId()))
+                // En un tipo de juego, solo los que han jugado a él (CA-84.1)
+                .filter(u -> juego == null || porUsuario.containsKey(u.getId()))
                 .map(u -> new Fila(u, porUsuario.getOrDefault(u.getId(), Estadisticas.VACIAS)))
                 .toList());
 
