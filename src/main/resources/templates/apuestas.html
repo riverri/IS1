@@ -73,6 +73,7 @@
     </div>
 
     <h2>Historial</h2>
+    <p class="aviso"><a th:href="@{/apuestas/exportar}">Descargar todas mis apuestas en CSV</a> (se abre con Excel o LibreOffice).</p>
     <div class="estadisticas" th:if="${estadisticas.tieneDatos}">
         <div class="tarjeta estadistica"><span th:text="${estadisticas.resueltas}">5</span>apuestas resueltas</div>
         <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(estadisticas.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %'">60,0 %</span>de aciertos</div>
@@ -82,6 +83,21 @@
             balance
             <small th:text="${#numbers.formatDecimal(estadisticas.rentabilidad, 1, 'POINT', 1, 'COMMA')} + ' % de rentabilidad'">12,5 % de rentabilidad</small>
         </div>
+    </div>
+    <!-- HU-96: dónde acierto más -->
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(porCompeticion)}">
+        <table>
+            <thead><tr><th>Competición</th><th>Resueltas</th><th>Aciertos</th><th>Balance</th></tr></thead>
+            <tbody>
+            <tr th:each="g : ${porCompeticion}" th:with="e=${g.estadisticas}">
+                <td th:text="${g.nombre}">LaLiga</td>
+                <td th:text="${e.resueltas}">4</td>
+                <td th:text="${#numbers.formatDecimal(e.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %'">50,0 %</td>
+                <td><strong th:classappend="${e.beneficio.signum() >= 0} ? 'positivo' : 'negativo'"
+                            th:text="${e.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(e.beneficio, 1, 'POINT', 2, 'COMMA')}">+12,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <div class="vacio" th:if="${#lists.isEmpty(historial)}">
         <p>Aquí aparecerán tus apuestas cuando se resuelvan.</p>

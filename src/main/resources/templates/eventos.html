@@ -40,6 +40,13 @@
         <a class="boton boton-secundario" th:if="${q != '' or deporteElegido != null}" th:href="@{/eventos}">Ver todos</a>
     </div>
 
+    <section class="mis-equipos" th:unless="${#lists.isEmpty(deMisEquipos)}">
+        <h2>★ Tus equipos</h2>
+        <div class="rejilla-partidos">
+            <th:block th:each="ev : ${deMisEquipos}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
+        </div>
+    </section>
+
     <section class="deporte" th:each="grupo : ${eventosPorDeporte}">
         <h2><span th:text="${grupo.key.icono}">⚽</span> <span th:text="${grupo.key.nombre}">Fútbol</span></h2>
         <section class="competicion" th:each="comp : ${grupo.value}" th:id="${@formato.ancla(comp.key)}">
