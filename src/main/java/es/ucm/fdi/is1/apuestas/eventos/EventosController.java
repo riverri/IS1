@@ -1,11 +1,15 @@
 package es.ucm.fdi.is1.apuestas.eventos;
 
+import java.security.Principal;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
+import es.ucm.fdi.is1.apuestas.seguimiento.FavoritosService;
 
 /**
  * Controlador MVC del catálogo público de eventos (HU-19, HU-22). Delega en {@link CatalogoService}
@@ -15,9 +19,11 @@ import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 public class EventosController {
 
     private final CatalogoService catalogo;
+    private final FavoritosService favoritos;
 
-    public EventosController(CatalogoService catalogo) {
+    public EventosController(CatalogoService catalogo, FavoritosService favoritos) {
         this.catalogo = catalogo;
+        this.favoritos = favoritos;
     }
 
     /**
@@ -29,7 +35,11 @@ public class EventosController {
      */
     @GetMapping("/eventos")
     public String catalogo(@RequestParam(required = false) Deporte deporte,
-                           @RequestParam(required = false) String q, Model model) {
+                           @RequestParam(required = false) String q, Principal principal,
+                           Model model) {
+        // HU-86: los próximos partidos de mis equipos, arriba del todo (sin filtros ni búsqueda)
+        model.addAttribute("deMisEquipos", principal == null || deporte != null || (q != null && !q.isBlank())
+                ? List.of() : favoritos.proximosPartidos(principal.getName()));
         // Spring convierte el texto "FUTBOL" de la URL en el valor Deporte.FUTBOL del enum automáticamente
         model.addAttribute("eventosPorDeporte", catalogo.buscar(deporte, q));
         // El recuento de las pestañas no depende de los filtros: siempre se ven todos los deportes

@@ -129,6 +129,12 @@ public class UsuarioService {
         usuarios.findByEmail(normalizar(email)).orElseThrow().fijarLimites(diario, semanal);
     }
 
+    /** Activa o desactiva el resumen semanal por correo (HU-92). */
+    @Transactional
+    public void activarResumen(String email, boolean activado) {
+        usuarios.findByEmail(normalizar(email)).orElseThrow().activarResumen(activado);
+    }
+
     /** Activa o desactiva el correo que llega al ganar una apuesta (HU-77). */
     @Transactional
     public void activarCorreos(String email, boolean activados) {

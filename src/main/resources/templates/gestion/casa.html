@@ -33,6 +33,36 @@
         <p class="aviso" th:text="${cuentas.jugadores} + (${cuentas.jugadores == 1} ? ' jugador ha hecho ' : ' jugadores han hecho ') + ${t.apuestas} + (${t.apuestas == 1} ? ' apuesta.' : ' apuestas.')">12 jugadores han hecho 80 apuestas.</p>
     </div>
 
+    <!-- HU-95: beneficio de cada día -->
+    <h2 id="por-dia">Últimos 30 días</h2>
+    <p class="aviso">Lo que han pagado los jugadores en apuestas, casino, predicciones y quiniela menos lo que han cobrado,
+        día a día. No cuenta la cripto.</p>
+    <div class="estadisticas">
+        <div class="tarjeta estadistica">
+            <span th:classappend="${diario.total.signum() < 0} ? 'negativo' : 'positivo'"
+                  th:text="${#numbers.formatDecimal(diario.total, 1, 'POINT', 2, 'COMMA')}">250,00</span>de beneficio en 30 días</div>
+    </div>
+    <div class="tarjeta grafico-precio" th:if="${diario.grafico != null}" th:with="g=${diario.grafico}">
+        <strong>Beneficio de cada día</strong>
+        <svg th:attr="viewBox='0 0 ' + ${g.ancho} + ' ' + ${g.alto}" role="img" aria-label="Beneficio de la casa en los últimos 30 días">
+            <path th:attr="d=${g.linea}" class="linea"/>
+        </svg>
+        <small class="aviso" th:text="'De ' + ${#numbers.formatDecimal(g.minimo, 1, 'POINT', 2, 'COMMA')} + ' (abajo) a ' + ${#numbers.formatDecimal(g.maximo, 1, 'POINT', 2, 'COMMA')} + ' (arriba).'">De -50 a 120.</small>
+    </div>
+    <p class="aviso" th:if="${diario.grafico == null}">En los últimos 30 días no se ha jugado.</p>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(diario.conMovimientos)}">
+        <table>
+            <thead><tr><th>Día</th><th>Beneficio</th></tr></thead>
+            <tbody>
+            <tr th:each="d : ${diario.conMovimientos}">
+                <td th:text="${#temporals.format(d.fecha, 'dd/MM/yyyy')}">16/11/2026</td>
+                <td><strong th:classappend="${d.beneficio.signum() < 0} ? 'negativo' : 'positivo'"
+                            th:text="${#numbers.formatDecimal(d.beneficio, 1, 'POINT', 2, 'COMMA')}">35,00</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <th:block th:each="tabla : ${ { {'Por tipo de apuesta', cuentas.porTipo}, {'Simples por deporte', cuentas.porDeporte} } }">
     <h2 th:text="${tabla[0]}">Por tipo de apuesta</h2>
     <div class="tarjeta tabla">

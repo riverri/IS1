@@ -22,6 +22,7 @@ import es.ucm.fdi.is1.apuestas.api.SincronizacionService;
 import es.ucm.fdi.is1.apuestas.apuesta.Limites;
 import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
 import es.ucm.fdi.is1.apuestas.apuesta.RiesgoService;
+import es.ucm.fdi.is1.apuestas.apuesta.SupercuotaService;
 import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
@@ -55,6 +56,7 @@ public class GestionController {
     private final MercadoService mercados;
     private final LimitesService limites;
     private final RiesgoService riesgo;
+    private final SupercuotaService supercuotas;
     private final PlantillaService plantillas;
     private final ApiProperties api;
     private final Clock reloj;
@@ -62,7 +64,7 @@ public class GestionController {
     public GestionController(GestionService gestion, ResolucionService resolucion,
                              SincronizacionService sincronizacion, SincronizacionPlantillas sincronizacionPlantillas,
                              MercadoService mercados, LimitesService limites, RiesgoService riesgo,
-                             PlantillaService plantillas, ApiProperties api, Clock reloj) {
+                             SupercuotaService supercuotas, PlantillaService plantillas, ApiProperties api, Clock reloj) {
         this.gestion = gestion;
         this.resolucion = resolucion;
         this.sincronizacion = sincronizacion;
@@ -71,6 +73,7 @@ public class GestionController {
         this.mercados = mercados;
         this.limites = limites;
         this.riesgo = riesgo;
+        this.supercuotas = supercuotas;
         this.api = api;
         this.reloj = reloj;
     }
@@ -427,6 +430,8 @@ public class GestionController {
         model.addAttribute("evento", evento);
         model.addAttribute("volumen", resolucion.volumen(id));
         model.addAttribute("riesgo", riesgo.delEvento(id));
+        model.addAttribute("supercuota", supercuotas.vigente(evento).orElse(null));
+        model.addAttribute("resultados", Resultado.values());
         model.addAttribute("empezado", evento.haEmpezado(LocalDateTime.now(reloj)));
         model.addAttribute("editable", evento.editable(LocalDateTime.now(reloj)));
         return "gestion/evento-detalle";

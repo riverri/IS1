@@ -48,7 +48,13 @@ public enum TipoMovimiento {
     /** Precio del boleto de una quiniela (HU-79). */
     QUINIELA_BOLETO("Quiniela: boleto", true),
     /** Parte del bote de una quiniela que le toca a un boleto ganador (HU-80). */
-    QUINIELA_PREMIO("Quiniela: premio");
+    QUINIELA_PREMIO("Quiniela: premio"),
+    /** Importe de un reto 1 contra 1 (HU-89). */
+    RETO_APUESTA("Reto: apuesta", true),
+    /** Lo que se lleva el ganador de un reto (HU-89). */
+    RETO_PREMIO("Reto: premio"),
+    /** Reto rechazado, caducado, anulado o sin ganador (HU-89). */
+    RETO_DEVOLUCION("Reto: devolución");
 
     private final String descripcion;
     private final boolean juego;
