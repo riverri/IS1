@@ -157,7 +157,7 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 | `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos; añadirlo o quitarlo de favoritos | HU-31, HU-32, HU-49, HU-86 |
 | `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/mercados` | Apuestas a largo plazo: Balón de Oro, campeón de liga… Se elige un candidato y se cobra al conocerse el ganador | HU-44 |
-| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad; cobrar ya (cash-out), estadísticas por competición y descargar las apuestas en CSV | HU-24, HU-26, HU-27, HU-34, HU-35, HU-75, HU-93, HU-96 |
+| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad; estadísticas por competición y descargar las apuestas en CSV | HU-24, HU-26, HU-27, HU-34, HU-35, HU-93, HU-96 |
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada; también por tipo de juego (deportes, predicciones, cripto, memecoins y quiniela) | HU-36, HU-84 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas; y sus logros | HU-48, HU-88 |
