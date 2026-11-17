@@ -181,19 +181,19 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-83 | Clasificación fantasy | Por hacer | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-84 | Ranking por tipo de juego | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-85 | Tiempo de carga mínimo | Integrada (15/11) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-86 | Equipos favoritos | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-87 | Supercuota | Integrada (16/11) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-88 | Logros | Integrada (16/11) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-89 | Reto 1 contra 1 | Integrada (16/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-90 | Alerta de cuota | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-91 | Evolución de la cuota | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-92 | Resumen semanal por correo | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-93 | Exportar mi historial | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-94 | Modo oscuro | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-95 | Beneficio de la casa por día | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-96 | Estadísticas por competición | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-86 | Equipos favoritos | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-87 | Supercuota | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-88 | Logros | Integrada (Sprint 5) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-89 | Reto 1 contra 1 | Integrada (Sprint 5) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-90 | Alerta de cuota | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-91 | Evolución de la cuota | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-92 | Resumen semanal por correo | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-93 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-94 | Modo oscuro | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-96 | Estadísticas por competición | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**96 historias**: 46 hechas, 29 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 a HU-96 el 16/11), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **217 criterios de aceptación** en total; 97 son de historias hechas, 77 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
+**96 historias**: 46 hechas, 29 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-96, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **217 criterios de aceptación** en total; 97 son de historias hechas, 77 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
 
 ---
 
@@ -358,7 +358,7 @@ El peor caso cuenta las combinadas enteras y supone que las de goles y ambos mar
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 49 | 3 (Media) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 49 | 3 (Media) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -378,7 +378,7 @@ Si después se cambia el importe de una apuesta hecha con supercuota, se recalcu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 55 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 55 | 4 (Baja) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -462,7 +462,7 @@ Medido en local antes y después del cambio: la portada pasa de 4,5 KB a 1,5 KB,
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 54 | 4 (Baja) | 4 | Integrada (16/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 54 | 4 (Baja) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -1017,7 +1017,7 @@ La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 50 | 4 (Baja) | 4 | Integrada (16/11) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| 50 | 4 (Baja) | 5 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1092,7 +1092,7 @@ El correo se envía cuando el resultado ya está guardado, para no avisar de pre
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 52 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 52 | 4 (Baja) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1111,7 +1111,7 @@ Sale a las 9:00 (hora de Madrid). Sin servidor de correo, se escribe en la conso
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 51 | 4 (Baja) | 4 | Integrada (16/11) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| 51 | 4 (Baja) | 5 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1728,7 +1728,7 @@ Seguir a unos equipos y vigilar las cuotas sin tener que entrar a mirarlas.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 48 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 48 | 4 (Baja) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1746,7 +1746,7 @@ Seguir a unos equipos y vigilar las cuotas sin tener que entrar a mirarlas.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 48 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 48 | 4 (Baja) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1766,7 +1766,7 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 48 | 4 (Baja) | 4 | Integrada (16/11) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 48 | 4 (Baja) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1785,7 +1785,7 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 53 | 4 (Baja) | 4 | Integrada (16/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 53 | 4 (Baja) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -1802,7 +1802,7 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 56 | 4 (Baja) | 4 | Integrada (16/11) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 56 | 4 (Baja) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
