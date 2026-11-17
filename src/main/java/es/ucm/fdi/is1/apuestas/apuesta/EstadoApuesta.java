@@ -14,10 +14,5 @@ public enum EstadoApuesta {
     /** Se anularon todas sus selecciones (evento o mercado anulado): se devolvió el importe (HU-05). */
     ANULADA,
     /** Cancelada por el usuario antes de empezar el evento; se le devolvió el importe (HU-26). */
-    CANCELADA,
-    /**
-     * El usuario la cobró antes de que acabaran sus partidos (cash-out, HU-75). Ya no la cambia ningún resultado; cuenta
-     * en el balance con lo que cobró, pero no como acierto.
-     */
-    COBRADA
+    CANCELADA
 }

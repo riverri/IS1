@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.apuesta.CriterioRanking;
 import es.ucm.fdi.is1.apuestas.apuesta.PuestoRanking;
-import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 
 /**
  * Controlador de las ligas privadas (HU-51): mis ligas, crear, unirse con un código, ver su ranking, salir
@@ -27,11 +26,9 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 public class LigasController {
 
     private final LigaService ligas;
-    private final RetoService retos;
 
-    public LigasController(LigaService ligas, RetoService retos) {
+    public LigasController(LigaService ligas) {
         this.ligas = ligas;
-        this.retos = retos;
     }
 
     /** GET /ligas: ligas del usuario, con los formularios para crear una o unirse con un código. */
@@ -88,14 +85,6 @@ public class LigasController {
         model.addAttribute("criterios", CriterioRanking.values());
         // La vista ofrece "borrar" al creador y "salir" al resto
         model.addAttribute("soyCreador", liga.getCreador().getEmail().equalsIgnoreCase(principal.getName()));
-        // HU-89: retos 1 contra 1 con los compañeros de esta liga
-        model.addAttribute("rivales", liga.getMiembrosActivos().stream()
-                .filter(u -> !u.getEmail().equalsIgnoreCase(principal.getName())).toList());
-        model.addAttribute("partidosReto", retos.partidosDisponibles());
-        model.addAttribute("misRetos", retos.mios(principal.getName()).stream()
-                .filter(r -> liga.getIdsMiembros().contains(r.getRetador().getId())
-                        && liga.getIdsMiembros().contains(r.getRetado().getId())).toList());
-        model.addAttribute("resultados", Resultado.values());
         return "liga";
     }
 
