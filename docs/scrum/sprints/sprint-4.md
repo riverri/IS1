@@ -20,17 +20,16 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 | Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | 5,5h | 1h | 
 | Revisión de la documentación frente a la teoría de la asignatura | 3h | 3h | 
 | HU-85: tiempo de carga mínimo y keep-alive para que Render no apague la web ([#102](https://github.com/riverri/IS1/pull/102)) | _por rellenar_ | 3h |
-| HU-75 (cash-out), HU-76 a HU-80, HU-84 y HU-86 a HU-96 ([#106](https://github.com/riverri/IS1/pull/106) y [#108](https://github.com/riverri/IS1/pull/108)) | _por rellenar_ | _por rellenar_ |
 | Arreglo del despliegue en Render: desde el 04/11 fallaban todos los deploys porque no detectaba el puerto ([#103](https://github.com/riverri/IS1/pull/103), [#104](https://github.com/riverri/IS1/pull/104)) | _por rellenar_ | 1h |
 | **Total** | **34,5h** + las dos últimas | **32h** | 
 
-Las historias HU-74 a HU-84 se escribieron primero en un archivo aparte de propuestas. El 16/11 se fusionó con [historias-de-usuario.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-de-usuario.md) y se añadieron las filas 42 a 47 del [Product Backlog](https://github.com/riverri/IS1/blob/main/docs/scrum/product-backlog.md) (el baccarat va en la 37, la del casino). Ese mismo día se integraron en `main` HU-76 a HU-80 y HU-84 ([#106](https://github.com/riverri/IS1/pull/106)) sin esperar a la review; HU-74, HU-75 y HU-81 a HU-83 quedan por hacer. El mismo día se escribieron e integraron también HU-86 a HU-96 (favoritos, supercuota, logros, reto 1 contra 1, alertas y evolución de la cuota, resumen semanal, exportar el historial, modo oscuro, beneficio diario de la casa y estadísticas por competición) y el cash-out (HU-75): en el Sprint 4 entran en `main` 30 historias.
+Las historias HU-74 a HU-84 se escribieron primero en un archivo aparte de propuestas. 
 
 
 ## Daily scrums
 Por el chat del grupo, los días que se trabaja en el proyecto ([proceso](https://github.com/riverri/IS1/blob/main/docs/scrum/proceso.md)). Se abandona la idea de la línea por persona: qué hice, qué haré y qué me bloquea, y se enfoca a una manera más práctica donde los integrantes del grupo detallan los cambios que se van haciendo al proyecto, así como ideas, avances, problemas, dudas y conflictos técnicos. Se mantendrá está tónica durante los siguientes Sprints.
 
-## Sprint Review (17/11)
+## Sprint Review 
 Se han alcanzado los objetivos planeados en el Sprint Planning haciendo hincapié en las facetas detectadas en anteriores Sprints como mejorables. En concreto se ha realizado una revisión de los riesgos decidiendo si ha cambiado su posible impacto sobre el proyecto y se han actualizado los medios de comunicación entre los miembros del proyecto ya que los propuestos en un primer lugar se han considerado ineficientes. Por último, se ha decido poner y dedicar más tiempo a la preparación de la presentación ya que es cuando podemos exponerle al Product Owner nuestro progreso y que él nos de el feedback necesario para el correcto desarrollo del mismo.
 
 ## Sprint Retrospective (_fecha_)
