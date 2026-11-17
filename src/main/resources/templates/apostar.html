@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/comun :: cabeza('Apostar')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main class="estrecho">
+<main class="estrecho pagina-apostar">
     <div class="tarjeta marcador">
       <div class="marcador-cabecera">
         <span class="chip" th:text="${evento.deporte.icono} + ' ' + ${evento.competicion.nombre}">LaLiga</span>
@@ -29,6 +29,9 @@
         <p class="alerta supercuota-aviso" th:if="${supercuota != null}"
            th:text="'🔥 Supercuota: «' + ${supercuota.resultado.descripcion} + '» paga ' + ${@formato.cuota(supercuota.cuota)} + ' en apuestas simples de hasta ' + ${#numbers.formatDecimal(supercuota.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas, hasta el ' + ${#temporals.format(supercuota.hasta, 'dd/MM HH:mm')} + '.'">Supercuota</p>
         <form class="formulario boleto" th:action="@{/eventos/{id}/apostar(id=${evento.id})}" th:object="${apuesta}" method="post">
+          <!-- En pantallas anchas, las cuotas a la izquierda y el importe a la derecha (solo aspecto) -->
+          <div class="apostar-columnas">
+          <div class="apostar-opciones">
             <fieldset class="opciones">
                 <legend>Tu pronóstico</legend>
                 <label class="opcion">
@@ -64,7 +67,9 @@
             </fieldset>
             <span class="error-campo" th:if="${#fields.hasErrors('opcion')}" th:text="${#fields.errors('opcion')[0]}"></span>
             <span class="error-campo" th:if="${#fields.hasErrors('opcionElegida')}" th:text="${#fields.errors('opcionElegida')[0]}"></span>
+          </div>
 
+          <div class="apostar-resumen">
             <label for="importe">Importe</label>
             <input id="importe" type="number" min="0.01" step="0.01" inputmode="decimal" th:field="*{importe}"
                    th:errorclass="con-error" placeholder="10">
@@ -89,6 +94,8 @@
             <button class="boton boton-secundario boton-bloque" type="submit" th:formaction="@{/boleto/anadir}"
                     formnovalidate>Añadir al boleto para combinar</button>
             </th:block>
+          </div>
+          </div>
         </form>
         <a class="enlace-volver" th:href="@{/eventos}">← Volver al catálogo</a>
     </div>
