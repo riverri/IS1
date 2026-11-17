@@ -4,7 +4,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +14,6 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.EquipoNoEncontradoException;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
-import es.ucm.fdi.is1.apuestas.eventos.EventoBorrado;
-import es.ucm.fdi.is1.apuestas.eventos.EventoCreado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.quiniela.PartidoQuinielaRepository;
@@ -35,18 +32,15 @@ public class GestionService {
     private final EventoRepository eventos;
     private final SeleccionRepository selecciones;
     private final PartidoQuinielaRepository partidosQuiniela;
-    private final ApplicationEventPublisher publicador;
     private final Clock reloj;
 
     public GestionService(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
-                          SeleccionRepository selecciones, PartidoQuinielaRepository partidosQuiniela,
-                          ApplicationEventPublisher publicador, Clock reloj) {
+                          SeleccionRepository selecciones, PartidoQuinielaRepository partidosQuiniela, Clock reloj) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
         this.selecciones = selecciones;
         this.partidosQuiniela = partidosQuiniela;
-        this.publicador = publicador;
         this.reloj = reloj;
     }
 
@@ -133,10 +127,7 @@ public class GestionService {
         if (form.getFase() != null && !form.getFase().isBlank()) {
             evento.setFase(form.getFase().trim());
         }
-        Evento guardado = eventos.save(evento);
-        // HU-86: aviso a quien sigue a alguno de los dos equipos
-        publicador.publishEvent(new EventoCreado(guardado));
-        return guardado;
+        return eventos.save(evento);
     }
 
     /**
@@ -195,8 +186,6 @@ public class GestionService {
             throw new IllegalStateException("El evento está en una quiniela: no se puede borrar, solo anular "
                     + "(en la quiniela cuenta como acierto para todos).");
         }
-        // Historial de cuotas, alertas y supercuotas se borran con él; con retos no se puede (HU-89)
-        publicador.publishEvent(new EventoBorrado(evento));
         eventos.delete(evento);
     }
 

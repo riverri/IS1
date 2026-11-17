@@ -60,20 +60,6 @@
         </div>
     </section>
 
-    <!-- HU-87: supercuotas vigentes -->
-    <section class="supercuotas" th:unless="${#lists.isEmpty(supercuotas)}">
-        <div class="seccion-titulo">
-            <h2>🔥 Supercuotas</h2>
-        </div>
-        <div class="rejilla-partidos">
-            <a class="tarjeta supercuota" th:each="s : ${supercuotas}" th:href="@{/eventos/{id}/apostar(id=${s.evento.id},resultado=${s.resultado})}">
-                <strong th:text="${s.evento.local.nombre} + ' – ' + ${s.evento.visitante.nombre}">Getafe CF – Sevilla FC</strong>
-                <span th:text="${s.resultado.descripcion} + ' a ' + ${@formato.cuota(s.cuota)}">Gana el local a 2,50</span>
-                <small class="aviso" th:text="'Hasta ' + ${#numbers.formatDecimal(s.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas · acaba el ' + ${#temporals.format(s.hasta, 'dd/MM HH:mm')}">Hasta 50,00 monedas</small>
-            </a>
-        </div>
-    </section>
-
     <section th:unless="${#lists.isEmpty(proximos)}">
         <div class="seccion-titulo">
             <h2>Próximos partidos</h2>
