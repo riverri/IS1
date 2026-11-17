@@ -171,16 +171,16 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 | HU-74 | Baccarat | Por hacer | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
 | HU-75 | Cobrar antes de tiempo (cash-out) | Por hacer | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
-| HU-76 | Riesgo de la casa por evento | Integrada (16/11) | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-77 | Correo al ganar una apuesta | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-78 | Montar una quiniela | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-79 | Echar un boleto | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-80 | Repartir el bote de la quiniela | Integrada (16/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-76 | Riesgo de la casa por evento | Por hacer | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-77 | Correo al ganar una apuesta | Por hacer | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-78 | Montar una quiniela | Por hacer | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-79 | Echar un boleto | Por hacer | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-80 | Repartir el bote de la quiniela | Por hacer | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-81 | Crear un equipo fantasy y fichar | Por hacer | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-82 | Puntos de los jugadores fantasy | Por hacer | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-83 | Clasificación fantasy | Por hacer | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-84 | Ranking por tipo de juego | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-85 | Tiempo de carga mínimo | Integrada (15/11) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-84 | Ranking por tipo de juego | Por hacer | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-85 | Tiempo de carga mínimo | Por hacer | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 | HU-86 | Equipos favoritos | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-87 | Supercuota | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-88 | Logros | Integrada (Sprint 5) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
