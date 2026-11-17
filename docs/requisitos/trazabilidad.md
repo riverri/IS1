@@ -12,14 +12,14 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 30 integradas (HU-63 a HU-73 y HU-75 a HU-96, sin HU-81 a HU-83) | 77 | 77 (100 %) | 0 | 0 |
+| 18 integradas (HU-63 a HU-73, HU-76 a HU-80, HU-84 y HU-85) | 47 | 47 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-75 (cash-out), HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) y HU-86 a HU-96 el 16/11, con sus 77 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11 y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, con sus 47 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
@@ -543,93 +543,3 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-85.1 | La aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
 | CA-85.2 | Las páginas llegan comprimidas con gzip si el navegador lo acepta | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
 | CA-85.3 | La hoja de estilos lleva la huella de su contenido en el nombre y se guarda un año en la caché | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |
-
-## HU-75 · Cobrar antes de tiempo (cash-out)
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-75.1 | La oferta es lo apostado al momento y sube o baja con las cuotas, sin pasar de la ganancia | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.recienHechaValeLoApostadoYSuPropioDineroNoLaMueve`, `.siLaCuotaBajaValeMasSinPasarDeLoQueCobrariaAcertando`, `.enUnaCombinadaCuentaLaSeleccionYaAcertada` |
-| CA-75.2 | Con un partido pendiente empezado o suspendido no se ofrece | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.siUnPartidoPendienteHaEmpezadoOEstaSuspendidoNoSeOfrece` |
-| CA-75.3 | Una vez cobrada, el resultado ya no la cambia | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.unaVezCobradaElResultadoYaNoLaCambia` |
-| CA-75.4 | Si las cuotas cambian, no se cobra y se enseña la oferta nueva | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.siLasCuotasCambianMientrasDecideNoSeCobraYSeEnsenaLaOfertaNueva` |
-
-## HU-86 · Equipos favoritos
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-86.1 | Se marca y se quita desde la ficha; el creador no sigue equipos | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.marcoUnEquipoComoFavoritoDesdeSuFichaYLoPuedoQuitar`, `.elCreadorNoSigueEquipos` |
-| CA-86.2 | Sus próximos partidos salen arriba en el catálogo | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.susPartidosSalenLosPrimerosEnElCatalogo` |
-| CA-86.3 | Aviso al publicarse un partido suyo | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.cuandoSePublicaUnPartidoDeMiEquipoMeLlegaUnAviso` |
-
-## HU-87 · Supercuota
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-87.1 | Mejora la normal sin pasar del doble y acaba al empezar el partido | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.tieneQueMejorarLaNormalSinPasarDelDoble`, `.acabaAlEmpezarElPartidoOCuandoLaRetira` |
-| CA-87.2 | En una simple se aplica hasta el importe máximo; en las combinadas, la normal | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.enUnaSimpleSeCobraConLaSupercuotaHastaElImporteMaximo` |
-| CA-87.3 | Sale destacada en la portada y en el partido | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.elCreadorLaPublicaYSaleEnLaPortadaYEnElPartido` |
-
-## HU-88 · Logros
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-88.1 | El perfil público enseña los logros y cuántos lleva | Automática | [`LogrosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/LogrosWebTest.java)`.losLogrosAparecenEnCuantoSeCumplen` |
-| CA-88.2 | Cada logro aparece al cumplirse; una perdida corta la racha | Automática | [`LogrosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/LogrosWebTest.java)`.losLogrosAparecenEnCuantoSeCumplen`, `.unaPerdidaCortaLaRacha` |
-
-## HU-89 · Reto 1 contra 1
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-89.1 | Se reta a un compañero de liga, se cobra y le llega el aviso | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.retoAUnCompaneroDesdeLaLigaYLeLlegaElAviso`, `.soloSeRetaACompanerosDeLiga` |
-| CA-89.2 | Aceptar con otro resultado cobra lo mismo; rechazar devuelve al retador | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.elQueAciertaSeLlevaLosDosImportes`, `.rechazarloOQueEmpieceSinAceptarDevuelveElImporte` |
-| CA-89.3 | El que acierta se lleva los dos importes; si no, se devuelve a cada uno | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.elQueAciertaSeLlevaLosDosImportes`, `.siNoAciertaNingunoSeDevuelveACadaUnoLoSuyo`, `.rechazarloOQueEmpieceSinAceptarDevuelveElImporte`, `.unEventoConRetosNoSeBorra` |
-
-## HU-90 · Alerta de cuota
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-90.1 | La cuota de la alerta tiene que ser mayor que la actual | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.laCuotaDeLaAlertaTieneQueSerMayorQueLaActual` |
-| CA-90.2 | Al llegar la cuota, avisa una sola vez | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.cuandoLaCuotaLlegaAlValorMeAvisaUnaSolaVez` |
-| CA-90.3 | Las de partidos ya empezados se borran | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.lasAlertasDeUnPartidoYaEmpezadoSeBorran` |
-
-## HU-91 · Evolución de la cuota
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-91.1 | El partido enseña el gráfico de las cuotas | Automática | [`EvolucionCuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/EvolucionCuotaWebTest.java)`.cadaCambioDeCuotaQuedaApuntadoYSeDibuja` |
-| CA-91.2 | Cada cambio queda apuntado, sin repetir los iguales | Automática | [`EvolucionCuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/EvolucionCuotaWebTest.java)`.cadaCambioDeCuotaQuedaApuntadoYSeDibuja`, `.unEventoSinApuestasSeBorraConSuHistorial` |
-
-## HU-92 · Resumen semanal por correo
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-92.1 | Llega a quien ha jugado, con lo jugado, lo cobrado y su puesto | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` |
-| CA-92.2 | Desactivado en Mi cuenta, no llega | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` |
-
-## HU-93 · Exportar mi historial
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-93.1 | CSV de mis apuestas para Excel | Automática | [`ExportacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ExportacionWebTest.java)`.descargoMisApuestasConPuntoYComaYComaDecimal` |
-| CA-93.2 | CSV de mis movimientos; sin sesión, nada | Automática | [`ExportacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ExportacionWebTest.java)`.descargoMisMovimientosConElSaldoQueDejaCadaUno`, `.sinSesionNoSeDescargaNada` |
-
-## HU-94 · Modo oscuro
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-94.1 | La luna pasa a oscuro y vuelve a la página; sin sesión nueva | Automática | [`TemaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/TemaWebTest.java)`.alPulsarLaLunaSeGuardaElModoOscuroYSeVuelveALaPagina`, `.conLaCookieLaPaginaCargaLosColoresOscurosYOfreceVolverALosClaros`, `.sinElegirNadaLaWebSaleConLosColoresClaros`, `.elBotonNoCreaSesionALosVisitantes`, `.noVuelveAUnaDireccionDeOtraWeb` |
-| CA-94.2 | Se recuerda un año en una cookie | Automática | [`TemaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/TemaWebTest.java)`.alPulsarLaLunaSeGuardaElModoOscuroYSeVuelveALaPagina` |
-
-## HU-95 · Beneficio de la casa por día
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-95.1 | El panel de la casa enseña los 30 días | Automática | [`BeneficioDiarioWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/BeneficioDiarioWebTest.java)`.loQuePierdenLosJugadoresLoGanaLaCasaYLosPremiosLoRestan` |
-| CA-95.2 | Lo pagado suma, lo cobrado resta y las recargas no cuentan | Automática | [`BeneficioDiarioWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/BeneficioDiarioWebTest.java)`.loQuePierdenLosJugadoresLoGanaLaCasaYLosPremiosLoRestan` |
-
-## HU-96 · Estadísticas por competición
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-96.1 | Aciertos y balance por competición; combinadas y largo plazo aparte | Automática | [`EstadisticasCompeticionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/EstadisticasCompeticionWebTest.java)`.cadaCompeticionTieneSusAciertosYSuBalanceYLasCombinadasVanAparte` |
-| CA-96.2 | Las activas no cuentan | Automática | [`EstadisticasCompeticionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/EstadisticasCompeticionWebTest.java)`.cadaCompeticionTieneSusAciertosYSuBalanceYLasCombinadasVanAparte` |

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
-import es.ucm.fdi.is1.apuestas.cuotas.RegistroCuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -44,14 +43,11 @@ public class ApuestaService {
     private final CalculadoraCuotas calculadora;
     private final LimitesService limites;
     private final JuegoResponsableService juegoResponsable;
-    private final RegistroCuotas registroCuotas;
-    private final SupercuotaRepository supercuotas;
     private final Clock reloj;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
                           CandidatoRepository candidatos, CalculadoraCuotas calculadora, LimitesService limites,
-                          JuegoResponsableService juegoResponsable, RegistroCuotas registroCuotas,
-                          SupercuotaRepository supercuotas, Clock reloj) {
+                          JuegoResponsableService juegoResponsable, Clock reloj) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
@@ -59,8 +55,6 @@ public class ApuestaService {
         this.calculadora = calculadora;
         this.limites = limites;
         this.juegoResponsable = juegoResponsable;
-        this.registroCuotas = registroCuotas;
-        this.supercuotas = supercuotas;
         this.reloj = reloj;
     }
 
@@ -109,18 +103,6 @@ public class ApuestaService {
                     .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));
             // La cuota se calcula aquí, nunca se fía de la que envía la página
             BigDecimal cuota = cuota(evento, pedida.resultado(), pedida.especial());
-            // HU-87: en una simple a un resultado con supercuota vale la supercuota, hasta su importe máximo
-            if (pedidas.size() == 1 && pedida.especial() == null) {
-                Supercuota supercuota = supercuotas.findByEventoAndHastaAfter(evento, ahora).stream()
-                        .filter(s -> s.isVigente(ahora) && s.getResultado() == pedida.resultado()).findFirst().orElse(null);
-                if (supercuota != null) {
-                    if (importe.compareTo(supercuota.getImporteMaximo()) > 0) {
-                        throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
-                                + supercuota.getImporteMaximo().toPlainString().replace('.', ',') + " monedas");
-                    }
-                    cuota = supercuota.getCuota();
-                }
-            }
             // Se apuntan todas las cambiadas antes de avisar, para enseñarlas todas de una vez
             if (pedida.cuotaVista() != null && pedida.cuotaVista().compareTo(cuota) != 0) {
                 cambiadas.add(evento.getId());
@@ -139,9 +121,7 @@ public class ApuestaService {
         // Se cobra tras todas las comprobaciones; sin saldo lanza SaldoInsuficienteException y no se guarda nada (CA-23.2)
         usuario.cargar(importe, TipoMovimiento.APUESTA, "Nueva " + apuesta.descripcion(), ahora);
         // Las selecciones se guardan con la apuesta (cascade); el usuario y su movimiento, al confirmar la transacción
-        Apuesta guardada = apuestas.save(apuesta);
-        registrarCuotas(guardada);
-        return guardada;
+        return apuestas.save(apuesta);
     }
 
     /**
@@ -188,7 +168,6 @@ public class ApuestaService {
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         // No hace falta save: la apuesta está gestionada por JPA y los cambios se guardan al terminar la transacción
         apuesta.cancelar(LocalDateTime.now(reloj));
-        registrarCuotas(apuesta);
         return apuesta;
     }
 
@@ -236,14 +215,7 @@ public class ApuestaService {
         }
         comprobarCuotaTotal(cuotaTotal);
         apuesta.cambiarImporte(nuevo, cuotas, ahora);
-        registrarCuotas(apuesta);
         return apuesta;
-    }
-
-    /** Las cuotas 1X2 se mueven con el dinero apostado: se apuntan para su evolución (HU-91). */
-    private void registrarCuotas(Apuesta apuesta) {
-        apuesta.getSelecciones().stream().filter(s -> s.getEvento() != null && s.getPronostico() != null)
-                .map(Seleccion::getEvento).distinct().forEach(registroCuotas::registrar);
     }
 
     /** El creador de apuestas introduce los resultados: no puede apostar a ellos. */
@@ -293,41 +265,13 @@ public class ApuestaService {
     public List<Apuesta> historial(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         return apuestas.findByUsuarioAndEstadoInOrderByFechaDesc(usuario, EnumSet.of(EstadoApuesta.GANADA,
-                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA, EstadoApuesta.COBRADA));
+                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA));
     }
 
     /** Porcentaje de aciertos y rentabilidad del usuario (HU-35). */
     @Transactional(readOnly = true)
     public Estadisticas estadisticas(String email) {
         return Estadisticas.de(historial(email));
-    }
-
-    /** Estadísticas de un grupo de apuestas: una competición, las combinadas o las de largo plazo (HU-96). */
-    public record EstadisticasGrupo(String nombre, Estadisticas estadisticas) {
-    }
-
-    /**
-     * Mis estadísticas por competición (HU-96): las simples van con la competición de su partido, y las combinadas
-     * (pueden mezclar competiciones) y las de largo plazo, cada una en su grupo. Solo los grupos con apuestas
-     * resueltas, de más a menos.
-     */
-    @Transactional(readOnly = true)
-    public List<EstadisticasGrupo> estadisticasPorCompeticion(String email) {
-        java.util.Map<String, List<Apuesta>> grupos = new java.util.LinkedHashMap<>();
-        for (Apuesta apuesta : historial(email)) {
-            if (!apuesta.isResuelta()) {
-                continue;
-            }
-            String grupo = apuesta.isLargoPlazo() ? "Largo plazo"
-                    : apuesta.isCombinada() ? "Combinadas"
-                    : apuesta.getSelecciones().get(0).getEvento().getCompeticion().getNombre();
-            grupos.computeIfAbsent(grupo, g -> new ArrayList<>()).add(apuesta);
-        }
-        return grupos.entrySet().stream()
-                .map(e -> new EstadisticasGrupo(e.getKey(), Estadisticas.de(e.getValue())))
-                .sorted(java.util.Comparator.comparing((EstadisticasGrupo g) -> g.estadisticas().resueltas()).reversed()
-                        .thenComparing(EstadisticasGrupo::nombre))
-                .toList();
     }
 
     /** Apuestas activas del usuario, de la más reciente a la más antigua (HU-24). */

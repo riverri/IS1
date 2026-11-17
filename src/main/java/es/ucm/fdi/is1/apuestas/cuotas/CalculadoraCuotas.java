@@ -101,15 +101,6 @@ public class CalculadoraCuotas {
                 evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento));
     }
 
-    /**
-     * Cuotas 1X2 sin contar el dinero de un usuario (HU-75): así, apostar y cobrar al momento no da ganancia, porque
-     * su propia apuesta no le mueve la cuota.
-     */
-    public Cuotas calcularSin(Evento evento, Long usuarioId) {
-        return calcular(nivelLocal(evento), nivelVisitante(evento),
-                evento.getDeporte().isAdmiteEmpate(), volumen.importesSin(evento, usuarioId));
-    }
-
     /** Cuotas de doble oportunidad, goles y ambos marcan (HU-52). Vacío si el deporte no es fútbol. */
     public Map<Especial, BigDecimal> especiales(Evento evento) {
         if (evento.getDeporte() != Deporte.FUTBOL) {

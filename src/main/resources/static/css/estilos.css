@@ -930,7 +930,6 @@ tbody tr:hover { background: #f8fafc; }
 .estado.ganada { background: var(--exito-suave); color: var(--exito); }
 .estado.perdida { background: var(--error-suave); color: var(--error); }
 .estado.cancelada { background: var(--fondo); color: var(--texto-suave); }
-.estado.cobrada { background: #fff7d6; color: #7a5600; }
 .estado.abierto { background: var(--primario-suave); color: var(--primario-oscuro); }
 .estado.cerrado { background: #fffaeb; color: #b54708; }
 .estado.resuelto { background: #eef2ff; color: #3538cd; }
@@ -1304,33 +1303,3 @@ tr.inactivo td { color: var(--texto-suave); }
 .cripto-nombre { color: var(--texto-suave); font-size: .9rem; }
 .cripto-precio { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .cripto-variacion { font-weight: 700; font-variant-numeric: tabular-nums; }
-
-/* Evolución de la cuota (HU-91) y alertas de cuota (HU-90) */
-.evolucion-cuotas h2, #alertas h2 { margin-top: 0; }
-.evolucion-cuotas .linea-local { stroke: var(--primario); }
-.evolucion-cuotas .linea-empate { stroke: var(--texto-suave); }
-.evolucion-cuotas .linea-visitante { stroke: #2563eb; }
-.leyenda-cuotas { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 4px; font-weight: 600; }
-.leyenda-cuotas .linea-local { color: var(--primario); }
-.leyenda-cuotas .linea-empate { color: var(--texto-suave); }
-.leyenda-cuotas .linea-visitante { color: #2563eb; }
-.alerta-cuota { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.alerta-cuota input { width: 110px; }
-.lista-alertas { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; }
-.lista-alertas li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; }
-.boton-favorito.activo { background: var(--primario-suave); border-color: var(--primario); }
-.mis-equipos { margin-bottom: 24px; }
-
-/* Supercuotas (HU-87) */
-.supercuota { display: grid; gap: 4px; padding: 16px 18px; text-decoration: none; color: var(--texto);
-    border-left: 4px solid var(--oro); }
-.supercuota span { font-weight: 700; color: var(--primario-oscuro); }
-.supercuota-aviso { background: #fff7d6; color: #7a5600; }
-
-/* Logros (HU-88) */
-.logros { list-style: none; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-.logro { display: grid; gap: 4px; justify-items: center; text-align: center; padding: 14px 10px; }
-.logro-icono { font-size: 1.8rem; }
-.logro.pendiente { opacity: .45; filter: grayscale(1); }
-.logro small { color: var(--texto-suave); }
-.cobrar-ya { margin: 8px 0; }

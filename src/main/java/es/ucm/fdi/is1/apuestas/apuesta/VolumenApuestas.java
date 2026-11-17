@@ -40,12 +40,6 @@ class VolumenApuestas implements VolumenApostado {
     /** Importe que cuenta en cada resultado del evento; los resultados sin apuestas no aparecen en el mapa. */
     @Override
     public Map<Resultado, BigDecimal> importes(Evento evento) {
-        return importesSin(evento, null);
-    }
-
-    /** Sin las selecciones del usuario {@code sinUsuario} (null = de todos). */
-    @Override
-    public Map<Resultado, BigDecimal> importesSin(Evento evento, Long sinUsuario) {
         Map<Resultado, BigDecimal> importes = new EnumMap<>(Resultado.class);
         // Un evento sin guardar (sin id) aún no puede tener apuestas
         if (evento.getId() == null) {
@@ -56,9 +50,6 @@ class VolumenApuestas implements VolumenApostado {
         Map<Clave, BigDecimal> porUsuario = new HashMap<>();
         // fila = [pronóstico, id del usuario, importe de la apuesta, número de selecciones]
         for (Object[] fila : selecciones.seleccionesActivasPorPronostico(evento)) {
-            if (sinUsuario != null && sinUsuario.equals(fila[1])) {
-                continue;
-            }
             // Parte de la apuesta que corresponde a esta selección: importe / número de selecciones.
             // MathContext.DECIMAL64 fija cuántas cifras guardar: sin él, 10 / 3 lanzaría una excepción
             // porque BigDecimal no sabe dónde cortar un decimal infinito (3,333...)

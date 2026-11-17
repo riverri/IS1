@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import es.ucm.fdi.is1.apuestas.apuesta.BeneficioDiarioService;
 import es.ucm.fdi.is1.apuestas.apuesta.CuentasCasaService;
 import es.ucm.fdi.is1.apuestas.cripto.CriptoService;
 import es.ucm.fdi.is1.apuestas.prediccion.PrediccionService;
@@ -19,14 +18,11 @@ public class CasaController {
     private final CuentasCasaService cuentas;
     private final PrediccionService predicciones;
     private final CriptoService cripto;
-    private final BeneficioDiarioService beneficioDiario;
 
-    public CasaController(CuentasCasaService cuentas, PrediccionService predicciones, CriptoService cripto,
-                          BeneficioDiarioService beneficioDiario) {
+    public CasaController(CuentasCasaService cuentas, PrediccionService predicciones, CriptoService cripto) {
         this.cuentas = cuentas;
         this.predicciones = predicciones;
         this.cripto = cripto;
-        this.beneficioDiario = beneficioDiario;
     }
 
     /**
@@ -38,7 +34,6 @@ public class CasaController {
         model.addAttribute("cuentas", cuentas.cuentas());
         model.addAttribute("predicciones", predicciones.cuentas());
         model.addAttribute("cripto", cripto.cuentas());
-        model.addAttribute("diario", beneficioDiario.ultimosDias());
         return "gestion/casa";
     }
 }

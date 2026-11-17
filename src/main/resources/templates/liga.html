@@ -38,54 +38,6 @@
     </ol>
     <p class="aviso" th:if="${#lists.size(puestos) < 2}">Pasa el código a tus amigos: en cuanto se unan aparecerán aquí.</p>
 
-    <!-- HU-89: retos 1 contra 1 -->
-    <h2 id="retos">Retos 1 contra 1</h2>
-    <p class="aviso">Reta a un compañero en un partido: cada uno pone lo mismo y elige un resultado distinto. El que
-        acierta se lleva los dos importes; si no acierta ninguno o se anula el partido, se devuelve a cada uno lo suyo.</p>
-    <form class="tarjeta formulario alerta-cuota" th:if="${!#lists.isEmpty(rivales) and !#lists.isEmpty(partidosReto)}"
-          th:action="@{/retos}" method="post">
-        <select name="retado" aria-label="Compañero" required>
-            <option th:each="u : ${rivales}" th:value="${u.id}" th:text="${u.nombre}">Luis</option>
-        </select>
-        <select name="evento" aria-label="Partido" required>
-            <option th:each="e : ${partidosReto}" th:value="${e.id}"
-                    th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 · Getafe CF – Sevilla FC</option>
-        </select>
-        <select name="pronostico" aria-label="Tu resultado" required>
-            <option th:each="r : ${resultados}" th:value="${r}" th:text="${r.simbolo} + ' · ' + ${r.descripcion}">1 · Gana el local</option>
-        </select>
-        <label>Cada uno pone <input name="importe" type="number" step="0.01" min="0.01" value="10" required></label>
-        <button class="boton" type="submit">Retar</button>
-    </form>
-    <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya alguien más en la liga, podrás retarle.</p>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(misRetos)}">
-        <table>
-            <thead><tr><th>Partido</th><th>Reto</th><th>Importe</th><th>Estado</th><th></th></tr></thead>
-            <tbody>
-            <tr th:each="r : ${misRetos}">
-                <td th:text="${r.evento.local.nombre} + ' – ' + ${r.evento.visitante.nombre}">Getafe CF – Sevilla FC</td>
-                <td th:text="${r.retador.nombre} + ' (' + ${r.pronosticoRetador.simbolo} + ') contra ' + ${r.retado.nombre} + (${r.pronosticoRetado != null} ? ' (' + ${r.pronosticoRetado.simbolo} + ')' : '')">Ana (1) contra Luis (2)</td>
-                <td th:text="${#numbers.formatDecimal(r.importe, 1, 'POINT', 2, 'COMMA')}">10,00</td>
-                <td th:text="${r.estado.name() == 'RESUELTO'} ? 'Ganó ' + ${r.ganador.nombre} : ${#strings.capitalize(#strings.toLowerCase(r.estado))}">Pendiente</td>
-                <td class="acciones">
-                    <th:block th:if="${r.estado.name() == 'PENDIENTE' and #strings.equalsIgnoreCase(r.retado.email, usuarioActual.email)}">
-                        <form th:action="@{/retos/{id}/aceptar(id=${r.id})}" method="post" class="en-linea">
-                            <select name="pronostico" aria-label="Tu resultado">
-                                <option th:each="x : ${resultados}" th:if="${x != r.pronosticoRetador and (x.name() != 'EMPATE' or r.evento.deporte.admiteEmpate)}"
-                                        th:value="${x}" th:text="${x.simbolo}">2</option>
-                            </select>
-                            <button class="enlace" type="submit">Aceptar</button>
-                        </form>
-                    </th:block>
-                    <form th:if="${r.estado.name() == 'PENDIENTE'}" th:action="@{/retos/{id}/rechazar(id=${r.id})}" method="post" class="en-linea">
-                        <button class="enlace" type="submit" th:text="${#strings.equalsIgnoreCase(r.retado.email, usuarioActual.email)} ? 'Rechazar' : 'Retirar'">Rechazar</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
     <div class="acciones">
         <form th:unless="${soyCreador}" th:action="@{/ligas/{id}/salir(id=${liga.id})}" method="post"
               onsubmit="return confirm('¿Salir de la liga?');">
