@@ -12,14 +12,14 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 30 integradas (HU-63 a HU-73 y HU-75 a HU-96, sin HU-81 a HU-83) | 77 | 77 (100 %) | 0 | 0 |
+| 29 integradas (HU-63 a HU-73, HU-76 a HU-80 y HU-84 a HU-96) | 73 | 73 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-75 (cash-out), HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) y HU-86 a HU-96 el 16/11, con sus 77 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) y HU-86 a HU-96 el 16/11, con sus 73 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
@@ -543,15 +543,6 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-85.1 | La aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
 | CA-85.2 | Las páginas llegan comprimidas con gzip si el navegador lo acepta | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
 | CA-85.3 | La hoja de estilos lleva la huella de su contenido en el nombre y se guarda un año en la caché | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |
-
-## HU-75 · Cobrar antes de tiempo (cash-out)
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-75.1 | La oferta es lo apostado al momento y sube o baja con las cuotas, sin pasar de la ganancia | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.recienHechaValeLoApostadoYSuPropioDineroNoLaMueve`, `.siLaCuotaBajaValeMasSinPasarDeLoQueCobrariaAcertando`, `.enUnaCombinadaCuentaLaSeleccionYaAcertada` |
-| CA-75.2 | Con un partido pendiente empezado o suspendido no se ofrece | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.siUnPartidoPendienteHaEmpezadoOEstaSuspendidoNoSeOfrece` |
-| CA-75.3 | Una vez cobrada, el resultado ya no la cambia | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.unaVezCobradaElResultadoYaNoLaCambia` |
-| CA-75.4 | Si las cuotas cambian, no se cobra y se enseña la oferta nueva | Automática | [`CashOutWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutWebTest.java)`.siLasCuotasCambianMientrasDecideNoSeCobraYSeEnsenaLaOfertaNueva` |
 
 ## HU-86 · Equipos favoritos
 

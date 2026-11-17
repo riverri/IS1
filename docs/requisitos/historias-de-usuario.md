@@ -68,9 +68,9 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (30) | 107 | 8.774 | 634 | 103 | 0,8 millones | 103 $ |
+| Historias integradas (29) | 99 | 8.118 | 587 | 95 | 0,7 millones | 95 $ |
 | Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 0,2 millones | 30 $ |
-| Historias por hacer (4) | 17 | 1.394 | 99 | 16 | 0,1 millones | 16 $ |
+| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 0,2 millones | 24 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -170,7 +170,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 | HU-74 | Baccarat | Por hacer | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
-| HU-75 | Cobrar antes de tiempo (cash-out) | Integrada (16/11) | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-75 | Cobrar antes de tiempo (cash-out) | Por hacer | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 | HU-76 | Riesgo de la casa por evento | Integrada (16/11) | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-77 | Correo al ganar una apuesta | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-78 | Montar una quiniela | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
@@ -193,7 +193,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-95 | Beneficio de la casa por día | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-96 | Estadísticas por competición | Integrada (16/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**96 historias**: 46 hechas, 30 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-75, HU-76 a HU-80 y HU-84 a HU-96 el 16/11), 8 pendientes de subir (HU-55 a HU-62), 4 por hacer (HU-74 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **217 criterios de aceptación** en total; 97 son de historias hechas, 77 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
+**96 historias**: 46 hechas, 29 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 a HU-96 el 16/11), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **217 criterios de aceptación** en total; 97 son de historias hechas, 77 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
 
 ---
 
@@ -815,7 +815,7 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 42 | 3 (Media) | 4 | Integrada (16/11) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| 42 | 3 (Media) | 4 | Por hacer | 8 | 656 | 47 | 7,6 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -826,9 +826,7 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-75.3 | He cobrado una apuesta | Después se juegan sus partidos | La apuesta queda «Cobrada» y el resultado ya no la cambia. |
 | CA-75.4 | Las cuotas cambian mientras decido | Pulso «Cobrar ya» | No se cobra y se me enseña la oferta nueva. |
 
-La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto. Las de largo plazo no se pueden cobrar antes: su cuota la fija el creador.
-
-**Pruebas:** `CashOutWebTest`.
+La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto.
 
 ---
 

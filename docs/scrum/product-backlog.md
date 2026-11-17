@@ -15,10 +15,10 @@
 
 Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida del MVP y del valor de cada fila.
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
-Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 374 en total: 182 de las filas hechas, 107 de las integradas (39 a 45 y 47 a 56), 36 de las pendientes de subir (36, 37 y 38; 5 de ellos son del baccarat, que está por hacer), 12 de la que está por hacer (46) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
+Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 374 en total: 182 de las filas hechas, 99 de las integradas (39 a 41, 43 a 45 y 47 a 56), 36 de las pendientes de subir (36, 37 y 38; 5 de ellos son del baccarat, que está por hacer), 20 de las que están por hacer (42 y 46) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 33 de 56 filas hechas; la 39 a la 45 y la 47 a la 56, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36, la 37 y la 38, pendientes de subir (de la 37, el baccarat está por hacer); la 46, por hacer, y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 56 filas hechas; la 39 a la 41, la 43 a la 45 y la 47 a la 56, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36, la 37 y la 38, pendientes de subir (de la 37, el baccarat está por hacer); la 42 y la 46, por hacer, y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Puntos | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|---|:-:|:-:|---|
@@ -63,7 +63,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 39 | Mercados de predicción de sí o no (tipo Polymarket) con precio de 0 a 1 calculado por un creador de mercado automático (LMSR): crear y cerrar, comprar y vender, resolver y pagar, estadísticas y posiciones de los compañeros de liga (HU-63 a HU-68). *Depende de las filas 33 y 36* | 1 sprint | 22 (HU-63 a HU-68) | 5 | C | | Integrada (06/11) |
 | 40 | Cartera de criptomonedas reales a su precio real en euros (CoinGecko), compradas y vendidas con moneditas (1 monedita = 1 €), con las memecoins y las de alto riesgo como protagonistas: precios y gráfico, comprar y vender con comisión, mi cartera con ganancias y pérdidas, y configuración del creador (HU-69 a HU-73). *Depende de la fila 36* | 1 sprint | 18 (HU-69 a HU-73) | 4 | C | | Integrada (06/11) |
 | 41 | Tiempo de carga mínimo: la web no se apaga por inactividad en Render (keep-alive: la aplicación se visita a sí misma cada 10 minutos), las páginas viajan comprimidas y la hoja de estilos se guarda en la caché del navegador (HU-85) | ¼ sprint | 3 (HU-85) | 7 | S | | Integrada (15/11) |
-| 42 | Cobrar una apuesta antes de tiempo (cash-out), sin apuestas en directo (HU-75) | ½ sprint | 8 (HU-75) | 5 | C | | Integrada (16/11) |
+| 42 | Cobrar una apuesta antes de tiempo (cash-out), sin apuestas en directo (HU-75) | ½ sprint | 8 (HU-75) | 5 | C | | Por hacer |
 | 43 | Riesgo de la casa por evento: lo que pagaría con cada resultado, aviso por encima de un límite y eventos marcados en el panel (HU-76) | ¼ sprint | 5 (HU-76) | 6 | S | | Integrada (16/11) |
 | 44 | Correo al ganar una apuesta, con opción de desactivarlo en Mi cuenta (HU-77) | ¼ sprint | 3 (HU-77) | 4 | C | | Integrada (16/11) |
 | 45 | Quiniela: montarla con 3 a 15 partidos, echar un boleto y repartir el bote entre los que más aciertan (HU-78 a HU-80) | ½ sprint | 11 (HU-78 a HU-80) | 4 | C | | Integrada (16/11) |
