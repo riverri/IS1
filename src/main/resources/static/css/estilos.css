@@ -1444,3 +1444,48 @@ tr.inactivo td { color: var(--texto-suave); }
 .boton-secundario:hover { transform: translateY(-1px); }
 .chip-filtro { transition: border-color .15s, color .15s, background .15s; }
 .pie a { transition: color .15s; }
+
+/* ---------- Mismo ancho para la cabecera, el contenido y el pie ---------- */
+
+main, .portada-interior, .pie-interior, .pie-legal { max-width: 1280px; }
+
+/* ---------- Apostar: dos columnas en pantallas anchas ---------- */
+
+/* En el móvil, los dos bloques se ven uno debajo del otro, como antes */
+.apostar-opciones, .apostar-resumen { display: flex; flex-direction: column; gap: 6px; }
+.apostar-resumen > .boton:not(.boton-secundario) { margin-top: 18px; }
+
+@media (min-width: 900px) {
+    main.pagina-apostar {
+        max-width: 1080px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+        align-items: start;
+    }
+    .pagina-apostar > .marcador { grid-column: 1 / -1; padding: 24px 28px 28px; }
+    /* clip y no hidden: así el resumen puede quedarse fijo al bajar */
+    .pagina-apostar > .marcador { overflow: clip; }
+    .pagina-apostar > section { margin: 0; }
+    .pagina-apostar .marcador-cabecera { margin: -24px -28px 24px; }
+    .pagina-apostar .marcador-equipo { font-size: 1.1rem; }
+    .apostar-columnas {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 28px;
+        align-items: start;
+    }
+    .apostar-resumen {
+        position: sticky;
+        top: 84px;
+        padding: 20px;
+        background: var(--fondo);
+        border: 1px solid var(--borde);
+        border-radius: 14px;
+    }
+    .apostar-resumen > label:first-child { margin-top: 0; }
+    .apostar-resumen .ganancia { margin-top: 12px; }
+}
+@media (min-width: 900px) {
+    .pagina-apostar .opciones-especiales { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
