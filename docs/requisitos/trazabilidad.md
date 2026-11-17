@@ -19,7 +19,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) y HU-86 a HU-96 el 16/11, con sus 73 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-86 a HU-96, del Sprint 5, con sus 73 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
