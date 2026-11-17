@@ -1332,3 +1332,115 @@ tr.inactivo td { color: var(--texto-suave); }
 .logro-icono { font-size: 1.8rem; }
 .logro.pendiente { opacity: .45; filter: grayscale(1); }
 .logro small { color: var(--texto-suave); }
+
+/* ==========================================================================
+   Pulido visual: solo cambia el aspecto, no lo que hace cada página
+   ========================================================================== */
+
+/* ---------- Cabecera en una sola fila ---------- */
+
+.cabecera-interior { max-width: 1280px; flex-wrap: nowrap; gap: 12px; }
+.marca { flex: none; }
+.menu {
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.menu::-webkit-scrollbar { display: none; }
+/* Margen automático y no justify-content: si el menú no cabe, se puede desplazar hasta el primer enlace */
+.menu > :first-child { margin-left: auto; }
+.menu > a, .menu > form { flex: none; }
+.menu > a:not(.boton):not(.saldo) { padding: 6px 8px; font-size: .9rem; white-space: nowrap; }
+.menu > a.campana { margin-left: 4px; }
+.menu form.en-linea { margin-left: 4px; }
+.saldo { white-space: nowrap; margin-left: 6px; transition: background .15s; }
+.saldo:hover { background: rgba(245, 179, 1, .22); }
+
+/* Pantallas medianas y móvil: marca y saldo arriba, menú debajo y desplazable */
+@media (max-width: 1279px) {
+    .cabecera-interior { position: relative; flex-wrap: wrap; gap: 6px 16px; padding: 10px 16px 6px; }
+    .menu { flex-basis: 100%; padding: 0 32px 4px 0; }
+    /* Borde derecho difuminado para que se vea que el menú sigue */
+    .cabecera-interior::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 40px;
+        height: 44px;
+        background: linear-gradient(90deg, rgba(11, 18, 32, 0), rgba(11, 18, 32, .96));
+        pointer-events: none;
+    }
+    .menu > :first-child { margin-left: 0; }
+    /* El saldo, siempre a la vista junto a la marca y no al final del menú */
+    .saldo { position: absolute; top: 9px; right: 16px; margin: 0; }
+    /* Sin sesión, el botón de registrarse ocupa el mismo sitio */
+    .menu > a.boton { position: absolute; top: 9px; right: 16px; }
+}
+@media (max-width: 560px) {
+    .cabecera-interior { padding: 10px 12px 4px; }
+    .saldo, .menu > a.boton { right: 12px; }
+    .saldo { padding: 5px 10px; font-size: .9rem; }
+}
+
+/* ---------- Cifras de resumen ---------- */
+
+.estadistica { position: relative; overflow: hidden; }
+.estadistica::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primario), var(--oro));
+    opacity: .85;
+}
+.estadistica > span { font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+@media (max-width: 560px) {
+    .estadisticas { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }
+    .estadistica { padding: 12px; font-size: .82rem; line-height: 1.3; }
+    .estadistica > span { font-size: 1.25rem; margin-bottom: 2px; }
+}
+
+/* ---------- Estado vacío con icono ---------- */
+
+.vacio::before {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310a36b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-6l-2 3h-4l-2-3H2'/%3E%3Cpath d='M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z'/%3E%3C/svg%3E")
+        center / 24px no-repeat,
+        var(--primario-suave);
+}
+.vacio .boton { margin-top: 6px; }
+
+/* ---------- Alerta de cuota y supercuota: campos como los del resto de formularios ---------- */
+
+.alerta-cuota select, .alerta-cuota input {
+    padding: 9px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    font: inherit;
+    background: var(--superficie);
+    color: var(--texto);
+    transition: border-color .15s, box-shadow .15s;
+}
+.alerta-cuota select { max-width: 100%; }
+.alerta-cuota select:focus, .alerta-cuota input:focus {
+    outline: none;
+    border-color: var(--primario);
+    box-shadow: 0 0 0 4px rgba(16, 163, 107, .15);
+}
+
+/* ---------- Detalles ---------- */
+
+::selection { background: rgba(16, 163, 107, .22); }
+.boton-secundario:hover { transform: translateY(-1px); }
+.chip-filtro { transition: border-color .15s, color .15s, background .15s; }
+.pie a { transition: color .15s; }
