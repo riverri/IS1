@@ -11,6 +11,8 @@ Sprints de dos semanas. El acta de cada uno (planificación, review, retrospecti
 | 1 | 19/09 – 3/10 | [Primer Sprint](Primer-Sprint) · el código se hizo en 12 [iteraciones](https://github.com/riverri/IS1/tree/main/docs/scrum/sprints/iteraciones) el 1 y el 2 de octubre |
 | 2 | 3/10 – 17/10 | [Segundo Sprint](Segundo-Sprint) |
 | 3 | _por completar_ | [Tercer Sprint](Tercer-Sprint) |
+| 4 | 4/11 – 17/11 | [Cuarto Sprint](Cuarto-Sprint) |
+| 5 | 18/11 – 1/12 | [Quinto Sprint](Quinto-Sprint) |
 
 Las actas se editan en el repositorio, en `docs/scrum/sprints/sprint-N.md`, y se publican solas en la wiki. Para el siguiente sprint, copia la [plantilla](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/plantilla-sprint.md).
 
