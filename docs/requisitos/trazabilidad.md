@@ -11,7 +11,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 46 hechas | 98 | 94 (96 %) | 4 | 0 |
+| 45 hechas | 97 | 93 (96 %) | 4 | 0 |
 | 30 integradas (HU-63 a HU-73 y HU-75 a HU-96, sin HU-81 a HU-83) | 77 | 77 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
@@ -21,7 +21,7 @@ Todos los criterios de las historias hechas tienen prueba automática, salvo los
 
 **Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-75 (cash-out), HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) y HU-86 a HU-96 el 16/11, con sus 77 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review.
 
-**Pendientes de subir:** HU-55 (movimientos del saldo), HU-56 a HU-59 (casino) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 (el del casino, el 13/11) para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
+**Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -354,12 +354,6 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-53.1 | Se ven el apostado, el pagado, el beneficio y el margen real frente al teórico | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio`<br>[`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.elCreadorVeElPanelYUnUsuarioNo` |
 | CA-53.2 | Se ve el desglose por tipo de apuesta y por deporte | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio` |
-
-## HU-54 · Nombres inapropiados
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-54.1 | Un nombre ofensivo no se acepta al crear la cuenta ni al cambiarlo | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConNombreOfensivoNoCreaLaCuenta`; [`CuentaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CuentaWebTest.java)`.elNombreNoPuedeSerOfensivo`; [`NombresProhibidosTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NombresProhibidosTest.java)`.rechazaPalabrasDeLaListaSinImportarMayusculasNiTildes`, `.rechazaLetrasCambiadasPorNumerosOSimbolos`, `.lasPalabrasLargasSeBuscanDentroDeOtrasYConElNombreTodoJunto`, `.noRechazaNombresNormalesQueContienenUnaPalabraCorta` |
 
 ## HU-60 · Anuncios de otras secciones
 
