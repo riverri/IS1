@@ -20,6 +20,12 @@ public interface MovimientoSaldoRepository extends JpaRepository<MovimientoSaldo
     /** Todos, del primero al último; lo usan las pruebas para comprobar que el saldo cuadra. */
     List<MovimientoSaldo> findByUsuarioOrderByIdAsc(Usuario usuario);
 
+    /** Los de un usuario desde una fecha: resumen semanal (HU-92). */
+    List<MovimientoSaldo> findByUsuarioAndFechaGreaterThanEqual(Usuario usuario, LocalDateTime desde);
+
+    /** Movimientos de todos los usuarios desde una fecha, de esos tipos: beneficio diario de la casa (HU-95). */
+    List<MovimientoSaldo> findByFechaGreaterThanEqualAndTipoIn(LocalDateTime desde, Collection<TipoMovimiento> tipos);
+
     /**
      * Lo jugado desde una fecha en movimientos de esos tipos (los cargos son negativos: se suman cambiados de signo).
      * Lo usa el juego responsable para el casino y los demás juegos (HU-10).

@@ -19,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
+import es.ucm.fdi.is1.apuestas.cuotas.RegistroCuotas;
+import es.ucm.fdi.is1.apuestas.seguimiento.AlertasService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -44,17 +46,26 @@ public class ApuestaController {
     private final RankingService rankings;
     private final LimitesService limites;
     private final FichaEquipoService fichas;
+    private final RegistroCuotas registroCuotas;
+    private final AlertasService alertas;
+    private final SupercuotaService supercuotas;
+    private final LogrosService logros;
     private final Clock reloj;
 
     public ApuestaController(ApuestaService apuestas, CatalogoService catalogo, CalculadoraCuotas calculadora,
                              RankingService rankings, LimitesService limites, FichaEquipoService fichas,
-                             Clock reloj) {
+                             RegistroCuotas registroCuotas, AlertasService alertas, SupercuotaService supercuotas,
+                             LogrosService logros, Clock reloj) {
         this.apuestas = apuestas;
         this.catalogo = catalogo;
         this.calculadora = calculadora;
         this.rankings = rankings;
         this.limites = limites;
         this.fichas = fichas;
+        this.registroCuotas = registroCuotas;
+        this.alertas = alertas;
+        this.supercuotas = supercuotas;
+        this.logros = logros;
         this.reloj = reloj;
     }
 
@@ -68,12 +79,12 @@ public class ApuestaController {
     // @PathVariable: el {id} de la dirección (/eventos/7/apostar → id = 7).
     // @RequestParam(required = false): parámetro opcional de la URL (?resultado=LOCAL); si no viene, llega null
     public String formulario(@PathVariable Long id, @RequestParam(required = false) Resultado resultado,
-                             @RequestParam(required = false) Especial especial, Model model) {
+                             @RequestParam(required = false) Especial especial, Principal principal, Model model) {
         ApuestaForm form = new ApuestaForm();
         form.setResultado(resultado);
         form.setEspecial(especial);
         model.addAttribute("apuesta", form);
-        return vista(catalogo.eventoDisponible(id), model);
+        return vista(catalogo.eventoDisponible(id), principal, model);
     }
 
     /**
@@ -113,7 +124,7 @@ public class ApuestaController {
                 errores.rejectValue("opcion", "invalido", e.getMessage());
             }
         }
-        return vista(evento, model);
+        return vista(evento, principal, model);
     }
 
     /**
@@ -131,6 +142,7 @@ public class ApuestaController {
         model.addAttribute("ahora", LocalDateTime.now(reloj));
         model.addAttribute("historial", apuestas.historial(principal.getName()));
         model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
+        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(principal.getName()));
         return "apuestas";
     }
 
@@ -167,6 +179,8 @@ public class ApuestaController {
     @GetMapping("/jugadores/{id}")
     public String jugador(@PathVariable Long id, Principal principal, Model model) {
         model.addAttribute("perfil", rankings.perfil(id, principal == null ? null : principal.getName()));
+        // HU-88: sus insignias
+        model.addAttribute("logros", logros.de(id));
         return "jugador";
     }
 
@@ -231,9 +245,16 @@ public class ApuestaController {
      * Rellena la página "apostar": cuotas 1X2, otros tipos de apuesta (solo en fútbol, HU-52),
      * límites de importe y cara a cara de los dos equipos (HU-33).
      */
-    private String vista(Evento evento, Model model) {
+    private String vista(Evento evento, Principal principal, Model model) {
+        // HU-91: se apuntan las cuotas por si han cambiado sin apostar (forma de los equipos, la API)
+        registroCuotas.registrar(evento);
+        model.addAttribute("evolucion", registroCuotas.evolucion(evento));
+        // HU-90: mis alertas de cuota en este partido
+        model.addAttribute("misAlertas", principal == null ? java.util.List.of() : alertas.mias(principal.getName(), evento));
         model.addAttribute("evento", evento);
-        model.addAttribute("cuotas", calculadora.calcular(evento));
+        // HU-87: con supercuota, su resultado se enseña ya mejorado
+        model.addAttribute("cuotas", supercuotas.cuotasConSupercuota(evento));
+        model.addAttribute("supercuota", supercuotas.vigente(evento).orElse(null));
         model.addAttribute("especiales", calculadora.especiales(evento));
         model.addAttribute("limitesApuesta", limites.actuales());
         model.addAttribute("caraACara", fichas.caraACara(evento));

@@ -14,7 +14,7 @@
     <ul class="avisos" th:unless="${#lists.isEmpty(avisos)}">
         <li class="tarjeta aviso-item" th:each="a : ${avisos}" th:classappend="${a.tipo} + ${a.nuevo ? ' nuevo' : ''}">
             <span class="aviso-icono" aria-hidden="true"
-                  th:text="${a.tipo == 'ganada'} ? '🏆' : (${a.tipo == 'perdida'} ? '✖' : '↩')">🏆</span>
+                  th:text="${a.tipo == 'ganada'} ? '🏆' : (${a.tipo == 'perdida'} ? '✖' : (${a.tipo == 'favorito'} ? '★' : (${a.tipo == 'alerta'} ? '📈' : (${a.tipo == 'info'} ? '🔔' : '↩'))))">🏆</span>
             <div>
                 <p th:text="${a.texto}">¡Has acertado tu apuesta a FC Barcelona! Cobras 18,50 monedas.</p>
                 <small class="aviso" th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy HH:mm')}">01/10/2026 21:00</small>

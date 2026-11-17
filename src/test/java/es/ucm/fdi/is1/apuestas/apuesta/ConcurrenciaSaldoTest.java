@@ -59,6 +59,9 @@ class ConcurrenciaSaldoTest {
     @Autowired
     private EquipoRepository equipos;
 
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.cuotas.CuotaHistoricaRepository historico;
+
     private Evento evento;
 
     @AfterEach
@@ -66,6 +69,8 @@ class ConcurrenciaSaldoTest {
         apuestaRepository.findAll().stream().filter(a -> a.getUsuario().getEmail().equals(EMAIL))
                 .forEach(apuestaRepository::delete);
         if (evento != null) {
+            // Primero su historial de cuotas (HU-91), que apunta al evento
+            historico.deleteAll(historico.findByEventoOrderByFechaAscIdAsc(evento));
             eventos.deleteById(evento.getId());
         }
         // Primero sus movimientos de saldo (HU-55), que apuntan al usuario

@@ -41,6 +41,8 @@ public class SeguridadConfig {
                                 "/css/**", "/error").permitAll()
                         // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()
+                        // Modo oscuro (HU-94): también para los visitantes
+                        .requestMatchers(HttpMethod.GET, "/tema").permitAll()
                         // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
                         .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
                         // Quiniela (HU-79): cualquiera ve las quinielas; echar un boleto exige sesión

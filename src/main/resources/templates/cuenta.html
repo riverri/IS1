@@ -50,6 +50,11 @@
     </form>
 
     <th:block th:unless="${usuario.creador}">
+        <h2 id="mis-datos-csv">Descargar mis datos</h2>
+        <p class="aviso">Cada cambio de tu saldo con su motivo, en un fichero CSV:
+            <a th:href="@{/cuenta/movimientos/exportar}">descargar mis movimientos</a>. Tus apuestas, en
+            <a th:href="@{/apuestas/exportar}">este otro</a>.</p>
+
         <h2 id="correos">Correos</h2>
         <div class="tarjeta tarjeta-formulario">
             <p class="aviso" th:if="${usuario.correosActivados}">Recibes un correo cada vez que ganas una apuesta. Los avisos de la web te llegan igual.</p>
@@ -58,6 +63,12 @@
                 <input type="hidden" name="activados" th:value="${!usuario.correosActivados}">
                 <button class="boton boton-secundario" type="submit"
                         th:text="${usuario.correosActivados} ? 'Desactivar los correos' : 'Activar los correos'">Desactivar los correos</button>
+            </form>
+            <p class="aviso" th:text="${usuario.resumenSemanal} ? 'Cada lunes te llega el resumen de tu semana: lo jugado, lo cobrado y tu puesto en el ranking.' : 'No recibes el resumen semanal.'">Resumen semanal</p>
+            <form th:action="@{/cuenta/resumen}" method="post">
+                <input type="hidden" name="activado" th:value="${!usuario.resumenSemanal}">
+                <button class="boton boton-secundario" type="submit"
+                        th:text="${usuario.resumenSemanal} ? 'Desactivar el resumen semanal' : 'Activar el resumen semanal'">Desactivar el resumen semanal</button>
             </form>
         </div>
     </th:block>
