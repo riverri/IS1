@@ -18,7 +18,7 @@ Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida
 Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 374 en total: 182 de las filas hechas, 99 de las integradas (39 a 41, 43 a 45 y 47 a 56), 36 de las pendientes de subir (36, 37 y 38; 5 de ellos son del baccarat, que está por hacer), 20 de las que están por hacer (42 y 46) y 29 de las descartadas. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5) salen los 214 y 185 de las historias. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 33 de 56 filas hechas; la 39 a la 41, la 43 a la 45 y la 47, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 48 a la 56, del Sprint 5, también integradas; la 36, la 37 y la 38, pendientes de subir (de la 37, el baccarat está por hacer); la 42 y la 46, por hacer, y las 25 y 26 descartadas (Won't).
+**Resumen:** 33 de 56 filas hechas; la 39 a la 41, la 43 a la 45 y la 47, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 48 a la 56, del [Sprint 5](sprints/sprint-5.md), también integradas; la 36, la 37 y la 38, pendientes de subir (de la 37, el baccarat está por hacer); la 42 y la 46, por hacer, y las 25 y 26 descartadas (Won't).
 
 | Orden | Elemento | Estimación | Puntos | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|---|:-:|:-:|---|
