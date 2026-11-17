@@ -32,7 +32,7 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 
 | Historias hechas | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 46 | 98 | 94 (96 %) | 4 | 0 |
+| 45 | 97 | 93 (96 %) | 4 | 0 |
 
 Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al escribir el importe y la confirmación al eliminar la cuenta.
 
