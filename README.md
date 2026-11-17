@@ -150,36 +150,33 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 
 | Página | Qué hace | Historias |
 |---|---|---|
-| `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador; arriba, los próximos partidos de tus equipos favoritos | HU-08, HU-19, HU-20, HU-22, HU-86 |
-| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial. En fútbol también doble oportunidad, más/menos de 2,5 goles y ambos marcan, que se pueden añadir al boleto; con supercuota si el creador la ha puesto, gráfico de la evolución de las cuotas y alertas de cuota | HU-03, HU-23, HU-52, HU-87, HU-90, HU-91 |
+| `/eventos` | Catálogo público con cuotas 1/X/2, pestañas por deporte (fútbol, baloncesto, tenis, F1, MotoGP) y buscador | HU-08, HU-19, HU-20, HU-22 |
+| `/eventos/{id}/apostar` | Apuesta simple directa: elegir resultado e importe, con la ganancia potencial. En fútbol también doble oportunidad, más/menos de 2,5 goles y ambos marcan, que se pueden añadir al boleto | HU-03, HU-23, HU-52 |
 | `/eventos/{id}/apostar` · cara a cara | Racha de cada equipo y enfrentamientos anteriores entre los dos | HU-33 |
 | `/equipos` | Equipos y deportistas por deporte, con su calificación y su forma | — |
-| `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos; añadirlo o quitarlo de favoritos | HU-31, HU-32, HU-49, HU-86 |
+| `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos | HU-31, HU-32, HU-49 |
 | `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/mercados` | Apuestas a largo plazo: Balón de Oro, campeón de liga… Se elige un candidato y se cobra al conocerse el ganador | HU-44 |
-| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad; cobrar ya (cash-out), estadísticas por competición y descargar las apuestas en CSV | HU-24, HU-26, HU-27, HU-34, HU-35, HU-75, HU-93, HU-96 |
+| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad | HU-24, HU-26, HU-27, HU-34, HU-35 |
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
-| `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada; también por tipo de juego (deportes, predicciones, cripto, memecoins y quiniela) | HU-36, HU-84 |
-| `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas; y sus logros | HU-48, HU-88 |
-| `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros; retos 1 contra 1 entre sus miembros | HU-51, HU-89 |
+| `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada | HU-36 |
+| `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas | HU-48 |
+| `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros | HU-51 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
-| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta; correo al ganar y resumen semanal (activar o desactivar) y descargar los movimientos en CSV | HU-10, HU-13, HU-14, HU-18, HU-47, HU-77, HU-92, HU-93 |
+| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta | HU-10, HU-13, HU-14, HU-18, HU-47 |
 | `/cuenta/movimientos` | *(Pendiente de subir)* Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
-| `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte; beneficio de cada uno de los últimos 30 días | HU-53, HU-95 |
+| `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte | HU-53 |
 | `/gestion/anuncios` | *(Pendiente de subir)* Anuncios internos: alta, edición, activar o desactivar, con sus impresiones, clics y porcentaje de clics | HU-61, HU-62 |
 | `/anuncios/{id}/ir` | *(Pendiente de subir)* Clic en un anuncio: lo apunta y lleva a su sección (lo pintan las páginas debajo de la cabecera) | HU-60, HU-62 |
-| `/casino` | *(Pendiente de subir)* Casino con moneditas: ruleta europea (`/casino/ruleta`), blackjack (`/casino/blackjack`) y mis partidas (`/casino/historial`) | HU-56, HU-57, HU-58 |
-| `/gestion/casino` | *(Pendiente de subir)* Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
+| `/casino` | Casino con moneditas: ruleta europea (`/casino/ruleta`), blackjack (`/casino/blackjack`) y mis partidas (`/casino/historial`) | HU-56, HU-57, HU-58 |
+| `/gestion/casino` | Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
 | `/predicciones` | Mercados de predicción de sí o no: precio de 0 a 1, comprar y vender participaciones, estadísticas, gráfico y posiciones de los compañeros de liga (`/predicciones/{id}`) | HU-64 a HU-68 |
 | `/gestion/predicciones` | Crear, cerrar, anular y resolver los mercados de predicción | HU-63, HU-66 |
 | `/cripto` | Criptomonedas a su precio real en euros (CoinGecko), memecoins primero; comprar y vender con moneditas y gráfico de la semana (`/cripto/{símbolo}`), y mi cartera (`/cripto/cartera`) | HU-69 a HU-72 |
 | `/gestion/cripto` | Abrir o cerrar las criptomonedas, comisión, validez de los precios, qué criptos se ofrecen y descargar los precios en el momento | HU-73 |
-| `/quinielas` | Quinielas de 3 a 15 partidos: echar un boleto con 1, X o 2 en cada uno y, al terminar, el reparto del bote | HU-79, HU-80 |
-| `/gestion/quinielas` | Montar quinielas, repartir el bote entre los que más aciertan y anularlas | HU-78, HU-80 |
-| `/tema` | Cambia entre los colores claros y el modo oscuro (la luna o el sol de la cabecera) | HU-94 |
-| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado; riesgo de la casa con cada resultado y supercuota | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52, HU-76, HU-87 |
+| `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 
 - **Pruebas:** `./mvnw test`
@@ -199,7 +196,7 @@ Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguie
 ## Base de datos y migraciones (Flyway)
 
 Las tablas se crean con los scripts SQL de `src/main/resources/db/migration`, que **Flyway** aplica en orden al arrancar. Hay una carpeta por base de datos:
-- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V17__seguimiento_y_ampliacion.sql`.
+- `h2/`, la de tu ordenador: de `V1__esquema_inicial.sql` a `V15__cartera_cripto.sql`.
 - `postgresql/`, la del servidor: `V8__esquema_postgresql.sql` crea de golpe el esquema equivalente y desde ahí van los mismos scripts que en `h2/` (`V9__…`, `V10__…`, `V11__…`, `V12__…`, `V13__…`, `V14__…`, `V15__…`). Flyway apunta en la propia base de datos qué scripts ha aplicado ya, así que cada uno se ejecuta una sola vez y los datos existentes se conservan.
 
 **Si cambias una entidad** (añadir un campo, una tabla, un valor de un `enum`…):

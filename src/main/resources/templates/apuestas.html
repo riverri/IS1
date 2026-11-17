@@ -48,12 +48,6 @@
                 <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
                 <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
             </dl>
-            <!-- HU-75: cobrar ya -->
-            <form th:if="${ofertasCobro.containsKey(a.id)}" th:action="@{/apuestas/{id}/cobrar(id=${a.id})}" method="post" class="cobrar-ya">
-                <input type="hidden" name="valorVisto" th:value="${ofertasCobro.get(a.id)}">
-                <button class="boton boton-bloque" type="submit"
-                        th:text="'Cobrar ya ' + ${#numbers.formatDecimal(ofertasCobro.get(a.id), 1, 'POINT', 2, 'COMMA')}">Cobrar ya 12,40</button>
-            </form>
             <!-- Si la cuota ha cambiado (HU-29), el formulario de esta apuesta sale abierto y con la cuota nueva -->
             <details class="cambiar-importe" th:if="${a.cancelable(ahora)}"
                      th:with="cambiada=${cuotaNuevaId != null and cuotaNuevaId == a.id}" th:open="${cambiada}">
@@ -79,7 +73,6 @@
     </div>
 
     <h2>Historial</h2>
-    <p class="aviso"><a th:href="@{/apuestas/exportar}">Descargar todas mis apuestas en CSV</a> (se abre con Excel o LibreOffice).</p>
     <div class="estadisticas" th:if="${estadisticas.tieneDatos}">
         <div class="tarjeta estadistica"><span th:text="${estadisticas.resueltas}">5</span>apuestas resueltas</div>
         <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(estadisticas.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %'">60,0 %</span>de aciertos</div>
@@ -89,21 +82,6 @@
             balance
             <small th:text="${#numbers.formatDecimal(estadisticas.rentabilidad, 1, 'POINT', 1, 'COMMA')} + ' % de rentabilidad'">12,5 % de rentabilidad</small>
         </div>
-    </div>
-    <!-- HU-96: dónde acierto más -->
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(porCompeticion)}">
-        <table>
-            <thead><tr><th>Competición</th><th>Resueltas</th><th>Aciertos</th><th>Balance</th></tr></thead>
-            <tbody>
-            <tr th:each="g : ${porCompeticion}" th:with="e=${g.estadisticas}">
-                <td th:text="${g.nombre}">LaLiga</td>
-                <td th:text="${e.resueltas}">4</td>
-                <td th:text="${#numbers.formatDecimal(e.porcentajeAciertos, 1, 'POINT', 1, 'COMMA')} + ' %'">50,0 %</td>
-                <td><strong th:classappend="${e.beneficio.signum() >= 0} ? 'positivo' : 'negativo'"
-                            th:text="${e.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(e.beneficio, 1, 'POINT', 2, 'COMMA')}">+12,00</strong></td>
-            </tr>
-            </tbody>
-        </table>
     </div>
     <div class="vacio" th:if="${#lists.isEmpty(historial)}">
         <p>Aquí aparecerán tus apuestas cuando se resuelvan.</p>

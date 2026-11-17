@@ -17,9 +17,6 @@ public interface BoletoQuinielaRepository extends JpaRepository<BoletoQuiniela, 
 
     long countByQuiniela(Quiniela quiniela);
 
-    /** Todos los boletos de un usuario: logros (HU-88). */
-    List<BoletoQuiniela> findByUsuario(Usuario usuario);
-
     /** Boletos de quinielas ya repartidas, con su usuario: estadísticas del ranking por tipo de juego (HU-84). */
     @Query("""
             select b from BoletoQuiniela b join fetch b.usuario

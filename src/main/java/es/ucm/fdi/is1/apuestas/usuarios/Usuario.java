@@ -102,10 +102,6 @@ public class Usuario {
     @Column(nullable = false)
     private boolean correosActivados = true;
 
-    /** Si recibe cada lunes el resumen de su semana (HU-92); se cambia en Mi cuenta. */
-    @Column(nullable = false)
-    private boolean resumenSemanal = true;
-
     /**
      * Libro de movimientos del saldo (HU-55). Solo se añaden: los nuevos se guardan con el usuario al terminar la
      * transacción (cascade PERSIST). No se cargan al leer el usuario (LAZY por defecto); para consultarlos está
@@ -233,15 +229,6 @@ public class Usuario {
     /** Activa o desactiva los correos de premios (HU-77, CA-77.2). */
     public void activarCorreos(boolean activados) {
         correosActivados = activados;
-    }
-
-    /** Activa o desactiva el resumen semanal (HU-92, CA-92.2). */
-    public void activarResumen(boolean activado) {
-        resumenSemanal = activado;
-    }
-
-    public boolean isResumenSemanal() {
-        return resumenSemanal;
     }
 
     public boolean isCorreosActivados() {
