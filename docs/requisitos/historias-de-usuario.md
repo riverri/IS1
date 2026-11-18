@@ -70,7 +70,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
 | Historias integradas (29) | 99 | 8.118 | 587 | 95 | 0,7 millones | 95 $ |
 | Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 0,2 millones | 30 $ |
-| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 0,2 millones | 24 $ |
+| Historias por hacer (10) | 40 | 3.280 | 235 | 38 | 0,3 millones | 38 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -192,8 +192,13 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-94 | Modo oscuro | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-96 | Estadísticas por competición | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-97 | Usar la web solo con el teclado | Por hacer | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-98 | Usar la web con un lector de pantalla | Por hacer | 4 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-99 | Leer bien con poca visión | Por hacer | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-100 | No depender solo del color | Por hacer | 3 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-101 | Menos movimiento | Por hacer | 2 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**96 historias**: 46 hechas, 29 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-96, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **217 criterios de aceptación** en total; 97 son de historias hechas, 77 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
+**101 historias**: 46 hechas, 29 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-96, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 10 por hacer (HU-74, HU-75, HU-81 a HU-83 y HU-97 a HU-101) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **232 criterios de aceptación** en total; 97 son de historias hechas, 73 de las integradas, 20 de las pendientes de subir, 29 de las que están por hacer y 13 de las descartadas.
 
 ---
 
@@ -1812,6 +1817,100 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 | CA-96.2 | Una apuesta sigue activa | Abro *Mis apuestas* | No cuenta. |
 
 **Pruebas:** `EstadisticasCompeticionWebTest`.
+
+---
+
+## Accesibilidad
+
+Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar: cualquiera tiene que poder usarla entera. La referencia es el nivel AA de las pautas WCAG 2.1, el que pide la norma europea EN 301 549.
+
+### HU-97 · Usar la web solo con el teclado
+
+**Como** usuario que no puede usar el ratón, **quiero** recorrer y usar toda la web con el teclado, **para** apostar igual que los demás.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 57 | 3 (Media) | — | Por hacer | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-97.1 | Cualquier página | Recorro la página con el tabulador | Llego a todos los enlaces, botones y campos en el orden en que se ven, y siempre se ve dónde está el foco. |
+| CA-97.2 | Estoy en un partido | Elijo un resultado con las flechas o la barra espaciadora y escribo el importe | Puedo confirmar la apuesta o añadirla al boleto sin usar el ratón. |
+| CA-97.3 | Acabo de entrar en una página | Pulso el tabulador por primera vez | Aparece un enlace «Saltar al contenido» que me lleva directo al contenido, sin pasar por todo el menú. |
+
+---
+
+### HU-98 · Usar la web con un lector de pantalla
+
+**Como** usuario ciego que usa un lector de pantalla, **quiero** que cada cuota, botón e icono tenga un nombre que se entienda, **para** saber qué estoy apostando.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 57 | 3 (Media) | — | Por hacer | 5 | 410 | 29 | 4,8 | 4,8 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-98.1 | Estoy en un partido o en el catálogo | El lector lee una cuota | Dice a qué resultado es y cuánto paga, por ejemplo «Getafe CF gana, cuota 2,72», no solo «2,72». |
+| CA-98.2 | Una página con iconos o emojis (campana, luna, deportes) | El lector llega a ellos | Lee lo que significan («Avisos», «Modo oscuro», «Fútbol») o se los salta si son decoración. |
+| CA-98.3 | Hago algo y la web responde con un mensaje (apuesta hecha, cuota cambiada, error) | Aparece el mensaje | El lector lo anuncia sin que tenga que buscarlo. |
+| CA-98.4 | Un formulario con un error | Lo envío mal | El error está junto a su campo y el lector lo lee al llegar al campo. |
+
+---
+
+### HU-99 · Leer bien con poca visión
+
+**Como** usuario con baja visión, **quiero** textos y botones con buen contraste y poder ampliar la página, **para** leer las cuotas sin esfuerzo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 57 | 3 (Media) | — | Por hacer | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-99.1 | Cualquier página, con colores claros u oscuros | Miro un texto o un botón | El texto tiene un contraste de al menos 4,5:1 con su fondo (3:1 si es grande), y los bordes de botones y campos, de al menos 3:1. |
+| CA-99.2 | Cualquier página | La amplío al 200 % en el navegador | Se sigue leyendo todo y se puede usar, sin que nada se corte ni se monte. |
+| CA-99.3 | Un móvil de 320 px de ancho | Abro cualquier página | No hace falta desplazarse a los lados para leer el contenido. |
+
+---
+
+### HU-100 · No depender solo del color
+
+**Como** usuario daltónico, **quiero** que nada se distinga solo por el color, **para** entender igual los resultados y las cuotas.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 57 | 3 (Media) | — | Por hacer | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-100.1 | Mi historial de apuestas | Miro si una apuesta se ganó o se perdió | Lo dice con texto o con un símbolo, además del color. |
+| CA-100.2 | La evolución de la cuota o el gráfico de una criptomoneda | Comparo las líneas o veo si sube o baja | Cada línea se distingue también por su forma o su etiqueta, y las subidas y bajadas llevan signo (+ o −). |
+| CA-100.3 | Un formulario con un error | Miro el campo que está mal | El error se indica con texto, no solo con el borde rojo. |
+
+---
+
+### HU-101 · Menos movimiento
+
+**Como** usuario al que le marean o le molestan las animaciones, **quiero** que la web respete la opción de reducir el movimiento de mi dispositivo, **para** usarla sin molestias.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 57 | 3 (Media) | — | Por hacer | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-101.1 | Tengo activada la opción «reducir movimiento» del sistema | Uso la web | No hay animaciones ni transiciones de movimiento: los cambios se ven de golpe. |
+| CA-101.2 | Cualquier página | La abro | Nada parpadea más de tres veces por segundo ni se mueve solo durante más de cinco segundos. |
 
 ---
 
