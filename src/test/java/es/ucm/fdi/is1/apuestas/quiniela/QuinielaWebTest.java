@@ -167,9 +167,10 @@ class QuinielaWebTest {
         assertThatThrownBy(() -> quinielas.crear("Demasiados decimales", new BigDecimal("1.001"),
                 List.of(primero.getId(), segundo.getId(), tercero.getId())))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("2 decimales");
-        assertThatThrownBy(() -> quinielas.crear("Duplicado", BigDecimal.ONE,
-                List.of(primero.getId(), segundo.getId(), tercero.getId(), tercero.getId())))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("has elegido 3");
+        Quiniela sinDuplicados = quinielas.crear("Duplicado", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), tercero.getId(), tercero.getId()));
+        assertThat(sinDuplicados.getPartidos()).extracting(PartidoQuiniela::getEvento)
+                .containsExactly(primero, segundo, tercero);
         assertThatThrownBy(() -> quinielas.crear("Desaparecido", BigDecimal.ONE,
                 List.of(primero.getId(), segundo.getId(), Long.MAX_VALUE)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessage("Alguno de los partidos ya no existe");
