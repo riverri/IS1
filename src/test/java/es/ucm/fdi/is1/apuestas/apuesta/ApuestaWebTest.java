@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
@@ -178,10 +179,12 @@ class ApuestaWebTest {
     @Test
     @WithMockUser(username = USUARIO)
     void noSePuedeApostarAUnEventoQueYaHaEmpezado() throws Exception {
+        // Ha empezado mientras rellenaba el formulario: vuelve al catálogo con un aviso (antes, un 404)
         mvc.perform(post("/eventos/{id}/apostar", yaEmpezado.getId()).with(csrf())
                         .param("resultado", "LOCAL")
                         .param("importe", "10"))
-                .andExpect(status().isNotFound());
+                .andExpect(redirectedUrl("/eventos"))
+                .andExpect(flash().attribute("errorBoleto", containsString("ya no admite apuestas")));
 
         assertThat(apuestas.count()).isZero();
     }

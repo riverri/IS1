@@ -119,7 +119,7 @@ public class ApuestaService {
                 Supercuota supercuota = supercuotaVigente(evento, pedida.resultado(), ahora);
                 if (supercuota != null) {
                     if (importe.compareTo(supercuota.getImporteMaximo()) > 0) {
-                        throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
+                        throw new ImporteFueraDeLimitesException("Con la supercuota se pueden apostar como mucho "
                                 + supercuota.getImporteMaximo().toPlainString().replace('.', ',') + " monedas");
                     }
                     cuota = supercuota.getCuota();
@@ -243,7 +243,7 @@ public class ApuestaService {
                 : supercuotaVigente(unica.getEvento(), unica.getPronostico(), ahora);
         if (supercuota != null) {
             if (nuevo.compareTo(supercuota.getImporteMaximo()) > 0) {
-                throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
+                throw new ImporteFueraDeLimitesException("Con la supercuota se pueden apostar como mucho "
                         + supercuota.getImporteMaximo().toPlainString().replace('.', ',') + " monedas");
             }
             cuotas = List.of(supercuota.getCuota());

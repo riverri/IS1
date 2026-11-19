@@ -50,8 +50,12 @@ public class SeguimientoController {
             alertas.crear(principal.getName(), id, resultado, cuota);
             redireccion.addFlashAttribute("mensajeAlerta", "Alerta guardada: te avisaremos cuando la cuota llegue a "
                     + cuota.toPlainString().replace('.', ',') + ".");
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             redireccion.addFlashAttribute("errorAlerta", e.getMessage());
+        } catch (IllegalStateException e) {
+            // Ya no admite apuestas: su página daría 404 y el aviso no se vería. Al catálogo, con el aviso
+            redireccion.addFlashAttribute("errorBoleto", e.getMessage());
+            return "redirect:/eventos";
         }
         return "redirect:/eventos/" + id + "/apostar#alertas";
     }

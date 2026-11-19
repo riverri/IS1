@@ -11,21 +11,22 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 | Paquete | Clases de prueba (número de pruebas) |
 |---|---|
 | `api` | FootballDataClienteTest (2), SincronizacionPlantillasTest (6), SincronizacionServiceTest (17), SincronizacionSinClaveTest (1) |
-| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (4), CorreoPremioWebTest (5), CorreoResumenTest (3), CorreoTrasGuardarTest (2), EliminarCuentaWebTest (6), EstadisticasCompeticionWebTest (1), EstadisticasTest (2), ExportacionWebTest (3), JuegoResponsableWebTest (10), LargoPlazoWebTest (15), LimitesWebTest (7), LogrosWebTest (2), ModificarImporteWebTest (8), MovimientosSaldoWebTest (4), NotificacionesWebTest (6), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), RankingPorJuegoWebTest (4), ResolucionWebTest (11), ResumenSemanalTest (1), RevisionFallosWebTest (23), RiesgoWebTest (5), SupercuotaWebTest (12) |
-| `config` | ContrasenasPruebaTest (1), DatosDemoTest (4), DatosInicialesTest (7), PasswordCreadorFijaTest (1), PasswordUsuarioFijaTest (1) |
+| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (4), CorreoPremioWebTest (5), CorreoResumenTest (3), CorreoTrasGuardarTest (2), EliminarCuentaWebTest (6), EstadisticasCompeticionWebTest (1), EstadisticasTest (2), ExportacionWebTest (3), JuegoResponsableWebTest (10), LargoPlazoWebTest (15), LimitesWebTest (7), LogrosWebTest (2), ModificarImporteWebTest (8), MovimientosSaldoWebTest (4), NotificacionesWebTest (6), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), RankingPorJuegoWebTest (4), ResolucionWebTest (11), ResumenSemanalTest (1), RevisionFallosWebTest (23), RiesgoWebTest (5), SupercuotaWebTest (15) |
+| `apuestas` | ApuestasApplicationTests (2), InvariantesDineroTest (2) |
+| `config` | ContrasenasPruebaTest (1), DatosDemoTest (4), DatosInicialesTest (8), PasswordCreadorFijaTest (1), PasswordUsuarioFijaTest (1) |
 | `cripto` | CoinGeckoClienteTest (2), CriptoWebTest (20), PosicionCriptoTest (4) |
 | `cuotas` | CalculadoraCuotasTest (12), EspecialTest (5), FormaYVolumenWebTest (4) |
 | `equipos` | AlineacionTest (5), EquipoTest (3), EquiposWebTest (4), PlantillaWebTest (8) |
 | `eventos` | BusquedaWebTest (5), CatalogoWebTest (5), EventoTest (2), FichaEquipoWebTest (10) |
 | `gestion` | BeneficioDiarioWebTest (1), CasaWebTest (2), EditarEventoWebTest (11), GestionWebTest (15) |
-| `ligas` | LigasSinTransaccionTest (1), LigasWebTest (7), RetoSinTransaccionTest (1), RetoWebTest (14) |
+| `ligas` | LigasSinTransaccionTest (1), LigasWebTest (7), RetoSinTransaccionTest (1), RetoWebTest (15) |
 | `prediccion` | LmsrTest (6), PrediccionWebTest (16) |
-| `quiniela` | QuinielaWebTest (17) |
+| `quiniela` | QuinielaWebTest (23) |
 | `seguimiento` | EvolucionCuotaWebTest (2), SeguimientoWebTest (15) |
-| `usuarios` | CuentaWebTest (8), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), RankingWebTest (3), RecargaAlEntrarHandlerTest (1), RecuperacionWebTest (9), RegistroConcurrenteTest (1), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (8) |
-| `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (7), CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (6), KeepAliveTest (3), PingSinBaseDeDatosTest (1), RendimientoWebTest (2), TemaWebTest (5) |
+| `usuarios` | CuentaWebTest (9), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), RankingWebTest (3), RecargaAlEntrarHandlerTest (1), RecuperacionWebTest (9), RegistroConcurrenteTest (1), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (9) |
+| `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (7), CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (6), KeepAliveTest (3), PingSinBaseDeDatosTest (1), RendimientoWebTest (2), TemaWebTest (6) |
 
-**Total: 491 pruebas en 83 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca.
+**Total: 507 pruebas en 84 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.

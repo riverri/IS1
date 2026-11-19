@@ -1,7 +1,10 @@
 package es.ucm.fdi.is1.apuestas.config;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,6 +60,18 @@ public class DatosIniciales implements ApplicationRunner {
      * volvería a crearse en el siguiente arranque, y nadie lo resolvería nunca.
      */
     private boolean cargarPartidos;
+
+    /**
+     * Los partidos de ejemplo están escritos con las fechas de la temporada en que se hicieron, a partir del
+     * {@link #PRIMER_PARTIDO}. Si esa fecha ya ha pasado, se mueven todos los mismos días para que el primero sea
+     * mañana: así, con la base de datos vacía (por ejemplo, en Render sin PostgreSQL), siguen siendo próximos.
+     */
+    private static final LocalDate PRIMER_PARTIDO = LocalDate.of(2026, 10, 4);
+
+    /** Días que se mueven los partidos de ejemplo (0 si aún no ha llegado su fecha). */
+    private long desfase;
+
+    private final Clock reloj;
     private boolean cargarMercados;
 
     /**
@@ -76,7 +91,8 @@ public class DatosIniciales implements ApplicationRunner {
                           @Value("${apuestas.creador.password}") String passwordCreador,
                           @Value("${apuestas.usuario.password}") String passwordUsuario,
                           @Value("${apuestas.creador.password-fija:false}") boolean passwordCreadorFija,
-                          @Value("${apuestas.usuario.password-fija:false}") boolean passwordUsuarioFija) {
+                          @Value("${apuestas.usuario.password-fija:false}") boolean passwordUsuarioFija,
+                          Clock reloj) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
@@ -87,6 +103,7 @@ public class DatosIniciales implements ApplicationRunner {
         this.passwordUsuario = passwordUsuario;
         this.passwordCreadorFija = passwordCreadorFija;
         this.passwordUsuarioFija = passwordUsuarioFija;
+        this.reloj = reloj;
     }
 
     /**
@@ -160,6 +177,7 @@ public class DatosIniciales implements ApplicationRunner {
 
         // Se decide antes de crear nada: con la base de datos vacía se cargan partidos y mercados de ejemplo
         cargarPartidos = eventos.count() == 0;
+        desfase = Math.max(0, ChronoUnit.DAYS.between(PRIMER_PARTIDO, LocalDate.now(reloj).plusDays(1)));
         cargarMercados = mercados.count() == 0;
 
         // Competiciones (se crean si no existen)
@@ -438,7 +456,7 @@ public class DatosIniciales implements ApplicationRunner {
         }
         Equipo equipoLocal = equipos.findByNombre(local).orElseThrow();
         Equipo equipoVisitante = equipos.findByNombre(visitante).orElseThrow();
-        LocalDateTime fechaHora = LocalDateTime.of(anio, mes, dia, hora, minuto);
+        LocalDateTime fechaHora = LocalDateTime.of(anio, mes, dia, hora, minuto).plusDays(desfase);
         Evento evento = eventos.findByLocalAndVisitanteAndFechaHora(equipoLocal, equipoVisitante, fechaHora)
                 .orElseGet(() -> eventos.save(new Evento(competicion, equipoLocal, equipoVisitante, fechaHora)));
         // Solo se pone la fase si no tenía ninguna, para no pisar la que haya escrito el creador
