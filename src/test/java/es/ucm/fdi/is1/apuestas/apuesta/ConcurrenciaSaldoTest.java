@@ -1,6 +1,7 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
@@ -114,5 +116,27 @@ class ConcurrenciaSaldoTest {
         assertThat(saldoFinal.signum()).isGreaterThanOrEqualTo(0);
         assertThat(guardadas).isEqualTo(hechas);
         assertThat(saldoFinal).isEqualByComparingTo(saldoInicial.subtract(importe.multiply(BigDecimal.valueOf(hechas))));
+    }
+
+    /**
+     * Cancelar y cambiar el importe a la vez: si el cambio (que con el mismo importe no toca el saldo) se guardara
+     * después de la cancelación, la apuesta volvería a estar activa con el dinero ya devuelto. Con el bloqueo
+     * optimista de la apuesta, guardar una copia que se leyó antes de cancelarla falla.
+     */
+    @Test
+    void unaApuestaLeidaAntesDeCancelarlaNoSeGuardaEncima() {
+        usuarioService.crear(EMAIL, "Concurrencia", "secreta123", Rol.USUARIO);
+        evento = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                equipos.findByNombre("Getafe CF").orElseThrow(), equipos.findByNombre("Sevilla FC").orElseThrow(),
+                Hora.ahora().plusDays(1)));
+        Apuesta apuesta = apuestas.apostar(EMAIL, evento.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        Apuesta leidaAntes = apuestaRepository.findById(apuesta.getId()).orElseThrow();
+
+        apuestas.cancelar(EMAIL, apuesta.getId());
+
+        assertThatThrownBy(() -> apuestaRepository.save(leidaAntes))
+                .isInstanceOf(ObjectOptimisticLockingFailureException.class);
+        assertThat(apuestaRepository.findById(apuesta.getId()).orElseThrow().getEstado())
+                .isEqualTo(EstadoApuesta.CANCELADA);
     }
 }

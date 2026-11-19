@@ -184,7 +184,14 @@ public class SincronizacionService {
             case "FINISHED" -> resultado(partido).ifPresent(r -> {
                 PartidoApi.MarcadorApi marcador = partido.score();
                 PartidoApi.GolesApi goles = marcador.marcador90();
+                if (evento.isResultadoManual()) {
+                    // Lo puso o corrigió el creador en Gestión: manda sobre la API (que puede haberse equivocado)
+                    return;
+                }
                 if (marcador.isProrroga() && goles == null) {
+                    if (evento.getEstado() == EstadoEvento.FINALIZADO) {
+                        return; // ya tiene resultado: no se repite el aviso en cada sincronización
+                    }
                     // El ganador sería el de la prórroga o los penaltis, no el de los 90 minutos
                     resumen.error("Partido " + partido.id() + " (" + evento.getLocal().getNombre() + " – "
                             + evento.getVisitante().getNombre() + "): hubo prórroga y la API no da el marcador de "

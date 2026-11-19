@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,14 @@ public class UsuarioService {
         // encode aplica BCrypt con una sal aleatoria: se guarda el resumen, nunca la contraseña
         Usuario usuario = new Usuario(emailNormalizado, nombre.trim(), passwordEncoder.encode(password), rol,
                 saldo.bienvenida(), LocalDateTime.now(reloj));
-        return usuarios.save(usuario);
+        try {
+            // saveAndFlush: el INSERT se hace aquí y no al terminar la transacción, para poder recoger el error
+            return usuarios.saveAndFlush(usuario);
+        } catch (DataIntegrityViolationException e) {
+            // Dos registros con el mismo email a la vez (doble clic): los dos pasan existsByEmail, pero la base de
+            // datos solo deja guardar uno (uk_usuario_email, la única restricción única de la tabla)
+            throw new EmailYaRegistradoException(emailNormalizado);
+        }
     }
 
     /**

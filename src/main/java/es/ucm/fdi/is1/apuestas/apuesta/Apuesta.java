@@ -25,6 +25,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.Version;
 
 /**
  * Apuesta de un usuario: una selección (simple) o varias de eventos distintos (combinada, HU-28).
@@ -53,6 +54,13 @@ public class Apuesta {
     @Id
     @GeneratedValue
     private Long id;
+
+    /**
+     * Bloqueo optimista, como en {@code Usuario}: si dos peticiones cambian la misma apuesta a la vez (cancelarla
+     * y cambiar el importe sin tocar el saldo), la segunda falla en lugar de dejarla activa después de devolverla.
+     */
+    @Version
+    private long version;
 
     // Muchas apuestas pertenecen a un mismo usuario (columna usuario_id en la tabla apuesta)
     @ManyToOne(optional = false)
