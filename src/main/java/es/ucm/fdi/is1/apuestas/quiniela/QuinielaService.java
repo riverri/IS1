@@ -153,7 +153,9 @@ public class QuinielaService {
     @Transactional
     public BoletoQuiniela echarBoleto(String email, Long id, List<Resultado> pronosticos) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        Quiniela quiniela = quiniela(id);
+        // Con bloqueo optimista: si a la vez se anula o se reparte, falla una de las dos (ver paraEcharBoleto)
+        Quiniela quiniela = quinielas.paraEcharBoleto(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe esa quiniela"));
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         if (usuario.isCreador()) {
             throw new IllegalArgumentException("El creador de apuestas no puede jugar a la quiniela");
