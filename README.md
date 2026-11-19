@@ -130,6 +130,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | `SPRING_DATASOURCE_PASSWORD` | la `CONTRASEÑA` de Neon |
 | `USUARIO_PASSWORD` | Opcional: crea también `usuario@apuestas.es` con esta contraseña. |
 | `FOOTBALL_DATA_TOKEN` | Opcional: la clave de la API para los partidos reales. |
+| `DEMO_DATOS` | Opcional: con `true` carga una vez datos de demostración (ver abajo), para enseñar la web con contenido. |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: servidor de correo para enviar el enlace de recuperar la contraseña (ver abajo). |
 | `URL_PUBLICA` | Opcional: dirección de la web para el enlace de recuperar la contraseña. En Render no hace falta (se usa la que da Render). |
 
@@ -140,6 +141,10 @@ Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los da
 **3. Que no se apague (keep-alive)**
 
 Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (HU-85). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. Si además quieres un aviso cuando la web se caiga, crea en UptimeRobot un monitor *HTTP(s)* a `https://TU-WEB.onrender.com/ping`. El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
+
+**4. Datos de demostración (opcional)**
+
+Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejemplo (Lucía, Marcos, Sofía, Pablo, Elena y Hugo) con apuestas ganadas, perdidas y activas, partidos próximos (si hay menos de seis), una combinada, una supercuota y la liga privada «Liga de la clase». Si existe `usuario@apuestas.es`, también tiene apuestas y está en la liga, para enseñar *Mis apuestas* al entrar con él. Todo se hace con los mismos servicios que usa la web, así que el saldo, el ranking y las cuotas cuadran. Los jugadores de ejemplo no pueden iniciar sesión (su contraseña es aleatoria). Si ya están cargados, no se repiten (y quitar la variable no los borra). También funciona en local: `DEMO_DATOS=true ./mvnw spring-boot:run`.
 
 **Notas**
 - Sin las variables `SPRING_DATASOURCE_*` funciona igual, pero con H2: los datos se borran en cada reinicio.

@@ -65,6 +65,7 @@ jobs:
 
   # Accesibilidad en un navegador real (HU-97 a HU-101): axe con las reglas de WCAG 2.1 AA en las páginas
   # principales, en modo claro y oscuro; uso con el teclado y sin desplazamiento lateral a 320 px y al 200 %.
+  # Arranca con los datos de demostración, para revisar también páginas con contenido (ranking, historial, ligas).
   accesibilidad:
     runs-on: ubuntu-latest
     steps:
@@ -83,7 +84,7 @@ jobs:
         run: ./mvnw -B -DskipTests package
       - name: Arrancar la aplicación
         run: |
-          java -jar target/apuestas-*.jar > app.log 2>&1 &
+          DEMO_DATOS=true java -jar target/apuestas-*.jar > app.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:8080/ping && break; sleep 2; done
       - name: Instalar el navegador
         working-directory: a11y

@@ -25,3 +25,6 @@ services:
       # Opcional: clave de football-data.org para los partidos reales
       - key: FOOTBALL_DATA_TOKEN
         sync: false
+      # Opcional: "true" carga una vez datos de demostración (jugadores con apuestas, partidos, una liga)
+      - key: DEMO_DATOS
+        sync: false
