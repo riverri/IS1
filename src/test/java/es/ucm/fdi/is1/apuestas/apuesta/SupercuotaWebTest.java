@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -163,5 +164,11 @@ class SupercuotaWebTest {
         BigDecimal mejor = calculadora.calcular(otro).local().add(new BigDecimal("0.10"));
         Supercuota corta = supercuotas.crear(otro.getId(), Resultado.LOCAL, mejor, BigDecimal.TEN, 24);
         assertThat(corta.getHasta()).isEqualTo(otro.getFechaHora());
+    }
+
+    @Test
+    void retirarLaSupercuotaDeUnEventoQueNoExisteDa404() throws Exception {
+        mvc.perform(post("/gestion/eventos/{id}/supercuota/quitar", 999_999).with(CREADOR).with(csrf()))
+                .andExpect(status().isNotFound());
     }
 }

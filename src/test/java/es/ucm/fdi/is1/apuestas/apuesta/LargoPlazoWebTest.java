@@ -268,4 +268,13 @@ class LargoPlazoWebTest {
                 .andExpect(content().string(containsString("Ferran Torres")))
                 .andExpect(content().string(containsString("35,00")));
     }
+
+    @Test
+    void unMercadoQueNoExisteDa404EnElPanelDelCreador() throws Exception {
+        mvc.perform(get("/gestion/mercados/{id}", 999_999).with(CREADOR)).andExpect(status().isNotFound());
+        mvc.perform(post("/gestion/mercados/{id}/cerrar", 999_999).with(CREADOR).with(csrf())).andExpect(status().isNotFound());
+        mvc.perform(post("/gestion/mercados/{id}/anular", 999_999).with(CREADOR).with(csrf())).andExpect(status().isNotFound());
+        mvc.perform(post("/gestion/mercados/{id}/candidatos/{c}/cuota", 999_999, 999_999).with(CREADOR).with(csrf())
+                .param("cuota", "2")).andExpect(status().isNotFound());
+    }
 }

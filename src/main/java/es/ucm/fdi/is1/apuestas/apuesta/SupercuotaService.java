@@ -95,7 +95,9 @@ public class SupercuotaService {
     @Transactional
     public void quitar(Long eventoId) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        supercuotas.findByEventoAndHastaAfter(eventos.findById(eventoId).orElseThrow(), ahora).forEach(s -> s.terminar(ahora));
+        Evento evento = eventos.findById(eventoId)
+                .orElseThrow(() -> new es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException(eventoId));
+        supercuotas.findByEventoAndHastaAfter(evento, ahora).forEach(s -> s.terminar(ahora));
     }
 
     /** La supercuota vigente del evento, si hay. */
