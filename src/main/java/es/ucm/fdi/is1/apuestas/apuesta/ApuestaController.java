@@ -24,6 +24,7 @@ import es.ucm.fdi.is1.apuestas.seguimiento.AlertasService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 import jakarta.validation.Valid;
@@ -95,7 +96,13 @@ public class ApuestaController {
     public String apostar(@PathVariable Long id, @Valid @ModelAttribute("apuesta") ApuestaForm form,
                           BindingResult errores, Principal principal, Model model,
                           RedirectAttributes redireccion) {
-        Evento evento = catalogo.eventoDisponible(id);
+        Evento evento;
+        try {
+            evento = catalogo.eventoDisponible(id);
+        } catch (EventoNoDisponibleException e) {
+            // Ha empezado o se ha suspendido mientras rellenaba el formulario: un aviso en vez de un 404
+            return yaNoAdmiteApuestas(redireccion);
+        }
         // Primero las validaciones del formulario (@Valid); solo si pasan se intenta apostar
         if (!errores.hasErrors()) {
             try {
@@ -105,6 +112,8 @@ public class ApuestaController {
                 redireccion.addFlashAttribute("mensaje", "Apuesta registrada. Si aciertas cobras "
                         + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
                 return "redirect:/apuestas";
+            } catch (EventoNoDisponibleException e) {
+                return yaNoAdmiteApuestas(redireccion);
             } catch (SaldoInsuficienteException e) {
                 // Cada catch recoge un tipo de error y lo enseña junto al campo que corresponde.
                 // "A | B" en un catch recoge cualquiera de las dos excepciones
@@ -125,6 +134,12 @@ public class ApuestaController {
             }
         }
         return vista(evento, principal, model);
+    }
+
+    /** El partido ya no admite apuestas (ha empezado, se ha suspendido…): al catálogo con el aviso, sin apostar. */
+    static String yaNoAdmiteApuestas(RedirectAttributes redireccion) {
+        redireccion.addFlashAttribute("errorBoleto", "Ese partido ya no admite apuestas: no se ha apostado nada.");
+        return "redirect:/eventos";
     }
 
     /**

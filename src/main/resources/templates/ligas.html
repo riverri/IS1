@@ -23,7 +23,8 @@
         <p>Todavía no estás en ninguna liga.</p>
     </div>
 
-    <div class="ligas-formularios">
+    <p class="aviso" th:if="${usuarioActual != null and usuarioActual.creador}">El creador de apuestas no juega en las ligas.</p>
+    <div class="ligas-formularios" th:unless="${usuarioActual != null and usuarioActual.creador}">
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/ligas}" method="post">
             <h2>Crear una liga</h2>
             <label for="nombre">Nombre</label>

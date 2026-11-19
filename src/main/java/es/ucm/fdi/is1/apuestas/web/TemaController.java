@@ -35,6 +35,12 @@ public class TemaController {
         ResponseCookie cookie = ResponseCookie.from(COOKIE, nuevo).path("/").maxAge(Duration.ofDays(365))
                 .httpOnly(true).sameSite("Lax").build();
         respuesta.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return "redirect:" + RutaSegura.de(referer, "/");
+        String destino = RutaSegura.de(referer, "/");
+        // Tras un formulario de Mi cuenta con errores, la página se pinta en la dirección del POST (/cuenta/nombre,
+        // /cuenta/limites…), que no tiene GET: volver ahí daba un error 405. Se vuelve a Mi cuenta
+        if (destino.startsWith("/cuenta/")) {
+            destino = "/cuenta";
+        }
+        return "redirect:" + destino;
     }
 }

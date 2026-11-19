@@ -73,6 +73,19 @@ class DatosInicialesTest {
                 .containsExactlyInAnyOrder(es.ucm.fdi.is1.apuestas.equipos.Deporte.values());
     }
 
+    /**
+     * Los partidos de ejemplo se escribieron con las fechas de octubre de 2026: si ya han pasado, se mueven para que
+     * sigan siendo próximos (con la base de datos vacía, el catálogo no sale vacío).
+     */
+    @Test
+    void losPartidosDeEjemploSonProximos() {
+        var malaga = equipos.findByNombre("Málaga CF").orElseThrow();
+        var espanyol = equipos.findByNombre("RCD Espanyol").orElseThrow();
+        assertThat(eventos.findAll()).filteredOn(e -> e.getLocal().equals(malaga) && e.getVisitante().equals(espanyol))
+                .isNotEmpty()
+                .allMatch(e -> e.getFechaHora().isAfter(es.ucm.fdi.is1.apuestas.Hora.ahora()));
+    }
+
     @Test
     void losEventosTienenSuJornada() {
         assertThat(eventos.findAll()).allMatch(e -> e.getFase() != null);

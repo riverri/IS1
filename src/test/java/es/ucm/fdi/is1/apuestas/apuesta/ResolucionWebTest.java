@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
@@ -124,7 +125,8 @@ class ResolucionWebTest {
 
         mvc.perform(post("/eventos/{id}/apostar", futbol.getId()).with(user(ANA)).with(csrf())
                         .param("resultado", "LOCAL").param("importe", "10"))
-                .andExpect(status().isNotFound());
+                .andExpect(redirectedUrl("/eventos"))
+                .andExpect(flash().attribute("errorBoleto", containsString("ya no admite apuestas")));
     }
 
     @Test
@@ -146,7 +148,8 @@ class ResolucionWebTest {
         mvc.perform(get("/eventos")).andExpect(content().string(not(containsString("Getafe CF – Sevilla FC"))));
         mvc.perform(post("/eventos/{id}/apostar", futbol.getId()).with(user(ANA)).with(csrf())
                         .param("resultado", "LOCAL").param("importe", "10"))
-                .andExpect(status().isNotFound());
+                .andExpect(redirectedUrl("/eventos"))
+                .andExpect(flash().attribute("errorBoleto", containsString("ya no admite apuestas")));
 
         mvc.perform(post("/gestion/eventos/{id}/reactivar", futbol.getId()).with(CREADOR).with(csrf()));
         mvc.perform(get("/eventos")).andExpect(content().string(containsString("Getafe CF – Sevilla FC")));

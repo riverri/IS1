@@ -108,8 +108,7 @@ public class UsuariosController {
     }
 
     /**
-     * POST /cuenta/limites: límites diario y semanal que se pone el usuario (HU-10). Vuelve a la sección
-     * de juego responsable de Mi cuenta. Si el diario supera al semanal, lo muestra como error del campo.
+     * POST /cuenta/limites: límites diario y semanal que se pone el usuario (HU-10). Vuelve a Mi cuenta. Si el diario supera al semanal, lo muestra como error del campo.
      */
     @PostMapping("/cuenta/limites")
     public String limites(@Valid @ModelAttribute("limitesPersonales") LimitesPersonalesForm form,
@@ -119,7 +118,7 @@ public class UsuariosController {
                 usuarios.fijarLimites(principal.getName(), form.getDiario(), form.getSemanal());
                 redireccion.addFlashAttribute("mensaje", "Límites guardados");
                 // "#juego-responsable" hace que el navegador baje hasta esa sección de la página
-                return "redirect:/cuenta#juego-responsable";
+                return "redirect:/cuenta";
             } catch (IllegalArgumentException e) {
                 errores.rejectValue("diario", "mayorQueSemanal", e.getMessage());
             }
@@ -140,7 +139,7 @@ public class UsuariosController {
         } catch (IllegalArgumentException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/cuenta#juego-responsable";
+        return "redirect:/cuenta";
     }
 
     /** POST /cuenta/correos: activa o desactiva el correo al ganar una apuesta (HU-77, CA-77.2). */
@@ -150,7 +149,7 @@ public class UsuariosController {
         redireccion.addFlashAttribute("mensaje", activados
                 ? "Te avisaremos por correo cuando ganes una apuesta."
                 : "Ya no recibirás correos al ganar; los avisos de la web siguen igual.");
-        return "redirect:/cuenta#correos";
+        return "redirect:/cuenta";
     }
 
     /** POST /cuenta/resumen: activa o desactiva el resumen semanal por correo (HU-92, CA-92.2). */
@@ -160,7 +159,7 @@ public class UsuariosController {
         redireccion.addFlashAttribute("mensaje", activado
                 ? "Te mandaremos cada lunes el resumen de tu semana."
                 : "Ya no recibirás el resumen semanal.");
-        return "redirect:/cuenta#correos";
+        return "redirect:/cuenta";
     }
 
     /** POST /cuenta/nombre: cambia el nombre visible (HU-47). */
@@ -205,6 +204,9 @@ public class UsuariosController {
 
     /** Página Mi cuenta; los formularios que ya están en el modelo (con sus errores) se respetan. */
     private String cuenta(Usuario usuario, Model model) {
+        // La cabecera (usuarioActual) se cargó antes de aplicar la recarga: se pone el usuario al día para que su saldo
+        // sea el mismo que el de la tarjeta de Mi cuenta
+        model.addAttribute("usuarioActual", usuario);
         // Si el formulario ya está en el modelo es porque se envió con errores: se deja tal cual para mostrarlos.
         // Si no, se crea uno nuevo relleno con los datos actuales del usuario
         if (!model.containsAttribute("datosNombre")) {

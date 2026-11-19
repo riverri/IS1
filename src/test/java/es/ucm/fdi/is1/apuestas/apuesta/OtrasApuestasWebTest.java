@@ -89,11 +89,17 @@ class OtrasApuestasWebTest {
         mvc.perform(post("/eventos/{id}/apostar", evento.getId()).with(COMO_ANA).with(csrf())
                         .param("opcion", opcion).param("importe", "10"))
                 .andExpect(redirectedUrl("/apuestas"));
+codex/preparar-diagnostico-tests
         return apuestas.findAll().stream()
                 .filter(a -> a.getUsuario().getEmail().equals(ANA))
                 .filter(a -> a.getSelecciones().stream()
                         .anyMatch(s -> s.getEvento().getId().equals(evento.getId())))
                 .findFirst().orElseThrow();
+
+        // La de id más alto: findAll() no tiene orden (en PostgreSQL, tras actualizar filas, salen en otro orden)
+        return apuestas.findAll().stream().filter(a -> a.getUsuario().getEmail().equals(ANA))
+                .max(java.util.Comparator.comparing(Apuesta::getId)).orElseThrow();
+main
     }
 
     private BigDecimal saldo() {

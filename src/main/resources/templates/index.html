@@ -27,6 +27,7 @@
 </section>
 
 <main>
+    <p role="status" class="alerta alerta-exito" th:if="${param.logout != null}">Has cerrado sesión.</p>
     <p role="status" class="alerta alerta-exito" th:if="${param.cuentaEliminada != null}">Tu cuenta se ha eliminado. ¡Gracias por jugar!</p>
     <section class="ventajas">
         <div class="ventaja">

@@ -26,6 +26,7 @@
 | Datos de demostración para Render (`DEMO_DATOS=true`): jugadores con apuestas, partidos próximos, una supercuota y una liga; la comprobación de accesibilidad de la CI los usa | | |
 | Depuración: errores 500 con ids inexistentes y nombres raros, retos que no se recalculaban al corregir ni se devolvían al dejar la liga, supercuota desde el boleto, bloqueo de apuestas y quinielas a la vez, resultados a mano que pisaba la API y límite de intentos con la contraseña actual ([#123](https://github.com/riverri/IS1/pull/123)) | | |
 | Segunda depuración: sincronización con la API (eventos anulados, traspasos, fechas puestas a mano), partidos aplazados, quiniela con todo anulado, apuestas a la vez que se anula el partido, supercuota por debajo de la normal, alertas, avisos de corrección, `/ping` sin base de datos y perfil `compartir` ([#124](https://github.com/riverri/IS1/pull/124)) | | |
+| Tercera depuración: panel de quinielas del creador, avisos que no se veían, creador en páginas de jugador, alertas de aplazados, partidos de ejemplo en el pasado, tiempos de espera del correo, y una prueba aleatoria de que el dinero siempre cuadra ([#126](https://github.com/riverri/IS1/pull/126)) | | |
 | | | |
 | **Total** | | |
 

@@ -102,6 +102,39 @@ class SupercuotaWebTest {
                 .andExpect(content().string(containsString(mejorada().toPlainString().replace('.', ','))));
     }
 
+    /** El catálogo enseña la misma cuota que la página del partido y que se cobra: la supercuota. */
+    @Test
+    void elCatalogoEnsenaLaSupercuota() throws Exception {
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("50"), 24);
+        mvc.perform(get("/eventos"))
+                .andExpect(content().string(containsString(mejorada().toPlainString().replace('.', ','))));
+    }
+
+    /** Pasarse del importe máximo de la supercuota es un error del importe, y se enseña junto a ese campo. */
+    @Test
+    void pasarseDelImporteMaximoSaleJuntoAlImporte() throws Exception {
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("50"), 24);
+        mvc.perform(post("/eventos/{id}/apostar", partido.getId()).with(user(ANA)).with(csrf())
+                        .param("resultado", "LOCAL").param("importe", "60"))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model()
+                        .attributeHasFieldErrorCode("apuesta", "importe", "limites"));
+    }
+
+    /** Si el partido deja de admitir apuestas mientras se rellena el formulario: un aviso, no un 404. */
+    @Test
+    void apostarEnUnPartidoQueAcabaDeSuspenderseAvisaSinError() throws Exception {
+        partido.suspender();
+        mvc.perform(post("/eventos/{id}/apostar", partido.getId()).with(user(ANA)).with(csrf())
+                        .param("resultado", "LOCAL").param("importe", "10"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("errorBoleto", containsString("ya no admite apuestas")));
+        mvc.perform(post("/eventos/{id}/alertas", partido.getId()).with(user(ANA)).with(csrf())
+                        .param("resultado", "LOCAL").param("cuota", "9"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("errorBoleto", containsString("ya no admite apuestas")));
+    }
+
     @Test
     void enUnaSimpleSeCobraConLaSupercuotaHastaElImporteMaximo() {
         supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("50"), 24);
