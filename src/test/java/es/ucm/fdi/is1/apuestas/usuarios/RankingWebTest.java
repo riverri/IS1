@@ -52,4 +52,12 @@ class RankingWebTest {
                 .andExpect(content().string(containsString("soy-yo")))
                 .andExpect(content().string(containsString("(tú)")));
     }
+
+    @Test
+    void unNombreQueEmpiezaPorGuionNoRompeElRanking() throws Exception {
+        usuarios.crear("guion@ucm.es", "-Ana", "secreta123", Rol.USUARIO);
+        usuarios.crear("barra@ucm.es", "/", "secreta123", Rol.USUARIO);
+        mvc.perform(get("/ranking")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("-Ana")));
+    }
 }

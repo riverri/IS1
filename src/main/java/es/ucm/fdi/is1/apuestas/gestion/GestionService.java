@@ -19,6 +19,7 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoBorrado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoCreado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.ligas.RetoRepository;
 import es.ucm.fdi.is1.apuestas.quiniela.PartidoQuinielaRepository;
 
 /**
@@ -35,17 +36,19 @@ public class GestionService {
     private final EventoRepository eventos;
     private final SeleccionRepository selecciones;
     private final PartidoQuinielaRepository partidosQuiniela;
+    private final RetoRepository retos;
     private final ApplicationEventPublisher publicador;
     private final Clock reloj;
 
     public GestionService(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
                           SeleccionRepository selecciones, PartidoQuinielaRepository partidosQuiniela,
-                          ApplicationEventPublisher publicador, Clock reloj) {
+                          RetoRepository retos, ApplicationEventPublisher publicador, Clock reloj) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
         this.selecciones = selecciones;
         this.partidosQuiniela = partidosQuiniela;
+        this.retos = retos;
         this.publicador = publicador;
         this.reloj = reloj;
     }
@@ -166,6 +169,17 @@ public class GestionService {
         if (cambianEquipos && partidosQuiniela.existsByEvento(evento)) {
             throw new DatosInvalidosException("localId",
                     "El evento está en una quiniela: no se pueden cambiar los equipos. Si está mal, anúlalo.");
+        }
+        // Los retos 1 contra 1 (HU-89) se aceptaron con estos equipos
+        if (cambianEquipos && retos.existsByEvento(evento)) {
+            throw new DatosInvalidosException("localId",
+                    "El evento tiene retos 1 contra 1: no se pueden cambiar los equipos. Si está mal, anúlalo.");
+        }
+        // La sincronización con la API de partidos aplica el resultado por el id externo, sin mirar los equipos:
+        // con otros equipos, el resultado de un partido se apuntaría a otro
+        if (cambianEquipos && evento.getIdExterno() != null) {
+            throw new DatosInvalidosException("localId",
+                    "El evento viene de la API de partidos: no se pueden cambiar los equipos. Si está mal, anúlalo.");
         }
         String fase = form.getFase() == null || form.getFase().isBlank() ? null : form.getFase().trim();
         // El propio evento comprueba que aún no ha empezado; su error se convierte en un error del formulario

@@ -79,6 +79,9 @@ public class RetoService {
         if (importe == null) {
             throw new IllegalArgumentException("Indica el importe");
         }
+        if (importe.signum() <= 0 || importe.stripTrailingZeros().scale() > 2) {
+            throw new IllegalArgumentException("El importe tiene que ser positivo y con 2 decimales como mucho");
+        }
         limites.actuales().comprobarImporte(importe);
         juegoResponsable.comprobar(retador, importe, ahora);
         retador.cargar(importe, TipoMovimiento.RETO_APUESTA, "Reto a " + retado.getNombre() + ": " + titulo(evento), ahora);
@@ -164,11 +167,20 @@ public class RetoService {
         }
     }
 
-    /** El partido ha terminado o se ha anulado: se resuelven sus retos (CA-89.3). */
+    /**
+     * El partido ha terminado o se ha anulado: se resuelven sus retos (CA-89.3). Si ya estaban resueltos (el creador
+     * corrige el resultado o anula un partido ya terminado), se recalculan: cada uno recibe o devuelve la diferencia
+     * entre lo que se le pagó y lo que le toca ahora, como las apuestas.
+     */
     @EventListener
     public void alResolverse(EventoResuelto resuelto) {
         Evento evento = resuelto.evento();
         LocalDateTime ahora = LocalDateTime.now(reloj);
+        for (Reto reto : retos.findByEventoAndEstadoIn(evento, EnumSet.of(EstadoReto.RESUELTO, EstadoReto.DEVUELTO))) {
+            if (reto.getPronosticoRetado() != null) {
+                corregir(reto, evento, ahora);
+            }
+        }
         for (Reto reto : retos.findByEventoAndEstadoIn(evento, EnumSet.of(EstadoReto.PENDIENTE, EstadoReto.ACEPTADO))) {
             Resultado r = evento.getResultado();
             if (reto.getEstado() == EstadoReto.ACEPTADO && evento.getEstado() == EstadoEvento.FINALIZADO
@@ -182,6 +194,79 @@ public class RetoService {
                         + " en " + titulo(evento) + ".");
             } else {
                 devolver(reto, ahora);
+            }
+        }
+    }
+
+    /** Quién gana un reto aceptado con el estado actual del partido; null si se devuelve (anulado o nadie acierta). */
+    private static Usuario ganadorAhora(Reto reto, Evento evento) {
+        Resultado r = evento.getResultado();
+        if (evento.getEstado() != EstadoEvento.FINALIZADO || r == null) {
+            return null;
+        }
+        return r == reto.getPronosticoRetador() ? reto.getRetador() : r == reto.getPronosticoRetado() ? reto.getRetado() : null;
+    }
+
+    /** Lo que un jugador ha cobrado o le toca cobrar de un reto aceptado: el bote si gana, su importe si se devuelve. */
+    private static BigDecimal cobro(Reto reto, Usuario jugador, Usuario ganador, boolean devuelto) {
+        if (devuelto) {
+            return reto.getImporte();
+        }
+        return ganador != null && ganador.getId().equals(jugador.getId()) ? reto.getBote() : BigDecimal.ZERO;
+    }
+
+    /** Un reto aceptado que ya se había cerrado: el resultado ha cambiado y se ajusta la diferencia a cada uno. */
+    private void corregir(Reto reto, Evento evento, LocalDateTime ahora) {
+        Usuario antes = reto.getGanador();
+        boolean devueltoAntes = reto.getEstado() == EstadoReto.DEVUELTO;
+        Usuario ahoraGana = ganadorAhora(reto, evento);
+        boolean devueltoAhora = ahoraGana == null;
+        boolean cambia = false;
+        for (Usuario jugador : List.of(reto.getRetador(), reto.getRetado())) {
+            BigDecimal diferencia = cobro(reto, jugador, ahoraGana, devueltoAhora)
+                    .subtract(cobro(reto, jugador, antes, devueltoAntes));
+            if (diferencia.signum() != 0) {
+                cambia = true;
+                jugador.ajustar(diferencia, TipoMovimiento.CORRECCION, "Reto corregido: " + titulo(evento), ahora);
+            }
+        }
+        if (!cambia) {
+            return;
+        }
+        reto.cerrar(devueltoAhora ? EstadoReto.DEVUELTO : EstadoReto.RESUELTO, ahoraGana);
+        String como = devueltoAhora ? "se devuelve a cada uno lo suyo"
+                : "lo gana " + ahoraGana.getNombre() + " (" + monedas(reto.getBote()) + " monedas)";
+        for (Usuario jugador : List.of(reto.getRetador(), reto.getRetado())) {
+            notificaciones.avisar(jugador, "info", "Se ha corregido el resultado de " + titulo(evento)
+                    + ": tu reto con " + reto.rival(jugador).getNombre() + " " + como + ".");
+        }
+    }
+
+    /**
+     * Alguien ha salido de una liga o se ha borrado: los retos pendientes entre quienes ya no comparten ninguna liga se
+     * devuelven al retador, porque ya no se verían en ninguna página y nadie podría aceptarlos ni retirarlos.
+     */
+    @EventListener
+    public void alCambiarMiembros(MiembrosLigaCambiados cambio) {
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        for (Long id : cambio.usuarios()) {
+            Usuario usuario = usuarios.findById(id).orElse(null);
+            if (usuario == null) {
+                continue;
+            }
+            for (Reto reto : retos.deUsuario(usuario)) {
+                if (reto.getEstado() != EstadoReto.PENDIENTE
+                        || ligas.deMiembro(reto.getRetador()).stream().anyMatch(l -> l.esMiembro(reto.getRetado()))) {
+                    continue;
+                }
+                reto.getRetador().abonar(reto.getImporte(), TipoMovimiento.RETO_DEVOLUCION,
+                        "Reto devuelto: " + titulo(reto.getEvento()), ahora);
+                reto.cerrar(EstadoReto.DEVUELTO, null);
+                for (Usuario jugador : List.of(reto.getRetador(), reto.getRetado())) {
+                    notificaciones.avisar(jugador, "anulada", "Se ha anulado el reto entre " + reto.getRetador().getNombre()
+                            + " y " + reto.getRetado().getNombre() + " en " + titulo(reto.getEvento())
+                            + " porque ya no estáis en la misma liga. Se ha devuelto el importe.");
+                }
             }
         }
     }

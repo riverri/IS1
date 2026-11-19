@@ -114,7 +114,12 @@ public class Formato {
      * "Real Madrid" → "M" (se saltan las palabras de PALABRAS_IGNORADAS).
      */
     public String iniciales(String nombre) {
-        String[] palabras = nombre.split("[\\s/-]+");
+        // Sin trozos vacíos: un nombre como "-Ana" o "/" no puede romper la página (ranking, perfil, ligas)
+        String[] palabras = Arrays.stream((nombre == null ? "" : nombre).split("[\\s/-]+"))
+                .filter(p -> !p.isEmpty()).toArray(String[]::new);
+        if (palabras.length == 0) {
+            return "?";
+        }
         String significativas = Arrays.stream(palabras)
                 .filter(p -> !PALABRAS_IGNORADAS.contains(p.toLowerCase(ES)))
                 .map(p -> p.substring(0, 1).toUpperCase(ES))
