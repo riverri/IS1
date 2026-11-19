@@ -236,8 +236,15 @@ class QuinielaWebTest {
     void laQuinielaSeVeSinIniciarSesion() throws Exception {
         Quiniela quiniela = crear();
         mvc.perform(get("/quinielas")).andExpect(status().isOk()).andExpect(content().string(containsString("Jornada 14")));
-        mvc.perform(get("/quinielas/{id}", quiniela.getId())).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Inicia sesión")));
+        // Con sesión, el formulario del boleto lleva su token CSRF
+        mvc.perform(get("/quinielas/{id}", quiniela.getId()).with(user(ANA)))
+                .andExpect(content().string(containsString("name=\"_csrf\"")));
+        var resultado = mvc.perform(get("/quinielas/{id}", quiniela.getId())).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Inicia sesión")))
+                .andExpect(content().string(containsString("</html>")))
+                .andReturn();
+        // Sin formulario que enviar no hace falta el token CSRF, que abriría una sesión a mitad de página
+        assertThat(resultado.getRequest().getSession(false)).isNull();
     }
 
     // --- HU-80 ---

@@ -26,7 +26,10 @@
                 <small th:text="'Cierra el ' + ${#temporals.format(m.cierre, 'dd/MM/yyyy')}">Cierra el 31/08/2027</small>
             </div>
             <h2 th:text="${m.nombre}">Balón de Oro 2027</h2>
-            <form class="formulario" th:action="@{/mercados/{id}/apostar(id=${m.id})}" method="post">
+            <!-- th:attr y no th:action: th:action mete el token CSRF, que a un visitante le abriría una sesión a mitad
+                 de página. Solo quien ha iniciado sesión puede enviar el formulario, y solo a él se le pone el token -->
+            <form class="formulario" th:attr="action=@{/mercados/{id}/apostar(id=${m.id})}" method="post">
+                <input type="hidden" th:if="${usuarioActual != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <fieldset class="opciones candidatos">
                     <legend class="solo-lectores" th:text="'Candidatos a ' + ${m.nombre}">Candidatos</legend>
                     <label class="opcion" th:each="c : ${m.candidatos}">

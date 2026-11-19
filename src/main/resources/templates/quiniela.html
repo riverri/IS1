@@ -18,7 +18,9 @@
 
     <!-- Echar el boleto (HU-79) -->
     <form class="tarjeta formulario" th:if="${resumen.admiteBoletos and miBoleto == null and (usuarioActual == null or !usuarioActual.creador)}"
-          th:action="@{/quinielas/{id}/boleto(id=${quiniela.id})}" method="post">
+          th:attr="action=@{/quinielas/{id}/boleto(id=${quiniela.id})}" method="post">
+        <!-- th:attr y no th:action: el token CSRF solo a quien ha iniciado sesión (a un visitante le abriría una sesión) -->
+        <input type="hidden" th:if="${usuarioActual != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <h2>Tu boleto</h2>
         <p class="aviso" th:if="${usuarioActual == null}"><a th:href="@{/login}">Inicia sesión</a> para echar un boleto.</p>
         <fieldset class="opciones opciones-quiniela" th:each="p : ${quiniela.partidos}">

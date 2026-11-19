@@ -97,13 +97,24 @@ class LargoPlazoWebTest {
 
     @Test
     void laPaginaEsPublicaYMuestraLosMercadosAbiertos() throws Exception {
-        mvc.perform(get("/mercados"))
+        var resultado = mvc.perform(get("/mercados"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Pichichi de prueba")))
                 .andExpect(content().string(containsString("Kylian Mbappé")))
                 .andExpect(content().string(containsString("2,20")))
                 .andExpect(content().string(containsString("Balón de Oro 2027")))
-                .andExpect(content().string(containsString("Entra para apostar")));
+                .andExpect(content().string(containsString("Entra para apostar")))
+                .andExpect(content().string(containsString("</html>")))
+                .andReturn();
+        // Sin formulario que enviar no hace falta el token CSRF, que abriría una sesión a mitad de página
+        assertThat(resultado.getRequest().getSession(false)).isNull();
+    }
+
+    @Test
+    void conSesionElFormularioLlevaElTokenCsrf() throws Exception {
+        mvc.perform(get("/mercados").with(COMO_ANA))
+                .andExpect(content().string(containsString("action=\"/mercados/")))
+                .andExpect(content().string(containsString("name=\"_csrf\"")));
     }
 
     @Test
