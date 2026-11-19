@@ -1108,7 +1108,7 @@ El correo se envía cuando el resultado ya está guardado, para no avisar de pre
 
 Sale a las 9:00 (hora de Madrid). Sin servidor de correo, se escribe en la consola, como el de HU-77.
 
-**Pruebas:** `ResumenSemanalTest`.
+**Pruebas:** `ResumenSemanalTest` y `CorreoResumenTest`.
 
 ### HU-89 · Reto 1 contra 1
 
@@ -1128,7 +1128,7 @@ Sale a las 9:00 (hora de Madrid). Sin servidor de correo, se escribe en la conso
 
 La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
-**Pruebas:** `RetoWebTest`.
+**Pruebas:** `RetoWebTest` y `RetoSinTransaccionTest`.
 
 ### HU-38 · Seguir a otro usuario
 

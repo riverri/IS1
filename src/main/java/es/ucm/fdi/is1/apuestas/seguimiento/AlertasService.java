@@ -66,7 +66,9 @@ public class AlertasService {
         if (usuario.isCreador()) {
             throw new IllegalArgumentException("El creador de apuestas no pone alertas");
         }
-        Evento evento = eventos.findById(eventoId).orElseThrow();
+        // Sin mensaje, un partido que no existe acabaría en un error 500 en vez de en el aviso de la página
+        Evento evento = (eventoId == null ? java.util.Optional.<Evento>empty() : eventos.findById(eventoId))
+                .orElseThrow(() -> new IllegalArgumentException("No existe ese partido"));
         if (!evento.admiteApuestas(ahora)) {
             throw new IllegalStateException("Este partido ya no admite apuestas");
         }

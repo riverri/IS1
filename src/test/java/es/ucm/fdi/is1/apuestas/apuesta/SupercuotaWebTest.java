@@ -134,4 +134,34 @@ class SupercuotaWebTest {
         assertThat(apuestas.apostar(ANA, otro.getId(), Resultado.LOCAL, BigDecimal.TEN).getCuota())
                 .isEqualByComparingTo(normalOtro).isLessThan(s.getCuota());
     }
+
+    @Test
+    void elImporteMaximoYLaDuracionTienenLimites() {
+        assertThatThrownBy(() -> supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("0.10"), 24))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("El importe máximo tiene que estar entre");
+        assertThatThrownBy(() -> supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), null, 24))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("El importe máximo");
+        for (Integer horas : new Integer[] {null, 0, SupercuotaService.HORAS_MAXIMAS + 1}) {
+            assertThatThrownBy(() -> supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), BigDecimal.TEN, horas))
+                    .as("horas = %s", horas).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("dura de 1 a");
+        }
+    }
+
+    @Test
+    void soloEnUnEventoQueExisteYAdmiteApuestas() {
+        assertThatThrownBy(() -> supercuotas.crear(999_999L, Resultado.LOCAL, mejorada(), BigDecimal.TEN, 24))
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("No existe ese evento");
+        assertThatThrownBy(() -> supercuotas.crear(partido.getId(), null, mejorada(), BigDecimal.TEN, 24))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Elige un resultado");
+        partido.suspender();
+        assertThatThrownBy(() -> supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), BigDecimal.TEN, 24))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("ya no admite apuestas");
+    }
+
+    @Test
+    void noDuraMasQueHastaQueEmpiezaElPartido() {
+        BigDecimal mejor = calculadora.calcular(otro).local().add(new BigDecimal("0.10"));
+        Supercuota corta = supercuotas.crear(otro.getId(), Resultado.LOCAL, mejor, BigDecimal.TEN, 24);
+        assertThat(corta.getHasta()).isEqualTo(otro.getFechaHora());
+    }
 }
