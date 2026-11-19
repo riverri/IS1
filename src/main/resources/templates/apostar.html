@@ -26,7 +26,7 @@
         </p>
       </div>
 
-        <p class="alerta supercuota-aviso" th:if="${supercuota != null}"
+        <p role="status" class="alerta supercuota-aviso" th:if="${supercuota != null}"
            th:text="'🔥 Supercuota: «' + ${supercuota.resultado.descripcion} + '» paga ' + ${@formato.cuota(supercuota.cuota)} + ' en apuestas simples de hasta ' + ${#numbers.formatDecimal(supercuota.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas, hasta el ' + ${#temporals.format(supercuota.hasta, 'dd/MM HH:mm')} + '.'">Supercuota</p>
         <form class="formulario boleto" th:action="@{/eventos/{id}/apostar(id=${evento.id})}" th:object="${apuesta}" method="post">
           <!-- En pantallas anchas, las cuotas a la izquierda y el importe a la derecha (solo aspecto) -->
@@ -119,8 +119,8 @@
     <!-- HU-90: avísame cuando la cuota llegue a... -->
     <section class="tarjeta tarjeta-formulario" id="alertas" th:if="${usuarioActual != null and !usuarioActual.creador}">
         <h2>Alerta de cuota</h2>
-        <p class="alerta alerta-exito" th:if="${mensajeAlerta}" th:text="${mensajeAlerta}">Alerta guardada</p>
-        <p class="alerta alerta-error" th:if="${errorAlerta}" th:text="${errorAlerta}">Error</p>
+        <p role="status" class="alerta alerta-exito" th:if="${mensajeAlerta}" th:text="${mensajeAlerta}">Alerta guardada</p>
+        <p role="alert" class="alerta alerta-error" th:if="${errorAlerta}" th:text="${errorAlerta}">Error</p>
         <form th:action="@{/eventos/{id}/alertas(id=${evento.id})}" method="post" class="alerta-cuota">
             <label for="alerta-resultado">Avísame cuando</label>
             <select id="alerta-resultado" name="resultado" required>

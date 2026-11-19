@@ -5,8 +5,8 @@
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho">
     <h1 th:text="'Hola, ' + ${usuario.nombre}">Hola</h1>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Nombre cambiado</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Nombre cambiado</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
     <div class="tarjeta-saldo">
         <span class="tarjeta-saldo-titulo">Saldo disponible</span>
         <span class="tarjeta-saldo-valor" th:text="${#numbers.formatDecimal(usuario.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas'">1.000,00 monedas</span>
@@ -90,7 +90,7 @@
 
         <div class="tarjeta tarjeta-formulario pausa">
             <strong>Pausa temporal</strong>
-            <p class="alerta alerta-aviso" th:if="${enPausa}"
+            <p role="status" class="alerta alerta-aviso" th:if="${enPausa}"
                th:text="'Tienes las apuestas en pausa hasta el ' + ${#temporals.format(usuario.pausaHasta, 'dd/MM/yyyy')} + ' a las ' + ${#temporals.format(usuario.pausaHasta, 'HH:mm')} + '.'">
                 Tienes las apuestas en pausa hasta el 09/10/2026 a las 18:00.</p>
             <p class="aviso">Durante la pausa no podrás apostar. No se puede cancelar antes de tiempo.</p>
@@ -108,7 +108,7 @@
         <h2 id="eliminar-cuenta">Eliminar cuenta</h2>
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/eliminar}" method="post"
               onsubmit="return confirm('¿Eliminar tu cuenta? No se puede deshacer.');">
-            <p class="alerta alerta-error" th:if="${errorBaja}" th:text="${errorBaja}">La contraseña no es correcta</p>
+            <p role="alert" class="alerta alerta-error" th:if="${errorBaja}" th:text="${errorBaja}">La contraseña no es correcta</p>
             <p class="aviso">Se borran tu email, tu nombre y tus avisos, y pierdes tu saldo. Las apuestas que aún no han empezado se cancelan. No se puede deshacer.</p>
             <label for="password-baja">Contraseña</label>
             <input id="password-baja" name="password" type="password" required autocomplete="current-password">

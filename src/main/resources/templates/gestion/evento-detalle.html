@@ -5,8 +5,8 @@
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho ancho-medio">
     <a class="enlace-volver" th:href="@{/gestion}">← Volver al panel</a>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="tarjeta marcador">
       <div class="marcador-cabecera">
@@ -77,7 +77,7 @@
     </th:block>
 
     <h2 id="riesgo">Riesgo de la casa</h2>
-    <p class="alerta alerta-error" th:if="${riesgo.alerta}"
+    <p role="alert" class="alerta alerta-error" th:if="${riesgo.alerta}"
        th:text="'Riesgo alto: con el peor resultado la casa perdería ' + ${#numbers.formatDecimal(riesgo.peorSaldo.negate(), 1, 'POINT', 2, 'COMMA')} + ' monedas, más que el límite de alerta (' + ${#numbers.formatDecimal(riesgo.limite, 1, 'POINT', 2, 'COMMA')} + ').'">Riesgo alto</p>
     <p class="aviso" th:if="${riesgo.sinApuestas}">Nadie ha apostado todavía a este evento.</p>
     <div class="tarjeta tabla" th:unless="${riesgo.sinApuestas}">

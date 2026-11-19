@@ -8,8 +8,8 @@
     <div class="titulo-pagina">
         <h1 th:text="${liga.nombre}">Los de clase</h1>
     </div>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="tarjeta invitacion">
         <div>

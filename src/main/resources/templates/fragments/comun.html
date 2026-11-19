@@ -10,9 +10,12 @@
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <meta name="color-scheme" th:content="${temaOscuro} ? 'dark' : 'light'">
     <link th:if="${temaOscuro}" rel="stylesheet" th:href="@{/css/oscuro.css}">
+    <script th:src="@{/js/accesible.js}" defer></script>
 </head>
 <body>
 <header class="cabecera" th:fragment="cabecera">
+    <!-- HU-97: el primer tabulador lleva aquí; salta el menú -->
+    <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
     <div class="cabecera-interior">
         <a class="marca" th:href="@{/}">
             <svg class="marca-logo" viewBox="0 0 32 32" aria-hidden="true">
@@ -59,14 +62,16 @@
     <p class="aviso-pausa" th:if="${pausaHasta != null}">
         <a th:href="@{/cuenta#juego-responsable}" th:text="'Apuestas en pausa hasta el ' + ${#temporals.format(pausaHasta, 'dd/MM/yyyy HH:mm')}">Apuestas en pausa hasta el 09/10/2026 18:00</a>
     </p>
-    <p class="aviso-flotante" th:if="${mensajeBoleto != null}" th:text="${mensajeBoleto}">Añadido al boleto</p>
-    <p class="aviso-flotante aviso-flotante-error" th:if="${errorBoleto != null}" th:text="${errorBoleto}">Error</p>
+    <p role="status" class="aviso-flotante" th:if="${mensajeBoleto != null}" th:text="${mensajeBoleto}">Añadido al boleto</p>
+    <p role="alert" class="aviso-flotante aviso-flotante-error" th:if="${errorBoleto != null}" th:text="${errorBoleto}">Error</p>
     <a class="barra-boleto" th:if="${boletoResumen != null and !#lists.isEmpty(boletoResumen.lineas) and ocultarBarraBoleto == null}" th:href="@{/boleto}">
         <span class="barra-boleto-numero" th:text="${#lists.size(boletoResumen.lineas)}">2</span>
         <span th:text="${boletoResumen.combinada} ? 'Combinada' : 'Apuesta simple'">Combinada</span>
         <span class="barra-boleto-cuota" th:text="'Cuota ' + ${@formato.cuota(boletoResumen.cuotaTotal)}">Cuota 4,52</span>
         <strong>Ver boleto →</strong>
     </a>
+    <!-- Destino de «Saltar al contenido»: lo siguiente que se recorre con el tabulador es la página -->
+    <span id="contenido" tabindex="-1"></span>
 </header>
 
 <span th:fragment="escudo(eq, tam)" class="escudo"
@@ -177,17 +182,17 @@
                 <input type="hidden" name="resultado" th:value="${op}">
                 <button type="submit" class="cuota" th:classappend="${boleto != null and boleto.contiene(ev.id, op)} ? 'en-boleto'"
                         th:title="'Añadir al boleto: ' + ${titulo}">
-                    <small th:text="${simbolo}">1</small><b th:text="${@formato.cuota(cuota)}">1,85</b>
+                    <small aria-hidden="true" th:text="${simbolo}">1</small><b aria-hidden="true" th:text="${@formato.cuota(cuota)}">1,85</b><span class="solo-lectores" th:text="${titulo} + ', cuota ' + ${@formato.cuota(cuota)}">gana Real Madrid, cuota 1,85</span>
                 </button>
             </form>
             <!-- Visitante: va al partido (y de ahí al inicio de sesión) sin crear sesión al pintar la página -->
             <a class="cuota" th:if="${usuarioActual == null}" th:href="@{/eventos/{id}/apostar(id=${ev.id},resultado=${op})}"
                th:title="'Apostar: ' + ${titulo}">
-                <small th:text="${simbolo}">1</small><b th:text="${@formato.cuota(cuota)}">1,85</b>
+                <small aria-hidden="true" th:text="${simbolo}">1</small><b aria-hidden="true" th:text="${@formato.cuota(cuota)}">1,85</b><span class="solo-lectores" th:text="${titulo} + ', cuota ' + ${@formato.cuota(cuota)}">gana Real Madrid, cuota 1,85</span>
             </a>
             <!-- El creador de apuestas no apuesta: solo ve la cuota -->
             <span class="cuota" th:if="${usuarioActual != null and usuarioActual.creador}" th:title="${titulo}">
-                <small th:text="${simbolo}">1</small><b th:text="${@formato.cuota(cuota)}">1,85</b>
+                <small aria-hidden="true" th:text="${simbolo}">1</small><b aria-hidden="true" th:text="${@formato.cuota(cuota)}">1,85</b><span class="solo-lectores" th:text="${titulo} + ', cuota ' + ${@formato.cuota(cuota)}">gana Real Madrid, cuota 1,85</span>
             </span>
             </th:block>
             </th:block>

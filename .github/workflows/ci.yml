@@ -45,3 +45,37 @@ jobs:
           cache: maven
       - name: Ejecutar pruebas con PostgreSQL
         run: ./mvnw -B test
+
+  # Accesibilidad en un navegador real (HU-97 a HU-101): axe con las reglas de WCAG 2.1 AA en las páginas
+  # principales, en modo claro y oscuro; uso con el teclado y sin desplazamiento lateral a 320 px y al 200 %.
+  accesibilidad:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: a11y/package-lock.json
+      - name: Compilar la aplicación
+        run: ./mvnw -B -DskipTests package
+      - name: Arrancar la aplicación
+        run: |
+          java -jar target/apuestas-*.jar > app.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:8080/ping && break; sleep 2; done
+      - name: Instalar el navegador
+        working-directory: a11y
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Comprobar la accesibilidad
+        working-directory: a11y
+        run: node comprobar.js
+      - name: Registro de la aplicación si algo falla
+        if: failure()
+        run: tail -100 app.log

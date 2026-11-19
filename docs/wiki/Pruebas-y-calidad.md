@@ -23,9 +23,9 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 | `quiniela` | QuinielaWebTest (14) |
 | `seguimiento` | EvolucionCuotaWebTest (2), SeguimientoWebTest (7) |
 | `usuarios` | CuentaWebTest (7), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), RankingWebTest (2), RecuperacionWebTest (9), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (8) |
-| `web` | CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (5), KeepAliveTest (3), RendimientoWebTest (2), TemaWebTest (5) |
+| `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (7), CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (5), KeepAliveTest (3), RendimientoWebTest (2), TemaWebTest (5) |
 
-**Total: 421 pruebas en 74 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca.
+**Total: 433 pruebas en 76 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
@@ -40,5 +40,6 @@ Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al
 `.github/workflows/ci.yml` se ejecuta en cada pull request y en cada cambio de `main`:
 - **build**: compila y pasa todas las pruebas con H2.
 - **postgresql**: arranca PostgreSQL 17 y pasa las mismas pruebas, para comprobar las migraciones de PostgreSQL.
+- **accesibilidad**: arranca la aplicación y la recorre con un navegador ([`a11y/comprobar.js`](https://github.com/riverri/IS1/blob/main/a11y/comprobar.js)). Pasa las reglas de WCAG 2.1 A y AA de axe a las páginas principales, con colores claros y oscuros; hace una apuesta solo con el teclado y comprueba que el foco siempre se ve; y mira que no haya desplazamiento lateral a 320 px ni con la página ampliada al 200 % (HU-97 a HU-101).
 
 Si alguno falla, el PR sale en rojo y no se fusiona.

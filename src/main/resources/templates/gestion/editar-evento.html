@@ -8,7 +8,7 @@
     <div class="tarjeta tarjeta-formulario">
         <h1>Editar evento</h1>
         <p class="subtitulo" th:text="${evento.competicion.nombre}">LaLiga</p>
-        <p class="alerta alerta-aviso" th:unless="${editable}">El evento ya ha empezado, ha terminado o está anulado: no se puede editar.</p>
+        <p role="status" class="alerta alerta-aviso" th:unless="${editable}">El evento ya ha empezado, ha terminado o está anulado: no se puede editar.</p>
         <p class="aviso" th:if="${evento.idExterno != null}">Este partido llega de la API: si cambias la fecha, la próxima sincronización pondrá la oficial.</p>
         <form class="formulario" th:if="${editable}" th:action="@{/gestion/eventos/{id}/editar(id=${evento.id})}"
               th:object="${edicion}" method="post">

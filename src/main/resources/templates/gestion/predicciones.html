@@ -7,8 +7,8 @@
     <div class="titulo-pagina">
         <h1>Mercados de predicción</h1>
     </div>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
     <p class="aviso">El precio lo pone un creador de mercado automático (LMSR). Con más liquidez el precio se mueve menos en
         cada compra, pero la casa puede perder más: como mucho liquidez × ln 2 por mercado, que la comisión compensa.</p>
 

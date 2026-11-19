@@ -7,8 +7,8 @@
     <div class="titulo-pagina">
         <h1>Quinielas</h1>
     </div>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
     <p class="aviso">Sin cuotas: el bote sale de lo que pagan los jugadores y la casa solo se queda el 10 %. Los partidos
         tienen que estar programados y ser de un deporte con empate.</p>
 

@@ -1,0 +1,12 @@
+{
+  "name": "better-accesibilidad",
+  "private": true,
+  "description": "Comprobación de accesibilidad de la web en un navegador real (HU-97 a HU-101): axe con WCAG 2.1 AA, teclado y ampliación",
+  "scripts": {
+    "comprobar": "node comprobar.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.1",
+    "playwright": "1.63.0"
+  }
+}

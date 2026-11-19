@@ -8,7 +8,7 @@
         <h1>Apuestas a largo plazo</h1>
         <p class="subtitulo">¿Quién ganará el Balón de Oro, la liga o el mundial? Elige un candidato y cobra cuando se conozca el ganador.</p>
     </div>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">La cuota ha cambiado</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">La cuota ha cambiado</p>
     <p class="aviso" th:if="${usuarioActual != null and limitesApuesta != null}"
        th:text="'Saldo disponible: ' + ${#numbers.formatDecimal(usuarioActual.saldo, 1, 'POINT', 2, 'COMMA')} + ' monedas · entre ' + ${#numbers.formatDecimal(limitesApuesta.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' y ' + ${#numbers.formatDecimal(limitesApuesta.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ' monedas por apuesta'">
         Saldo disponible: 1.000,00 monedas · entre 1,00 y 500,00 monedas por apuesta</p>

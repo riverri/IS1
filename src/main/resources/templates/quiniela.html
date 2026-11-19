@@ -5,8 +5,8 @@
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho ancho-medio">
     <h1 th:text="${quiniela.nombre}">Jornada 14</h1>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="estadisticas">
         <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(quiniela.precio, 1, 'POINT', 2, 'COMMA')}">2,00</span>monedas el boleto</div>
@@ -51,7 +51,7 @@
             </tbody>
         </table>
     </div>
-    <p class="alerta alerta-exito" th:if="${miBoleto != null and miBoleto.ganador}"
+    <p role="status" class="alerta alerta-exito" th:if="${miBoleto != null and miBoleto.ganador}"
        th:text="'¡Has ganado ' + ${#numbers.formatDecimal(miBoleto.premio, 1, 'POINT', 2, 'COMMA')} + ' monedas con ' + ${miBoleto.aciertos} + ' aciertos!'">¡Has ganado!</p>
     <p class="aviso" th:if="${miBoleto != null and miBoleto.devuelto}">Te hemos devuelto el precio del boleto.</p>
 
