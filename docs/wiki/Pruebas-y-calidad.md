@@ -21,12 +21,12 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 | `gestion` | BeneficioDiarioWebTest (1), CasaWebTest (2), EditarEventoWebTest (11), GestionWebTest (15) |
 | `ligas` | LigasSinTransaccionTest (1), LigasWebTest (7), RetoSinTransaccionTest (1), RetoWebTest (15) |
 | `prediccion` | LmsrTest (6), PrediccionWebTest (16) |
-| `quiniela` | QuinielaWebTest (19) |
+| `quiniela` | QuinielaWebTest (23) |
 | `seguimiento` | EvolucionCuotaWebTest (2), SeguimientoWebTest (15) |
 | `usuarios` | CuentaWebTest (9), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), RankingWebTest (3), RecargaAlEntrarHandlerTest (1), RecuperacionWebTest (9), RegistroConcurrenteTest (1), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (9) |
 | `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (7), CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (6), KeepAliveTest (3), PingSinBaseDeDatosTest (1), RendimientoWebTest (2), TemaWebTest (6) |
 
-**Total: 503 pruebas en 84 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra.
+**Total: 507 pruebas en 84 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
