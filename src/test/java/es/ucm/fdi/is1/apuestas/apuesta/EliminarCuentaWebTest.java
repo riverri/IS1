@@ -56,6 +56,9 @@ class EliminarCuentaWebTest {
     private ResolucionService resolucion;
 
     @Autowired
+    private BajaService bajas;
+
+    @Autowired
     private NotificacionService notificaciones;
 
     @Autowired
@@ -105,6 +108,26 @@ class EliminarCuentaWebTest {
         assertThat(pendiente.getEstado()).isEqualTo(EstadoApuesta.CANCELADA);
         assertThat(usuarios.findByEmail(ANA)).isEmpty();
         assertThat(notificaciones.sinLeer(eliminada.getEmail())).isZero();
+    }
+
+    /**
+     * Una apuesta que ya no se podía cancelar se resuelve después de la baja sin abonar nada: tampoco cuenta como
+     * pagada en las cuentas de la casa (HU-53).
+     */
+    @Test
+    void loQueGanaUnaCuentaEliminadaNoCuentaComoPagado() {
+        Evento empezado = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                equipos.findByNombre("Villarreal CF").orElseThrow(),
+                equipos.findByNombre("Real Betis").orElseThrow(), Hora.ahora().plusDays(1)));
+        Apuesta enJuego = apuestas.apostar(ANA, empezado.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        empezado.cambiarFecha(Hora.ahora().minusMinutes(10));
+
+        bajas.eliminarCuenta(ANA, "secreta123");
+        resolucion.introducirResultado(empezado.getId(), Resultado.LOCAL);
+
+        assertThat(enJuego.getEstado()).isEqualTo(EstadoApuesta.GANADA);
+        assertThat(enJuego.getPagado()).isZero();
+        assertThat(usuarios.findById(ana.getId()).orElseThrow().getSaldo()).isZero();
     }
 
     @Test

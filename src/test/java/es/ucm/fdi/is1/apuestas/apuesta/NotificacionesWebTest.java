@@ -121,6 +121,21 @@ class NotificacionesWebTest {
         assertThat(avisos).hasSize(3);
     }
 
+    /** En una corrección se dice lo que de verdad se mueve: la diferencia con lo ya pagado, no el importe entero. */
+    @Test
+    void alCorregirElAvisoDiceLaDiferenciaQueSeAbonaOSeRetira() {
+        Apuesta apuesta = apuestas.apostar(ANA, partido.getId(), Resultado.LOCAL, new BigDecimal("10"));
+        resolucion.introducirResultado(partido.getId(), Resultado.LOCAL);
+        BigDecimal premio = apuesta.getGananciaPotencial();
+        resolucion.anular(partido.getId());
+
+        String retirado = premio.subtract(BigDecimal.TEN).setScale(2).toPlainString().replace('.', ',');
+        assertThat(notificaciones.leer(ANA)).extracting(NotificacionService.Aviso::texto)
+                .anyMatch(t -> t.equals("Resultado corregido. Se ha anulado tu apuesta a " + partido.getLocal().getNombre()
+                        + " (" + partido.getLocal().getNombre() + " – " + partido.getVisitante().getNombre()
+                        + "). Te hemos retirado " + retirado + " monedas."));
+    }
+
     @Test
     void laCampanaMuestraLosAvisosSinLeerYAlAbrirlosSeLeen() throws Exception {
         apuestas.apostar(ANA, partido.getId(), Resultado.LOCAL, new BigDecimal("10"));

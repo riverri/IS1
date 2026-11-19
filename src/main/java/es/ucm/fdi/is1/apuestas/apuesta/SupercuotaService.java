@@ -107,14 +107,25 @@ public class SupercuotaService {
     }
 
     Optional<Supercuota> vigente(Evento evento, LocalDateTime ahora) {
-        return supercuotas.findByEventoAndHastaAfter(evento, ahora).stream().filter(s -> s.isVigente(ahora)).findFirst();
+        return supercuotas.findByEventoAndHastaAfter(evento, ahora).stream()
+                .filter(s -> s.isVigente(ahora) && mejora(s)).findFirst();
+    }
+
+    /**
+     * Sigue mejorando la cuota normal. Al crearla se exige que la mejore, pero la normal se mueve con el dinero
+     * apostado y la forma de los equipos: si la alcanza, deja de valer y se paga la normal, que es mejor.
+     */
+    private boolean mejora(Supercuota supercuota) {
+        return supercuota.getCuota().compareTo(
+                calculadora.cuota(supercuota.getEvento(), supercuota.getResultado(), null)) > 0;
     }
 
     /** Las vigentes de todos los eventos, la que acaba antes primero: para la portada (CA-87.3). */
     @Transactional(readOnly = true)
     public List<Supercuota> vigentes() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        List<Supercuota> lista = supercuotas.findByHastaAfterOrderByHastaAsc(ahora).stream().filter(s -> s.isVigente(ahora)).toList();
+        List<Supercuota> lista = supercuotas.findByHastaAfterOrderByHastaAsc(ahora).stream()
+                .filter(s -> s.isVigente(ahora) && mejora(s)).toList();
         lista.forEach(s -> s.getEvento().getLocal().getNombre());
         return lista;
     }

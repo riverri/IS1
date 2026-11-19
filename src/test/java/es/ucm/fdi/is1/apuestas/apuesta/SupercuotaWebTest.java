@@ -153,6 +153,21 @@ class SupercuotaWebTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("como mucho 50");
     }
 
+    /** Si después la cuota normal sube hasta pasar la supercuota, deja de valer: se paga la normal, que es mejor. */
+    @Test
+    void siLaNormalPasaALaSupercuotaSePagaLaNormal() {
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, normal.add(new BigDecimal("0.05")), new BigDecimal("50"), 24);
+        // El local empeora mucho: su cuota normal sube
+        partido.getLocal().setCalidad(1.0);
+        BigDecimal ahora = calculadora.calcular(partido).local();
+        assertThat(ahora).isGreaterThan(normal.add(new BigDecimal("0.05")));
+
+        assertThat(supercuotas.cuotasConSupercuota(partido).local()).isEqualByComparingTo(ahora);
+        assertThat(supercuotas.vigentes()).noneMatch(s -> s.getEvento().getId().equals(partido.getId()));
+        Apuesta simple = apuestas.apostar(ANA, partido.getId(), Resultado.LOCAL, new BigDecimal("80"));
+        assertThat(simple.getCuota()).isEqualByComparingTo(ahora);
+    }
+
     @Test
     void tieneQueMejorarLaNormalSinPasarDelDoble() {
         assertThatThrownBy(() -> supercuotas.crear(partido.getId(), Resultado.LOCAL, normal, BigDecimal.TEN, 24))

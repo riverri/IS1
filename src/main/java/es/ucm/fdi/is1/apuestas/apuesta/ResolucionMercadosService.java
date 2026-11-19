@@ -43,7 +43,7 @@ public class ResolucionMercadosService {
      */
     @Transactional
     public int resolver(Long mercadoId, Long candidatoId) {
-        Mercado mercado = mercados.mercado(mercadoId);
+        Mercado mercado = mercados.mercadoParaCambiar(mercadoId);
         Candidato ganador = mercado.getCandidatos().stream()
                 .filter(c -> c.getId().equals(candidatoId))
                 .findFirst()
@@ -55,8 +55,9 @@ public class ResolucionMercadosService {
             Apuesta apuesta = seleccion.getApuesta();
             // Se guarda el estado anterior para avisar solo si cambia (HU-37)
             EstadoApuesta antes = apuesta.getEstado();
+            BigDecimal pagadoAntes = apuesta.getPagado();
             apuesta.resolver(mercado, ganador, ahora);
-            avisos.siCambia(apuesta, antes);
+            avisos.siCambia(apuesta, antes, pagadoAntes);
         }
         return afectadas.size();
     }
@@ -68,15 +69,16 @@ public class ResolucionMercadosService {
      */
     @Transactional
     public int anular(Long mercadoId) {
-        Mercado mercado = mercados.mercado(mercadoId);
+        Mercado mercado = mercados.mercadoParaCambiar(mercadoId);
         mercado.anular();
         List<Seleccion> afectadas = selecciones.findByCandidatoMercado(mercado);
         LocalDateTime ahora = LocalDateTime.now(reloj);
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             EstadoApuesta antes = apuesta.getEstado();
+            BigDecimal pagadoAntes = apuesta.getPagado();
             apuesta.anular(mercado, ahora);
-            avisos.siCambia(apuesta, antes);
+            avisos.siCambia(apuesta, antes, pagadoAntes);
         }
         return afectadas.size();
     }
