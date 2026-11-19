@@ -53,6 +53,15 @@ class SincronizacionServiceTest {
     @Autowired
     private ResolucionService resolucion;
 
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository competiciones;
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.seguimiento.FavoritosService favoritos;
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService notificaciones;
+
     private static String utc(LocalDateTime madrid) {
         return madrid.atZone(ZoneId.of("Europe/Madrid")).toInstant().toString();
     }
@@ -314,6 +323,65 @@ class SincronizacionServiceTest {
         devuelve(partido(900005, fecha, "CANCELLED", null, sevilla, betis));
         sincronizacion.sincronizar();
         assertThat(evento.getEstado()).isEqualTo(EstadoEvento.ANULADO);
+    }
+
+    /** Un evento anulado (o ya enlazado con otro partido de la API) no se empareja por equipos con uno nuevo. */
+    @Test
+    void unPartidoDeLaApiNoSeEnlazaConUnEventoAnulado() {
+        LocalDateTime fecha = Hora.ahora().plusHours(3).withNano(0).withSecond(0);
+        var laLiga = competiciones.findByNombre("LaLiga").orElseThrow();
+        var elche = equipos.findByNombre("Elche CF").orElseThrow();
+        var celta = equipos.findByNombre("Celta de Vigo").orElseThrow();
+        // El creador lo creó mal, lo anuló y lo volvió a crear una hora después
+        Evento anulado = eventos.save(new Evento(laLiga, elche, celta, fecha.minusHours(1)));
+        resolucion.anular(anulado.getId());
+        Evento bueno = eventos.save(new Evento(laLiga, elche, celta, fecha));
+        Apuesta apuesta = apuestas.apostar("usuario@apuestas.es", bueno.getId(), Resultado.VISITANTE, new BigDecimal("10"));
+
+        devuelve(partido(900020, fecha, "FINISHED", "AWAY_TEAM", equipo(285, "Elche CF", "Elche"),
+                equipo(558, "RC Celta de Vigo", "Celta")));
+        sincronizacion.sincronizar();
+
+        assertThat(anulado.getIdExterno()).isNull();
+        assertThat(bueno.getIdExterno()).isEqualTo(900020L);
+        assertThat(bueno.getEstado()).isEqualTo(EstadoEvento.FINALIZADO);
+        assertThat(apuesta.getEstado()).isEqualTo(EstadoApuesta.GANADA);
+    }
+
+    /** Si el creador cambia a mano la fecha de un aplazado, la API (que aún da la antigua) no la deshace. */
+    @Test
+    void laSincronizacionNoDeshaceLaFechaPuestaAMano() {
+        LocalDateTime fecha = Hora.ahora().plusDays(4).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi sevilla = equipo(559, "Sevilla FC", "Sevilla");
+        PartidoApi.EquipoApi betis = equipo(90, "Real Betis Balompié", "Betis");
+        devuelve(partido(900021, fecha, "POSTPONED", null, sevilla, betis));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900021L).orElseThrow();
+        assertThat(evento.getEstado()).isEqualTo(EstadoEvento.SUSPENDIDO);
+
+        // El creador le pone la nueva fecha y lo reactiva
+        LocalDateTime nueva = fecha.plusDays(10);
+        evento.modificar(evento.getLocal(), evento.getVisitante(), nueva, null, Hora.ahora());
+        resolucion.reactivar(evento.getId());
+
+        sincronizacion.sincronizar();
+        assertThat(evento.getFechaHora()).isEqualTo(nueva);
+        assertThat(evento.getEstado()).isEqualTo(EstadoEvento.PROGRAMADO);
+    }
+
+    /** La sincronización trae también los partidos de los últimos días: de esos no se avisa como «nuevo partido». */
+    @Test
+    void noSeAvisaDeUnPartidoNuevoQueYaSeHaJugado() {
+        favoritos.alternar("usuario@apuestas.es", equipos.findByNombre("Elche CF").orElseThrow().getId());
+        long antes = notificaciones.sinLeer("usuario@apuestas.es");
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        devuelve(partido(900022, Hora.ahora().minusDays(3).withNano(0), "FINISHED", "HOME_TEAM", elche, celta),
+                partido(900023, Hora.ahora().plusDays(3).withNano(0), "TIMED", null, celta, elche));
+        sincronizacion.sincronizar();
+
+        // Solo del próximo
+        assertThat(notificaciones.sinLeer("usuario@apuestas.es")).isEqualTo(antes + 1);
     }
 
     @Test

@@ -54,6 +54,14 @@ public class ResolucionService {
     }
 
     /**
+     * El evento para cambiar su estado, con su fila bloqueada hasta el final de la transacción: una apuesta que se
+     * esté guardando a la vez espera, o se guarda antes y la ve quien anula (ver {@link EventoRepository#paraCambiar}).
+     */
+    private Evento paraCambiar(Long id) {
+        return eventos.paraCambiar(id).orElseThrow(() -> new EventoNoDisponibleException(id));
+    }
+
+    /**
      * Introduce o corrige el resultado: el evento pasa a finalizado y todas sus apuestas
      * se resuelven y se pagan. Si se corrige, los saldos se reajustan (HU-04, HU-25).
      * Devuelve cuántas selecciones se han resuelto.
@@ -63,7 +71,7 @@ public class ResolucionService {
      */
     @Transactional
     public int introducirResultado(Long eventoId, Resultado resultado) {
-        Evento evento = evento(eventoId);
+        Evento evento = paraCambiar(eventoId);
         evento.finalizar(resultado);
         return resolverApuestas(evento);
     }
@@ -76,7 +84,7 @@ public class ResolucionService {
      */
     @Transactional
     public int introducirMarcador(Long eventoId, int golesLocal, int golesVisitante) {
-        Evento evento = evento(eventoId);
+        Evento evento = paraCambiar(eventoId);
         evento.finalizarConMarcador(golesLocal, golesVisitante);
         return resolverApuestas(evento);
     }
@@ -113,8 +121,9 @@ public class ResolucionService {
             Apuesta apuesta = seleccion.getApuesta();
             // Se guarda el estado anterior para avisar solo si cambia (HU-37)
             EstadoApuesta antes = apuesta.getEstado();
+            BigDecimal pagadoAntes = apuesta.getPagado();
             apuesta.resolver(evento, evento.getResultado(), ahora);
-            avisos.siCambia(apuesta, antes);
+            avisos.siCambia(apuesta, antes, pagadoAntes);
         }
         // HU-89: los retos 1 contra 1 a este partido se resuelven también
         publicador.publishEvent(new EventoResuelto(evento));
@@ -124,19 +133,19 @@ public class ResolucionService {
     /** Deja de admitir apuestas nuevas hasta que se reactive; las ya hechas siguen igual (HU-05). */
     @Transactional
     public void suspender(Long eventoId) {
-        evento(eventoId).suspender();
+        paraCambiar(eventoId).suspender();
     }
 
     /** Aplazado según la API: solo en ese caso la sincronización lo reactiva sola. */
     @Transactional
     public void suspenderPorApi(Long eventoId) {
-        evento(eventoId).suspenderPorApi();
+        paraCambiar(eventoId).suspenderPorApi();
     }
 
     /** Vuelve a admitir apuestas un evento suspendido (HU-05). */
     @Transactional
     public void reactivar(Long eventoId) {
-        evento(eventoId).reactivar();
+        paraCambiar(eventoId).reactivar(LocalDateTime.now(reloj));
     }
 
     /**
@@ -148,7 +157,7 @@ public class ResolucionService {
      */
     @Transactional
     public int anular(Long eventoId) {
-        Evento evento = evento(eventoId);
+        Evento evento = paraCambiar(eventoId);
         evento.anular();
         List<Seleccion> afectadas = selecciones.findByEvento(evento);
         LocalDateTime ahora = LocalDateTime.now(reloj);
@@ -156,8 +165,9 @@ public class ResolucionService {
         for (Seleccion seleccion : afectadas) {
             Apuesta apuesta = seleccion.getApuesta();
             EstadoApuesta antes = apuesta.getEstado();
+            BigDecimal pagadoAntes = apuesta.getPagado();
             apuesta.anular(evento, ahora);
-            avisos.siCambia(apuesta, antes);
+            avisos.siCambia(apuesta, antes, pagadoAntes);
         }
         publicador.publishEvent(new EventoResuelto(evento));
         return afectadas.size();

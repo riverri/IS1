@@ -1,6 +1,7 @@
 package es.ucm.fdi.is1.apuestas.gestion;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -70,6 +71,9 @@ class EditarEventoWebTest {
     @Autowired
     private RetoService retos;
 
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.ResolucionService resolucion;
+
     private Evento evento;
     private Equipo getafe;
     private Equipo sevilla;
@@ -122,6 +126,29 @@ class EditarEventoWebTest {
 
         editar(getafe, sevilla).andExpect(redirectedUrl("/gestion/eventos/" + evento.getId()));
         assertThat(evento.getFechaHora()).isEqualTo(nuevaFecha);
+    }
+
+    /**
+     * Un partido suspendido cuya hora ya ha pasado (un aplazado) se reprograma: se edita su fecha y se reactiva. Antes
+     * no se podía editar, y reactivarlo lo dejaba programado en el pasado, sin admitir apuestas.
+     */
+    @Test
+    void unSuspendidoCuyaHoraYaPasoSeReprogramaAntesDeReactivarlo() throws Exception {
+        Evento aplazado = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(), elche, getafe,
+                Hora.ahora().minusHours(2)));
+        aplazado.suspender();
+
+        assertThatThrownBy(() -> resolucion.reactivar(aplazado.getId()))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("ponle antes la nueva fecha");
+        mvc.perform(post("/gestion/eventos/{id}/editar", aplazado.getId()).with(CREADOR).with(csrf())
+                        .param("localId", elche.getId().toString())
+                        .param("visitanteId", getafe.getId().toString())
+                        .param("fechaHora", nuevaFecha.toString()))
+                .andExpect(redirectedUrl("/gestion/eventos/" + aplazado.getId()));
+        resolucion.reactivar(aplazado.getId());
+
+        assertThat(aplazado.getFechaHora()).isEqualTo(nuevaFecha);
+        assertThat(aplazado.admiteApuestas(Hora.ahora())).isTrue();
     }
 
     @Test

@@ -340,6 +340,32 @@ class QuinielaWebTest {
         assertThat(quinielas.boletoDe(ANA, quiniela.getId()).orElseThrow().isDevuelto()).isTrue();
     }
 
+    /** Con todos los partidos anulados no se ha jugado nada: se devuelve el precio entero, sin comisión de la casa. */
+    @Test
+    void siSeAnulanTodosLosPartidosSeDevuelveElPrecioEntero() {
+        Quiniela quiniela = crear();
+        quinielas.echarBoleto(ANA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.LOCAL, Resultado.LOCAL));
+        quinielas.echarBoleto(BEA, quiniela.getId(), List.of(Resultado.EMPATE, Resultado.EMPATE, Resultado.EMPATE));
+        BigDecimal anaAntes = saldo(ANA);
+        for (Evento partido : List.of(primero, segundo, tercero)) {
+            resolucion.anular(partido.getId());
+        }
+
+        quinielas.repartir(quiniela.getId());
+
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes.add(BigDecimal.TEN));
+        assertThat(movimientosDe(ANA, TipoMovimiento.QUINIELA_PREMIO)).isEmpty();
+    }
+
+    /** La hora de cierre es la del partido que empieza antes, aunque se haya aplazado el que iba primero. */
+    @Test
+    void elCierreEsElDelPartidoQueEmpiezaAntesAunqueSeAplaceElPrimero() {
+        Quiniela quiniela = crear();
+        primero.cambiarFecha(primero.getFechaHora().plusDays(7));
+
+        assertThat(quinielas.quiniela(quiniela.getId()).getCierre()).isEqualTo(segundo.getFechaHora());
+    }
+
     @Test
     void alAnularlaAntesDeRepartirSeDevuelveElPrecio() throws Exception {
         Quiniela quiniela = crear();

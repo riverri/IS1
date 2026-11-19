@@ -82,6 +82,9 @@ public class Evento {
     /** El resultado lo puso o lo corrigió el creador en Gestión: la sincronización con la API no lo cambia. */
     private boolean resultadoManual;
 
+    /** El creador cambió a mano la fecha de un partido de la API: la sincronización ya no la toca ni lo suspende. */
+    private boolean fechaManual;
+
     protected Evento() {
         // requerido por JPA
     }
@@ -174,14 +177,23 @@ public class Evento {
         return resultadoManual;
     }
 
+    public boolean isFechaManual() {
+        return fechaManual;
+    }
+
     /**
      * Vuelve a programado y admite apuestas otra vez, si no ha empezado (HU-05).
      *
-     * @throws IllegalStateException si no está suspendido
+     * @throws IllegalStateException si no está suspendido o ya ha pasado su hora (programado en el pasado no
+     *                               admitiría apuestas ni saldría en el catálogo: antes hay que cambiar la fecha)
      */
-    public void reactivar() {
+    public void reactivar(LocalDateTime ahora) {
         if (estado != EstadoEvento.SUSPENDIDO) {
             throw new IllegalStateException("Solo se puede reactivar un evento suspendido");
+        }
+        if (haEmpezado(ahora)) {
+            throw new IllegalStateException("La hora del evento ya ha pasado: ponle antes la nueva fecha (Editar) "
+                    + "y después reactívalo");
         }
         estado = EstadoEvento.PROGRAMADO;
         suspendidoPorApi = false;
@@ -265,7 +277,11 @@ public class Evento {
     public void modificar(Equipo nuevoLocal, Equipo nuevoVisitante, LocalDateTime nuevaFecha, String nuevaFase,
                           LocalDateTime ahora) {
         if (!editable(ahora)) {
-            throw new IllegalStateException("Solo se puede editar un evento que aún no ha empezado");
+            throw new IllegalStateException("Solo se puede editar un evento suspendido o que aún no ha empezado");
+        }
+        // En un partido de la API, una fecha puesta a mano (un aplazado, por ejemplo) manda sobre la de la API
+        if (idExterno != null && !nuevaFecha.equals(fechaHora)) {
+            fechaManual = true;
         }
         local = nuevoLocal;
         visitante = nuevoVisitante;
@@ -273,9 +289,12 @@ public class Evento {
         fase = nuevaFase;
     }
 
-    /** Programado o suspendido y sin empezar (HU-46). */
+    /**
+     * Programado y sin empezar, o suspendido (HU-46). Uno suspendido se puede editar aunque haya pasado su hora: es
+     * la forma de darle la nueva fecha de un partido aplazado antes de reactivarlo.
+     */
     public boolean editable(LocalDateTime ahora) {
-        return (estado == EstadoEvento.PROGRAMADO || estado == EstadoEvento.SUSPENDIDO) && fechaHora.isAfter(ahora);
+        return estado == EstadoEvento.SUSPENDIDO || estado == EstadoEvento.PROGRAMADO && fechaHora.isAfter(ahora);
     }
 
     /**

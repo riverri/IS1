@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import jakarta.persistence.LockModeType;
 
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
@@ -18,6 +22,20 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
  * {@code findAllByOrderBy...} (todos, ordenados).
  */
 public interface EventoRepository extends JpaRepository<Evento, Long> {
+
+    /**
+     * El evento para apostar en él, con su fila bloqueada para lectura (FOR SHARE): las apuestas pueden ir a la vez,
+     * pero esperan a que termine quien lo esté anulando o resolviendo (ver {@link #paraCambiar}), y al revés. Si no,
+     * una apuesta guardada justo mientras se anula se quedaría activa para siempre, con el dinero retenido.
+     */
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Query("select e from Evento e where e.id = :id")
+    Optional<Evento> paraApostar(@Param("id") Long id);
+
+    /** El evento para cambiar su estado (resultado, anular, suspender), con su fila bloqueada (FOR UPDATE). */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from Evento e where e.id = :id")
+    Optional<Evento> paraCambiar(@Param("id") Long id);
 
     /** Eventos en un estado que empiezan después de una fecha, del más próximo al más lejano (catálogo, HU-19). */
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha);

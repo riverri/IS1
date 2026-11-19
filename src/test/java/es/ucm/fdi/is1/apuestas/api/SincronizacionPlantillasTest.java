@@ -95,6 +95,32 @@ class SincronizacionPlantillasTest {
         assertThat(jugadores.findById(manual.getId())).isPresent();
     }
 
+    /** Un traspaso entre dos equipos nuestros: aunque su equipo anterior se procese antes, conserva su nota. */
+    @Test
+    void unTraspasoEntreDosEquiposNuestrosConservaLaNota() {
+        Equipo sevilla = equipos.findByNombre("Sevilla FC").orElseThrow();
+        devuelve(new PlantillaApi(sevilla.getIdExterno(), "Sevilla FC", "Sevilla", List.of(
+                        jugador(9201, "Mediocentro Viajero", "Central Midfield", 8))),
+                new PlantillaApi(getafe.getIdExterno(), "Getafe CF", "Getafe", List.of(
+                        jugador(9202, "Portero Fijo", "Goalkeeper", 1))));
+        sincronizacion.sincronizar();
+        Jugador viajero = jugadores.findByIdExterno(9201).orElseThrow();
+        viajero.cambiarNota(9.5);
+        Long id = viajero.getId();
+
+        // Ahora juega en el Getafe; el Sevilla sale primero en la lista de la API
+        devuelve(new PlantillaApi(sevilla.getIdExterno(), "Sevilla FC", "Sevilla", List.of(
+                        jugador(9203, "Otro del Sevilla", "Goalkeeper", 13))),
+                new PlantillaApi(getafe.getIdExterno(), "Getafe CF", "Getafe", List.of(
+                        jugador(9202, "Portero Fijo", "Goalkeeper", 1), jugador(9201, "Mediocentro Viajero", "Central Midfield", 6))));
+        sincronizacion.sincronizar();
+
+        Jugador traspasado = jugadores.findByIdExterno(9201).orElseThrow();
+        assertThat(traspasado.getId()).isEqualTo(id);
+        assertThat(traspasado.getEquipo()).isEqualTo(getafe);
+        assertThat(traspasado.getNota()).isEqualTo(9.5);
+    }
+
     @Test
     void lasPlantillasDeLosEquiposDeChampionsSalenDeSuLiga() {
         Equipo bayern = equipos.findByNombre("Bayern de Múnich").orElseThrow();

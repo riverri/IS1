@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -133,6 +134,7 @@ public class Quiniela {
 
     /** Fecha del primer partido: a partir de ahí ya no se admiten boletos. */
     public LocalDateTime getCierre() {
-        return partidos.isEmpty() ? null : partidos.get(0).getEvento().getFechaHora();
+        // El más temprano de todos, no el primero de la lista: si se aplaza un partido, el orden de la quiniela no cambia
+        return partidos.stream().map(p -> p.getEvento().getFechaHora()).min(Comparator.naturalOrder()).orElse(null);
     }
 }

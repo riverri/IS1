@@ -193,7 +193,14 @@ public class QuinielaService {
         List<BoletoQuiniela> todos = boletos.findByQuinielaOrderByIdAsc(quiniela);
         int maximo = todos.stream().mapToInt(BoletoQuiniela::contarAciertos).max().orElse(0);
         int partidos = quiniela.getPartidos().size();
-        if (maximo == 0) {
+        // Con todos los partidos anulados no se ha jugado nada: se devuelve el precio entero, sin comisión (si no,
+        // todos "acertarían" todo y cobrarían menos de lo que pagaron)
+        boolean todosAnulados = quiniela.getPartidos().stream()
+                .allMatch(p -> p.getEvento().getEstado() == EstadoEvento.ANULADO);
+        if (todosAnulados) {
+            todos.forEach(b -> devolver(b, "Se han anulado todos los partidos de la quiniela «" + quiniela.getNombre()
+                    + "»: te hemos devuelto " + monedas(b.getPagado()) + " monedas.", ahora));
+        } else if (maximo == 0) {
             todos.forEach(b -> devolver(b, "Nadie ha acertado ningún partido de la quiniela «" + quiniela.getNombre()
                     + "»: te hemos devuelto " + monedas(b.getPagado()) + " monedas.", ahora));
         } else {
