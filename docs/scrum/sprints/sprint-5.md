@@ -24,6 +24,7 @@
 | Accesibilidad: HU-97 a HU-101 (teclado, lector de pantalla, contraste y ampliar, no solo color y menos movimiento), fila 57 ([#120](https://github.com/riverri/IS1/pull/120)) | | |
 | Informe de cobertura con JaCoCo y 13 pruebas más de HU-86 a HU-96. Arreglos: aceptar un reto de un partido ya empezado no devolvía el importe, y una alerta o supercuota de un partido que no existe daba un error 500 ([#121](https://github.com/riverri/IS1/pull/121)) | | |
 | Datos de demostración para Render (`DEMO_DATOS=true`): jugadores con apuestas, partidos próximos, una supercuota y una liga; la comprobación de accesibilidad de la CI los usa | | |
+| Depuración: errores 500 con ids inexistentes y nombres raros, retos que no se recalculaban al corregir ni se devolvían al dejar la liga, supercuota desde el boleto, bloqueo de apuestas y quinielas a la vez, resultados a mano que pisaba la API y límite de intentos con la contraseña actual ([#123](https://github.com/riverri/IS1/pull/123)) | | |
 | | | |
 | **Total** | | |
 
