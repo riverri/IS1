@@ -36,3 +36,7 @@ input, select, textarea { background: var(--superficie); color: var(--texto); }
 .supercuota-aviso { background: #3a300a; color: #fde68a; }
 .cuota { background: #18243b; }
 .cuota small { color: var(--texto-suave); }
+
+/* Accesibilidad (HU-99): el azul del visitante, más claro sobre fondo oscuro */
+.leyenda-cuotas .linea-visitante { color: #93c5fd; }
+.evolucion-cuotas .linea-visitante { stroke: #60a5fa; }

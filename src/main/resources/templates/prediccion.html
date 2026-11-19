@@ -6,9 +6,9 @@
 <main class="estrecho ancho-medio">
     <h1 th:text="${mercado.pregunta}">¿Ganará el FC Barcelona LaLiga 2026/27?</h1>
     <p class="aviso" th:if="${mercado.descripcion}" th:text="${mercado.descripcion}">Cómo se resuelve</p>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
-    <p class="alerta" th:if="${aviso}" th:text="${aviso}">El precio ha cambiado</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta" th:if="${aviso}" th:text="${aviso}">El precio ha cambiado</p>
 
     <div th:replace="~{fragments/prediccion :: barra(${mercado})}"></div>
 

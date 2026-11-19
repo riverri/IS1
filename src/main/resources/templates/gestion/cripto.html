@@ -6,8 +6,8 @@
 <main class="estrecho ancho-medio">
     <div class="tarjeta tarjeta-formulario">
         <h1>Configuración de las criptomonedas</h1>
-        <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
-        <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+        <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+        <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
         <form class="formulario" th:action="@{/gestion/cripto}" method="post">
             <label class="casilla">
                 <input type="checkbox" name="activo" value="true" th:checked="${configuracion.activo}">

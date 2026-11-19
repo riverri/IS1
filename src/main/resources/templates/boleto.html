@@ -7,8 +7,8 @@
     <div class="titulo-pagina">
         <h1>Boleto</h1>
     </div>
-    <p class="alerta alerta-aviso" th:if="${aviso}" th:text="${aviso}">Han cambiado las cuotas</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-aviso" th:if="${aviso}" th:text="${aviso}">Han cambiado las cuotas</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="vacio" th:if="${#lists.isEmpty(vista.lineas)}">
         <p>Tu boleto está vacío. Pulsa las cuotas de varios partidos para crear una combinada.</p>

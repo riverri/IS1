@@ -68,9 +68,9 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (29) | 99 | 8.118 | 587 | 95 | 0,7 millones | 95 $ |
+| Historias integradas (34) | 114 | 9.348 | 676 | 109 | 0,9 millones | 109 $ |
 | Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 0,2 millones | 30 $ |
-| Historias por hacer (10) | 40 | 3.280 | 235 | 38 | 0,3 millones | 38 $ |
+| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 0,2 millones | 24 $ |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -192,13 +192,13 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-94 | Modo oscuro | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-96 | Estadísticas por competición | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-97 | Usar la web solo con el teclado | Por hacer | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-98 | Usar la web con un lector de pantalla | Por hacer | 4 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-99 | Leer bien con poca visión | Por hacer | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-100 | No depender solo del color | Por hacer | 3 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-101 | Menos movimiento | Por hacer | 2 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-97 | Usar la web solo con el teclado | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-98 | Usar la web con un lector de pantalla | Integrada (Sprint 5) | 4 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-99 | Leer bien con poca visión | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-100 | No depender solo del color | Integrada (Sprint 5) | 3 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-101 | Menos movimiento | Integrada (Sprint 5) | 2 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**101 historias**: 46 hechas, 29 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-96, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 10 por hacer (HU-74, HU-75, HU-81 a HU-83 y HU-97 a HU-101) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **232 criterios de aceptación** en total; 97 son de historias hechas, 73 de las integradas, 20 de las pendientes de subir, 29 de las que están por hacer y 13 de las descartadas.
+**101 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **232 criterios de aceptación** en total; 97 son de historias hechas, 88 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer y 13 de las descartadas.
 
 ---
 
@@ -1824,13 +1824,15 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar: cualquiera tiene que poder usarla entera. La referencia es el nivel AA de las pautas WCAG 2.1, el que pide la norma europea EN 301 549.
 
+**Pruebas:** `AccesibilidadWebTest` y `AccesibilidadCssTest`, y en cada pull request la comprobación con navegador de [`a11y/comprobar.js`](../../a11y/comprobar.js): las reglas de WCAG 2.1 A y AA de axe en las páginas principales, con colores claros y oscuros, el uso con el teclado y la página a 320 px y ampliada al 200 %.
+
 ### HU-97 · Usar la web solo con el teclado
 
 **Como** usuario que no puede usar el ratón, **quiero** recorrer y usar toda la web con el teclado, **para** apostar igual que los demás.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 57 | 3 (Media) | — | Por hacer | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 57 | 3 (Media) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1848,7 +1850,7 @@ Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 57 | 3 (Media) | — | Por hacer | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| 57 | 3 (Media) | 5 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1867,7 +1869,7 @@ Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 57 | 3 (Media) | — | Por hacer | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| 57 | 3 (Media) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1885,7 +1887,7 @@ Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 57 | 3 (Media) | — | Por hacer | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 57 | 3 (Media) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -1903,7 +1905,7 @@ Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 57 | 3 (Media) | — | Por hacer | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 57 | 3 (Media) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 

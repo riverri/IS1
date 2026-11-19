@@ -9,7 +9,7 @@
         <h1>Recuperar la contraseña</h1>
         <p class="subtitulo">Te enviamos un enlace para crear una contraseña nueva.</p>
 
-        <p class="alerta alerta-exito" th:if="${param.enviado}">Si hay una cuenta con ese email, te hemos enviado
+        <p role="status" class="alerta alerta-exito" th:if="${param.enviado}">Si hay una cuenta con ese email, te hemos enviado
             un enlace. Caduca en 30 minutos y solo sirve una vez. Revisa también la carpeta de spam.</p>
 
         <form class="formulario" th:action="@{/recuperar}" method="post">

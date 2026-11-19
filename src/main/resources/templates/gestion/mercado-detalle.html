@@ -5,8 +5,8 @@
 <header th:replace="~{fragments/comun :: cabecera}"></header>
 <main class="estrecho ancho-medio">
     <a class="enlace-volver" th:href="@{/gestion}">← Volver al panel</a>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <div class="tarjeta marcador">
       <div class="marcador-cabecera">

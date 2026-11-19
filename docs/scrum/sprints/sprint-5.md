@@ -21,10 +21,11 @@
 | HU-95: beneficio diario de la casa, fila 55 ([#113](https://github.com/riverri/IS1/pull/113)) | | |
 | HU-96: estadísticas por competición, fila 56 ([#113](https://github.com/riverri/IS1/pull/113)) | | |
 | Mejora del aspecto de la web: cabecera en una fila, saldo siempre visible en el móvil, página de apostar en dos columnas y el mismo ancho en toda la web ([#115](https://github.com/riverri/IS1/pull/115), [#116](https://github.com/riverri/IS1/pull/116)) | | |
+| Accesibilidad: HU-97 a HU-101 (teclado, lector de pantalla, contraste y ampliar, no solo color y menos movimiento), fila 57 | | |
 | | | |
 | **Total** | | |
 
-**Hecho hasta ahora:** las once historias (HU-86 a HU-96) están integradas en `main`, con sus 26 criterios de aceptación cubiertos por pruebas automáticas ([trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md)). La fusión de las historias propuestas con `historias-de-usuario.md`, que el acta del Sprint 4 dejaba para este sprint, también está hecha ([#107](https://github.com/riverri/IS1/pull/107)).
+**Hecho hasta ahora:** las dieciséis historias (HU-86 a HU-101) están integradas en `main`, con sus 41 criterios de aceptación cubiertos por pruebas automáticas ([trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md)). La fusión de las historias propuestas con `historias-de-usuario.md`, que el acta del Sprint 4 dejaba para este sprint, también está hecha ([#107](https://github.com/riverri/IS1/pull/107)).
 
 ## Daily scrums
 - **_fecha_:**

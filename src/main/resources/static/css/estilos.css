@@ -1489,3 +1489,79 @@ main, .portada-interior, .pie-interior, .pie-legal { max-width: 1280px; }
 @media (min-width: 900px) {
     .pagina-apostar .opciones-especiales { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 }
+
+/* ==========================================================================
+   Accesibilidad (HU-97 a HU-101), nivel AA de WCAG 2.1
+   ========================================================================== */
+
+/* HU-97: enlace para saltar el menú; solo se ve al llegar con el tabulador */
+.saltar-contenido {
+    position: absolute;
+    left: 12px;
+    top: -60px;
+    z-index: 100;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #fff;
+    color: #0b1220 !important;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: var(--sombra-fuerte);
+}
+.saltar-contenido:focus { top: 10px; }
+#contenido:focus { outline: none; }
+/* Foco siempre visible, también en botones, desplegables y casillas */
+button:focus-visible, summary:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid rgba(16, 163, 107, .55);
+    outline-offset: 2px;
+}
+.cabecera a:focus-visible, .cabecera button:focus-visible { outline-color: #9ee6c4; }
+
+/* HU-99: contraste de al menos 4,5:1 */
+:root { --texto-suave: #5b6679; --error: #b42318; }
+.boton {
+    background: linear-gradient(180deg, #0b8457, #0b7f53);
+    box-shadow: 0 1px 2px rgba(11, 127, 83, .25), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+.boton:hover { background: linear-gradient(180deg, #0a7049, #096643); }
+.boton-secundario, .boton-secundario:hover { background: var(--superficie); }
+.boton-secundario:hover { background: var(--fondo); }
+.boton-fantasma { background: rgba(255, 255, 255, .04); }
+.boton-fantasma:hover { background: rgba(255, 255, 255, .12); }
+/* Rojo fijo con texto blanco: el --error del modo oscuro es claro y no daría contraste */
+.boton-peligro, .aviso-flotante-error { background: #b42318; }
+.boton-peligro:hover { background: #912018; }
+
+/* HU-100: las líneas del gráfico de cuotas se distinguen también por su trazo */
+.evolucion-cuotas .linea-empate { stroke-dasharray: 2 6; stroke-linecap: round; }
+.evolucion-cuotas .linea-visitante { stroke-dasharray: 10 6; }
+.leyenda-cuotas .linea-local::before { content: "━ "; }
+.leyenda-cuotas .linea-empate::before { content: "┅ "; }
+.leyenda-cuotas .linea-visitante::before { content: "╍ "; }
+
+/* HU-101: con «reducir movimiento» no hay animaciones ni transiciones */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+    /* El aviso de «añadido al boleto» se queda quieto en vez de desvanecerse */
+    .aviso-flotante { animation: none !important; }
+    .boton:active, .lista-ligas li:hover, .portada-destacado .partido:hover, .boton-secundario:hover { transform: none; }
+}
+
+/* HU-99: más contraste en los textos que quedaban por debajo de 4,5:1 */
+.pie-legal { color: #94a3b8; }
+.leyenda-cuotas .linea-local { color: var(--primario-oscuro); }
+.leyenda-cuotas .linea-visitante { color: #1d4ed8; }
+.barra-prediccion .lado-si { background: #0b7f53; }
+
+/* HU-99 (CA-99.3): nada obliga a desplazarse a los lados en un móvil de 320 px */
+.portada { overflow-x: clip; }
+@media (max-width: 560px) {
+    .buscador { flex: 1 1 100%; min-width: 0; max-width: none; }
+    /* Sin esto, el ancho propio del campo empuja el botón fuera de la pantalla */
+    .buscador input { width: 0; }
+}

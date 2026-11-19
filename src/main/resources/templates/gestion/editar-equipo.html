@@ -38,8 +38,8 @@
 
     <th:block th:unless="${equipo.deporte.individual}">
     <h2 id="jugadores">Jugadores</h2>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Jugador añadido</p>
-    <p class="alerta alerta-error" th:if="${errorJugadores}" th:text="${errorJugadores}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Jugador añadido</p>
+    <p role="alert" class="alerta alerta-error" th:if="${errorJugadores}" th:text="${errorJugadores}">Error</p>
     <p class="aviso">La nota (0-10) decide quién sale en la alineación probable. Los jugadores que llegan de la API se actualizan solos; si quitas uno, volverá con la siguiente descarga mientras siga en el equipo.</p>
     <div class="vacio" th:if="${#maps.isEmpty(plantilla)}">
         <p>Este equipo todavía no tiene jugadores.</p>

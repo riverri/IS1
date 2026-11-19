@@ -8,8 +8,8 @@
         <h1>Ligas con amigos</h1>
     </div>
     <p class="subtitulo">Crea una liga, pasa el código a tus amigos y competid en un ranking solo entre vosotros.</p>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
 
     <ul class="lista-ligas" th:unless="${#lists.isEmpty(ligas)}">
         <li class="tarjeta" th:each="l : ${ligas}">

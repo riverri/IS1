@@ -12,14 +12,14 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 29 integradas (HU-63 a HU-73, HU-76 a HU-80 y HU-84 a HU-96) | 73 | 73 (100 %) | 0 | 0 |
+| 34 integradas (HU-63 a HU-73, HU-76 a HU-80 y HU-84 a HU-101) | 88 | 88 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-86 a HU-96, del Sprint 5, con sus 73 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5, con sus 88 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
@@ -624,3 +624,43 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-96.1 | Aciertos y balance por competición; combinadas y largo plazo aparte | Automática | [`EstadisticasCompeticionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/EstadisticasCompeticionWebTest.java)`.cadaCompeticionTieneSusAciertosYSuBalanceYLasCombinadasVanAparte` |
 | CA-96.2 | Las activas no cuentan | Automática | [`EstadisticasCompeticionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/EstadisticasCompeticionWebTest.java)`.cadaCompeticionTieneSusAciertosYSuBalanceYLasCombinadasVanAparte` |
+
+## HU-97 · Usar la web solo con el teclado
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-97.1 | Todo se alcanza con el tabulador y el foco siempre se ve | Automática | [`a11y/comprobar.js`](../../a11y/comprobar.js)`.revisarTeclado` (foco visible en los 40 primeros pasos) y la regla de axe de orden y nombres |
+| CA-97.2 | Apostar sin ratón | Automática | [`a11y/comprobar.js`](../../a11y/comprobar.js)`.revisarTeclado` (elige con la barra espaciadora, escribe el importe y confirma con Intro) |
+| CA-97.3 | «Saltar al contenido» con el primer tabulador | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.cadaPaginaEmpiezaConUnEnlaceParaSaltarAlContenido` y [`a11y/comprobar.js`](../../a11y/comprobar.js)`.revisarTeclado` |
+
+## HU-98 · Usar la web con un lector de pantalla
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-98.1 | Cada cuota dice a qué resultado es | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.cadaCuotaDiceAQueResultadoEs` |
+| CA-98.2 | Los iconos tienen nombre o se saltan | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.losIconosDeLaCabeceraTienenNombre` y la regla de axe de nombres |
+| CA-98.3 | Los mensajes se anuncian | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.losMensajesSeAnuncianAlLectorDePantalla` |
+| CA-98.4 | Cada error queda unido a su campo | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.elScriptQueAsociaLosErroresASuCampoEstaEnTodasLasPaginas` |
+
+## HU-99 · Leer bien con poca visión
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-99.1 | Contraste de 4,5:1, en claro y oscuro | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.losTextosTienenContrasteSuficienteEnLosDosModos`, `.losBotonesTienenContrasteSuficiente` y la regla de contraste de axe en [`a11y/comprobar.js`](../../a11y/comprobar.js) |
+| CA-99.2 | Ampliada al 200 % se sigue usando | Automática | [`a11y/comprobar.js`](../../a11y/comprobar.js)`.revisarAnchos` (1280 px al 200 % = 640 px) |
+| CA-99.3 | Sin desplazamiento lateral a 320 px | Automática | [`a11y/comprobar.js`](../../a11y/comprobar.js)`.revisarAnchos` |
+
+## HU-100 · No depender solo del color
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-100.1 | Ganada o perdida, con texto | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.elHistorialDiceConTextoSiSeGanoOSePerdio` |
+| CA-100.2 | Líneas del gráfico por su trazo; subidas y bajadas con signo | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.lasLineasDelGraficoSeDistinguenPorElTrazo` y [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.lasSubidasYBajadasLlevanSigno` |
+| CA-100.3 | El error de un campo, con texto | Automática | [`AccesibilidadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadWebTest.java)`.elScriptQueAsociaLosErroresASuCampoEstaEnTodasLasPaginas` (el texto del error ya estaba) |
+
+## HU-101 · Menos movimiento
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-101.1 | Con «reducir movimiento», sin animaciones | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.conReducirMovimientoNoHayAnimaciones` |
+| CA-101.2 | Nada parpadea ni se mueve solo | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.ningunaAnimacionSeRepiteSinFin` |

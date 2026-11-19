@@ -9,7 +9,7 @@
         <h1>Contraseña nueva</h1>
 
         <th:block th:unless="${enlaceValido}">
-            <p class="alerta alerta-error">El enlace ha caducado o ya se ha usado. Pide uno nuevo.</p>
+            <p role="alert" class="alerta alerta-error">El enlace ha caducado o ya se ha usado. Pide uno nuevo.</p>
             <p class="pie-formulario"><a th:href="@{/recuperar}">Pedir otro enlace</a></p>
         </th:block>
 

@@ -7,9 +7,9 @@
     <div class="titulo-pagina">
         <h1>Mis apuestas</h1>
     </div>
-    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Apuesta registrada</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">No se puede cancelar</p>
-    <p class="alerta alerta-aviso" th:if="${aviso}" th:text="${aviso}">La cuota ha cambiado</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Apuesta registrada</p>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">No se puede cancelar</p>
+    <p role="status" class="alerta alerta-aviso" th:if="${aviso}" th:text="${aviso}">La cuota ha cambiado</p>
 
     <div class="estadisticas">
         <div class="tarjeta estadistica"><span th:text="${activas.size()}">2</span>apuestas activas</div>

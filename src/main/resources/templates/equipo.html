@@ -10,8 +10,8 @@
         <span th:replace="~{fragments/comun :: escudo(${equipo}, 'escudo-grande')}"></span>
         <div class="ficha-datos">
             <h1 th:text="${equipo.nombre}">FC Barcelona</h1>
-            <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Añadido a tus favoritos</p>
-            <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+            <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Añadido a tus favoritos</p>
+            <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
             <form th:if="${usuarioActual != null and !usuarioActual.creador}" th:action="@{/equipos/{id}/favorito(id=${equipo.id})}" method="post">
                 <button class="boton boton-secundario boton-pequeno boton-favorito" type="submit" th:classappend="${favorito} ? 'activo'"
                         th:text="${favorito} ? '★ Quitar de favoritos' : '☆ Añadir a favoritos'">☆ Añadir a favoritos</button>
