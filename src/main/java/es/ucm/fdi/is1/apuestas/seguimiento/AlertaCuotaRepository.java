@@ -17,4 +17,6 @@ public interface AlertaCuotaRepository extends JpaRepository<AlertaCuota, Long> 
     List<AlertaCuota> findByUsuarioAndEventoOrderByIdAsc(Usuario usuario, Evento evento);
 
     void deleteByEvento(Evento evento);
+
+    void deleteByUsuario(Usuario usuario);
 }

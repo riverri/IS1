@@ -145,17 +145,20 @@ public class SincronizacionService {
                 ZoneId.of(propiedades.zonaHoraria()));
 
         // Emparejamiento: primero por el identificador de la API; si no, un evento con los mismos equipos
-        // dentro de ±2 días (uno creado a mano o por DatosIniciales, quizá con otra hora)
+        // dentro de ±2 días (uno creado a mano o por DatosIniciales, quizá con otra hora). Solo uno sin enlazar a
+        // otro partido de la API y no anulado: si no, un partido reprogramado se pegaría al anulado y no se crearía
         // Optional.or: si el primero está vacío, prueba con el segundo; orElse(null): si los dos fallan, null
         Evento evento = eventos.findByIdExterno(partido.id())
                 .or(() -> eventos.findByLocalAndVisitanteAndFechaHoraBetween(local, visitante,
-                        fecha.minusDays(2), fecha.plusDays(2)).stream().findFirst())
+                        fecha.minusDays(2), fecha.plusDays(2)).stream()
+                        .filter(e -> e.getIdExterno() == null && e.getEstado() != EstadoEvento.ANULADO).findFirst())
                 .orElse(null);
-        if (evento == null) {
+        boolean nuevo = evento == null;
+        if (nuevo) {
             evento = eventos.save(new Evento(competicion, local, visitante, fecha));
-            // HU-86: aviso a quien sigue a alguno de los dos equipos
-            publicador.publishEvent(new EventoCreado(evento));
             resumen.eventoNuevo();
+        } else if (evento.isFechaManual()) {
+            // El creador le puso la fecha a mano (por ejemplo, un aplazado del que la API aún da la fecha antigua)
         } else if (!fecha.equals(evento.getFechaHora()) || evento.getIdExterno() == null) {
             // Ha cambiado la hora o es la primera vez que se enlaza. Evento solo cambia la fecha si aún no se ha jugado
             evento.cambiarFecha(fecha);
@@ -168,6 +171,11 @@ public class SincronizacionService {
             evento.setFase("Jornada " + partido.matchday());
         }
         aplicarEstado(partido, evento, resumen);
+        // HU-86: aviso a quien sigue a alguno de los dos equipos, solo si aún se puede apostar (la sincronización
+        // también trae los partidos de los últimos días, ya jugados)
+        if (nuevo && evento.admiteApuestas(LocalDateTime.now(reloj))) {
+            publicador.publishEvent(new EventoCreado(evento));
+        }
     }
 
     /**
@@ -216,8 +224,9 @@ public class SincronizacionService {
             });
             case "POSTPONED", "SUSPENDED" -> {
                 // Aplazado: deja de admitir apuestas. Queda marcado como suspendido por la API para que la
-                // sincronización lo reactive sola cuando vuelva a tener fecha
-                if (evento.getEstado() == EstadoEvento.PROGRAMADO) {
+                // sincronización lo reactive sola cuando vuelva a tener fecha. Si el creador ya le ha puesto la
+                // nueva fecha a mano, no se vuelve a suspender (la API sigue diciendo POSTPONED con la antigua)
+                if (evento.getEstado() == EstadoEvento.PROGRAMADO && !evento.isFechaManual()) {
                     resolucion.suspenderPorApi(evento.getId());
                 }
             }
@@ -228,8 +237,10 @@ public class SincronizacionService {
                 }
             }
             case "SCHEDULED", "TIMED" -> {
-                // Solo los que suspendió la propia API: los que suspendió el creador siguen suspendidos
-                if (evento.getEstado() == EstadoEvento.SUSPENDIDO && evento.isSuspendidoPorApi()) {
+                // Solo los que suspendió la propia API: los que suspendió el creador siguen suspendidos. Y con la
+                // nueva fecha por llegar: si la API aún da la hora pasada, se espera a la siguiente sincronización
+                if (evento.getEstado() == EstadoEvento.SUSPENDIDO && evento.isSuspendidoPorApi()
+                        && !evento.haEmpezado(LocalDateTime.now(reloj))) {
                     resolucion.reactivar(evento.getId());
                 }
             }

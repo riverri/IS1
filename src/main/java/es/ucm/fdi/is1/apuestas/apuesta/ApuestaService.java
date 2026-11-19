@@ -20,6 +20,7 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.CandidatoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
+import es.ucm.fdi.is1.apuestas.mercados.MercadoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -41,6 +42,7 @@ public class ApuestaService {
     private final EventoRepository eventos;
     private final UsuarioRepository usuarios;
     private final CandidatoRepository candidatos;
+    private final MercadoRepository mercados;
     private final CalculadoraCuotas calculadora;
     private final LimitesService limites;
     private final JuegoResponsableService juegoResponsable;
@@ -49,13 +51,15 @@ public class ApuestaService {
     private final Clock reloj;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
-                          CandidatoRepository candidatos, CalculadoraCuotas calculadora, LimitesService limites,
+                          CandidatoRepository candidatos, MercadoRepository mercados, CalculadoraCuotas calculadora,
+                          LimitesService limites,
                           JuegoResponsableService juegoResponsable, RegistroCuotas registroCuotas,
                           SupercuotaRepository supercuotas, Clock reloj) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
         this.candidatos = candidatos;
+        this.mercados = mercados;
         this.calculadora = calculadora;
         this.limites = limites;
         this.juegoResponsable = juegoResponsable;
@@ -104,7 +108,8 @@ public class ApuestaService {
         List<Long> cambiadas = new ArrayList<>();
         for (SeleccionPedida pedida : pedidas) {
             // Si el evento no existe o no admite apuestas (filter deja el Optional vacío), se lanza la excepción
-            Evento evento = eventos.findById(pedida.eventoId())
+            // Con la fila del evento bloqueada: si a la vez se anula o se resuelve, uno espera al otro
+            Evento evento = eventos.paraApostar(pedida.eventoId())
                     .filter(e -> e.admiteApuestas(ahora))
                     .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));
             // La cuota se calcula aquí, nunca se fía de la que envía la página
@@ -154,6 +159,10 @@ public class ApuestaService {
     public Apuesta apostarMercado(String email, Long mercadoId, Long candidatoId, BigDecimal cuotaVista,
                                   BigDecimal importe) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
+        // Primero el mercado, con su fila bloqueada: si a la vez se resuelve o se anula, uno espera al otro
+        if (mercados.paraApostar(mercadoId).isEmpty()) {
+            throw new MercadoNoDisponibleException(mercadoId);
+        }
         // El candidato tiene que ser del mercado de la URL y ese mercado tiene que seguir abierto
         Candidato candidato = candidatos.findById(candidatoId)
                 .filter(c -> c.getMercado().getId().equals(mercadoId))
@@ -258,8 +267,11 @@ public class ApuestaService {
         if (resultado == null) {
             return null;
         }
+        // Si la cuota normal ha subido hasta igualarla o pasarla, la "mejora" ya no mejora: vale la normal
         return supercuotas.findByEventoAndHastaAfter(evento, ahora).stream()
-                .filter(s -> s.isVigente(ahora) && s.getResultado() == resultado).findFirst().orElse(null);
+                .filter(s -> s.isVigente(ahora) && s.getResultado() == resultado)
+                .filter(s -> s.getCuota().compareTo(calculadora.cuota(evento, resultado, null)) > 0)
+                .findFirst().orElse(null);
     }
 
     /** Las cuotas 1X2 se mueven con el dinero apostado: se apuntan para su evolución (HU-91). */

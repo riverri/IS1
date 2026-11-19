@@ -28,21 +28,39 @@ class AvisosApuestas {
         this.eventos = eventos;
     }
 
-    /** Solo si el estado ha cambiado; una combinada que sigue pendiente de otros partidos no avisa. */
-    void siCambia(Apuesta apuesta, EstadoApuesta antes) {
+    /**
+     * Solo si el estado ha cambiado; una combinada que sigue pendiente de otros partidos no avisa.
+     *
+     * @param pagadoAntes lo que se le había pagado por la apuesta antes de resolverla ahora: en una corrección se le
+     *                    dice la diferencia que de verdad se le abona o retira, no el premio o el importe entero
+     */
+    void siCambia(Apuesta apuesta, EstadoApuesta antes, BigDecimal pagadoAntes) {
         EstadoApuesta ahora = apuesta.getEstado();
         if (ahora == antes || ahora == EstadoApuesta.ACTIVA || ahora == EstadoApuesta.CANCELADA) {
             return;
         }
-        // Si ya estaba resuelta, es una corrección del resultado (HU-04) y se dice así
-        String correccion = antes == EstadoApuesta.ACTIVA ? "" : "Resultado corregido. ";
-        String texto = switch (ahora) {
-            case GANADA -> correccion + "¡Has acertado " + descripcion(apuesta) + "! Cobras "
-                    + monedas(apuesta.getGananciaPotencial()) + " monedas.";
-            case PERDIDA -> correccion + "Has perdido " + descripcion(apuesta) + ".";
-            default -> correccion + "Se ha anulado " + descripcion(apuesta) + ". Te hemos devuelto "
-                    + monedas(apuesta.getImporte()) + " monedas.";
-        };
+        String texto;
+        if (antes == EstadoApuesta.ACTIVA) {
+            texto = switch (ahora) {
+                case GANADA -> "¡Has acertado " + descripcion(apuesta) + "! Cobras "
+                        + monedas(apuesta.getGananciaPotencial()) + " monedas.";
+                case PERDIDA -> "Has perdido " + descripcion(apuesta) + ".";
+                default -> "Se ha anulado " + descripcion(apuesta) + ". Te hemos devuelto "
+                        + monedas(apuesta.getImporte()) + " monedas.";
+            };
+        } else {
+            // Ya estaba resuelta: es una corrección del resultado (HU-04) y solo se mueve la diferencia
+            String estado = switch (ahora) {
+                case GANADA -> "Ahora ganas " + descripcion(apuesta) + ".";
+                case PERDIDA -> "Ahora pierdes " + descripcion(apuesta) + ".";
+                default -> "Se ha anulado " + descripcion(apuesta) + ".";
+            };
+            BigDecimal diferencia = apuesta.getPagado().subtract(pagadoAntes);
+            String dinero = diferencia.signum() > 0 ? " Te hemos abonado " + monedas(diferencia) + " monedas."
+                    : diferencia.signum() < 0 ? " Te hemos retirado " + monedas(diferencia.negate()) + " monedas."
+                    : "";
+            texto = "Resultado corregido. " + estado + dinero;
+        }
         // El tipo del aviso es el estado en minúsculas: "ganada", "perdida" o "anulada"
         notificaciones.avisar(apuesta.getUsuario(), ahora.name().toLowerCase(Locale.ROOT), texto);
         // HU-77: correo solo al ganar por primera vez, no al corregir, y si el usuario no lo ha desactivado.

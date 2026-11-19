@@ -93,7 +93,7 @@
                 if (!importe || !salida) { return; }
                 const cantidad = parseFloat(importe.value);
                 if (!elegido || !(cantidad > 0)) { salida.textContent = '–'; return; }
-                const ganancia = Math.floor(cantidad * parseFloat(elegido.dataset.cuota) * 100) / 100;
+                const ganancia = Math.floor(Math.round(cantidad * 100) * Math.round(parseFloat(elegido.dataset.cuota) * 100) / 100) / 100; // en céntimos enteros, como el servidor: con decimales 1 × 2,01 daba 2,00
                 salida.textContent = formato.format(ganancia) + ' monedas';
             }
             form.querySelectorAll('input[name="candidato"]').forEach(r => r.addEventListener('change', actualizar));

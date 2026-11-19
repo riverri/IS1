@@ -3,8 +3,10 @@ package es.ucm.fdi.is1.apuestas.ligas;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -166,13 +168,19 @@ public class LigaService {
     @EventListener
     public void alEliminarCuenta(CuentaEliminada cuenta) {
         Usuario usuario = usuarios.findById(cuenta.usuarioId()).orElseThrow();
+        // Quien se queda sin compartir liga con alguien: el propio usuario y los miembros de las ligas que se borran
+        Set<Long> afectados = new LinkedHashSet<>(List.of(usuario.getId()));
         for (Liga liga : ligas.deMiembro(usuario)) {
             if (liga.esCreador(usuario)) {
+                afectados.addAll(liga.getIdsMiembros());
                 ligas.delete(liga);
             } else {
                 liga.salir(usuario);
             }
         }
+        // Como al salir o borrar una liga: los retos pendientes se devuelven (RetoService). Se publica antes de que la
+        // baja ponga el saldo a cero, así que lo del propio usuario se pierde con su saldo, como sus apuestas
+        publicador.publishEvent(new MiembrosLigaCambiados(List.copyOf(afectados)));
     }
 
     /** Genera códigos al azar con {@link #ALFABETO} hasta dar con uno que no use otra liga. */

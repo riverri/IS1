@@ -16,6 +16,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Version;
 
 /**
  * Un pronóstico dentro de una apuesta, con la cuota fijada al apostar: el resultado de un evento (1/X/2),
@@ -33,6 +34,14 @@ public class Seleccion {
     @Id
     @GeneratedValue
     private Long id;
+
+    /**
+     * Bloqueo optimista, como en {@link Apuesta}: cambiar el importe de una combinada reescribe la cuota de sus
+     * selecciones; si a la vez se anula uno de sus partidos, la segunda en guardar falla en lugar de volver a dejar
+     * pendiente la selección anulada.
+     */
+    @Version
+    private long version;
 
     @ManyToOne(optional = false)
     private Apuesta apuesta;

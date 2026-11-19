@@ -64,12 +64,23 @@ class ConcurrenciaSaldoTest {
     @Autowired
     private es.ucm.fdi.is1.apuestas.cuotas.CuotaHistoricaRepository historico;
 
+    @Autowired
+    private ResolucionService resolucion;
+
+    @Autowired
+    private org.springframework.transaction.PlatformTransactionManager transacciones;
+
     private Evento evento;
+    private Evento otro;
 
     @AfterEach
     void limpiar() {
         apuestaRepository.findAll().stream().filter(a -> a.getUsuario().getEmail().equals(EMAIL))
                 .forEach(apuestaRepository::delete);
+        if (otro != null) {
+            historico.deleteAll(historico.findByEventoOrderByFechaAscIdAsc(otro));
+            eventos.deleteById(otro.getId());
+        }
         if (evento != null) {
             // Primero su historial de cuotas (HU-91), que apunta al evento
             historico.deleteAll(historico.findByEventoOrderByFechaAscIdAsc(evento));
@@ -138,5 +149,66 @@ class ConcurrenciaSaldoTest {
                 .isInstanceOf(ObjectOptimisticLockingFailureException.class);
         assertThat(apuestaRepository.findById(apuesta.getId()).orElseThrow().getEstado())
                 .isEqualTo(EstadoApuesta.CANCELADA);
+    }
+
+    /**
+     * Apostar mientras el creador anula el partido: la apuesta espera a que termine la anulación y entonces ve que el
+     * partido ya no admite apuestas. Antes se guardaba, nadie la devolvía y se quedaba activa con el dinero retenido.
+     */
+    @Test
+    void unaApuestaQueLlegaMientrasSeAnulaElPartidoNoSeGuarda() throws Exception {
+        usuarioService.crear(EMAIL, "Concurrencia", "secreta123", Rol.USUARIO);
+        evento = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                equipos.findByNombre("Getafe CF").orElseThrow(), equipos.findByNombre("Sevilla FC").orElseThrow(),
+                Hora.ahora().plusDays(1)));
+        BigDecimal saldoInicial = usuarios.findByEmail(EMAIL).orElseThrow().getSaldo();
+
+        ExecutorService hilo = Executors.newSingleThreadExecutor();
+        CountDownLatch anulado = new CountDownLatch(1);
+        // La anulación se hace pero tarda en confirmarse (medio segundo con el evento bloqueado)
+        Future<?> anulacion = hilo.submit(() -> new org.springframework.transaction.support.TransactionTemplate(transacciones)
+                .executeWithoutResult(estado -> {
+                    resolucion.anular(evento.getId());
+                    anulado.countDown();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }));
+        anulado.await();
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(
+                        () -> apuestas.apostar(EMAIL, evento.getId(), Resultado.LOCAL, BigDecimal.TEN))
+                .isInstanceOf(es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException.class);
+        anulacion.get();
+        hilo.shutdown();
+
+        assertThat(apuestaRepository.findAll()).noneMatch(a -> a.getUsuario().getEmail().equals(EMAIL));
+        assertThat(usuarios.findByEmail(EMAIL).orElseThrow().getSaldo()).isEqualByComparingTo(saldoInicial);
+    }
+
+    /**
+     * Cambiar el importe de una combinada reescribe la cuota de sus selecciones. Si a la vez se anula uno de sus
+     * partidos, guardar la combinada leída antes ya no vuelve a dejar pendiente la selección anulada.
+     */
+    @Test
+    void unaCombinadaLeidaAntesDeAnularUnoDeSusPartidosNoSeGuardaEncima() {
+        usuarioService.crear(EMAIL, "Concurrencia", "secreta123", Rol.USUARIO);
+        evento = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                equipos.findByNombre("Getafe CF").orElseThrow(), equipos.findByNombre("Sevilla FC").orElseThrow(),
+                Hora.ahora().plusDays(1)));
+        otro = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                equipos.findByNombre("Elche CF").orElseThrow(), equipos.findByNombre("Levante UD").orElseThrow(),
+                Hora.ahora().plusDays(2)));
+        Apuesta combinada = apuestas.apostar(EMAIL, List.of(new SeleccionPedida(evento.getId(), Resultado.LOCAL, null),
+                new SeleccionPedida(otro.getId(), Resultado.LOCAL, null)), BigDecimal.TEN);
+        Apuesta leidaAntes = apuestaRepository.findById(combinada.getId()).orElseThrow();
+
+        resolucion.anular(otro.getId());
+        leidaAntes.getSelecciones().forEach(sel -> sel.actualizarCuota(new BigDecimal("1.50")));
+
+        assertThatThrownBy(() -> apuestaRepository.save(leidaAntes))
+                .isInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
 }

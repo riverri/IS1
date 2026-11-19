@@ -222,7 +222,11 @@ public class Apuesta {
         TipoMovimiento tipo = yaResuelta ? TipoMovimiento.CORRECCION
                 : estado == EstadoApuesta.GANADA ? TipoMovimiento.PREMIO : TipoMovimiento.DEVOLUCION;
         usuario.ajustar(diferencia, tipo, tipo.getDescripcion() + ": " + descripcion(), ahora);
-        pagado = debePagar;
+        // A una cuenta eliminada no se le abona nada (Usuario.ajustar): lo pagado sigue siendo lo que se le pagó de
+        // verdad, para que las cuentas de la casa (HU-53) no cuenten como pagado un premio que nadie cobró
+        if (!usuario.isEliminado()) {
+            pagado = debePagar;
+        }
     }
 
     /**

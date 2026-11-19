@@ -51,6 +51,15 @@ class SeguimientoWebTest {
     private FavoritosService favoritos;
 
     @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.BajaService bajas;
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.SupercuotaService supercuotas;
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.ResolucionService resolucion;
+
+    @Autowired
     private AlertasService alertas;
 
     @Autowired
@@ -184,6 +193,62 @@ class SeguimientoWebTest {
         alertas.repasar();
 
         assertThat(alertaRepository.findById(alerta.getId())).isEmpty();
+    }
+
+    /** Un partido suspendido se puede reactivar: sus alertas se guardan y vuelven a valer. */
+    @Test
+    void lasAlertasDeUnPartidoSuspendidoSeGuardanHastaQueSeReactive() {
+        BigDecimal actual = calculadora.calcular(partido).local();
+        AlertaCuota alerta = alertas.crear(ANA, partido.getId(), Resultado.LOCAL, actual.add(BigDecimal.ONE));
+        resolucion.suspender(partido.getId());
+
+        alertas.repasar();
+        assertThat(alertaRepository.findById(alerta.getId())).isPresent();
+
+        resolucion.reactivar(partido.getId());
+        alertas.repasar();
+        assertThat(alertaRepository.findById(alerta.getId())).isPresent();
+    }
+
+    /** Al eliminar la cuenta se borran sus alertas y sus favoritos: no siguen creando avisos. */
+    @Test
+    void alEliminarLaCuentaSeBorranSusAlertasYSusFavoritos() {
+        BigDecimal actual = calculadora.calcular(partido).local();
+        alertas.crear(ANA, partido.getId(), Resultado.LOCAL, actual.add(BigDecimal.ONE));
+        favoritos.alternar(ANA, getafe.getId());
+
+        bajas.eliminarCuenta(ANA, "secreta123");
+
+        assertThat(alertaRepository.findAll()).noneMatch(a -> a.getEvento().getId().equals(partido.getId()));
+        assertThat(favoritos.esFavorito(ANA, getafe.getId())).isFalse();
+    }
+
+    /** Con supercuota, la alerta se compara con la cuota que se ve en la página: la supercuota. */
+    @Test
+    void conSupercuotaLaAlertaSeComparaConLaQueSeVe() {
+        BigDecimal normal = calculadora.calcular(partido).local();
+        BigDecimal mejorada = normal.add(new BigDecimal("0.50"));
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada, new BigDecimal("50"), 24);
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() ->
+                        alertas.crear(ANA, partido.getId(), Resultado.LOCAL, normal.add(new BigDecimal("0.10"))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(mejorada.toPlainString().replace('.', ','));
+    }
+
+    /** Doble clic en «Seguir»: la segunda petición choca con la restricción única y no da un error 500. */
+    @Test
+    void marcarFavoritoDosVecesALaVezNoDaError() throws Exception {
+        org.springframework.test.web.servlet.MockMvc conFallo = org.springframework.test.web.servlet.setup.MockMvcBuilders
+                .standaloneSetup(new SeguimientoController(new FavoritosService(null, null, null, null, null, null) {
+                    @Override
+                    public boolean alternar(String email, Long equipoId) {
+                        throw new org.springframework.dao.DataIntegrityViolationException("uk_equipo_favorito");
+                    }
+                }, alertas)).build();
+        conFallo.perform(post("/equipos/{id}/favorito", getafe.getId()).principal(() -> ANA))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("mensaje", "Añadido a tus favoritos."));
     }
 
     @Test

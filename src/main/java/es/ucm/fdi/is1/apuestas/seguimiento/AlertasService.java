@@ -13,14 +13,16 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.ucm.fdi.is1.apuestas.eventos.EventoBorrado;
-import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
+import es.ucm.fdi.is1.apuestas.apuesta.SupercuotaService;
 import es.ucm.fdi.is1.apuestas.cuotas.Cuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.CuotasCambiadas;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
+import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.eventos.EventoBorrado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
+import es.ucm.fdi.is1.apuestas.usuarios.CuentaEliminada;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
@@ -38,16 +40,17 @@ public class AlertasService {
     private final AlertaCuotaRepository alertas;
     private final EventoRepository eventos;
     private final UsuarioRepository usuarios;
-    private final CalculadoraCuotas calculadora;
+    private final SupercuotaService supercuotas;
     private final NotificacionService notificaciones;
     private final Clock reloj;
 
     public AlertasService(AlertaCuotaRepository alertas, EventoRepository eventos, UsuarioRepository usuarios,
-                          CalculadoraCuotas calculadora, NotificacionService notificaciones, Clock reloj) {
+                          SupercuotaService supercuotas,
+                          NotificacionService notificaciones, Clock reloj) {
         this.alertas = alertas;
         this.eventos = eventos;
         this.usuarios = usuarios;
-        this.calculadora = calculadora;
+        this.supercuotas = supercuotas;
         this.notificaciones = notificaciones;
         this.reloj = reloj;
     }
@@ -72,7 +75,8 @@ public class AlertasService {
         if (!evento.admiteApuestas(ahora)) {
             throw new IllegalStateException("Este partido ya no admite apuestas");
         }
-        BigDecimal actual = resultado == null ? null : calculadora.calcular(evento).de(resultado);
+        // La cuota que se ve en la página: con supercuota (HU-87), la supercuota
+        BigDecimal actual = resultado == null ? null : supercuotas.cuotasConSupercuota(evento).de(resultado);
         if (actual == null) {
             throw new IllegalArgumentException("Elige el resultado de la alerta");
         }
@@ -104,6 +108,12 @@ public class AlertasService {
         return alerta.getEvento().getId();
     }
 
+    /** Al eliminar una cuenta (HU-18) se borran sus alertas: si no, seguirían saltando y creando avisos. */
+    @EventListener
+    public void alEliminarCuenta(CuentaEliminada cuenta) {
+        usuarios.findById(cuenta.usuarioId()).ifPresent(alertas::deleteByUsuario);
+    }
+
     /** Al borrar un evento creado por error, sus alertas se van con él. */
     @EventListener
     public void alBorrarse(EventoBorrado borrado) {
@@ -116,11 +126,15 @@ public class AlertasService {
     public void alCambiar(CuotasCambiadas cambio) {
         List<AlertaCuota> pendientes = alertas.findByEventoIdAndAvisadaIsNull(cambio.eventoId());
         if (!pendientes.isEmpty()) {
-            comprobar(pendientes, cambio.cuotas(), LocalDateTime.now(reloj));
+            // Las nuevas cuotas, con la supercuota si la hay: la misma que se ve en la página
+            comprobar(pendientes, supercuotas.cuotasConSupercuota(pendientes.get(0).getEvento()), LocalDateTime.now(reloj));
         }
     }
 
-    /** Repaso de todas las alertas pendientes; las de partidos que ya no admiten apuestas se borran (CA-90.3). */
+    /**
+     * Repaso de todas las alertas pendientes; las de partidos que ya no admiten apuestas se borran (CA-90.3). Las de
+     * un partido suspendido se guardan sin comprobarlas: si se reactiva, vuelven a valer.
+     */
     @Scheduled(initialDelayString = "${apuestas.alertas.intervalo:PT10M}", fixedDelayString = "${apuestas.alertas.intervalo:PT10M}")
     @Transactional
     public void repasar() {
@@ -128,16 +142,19 @@ public class AlertasService {
         java.util.Map<Evento, List<AlertaCuota>> porEvento = new java.util.HashMap<>();
         alertas.findByAvisadaIsNull().forEach(a -> porEvento.computeIfAbsent(a.getEvento(), e -> new java.util.ArrayList<>()).add(a));
         porEvento.forEach((evento, lista) -> {
-            if (!evento.admiteApuestas(ahora)) {
+            if (evento.admiteApuestas(ahora)) {
+                comprobar(lista, supercuotas.cuotasConSupercuota(evento), ahora);
+            } else if (evento.getEstado() != EstadoEvento.SUSPENDIDO || evento.haEmpezado(ahora)) {
                 alertas.deleteAll(lista);
-            } else {
-                comprobar(lista, calculadora.calcular(evento), ahora);
             }
         });
     }
 
     private void comprobar(List<AlertaCuota> pendientes, Cuotas cuotas, LocalDateTime ahora) {
         for (AlertaCuota alerta : pendientes) {
+            if (alerta.getUsuario().isEliminado()) {
+                continue; // por si acaso: al eliminar la cuenta ya se borran sus alertas
+            }
             BigDecimal actual = cuotas.de(alerta.getResultado());
             if (actual != null && actual.compareTo(alerta.getCuota()) >= 0) {
                 alerta.avisar(ahora);

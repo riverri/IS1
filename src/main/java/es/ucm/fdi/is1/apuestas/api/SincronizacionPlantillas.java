@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -78,6 +80,10 @@ public class SincronizacionPlantillas {
         // aquí. Con un array, el método cambia las casillas del mismo array que tenemos nosotros
         int[] cuenta = new int[3];
         List<String> errores = new ArrayList<>();
+        // Jugadores de la API que salen en la plantilla de cada equipo procesado. Los que ya no están se borran al
+        // final, cuando se han visto todas: si se hiciera equipo a equipo, un traspaso entre dos equipos nuestros
+        // borraría al jugador antes de llegar a su equipo nuevo, y se perdería la nota que le puso el creador
+        Map<Equipo, Set<Integer>> plantillas = new LinkedHashMap<>();
         for (String codigo : propiedades.ligasDePlantillas()) {
             try {
                 for (PlantillaApi datos : fuente.plantillas(codigo)) {
@@ -88,7 +94,7 @@ public class SincronizacionPlantillas {
                             || !procesados.add(equipo.getId())) {
                         continue;
                     }
-                    actualizar(equipo, datos.squad(), cuenta);
+                    plantillas.put(equipo, actualizar(equipo, datos.squad(), cuenta));
                 }
             } catch (RestClientException e) {
                 // Sin conexión, límite de peticiones…: se apunta y se pasa a la liga siguiente
@@ -96,13 +102,23 @@ public class SincronizacionPlantillas {
                 errores.add(codigo + ": " + e.getMessage());
             }
         }
+        // Los de la API que ya no salen en la plantilla de su equipo lo han dejado (y no han llegado a otro de los
+        // nuestros, que ya los habría cambiado de equipo); los dados de alta a mano (sin identificador) se quedan (CA-50.2)
+        plantillas.forEach((equipo, enLaPlantilla) -> {
+            for (Jugador jugador : jugadores.findByEquipo(equipo)) {
+                if (jugador.isDeLaApi() && !enLaPlantilla.contains(jugador.getIdExterno())) {
+                    jugadores.delete(jugador);
+                    cuenta[2]++;
+                }
+            }
+        });
         Resumen resumen = new Resumen(procesados.size(), cuenta[0], cuenta[1], cuenta[2], errores);
         LOG.info("Plantillas: {}", resumen);
         return resumen;
     }
 
-    /** cuenta: [nuevos, actualizados, retirados]. */
-    private void actualizar(Equipo equipo, List<PlantillaApi.JugadorApi> plantilla, int[] cuenta) {
+    /** cuenta: [nuevos, actualizados, retirados]. Devuelve los identificadores de la API de la plantilla. */
+    private Set<Integer> actualizar(Equipo equipo, List<PlantillaApi.JugadorApi> plantilla, int[] cuenta) {
         Set<Integer> enLaPlantilla = new HashSet<>();
         for (PlantillaApi.JugadorApi datos : plantilla) {
             Posicion posicion = Posicion.desdeApi(datos.position());
@@ -124,14 +140,7 @@ public class SincronizacionPlantillas {
                     fecha(datos.dateOfBirth()));
             jugadores.save(jugador);
         }
-        // Los de la API que ya no salen en la plantilla han dejado el equipo; los dados de alta a mano
-        // (sin identificador de la API) se quedan (CA-50.2)
-        for (Jugador jugador : jugadores.findByEquipo(equipo)) {
-            if (jugador.isDeLaApi() && !enLaPlantilla.contains(jugador.getIdExterno())) {
-                jugadores.delete(jugador);
-                cuenta[2]++;
-            }
-        }
+        return enLaPlantilla;
     }
 
     /**

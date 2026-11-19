@@ -9,7 +9,7 @@ class ContrasenasPruebaTest {
 
     @Test
     void sinContrasenaDelCreadorNoArranca() {
-        DatosIniciales datos = new DatosIniciales(null, null, null, null, null, null, "", "", true);
+        DatosIniciales datos = new DatosIniciales(null, null, null, null, null, null, "", "", true, true);
 
         assertThatThrownBy(() -> datos.run(null))
                 .isInstanceOf(IllegalStateException.class)

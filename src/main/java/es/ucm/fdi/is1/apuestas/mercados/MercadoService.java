@@ -64,6 +64,12 @@ public class MercadoService {
         return mercados.findById(id).orElseThrow(() -> new MercadoNoDisponibleException(id));
     }
 
+    /** Como {@link #mercado}, con la fila bloqueada para resolverlo o anularlo (ver {@link MercadoRepository#paraCambiar}). */
+    @Transactional
+    public Mercado mercadoParaCambiar(Long id) {
+        return mercados.paraCambiar(id).orElseThrow(() -> new MercadoNoDisponibleException(id));
+    }
+
     /**
      * Crea un mercado con sus candidatos, uno por línea con el formato "Nombre; cuota" (HU-45).
      * Si un candidato se llama igual que un equipo o deportista del mismo deporte, se enlaza para mostrar su escudo.

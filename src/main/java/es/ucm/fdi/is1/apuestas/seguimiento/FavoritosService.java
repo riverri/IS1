@@ -18,6 +18,7 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoCreado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
+import es.ucm.fdi.is1.apuestas.usuarios.CuentaEliminada;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
@@ -66,9 +67,17 @@ public class FavoritosService {
             favoritos.delete(f);
             return false;
         }).orElseGet(() -> {
-            favoritos.save(new EquipoFavorito(usuario, equipo));
+            // saveAndFlush: si con un doble clic la otra petición ya lo ha marcado, la restricción única
+            // (uk_equipo_favorito) falla aquí, y el controlador lo trata como marcado
+            favoritos.saveAndFlush(new EquipoFavorito(usuario, equipo));
             return true;
         });
+    }
+
+    /** Al eliminar una cuenta (HU-18) deja de seguir sus equipos. */
+    @EventListener
+    public void alEliminarCuenta(CuentaEliminada cuenta) {
+        usuarios.findById(cuenta.usuarioId()).ifPresent(u -> favoritos.deleteAll(favoritos.findByUsuario(u)));
     }
 
     @Transactional(readOnly = true)

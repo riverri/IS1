@@ -50,6 +50,9 @@ class RetoWebTest {
     private RetoService retos;
 
     @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.BajaService bajas;
+
+    @Autowired
     private LigaService ligas;
 
     @Autowired
@@ -280,6 +283,18 @@ class RetoWebTest {
         // Al borrar la última liga en común, también se devuelve
         ligas.borrar(otra.getId(), ANA);
         assertThat(sigue.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
+        assertThat(saldo(ANA)).isEqualByComparingTo(antes);
+    }
+
+    /** Como al salir de la liga: si el retado elimina su cuenta sin contestar, al retador se le devuelve el importe. */
+    @Test
+    void siElRetadoEliminaSuCuentaElRetoPendienteSeDevuelve() {
+        BigDecimal antes = saldo(ANA);
+        Reto reto = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+
+        bajas.eliminarCuenta(LUIS, "secreta123");
+
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
         assertThat(saldo(ANA)).isEqualByComparingTo(antes);
     }
 
