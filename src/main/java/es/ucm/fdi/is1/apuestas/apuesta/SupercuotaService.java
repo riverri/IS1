@@ -54,7 +54,8 @@ public class SupercuotaService {
     @Transactional
     public Supercuota crear(Long eventoId, Resultado resultado, BigDecimal cuota, BigDecimal importeMaximo, Integer horas) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        Evento evento = eventos.findById(eventoId).orElseThrow();
+        Evento evento = (eventoId == null ? java.util.Optional.<Evento>empty() : eventos.findById(eventoId))
+                .orElseThrow(() -> new IllegalArgumentException("No existe ese evento"));
         if (!evento.admiteApuestas(ahora)) {
             throw new IllegalStateException("Este evento ya no admite apuestas");
         }

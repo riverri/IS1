@@ -92,9 +92,11 @@ public class RetoService {
      * El retado acepta con otro resultado y paga lo mismo (CA-89.2).
      *
      * @throws IllegalArgumentException si no es el retado o elige el mismo resultado
-     * @throws IllegalStateException    si ya no está pendiente o el partido ha empezado (entonces se devuelve)
+     * @throws IllegalStateException    si ya no está pendiente
+     * @throws RetoCaducadoException    si el partido ya no admite apuestas: el reto se anula y se devuelve el importe.
+     *                                  No deshace la transacción, para que esa devolución se guarde
      */
-    @Transactional
+    @Transactional(noRollbackFor = RetoCaducadoException.class)
     public Reto aceptar(String email, Long retoId, Resultado pronostico) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
@@ -104,7 +106,7 @@ public class RetoService {
         }
         if (!reto.getEvento().admiteApuestas(ahora)) {
             devolver(reto, ahora);
-            throw new IllegalStateException("El partido ya ha empezado: el reto se ha anulado y se ha devuelto el importe");
+            throw new RetoCaducadoException();
         }
         comprobarPronostico(reto.getEvento(), pronostico);
         if (pronostico == reto.getPronosticoRetador()) {

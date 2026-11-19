@@ -21,7 +21,8 @@
 | HU-95: beneficio diario de la casa, fila 55 ([#113](https://github.com/riverri/IS1/pull/113)) | | |
 | HU-96: estadísticas por competición, fila 56 ([#113](https://github.com/riverri/IS1/pull/113)) | | |
 | Mejora del aspecto de la web: cabecera en una fila, saldo siempre visible en el móvil, página de apostar en dos columnas y el mismo ancho en toda la web ([#115](https://github.com/riverri/IS1/pull/115), [#116](https://github.com/riverri/IS1/pull/116)) | | |
-| Accesibilidad: HU-97 a HU-101 (teclado, lector de pantalla, contraste y ampliar, no solo color y menos movimiento), fila 57 | | |
+| Accesibilidad: HU-97 a HU-101 (teclado, lector de pantalla, contraste y ampliar, no solo color y menos movimiento), fila 57 ([#120](https://github.com/riverri/IS1/pull/120)) | | |
+| Informe de cobertura con JaCoCo y 13 pruebas más de HU-86 a HU-96. Arreglos: aceptar un reto de un partido ya empezado no devolvía el importe, y una alerta o supercuota de un partido que no existe daba un error 500 | | |
 | | | |
 | **Total** | | |
 

@@ -556,7 +556,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-87.1 | Mejora la normal sin pasar del doble y acaba al empezar el partido | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.tieneQueMejorarLaNormalSinPasarDelDoble`, `.acabaAlEmpezarElPartidoOCuandoLaRetira` |
+| CA-87.1 | Mejora la normal sin pasar del doble y acaba al empezar el partido | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.tieneQueMejorarLaNormalSinPasarDelDoble`, `.acabaAlEmpezarElPartidoOCuandoLaRetira`, `.elImporteMaximoYLaDuracionTienenLimites`, `.soloEnUnEventoQueExisteYAdmiteApuestas`, `.noDuraMasQueHastaQueEmpiezaElPartido` |
 | CA-87.2 | En una simple se aplica hasta el importe máximo; en las combinadas, la normal | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.enUnaSimpleSeCobraConLaSupercuotaHastaElImporteMaximo` |
 | CA-87.3 | Sale destacada en la portada y en el partido | Automática | [`SupercuotaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/SupercuotaWebTest.java)`.elCreadorLaPublicaYSaleEnLaPortadaYEnElPartido` |
 
@@ -571,15 +571,15 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-89.1 | Se reta a un compañero de liga, se cobra y le llega el aviso | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.retoAUnCompaneroDesdeLaLigaYLeLlegaElAviso`, `.soloSeRetaACompanerosDeLiga` |
-| CA-89.2 | Aceptar con otro resultado cobra lo mismo; rechazar devuelve al retador | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.elQueAciertaSeLlevaLosDosImportes`, `.rechazarloOQueEmpieceSinAceptarDevuelveElImporte` |
+| CA-89.1 | Se reta a un compañero de liga, se cobra y le llega el aviso | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.retoAUnCompaneroDesdeLaLigaYLeLlegaElAviso`, `.soloSeRetaACompanerosDeLiga`, `.sinImporteOSinSaldoNoSeReta` |
+| CA-89.2 | Aceptar con otro resultado cobra lo mismo; rechazar devuelve al retador | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.elQueAciertaSeLlevaLosDosImportes`, `.rechazarloOQueEmpieceSinAceptarDevuelveElImporte`, `.elRetadoAceptaDesdeLaWebConOtroResultado`, `.elRetadorLoRetiraDesdeLaWebYNadieMasPuede` y [`RetoSinTransaccionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoSinTransaccionTest.java)`.aceptarloCuandoElPartidoYaNoAdmiteApuestasLoAnulaYDevuelveElImporte` |
 | CA-89.3 | El que acierta se lleva los dos importes; si no, se devuelve a cada uno | Automática | [`RetoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/RetoWebTest.java)`.elQueAciertaSeLlevaLosDosImportes`, `.siNoAciertaNingunoSeDevuelveACadaUnoLoSuyo`, `.rechazarloOQueEmpieceSinAceptarDevuelveElImporte`, `.unEventoConRetosNoSeBorra` |
 
 ## HU-90 · Alerta de cuota
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-90.1 | La cuota de la alerta tiene que ser mayor que la actual | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.laCuotaDeLaAlertaTieneQueSerMayorQueLaActual` |
+| CA-90.1 | La cuota de la alerta tiene que ser mayor que la actual | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.laCuotaDeLaAlertaTieneQueSerMayorQueLaActual`, `.unaAlertaSinResultadoOEnUnPartidoQueNoExisteAvisaSinError`, `.comoMuchoTresAlertasPendientesPorPartido`, `.soloBorroMisAlertas` |
 | CA-90.2 | Al llegar la cuota, avisa una sola vez | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.cuandoLaCuotaLlegaAlValorMeAvisaUnaSolaVez` |
 | CA-90.3 | Las de partidos ya empezados se borran | Automática | [`SeguimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/seguimiento/SeguimientoWebTest.java)`.lasAlertasDeUnPartidoYaEmpezadoSeBorran` |
 
@@ -594,7 +594,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-92.1 | Llega a quien ha jugado, con lo jugado, lo cobrado y su puesto | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` |
+| CA-92.1 | Llega a quien ha jugado, con lo jugado, lo cobrado y su puesto | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` y [`CorreoResumenTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CorreoResumenTest.java)`.conServidorDeCorreoLlegaUnCorreoConElResumen`, `.sinServidorDeCorreoNoSeIntentaEnviar`, `.siElEnvioFallaNoSePropagaElError` |
 | CA-92.2 | Desactivado en Mi cuenta, no llega | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` |
 
 ## HU-93 · Exportar mi historial

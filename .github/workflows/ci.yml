@@ -17,6 +17,23 @@ jobs:
           cache: maven
       - name: Compilar y ejecutar pruebas
         run: ./mvnw -B verify
+      # Cobertura de las pruebas (JaCoCo): el resumen sale en la página de la ejecución y el informe completo,
+      # en el artefacto «cobertura-jacoco» (abrir index.html)
+      - name: Resumen de la cobertura
+        if: always()
+        run: |
+          if [ -f target/site/jacoco/jacoco.csv ]; then
+            awk -F, 'NR > 1 { im += $4; ic += $5; bm += $6; bc += $7; lm += $8; lc += $9 }
+              END { printf "## Cobertura de las pruebas (JaCoCo)\n\n| | Cubierto |\n|---|---:|\n| Líneas | %.1f %% |\n| Ramas | %.1f %% |\n| Instrucciones | %.1f %% |\n",
+                    100 * lc / (lm + lc), 100 * bc / (bm + bc), 100 * ic / (im + ic) }' \
+              target/site/jacoco/jacoco.csv >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Guardar el informe de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-jacoco
+          path: target/site/jacoco/
 
   # Las mismas pruebas contra PostgreSQL, la base de datos del servidor:
   # comprueba que las migraciones de db/migration/postgresql siguen al día con las entidades.

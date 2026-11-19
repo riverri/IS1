@@ -171,4 +171,53 @@ class RetoWebTest {
         assertThat(sinContestar.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
         assertThat(saldo(ANA)).isEqualByComparingTo(antes);
     }
+
+    @Test
+    void elRetadoAceptaDesdeLaWebConOtroResultado() throws Exception {
+        Reto reto = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        mvc.perform(post("/retos/{id}/aceptar", reto.getId()).with(user(LUIS)).with(csrf()).param("pronostico", "LOCAL"))
+                .andExpect(flash().attribute("error", containsString("Elige un resultado distinto del de Ana")));
+        mvc.perform(post("/retos/{id}/aceptar", reto.getId()).with(user(EVA)).with(csrf()).param("pronostico", "VISITANTE"))
+                .andExpect(flash().attribute("error", "Este reto no es para ti"));
+
+        BigDecimal antes = saldo(LUIS);
+        mvc.perform(post("/retos/{id}/aceptar", reto.getId()).with(user(LUIS)).with(csrf()).param("pronostico", "VISITANTE"))
+                .andExpect(flash().attribute("mensaje", "Reto aceptado. ¡Suerte!"));
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.ACEPTADO);
+        assertThat(saldo(LUIS)).isEqualByComparingTo(antes.subtract(BigDecimal.TEN));
+
+        // Ya aceptado, ni se vuelve a aceptar ni se puede retirar
+        mvc.perform(post("/retos/{id}/aceptar", reto.getId()).with(user(LUIS)).with(csrf()).param("pronostico", "EMPATE"))
+                .andExpect(flash().attribute("error", "Este reto ya no está pendiente"));
+        mvc.perform(post("/retos/{id}/rechazar", reto.getId()).with(user(ANA)).with(csrf()))
+                .andExpect(flash().attribute("error", "Este reto ya no está pendiente"));
+    }
+
+    @Test
+    void elRetadorLoRetiraDesdeLaWebYNadieMasPuede() throws Exception {
+        Reto reto = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        mvc.perform(post("/retos/{id}/rechazar", reto.getId()).with(user(EVA)).with(csrf()))
+                .andExpect(flash().attribute("error", "Este reto no es tuyo"));
+        mvc.perform(post("/retos/{id}/rechazar", reto.getId()).with(user(ANA)).with(csrf()))
+                .andExpect(flash().attribute("mensaje", containsString("se ha devuelto el importe")));
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.RECHAZADO);
+        mvc.perform(post("/retos/{id}/aceptar", 999_999).with(user(LUIS)).with(csrf()).param("pronostico", "VISITANTE"))
+                .andExpect(flash().attribute("error", "No existe ese reto"));
+    }
+
+    @Test
+    void sinImporteOSinSaldoNoSeReta() throws Exception {
+        mvc.perform(post("/retos").with(user(ANA)).with(csrf()).param("retado", luis.getId().toString())
+                        .param("evento", partido.getId().toString()).param("pronostico", "LOCAL"))
+                .andExpect(flash().attribute("error", "Indica el importe"));
+        mvc.perform(post("/retos").with(user(ANA)).with(csrf()).param("retado", luis.getId().toString())
+                        .param("evento", partido.getId().toString()).param("importe", "10"))
+                .andExpect(flash().attribute("error", containsString("Elige un resultado")));
+        // Ana se queda sin saldo con dos retos del importe máximo
+        retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, new BigDecimal("500"));
+        retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, new BigDecimal("500"));
+        mvc.perform(post("/retos").with(user(ANA)).with(csrf()).param("retado", luis.getId().toString())
+                        .param("evento", partido.getId().toString()).param("pronostico", "LOCAL").param("importe", "10"))
+                .andExpect(flash().attribute("error", "No tienes saldo suficiente para el reto"));
+    }
 }

@@ -185,4 +185,39 @@ class SeguimientoWebTest {
 
         assertThat(alertaRepository.findById(alerta.getId())).isEmpty();
     }
+
+    @Test
+    void unaAlertaSinResultadoOEnUnPartidoQueNoExisteAvisaSinError() throws Exception {
+        mvc.perform(post("/eventos/{id}/alertas", partido.getId()).with(user(ANA)).with(csrf()).param("cuota", "9"))
+                .andExpect(flash().attribute("errorAlerta", containsString("Elige el resultado")));
+        mvc.perform(post("/eventos/{id}/alertas", 999_999).with(user(ANA)).with(csrf())
+                        .param("resultado", "LOCAL").param("cuota", "9"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("errorAlerta", "No existe ese partido"));
+    }
+
+    @Test
+    void comoMuchoTresAlertasPendientesPorPartido() {
+        BigDecimal actual = calculadora.calcular(partido).local();
+        for (int i = 1; i <= AlertasService.MAXIMO_POR_EVENTO; i++) {
+            alertas.crear(ANA, partido.getId(), Resultado.LOCAL, actual.add(BigDecimal.valueOf(i)));
+        }
+        assertThatThrownBy(() -> alertas.crear(ANA, partido.getId(), Resultado.LOCAL, actual.add(BigDecimal.TEN)))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Como mucho 3");
+    }
+
+    @Test
+    void soloBorroMisAlertas() throws Exception {
+        usuarios.crear("otro-sigue@ucm.es", "Otro", "secreta123", Rol.USUARIO);
+        AlertaCuota mia = alertas.crear(ANA, partido.getId(), Resultado.LOCAL,
+                calculadora.calcular(partido).local().add(BigDecimal.ONE));
+
+        mvc.perform(post("/alertas/{id}/borrar", mia.getId()).with(user("otro-sigue@ucm.es")).with(csrf()))
+                .andExpect(flash().attribute("error", "No existe esa alerta"));
+        assertThat(alertaRepository.findById(mia.getId())).isPresent();
+
+        mvc.perform(post("/alertas/{id}/borrar", mia.getId()).with(user(ANA)).with(csrf()))
+                .andExpect(flash().attribute("mensajeAlerta", "Alerta borrada."));
+        assertThat(alertaRepository.findById(mia.getId())).isEmpty();
+    }
 }
