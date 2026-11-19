@@ -58,8 +58,17 @@ public class IntentosLogin {
         if (!usuarios.existsByEmail(email)) {
             return;
         }
+        fallo(email);
+    }
+
+    /**
+     * Contraseña actual equivocada con la sesión ya iniciada, al cambiarla o al eliminar la cuenta: cuenta como un
+     * fallo más. Si no, quien encuentre una sesión abierta podría probar contraseñas sin límite.
+     */
+    public void fallo(String email) {
+        Instant ahora = reloj.instant();
         // merge: si no había fallos guarda el nuevo; si los había, los combina con la lambda
-        fallos.merge(email, new Fallos(1, ahora), (antes, nuevo) ->
+        fallos.merge(clave(email), new Fallos(1, ahora), (antes, nuevo) ->
                 caducado(antes, ahora) ? nuevo : new Fallos(antes.seguidos() + 1, ahora));
     }
 

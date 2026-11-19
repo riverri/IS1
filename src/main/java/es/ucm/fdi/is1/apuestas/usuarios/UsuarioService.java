@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,15 +36,18 @@ public class UsuarioService {
     private final UsuarioRepository usuarios;
     private final MovimientoSaldoRepository movimientos;
     private final PasswordEncoder passwordEncoder;
+    private final IntentosLogin intentos;
     private final SaldoProperties saldo;
     private final Clock reloj;
 
     /** Inyección de dependencias: Spring llama a este constructor y le pasa los objetos que pide. */
     public UsuarioService(UsuarioRepository usuarios, MovimientoSaldoRepository movimientos,
-                          PasswordEncoder passwordEncoder, SaldoProperties saldo, Clock reloj) {
+                          PasswordEncoder passwordEncoder, SaldoProperties saldo, IntentosLogin intentos,
+                          Clock reloj) {
         this.usuarios = usuarios;
         this.movimientos = movimientos;
         this.passwordEncoder = passwordEncoder;
+        this.intentos = intentos;
         this.saldo = saldo;
         this.reloj = reloj;
     }
@@ -70,7 +74,14 @@ public class UsuarioService {
         // encode aplica BCrypt con una sal aleatoria: se guarda el resumen, nunca la contraseña
         Usuario usuario = new Usuario(emailNormalizado, nombre.trim(), passwordEncoder.encode(password), rol,
                 saldo.bienvenida(), LocalDateTime.now(reloj));
-        return usuarios.save(usuario);
+        try {
+            // saveAndFlush: el INSERT se hace aquí y no al terminar la transacción, para poder recoger el error
+            return usuarios.saveAndFlush(usuario);
+        } catch (DataIntegrityViolationException e) {
+            // Dos registros con el mismo email a la vez (doble clic): los dos pasan existsByEmail, pero la base de
+            // datos solo deja guardar uno (uk_usuario_email, la única restricción única de la tabla)
+            throw new EmailYaRegistradoException(emailNormalizado);
+        }
     }
 
     /**
@@ -99,8 +110,7 @@ public class UsuarioService {
     @Transactional
     public void cambiarPassword(String email, String actual, String nueva) {
         Usuario usuario = usuarios.findByEmail(normalizar(email)).orElseThrow();
-        // BCrypt no se puede descifrar: matches cifra la contraseña escrita con la sal del resumen y los compara
-        if (!passwordEncoder.matches(actual, usuario.getPasswordHash())) {
+        if (!passwordCorrecta(email, actual)) {
             throw new PasswordIncorrectaException();
         }
         usuario.cambiarPasswordHash(passwordEncoder.encode(nueva));
@@ -158,15 +168,29 @@ public class UsuarioService {
     }
 
     /**
-     * Comprueba la contraseña del usuario, por ejemplo antes de eliminar la cuenta (HU-18).
-     * Devuelve false si la contraseña es null o no existe la cuenta.
+     * Comprueba la contraseña del usuario, por ejemplo antes de eliminar la cuenta (HU-18) o de cambiarla (HU-47).
+     * Devuelve false si la contraseña es null o no existe la cuenta. Cada fallo cuenta en {@link IntentosLogin},
+     * como al iniciar sesión: tras cinco seguidos no se comprueba durante 15 minutos.
+     *
+     * @throws PasswordIncorrectaException si ya hay demasiados fallos seguidos
      */
     @Transactional(readOnly = true)
     public boolean passwordCorrecta(String email, String password) {
+        if (intentos.bloqueado(email)) {
+            throw PasswordIncorrectaException.demasiadosIntentos();
+        }
+        // BCrypt no se puede descifrar: matches cifra la contraseña escrita con la sal del resumen y los compara.
         // map transforma el usuario (si existe) en true/false; si no existe, orElse(false)
-        return password != null && usuarios.findByEmail(normalizar(email))
+        boolean correcta = password != null && usuarios.findByEmail(normalizar(email))
                 .map(u -> passwordEncoder.matches(password, u.getPasswordHash()))
                 .orElse(false);
+        // Como al iniciar sesión: acertar borra los fallos acumulados
+        if (correcta) {
+            intentos.olvidar(email);
+        } else {
+            intentos.fallo(normalizar(email));
+        }
+        return correcta;
     }
 
     /** Anonimiza la cuenta: los datos personales desaparecen y ya no se puede entrar con ella (HU-18). */

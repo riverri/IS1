@@ -35,7 +35,8 @@ public class BajaController {
         try {
             bajas.eliminarCuenta(principal.getName(), password);
         } catch (PasswordIncorrectaException e) {
-            redireccion.addFlashAttribute("errorBaja", "La contraseña no es correcta: la cuenta no se ha eliminado.");
+            redireccion.addFlashAttribute("errorBaja", e.isDemasiadosIntentos() ? e.getMessage()
+                    : "La contraseña no es correcta: la cuenta no se ha eliminado.");
             return "redirect:/cuenta#eliminar-cuenta";
         } catch (IllegalStateException e) {
             redireccion.addFlashAttribute("errorBaja", e.getMessage());

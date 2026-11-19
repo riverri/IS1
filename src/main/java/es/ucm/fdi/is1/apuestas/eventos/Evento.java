@@ -79,6 +79,9 @@ public class Evento {
     /** Lo suspendió la sincronización con la API (aplazado); si lo suspendió el creador, la API no lo reactiva. */
     private boolean suspendidoPorApi;
 
+    /** El resultado lo puso o lo corrigió el creador en Gestión: la sincronización con la API no lo cambia. */
+    private boolean resultadoManual;
+
     protected Evento() {
         // requerido por JPA
     }
@@ -160,6 +163,15 @@ public class Evento {
 
     public boolean isSuspendidoPorApi() {
         return suspendidoPorApi;
+    }
+
+    /** El creador ha puesto o corregido el resultado a mano: manda sobre el de la API. */
+    public void marcarResultadoManual() {
+        resultadoManual = true;
+    }
+
+    public boolean isResultadoManual() {
+        return resultadoManual;
     }
 
     /**

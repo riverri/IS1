@@ -82,6 +82,25 @@ public class ResolucionService {
     }
 
     /**
+     * {@link #introducirResultado} desde Gestión: el resultado queda puesto a mano y la sincronización con la API
+     * ya no lo cambia (por ejemplo, si la API dio un resultado equivocado y el creador lo ha corregido).
+     */
+    @Transactional
+    public int introducirResultadoAMano(Long eventoId, Resultado resultado) {
+        int resueltas = introducirResultado(eventoId, resultado);
+        evento(eventoId).marcarResultadoManual();
+        return resueltas;
+    }
+
+    /** {@link #introducirMarcador} desde Gestión, con el resultado puesto a mano (ver {@link #introducirResultadoAMano}). */
+    @Transactional
+    public int introducirMarcadorAMano(Long eventoId, int golesLocal, int golesVisitante) {
+        int resueltas = introducirMarcador(eventoId, golesLocal, golesVisitante);
+        evento(eventoId).marcarResultadoManual();
+        return resueltas;
+    }
+
+    /**
      * Resuelve todas las selecciones del evento. Una combinada solo cambia de estado cuando falla una
      * selección o se conocen todas (HU-30); mientras tanto sigue activa.
      */

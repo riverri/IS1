@@ -96,6 +96,8 @@ class ResolucionWebTest {
                 .andExpect(flash().attributeExists("mensaje"));
 
         assertThat(eventos.findById(futbol.getId()).orElseThrow().getEstado()).isEqualTo(EstadoEvento.FINALIZADO);
+        // Puesto a mano: la sincronización con la API ya no lo cambia
+        assertThat(eventos.findById(futbol.getId()).orElseThrow().isResultadoManual()).isTrue();
         assertThat(deAna.getEstado()).isEqualTo(EstadoApuesta.GANADA);
         assertThat(deLuis.getEstado()).isEqualTo(EstadoApuesta.PERDIDA);
         assertThat(saldo(ANA)).isEqualByComparingTo(new BigDecimal("900").add(deAna.getGananciaPotencial()));

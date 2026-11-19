@@ -109,6 +109,16 @@ class QuinielaWebTest {
         return quinielas.crear("Jornada 14", new BigDecimal("10"), List.of(tercero.getId(), primero.getId(), segundo.getId()));
     }
 
+    @Autowired
+    private jakarta.persistence.EntityManager em;
+
+    /** La versión de la quiniela guardada en la base de datos (el bloqueo optimista). */
+    private long version(Quiniela quiniela) {
+        em.flush();
+        return ((Number) em.createNativeQuery("select version from quiniela where id = ?1")
+                .setParameter(1, quiniela.getId()).getSingleResult()).longValue();
+    }
+
     private BigDecimal saldo(String email) {
         return usuarios.findByEmail(email).orElseThrow().getSaldo();
     }
@@ -232,12 +242,33 @@ class QuinielaWebTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("no puede jugar");
     }
 
+    /**
+     * Echar un boleto sube la versión de la quiniela: si a la vez se anula, una de las dos falla, en lugar de quedar un
+     * boleto cobrado en una quiniela anulada al que nadie le devuelve el precio.
+     */
+    @Test
+    void echarUnBoletoSubeLaVersionDeLaQuiniela() {
+        Quiniela quiniela = crear();
+        long antes = version(quiniela);
+        // Como en la aplicación, donde cada petición carga la quiniela de nuevo
+        em.clear();
+        quinielas.echarBoleto(ANA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.VISITANTE));
+        assertThat(version(quiniela)).isGreaterThan(antes);
+    }
+
     @Test
     void laQuinielaSeVeSinIniciarSesion() throws Exception {
         Quiniela quiniela = crear();
         mvc.perform(get("/quinielas")).andExpect(status().isOk()).andExpect(content().string(containsString("Jornada 14")));
-        mvc.perform(get("/quinielas/{id}", quiniela.getId())).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Inicia sesión")));
+        // Con sesión, el formulario del boleto lleva su token CSRF
+        mvc.perform(get("/quinielas/{id}", quiniela.getId()).with(user(ANA)))
+                .andExpect(content().string(containsString("name=\"_csrf\"")));
+        var resultado = mvc.perform(get("/quinielas/{id}", quiniela.getId())).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Inicia sesión")))
+                .andExpect(content().string(containsString("</html>")))
+                .andReturn();
+        // Sin formulario que enviar no hace falta el token CSRF, que abriría una sesión a mitad de página
+        assertThat(resultado.getRequest().getSession(false)).isNull();
     }
 
     // --- HU-80 ---

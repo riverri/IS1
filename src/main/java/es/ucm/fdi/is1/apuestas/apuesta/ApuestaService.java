@@ -111,8 +111,7 @@ public class ApuestaService {
             BigDecimal cuota = cuota(evento, pedida.resultado(), pedida.especial());
             // HU-87: en una simple a un resultado con supercuota vale la supercuota, hasta su importe máximo
             if (pedidas.size() == 1 && pedida.especial() == null) {
-                Supercuota supercuota = supercuotas.findByEventoAndHastaAfter(evento, ahora).stream()
-                        .filter(s -> s.isVigente(ahora) && s.getResultado() == pedida.resultado()).findFirst().orElse(null);
+                Supercuota supercuota = supercuotaVigente(evento, pedida.resultado(), ahora);
                 if (supercuota != null) {
                     if (importe.compareTo(supercuota.getImporteMaximo()) > 0) {
                         throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
@@ -229,6 +228,17 @@ public class ApuestaService {
         }
         // Cuotas vigentes, en el mismo orden que las selecciones (Apuesta.cambiarImporte cuenta con ello)
         List<BigDecimal> cuotas = apuesta.getSelecciones().stream().map(this::cuotaActual).toList();
+        // HU-87: una simple a un resultado con supercuota vigente sigue con la supercuota, y con su importe máximo
+        Seleccion unica = apuesta.getSelecciones().size() == 1 ? apuesta.getSelecciones().get(0) : null;
+        Supercuota supercuota = unica == null || unica.isLargoPlazo() || unica.getEspecial() != null ? null
+                : supercuotaVigente(unica.getEvento(), unica.getPronostico(), ahora);
+        if (supercuota != null) {
+            if (nuevo.compareTo(supercuota.getImporteMaximo()) > 0) {
+                throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
+                        + supercuota.getImporteMaximo().toPlainString().replace('.', ',') + " monedas");
+            }
+            cuotas = List.of(supercuota.getCuota());
+        }
         BigDecimal cuotaTotal = Apuesta.producto(cuotas);
         // HU-29 también aquí: no se aplica en silencio una cuota distinta de la que ha visto
         if (cuotaVista != null && cuotaVista.compareTo(cuotaTotal) != 0) {
@@ -238,6 +248,18 @@ public class ApuestaService {
         apuesta.cambiarImporte(nuevo, cuotas, ahora);
         registrarCuotas(apuesta);
         return apuesta;
+    }
+
+    /**
+     * Supercuota vigente de ese resultado (HU-87), o null si no hay. Solo vale en apuestas simples; el boleto
+     * también la usa para enseñar la misma cuota que se va a aplicar al confirmar.
+     */
+    Supercuota supercuotaVigente(Evento evento, Resultado resultado, LocalDateTime ahora) {
+        if (resultado == null) {
+            return null;
+        }
+        return supercuotas.findByEventoAndHastaAfter(evento, ahora).stream()
+                .filter(s -> s.isVigente(ahora) && s.getResultado() == resultado).findFirst().orElse(null);
     }
 
     /** Las cuotas 1X2 se mueven con el dinero apostado: se apuntan para su evolución (HU-91). */

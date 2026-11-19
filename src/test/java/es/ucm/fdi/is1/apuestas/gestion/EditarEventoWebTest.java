@@ -32,6 +32,11 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.ligas.LigaService;
+import es.ucm.fdi.is1.apuestas.ligas.RetoService;
+import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
+import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
 /** HU-46: el creador edita o borra un evento que ha creado mal. */
 @SpringBootTest
@@ -55,6 +60,15 @@ class EditarEventoWebTest {
 
     @Autowired
     private ApuestaService apuestas;
+
+    @Autowired
+    private UsuarioService usuarios;
+
+    @Autowired
+    private LigaService ligas;
+
+    @Autowired
+    private RetoService retos;
 
     private Evento evento;
     private Equipo getafe;
@@ -104,6 +118,33 @@ class EditarEventoWebTest {
         editar(elche, sevilla)
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("no se pueden cambiar los equipos")));
+        assertThat(evento.getLocal()).isEqualTo(getafe);
+
+        editar(getafe, sevilla).andExpect(redirectedUrl("/gestion/eventos/" + evento.getId()));
+        assertThat(evento.getFechaHora()).isEqualTo(nuevaFecha);
+    }
+
+    @Test
+    void conRetosNoSeCambianLosEquipos() throws Exception {
+        usuarios.crear("ana-editar@ucm.es", "Ana", "secreta123", Rol.USUARIO);
+        Usuario luis = usuarios.crear("luis-editar@ucm.es", "Luis", "secreta123", Rol.USUARIO);
+        ligas.unirse("luis-editar@ucm.es", ligas.crear("ana-editar@ucm.es", "Editar con retos").getCodigo());
+        retos.retar("ana-editar@ucm.es", luis.getId(), evento.getId(), Resultado.LOCAL, BigDecimal.TEN);
+
+        editar(elche, sevilla)
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("tiene retos 1 contra 1")));
+        assertThat(evento.getLocal()).isEqualTo(getafe);
+    }
+
+    @Test
+    void unEventoDeLaApiNoCambiaDeEquipos() throws Exception {
+        // La sincronización aplica el resultado por el id externo: con otros equipos se apuntaría a otro partido
+        evento.setIdExterno(987654L);
+
+        editar(elche, sevilla)
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("viene de la API de partidos")));
         assertThat(evento.getLocal()).isEqualTo(getafe);
 
         editar(getafe, sevilla).andExpect(redirectedUrl("/gestion/eventos/" + evento.getId()));

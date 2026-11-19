@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -52,6 +53,9 @@ class SupercuotaWebTest {
 
     @Autowired
     private CalculadoraCuotas calculadora;
+
+    @Autowired
+    private BoletoService boletos;
 
     @Autowired
     private UsuarioService usuarios;
@@ -113,6 +117,42 @@ class SupercuotaWebTest {
         assertThat(combinada.getSelecciones().get(0).getCuota()).isLessThan(mejorada());
     }
 
+    /** Antes el boleto enseñaba la cuota normal y al confirmar valía la supercuota: «la cuota ha cambiado» sin fin. */
+    @Test
+    void unaSimpleDesdeElBoletoSeConfirmaConLaSupercuota() {
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("50"), 24);
+        Boleto boleto = new Boleto();
+        boletos.anadir(boleto, partido.getId(), Resultado.LOCAL);
+
+        assertThat(boletos.vista(boleto).cuotaTotal()).isEqualByComparingTo(mejorada());
+        Apuesta simple = boletos.confirmar(ANA, boleto, new BigDecimal("20"));
+        assertThat(simple.getCuota()).isEqualByComparingTo(mejorada());
+    }
+
+    @Test
+    void enElBoletoConDosSeleccionesValeLaCuotaNormal() {
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("50"), 24);
+        Boleto boleto = new Boleto();
+        boletos.anadir(boleto, partido.getId(), Resultado.LOCAL);
+        boletos.anadir(boleto, otro.getId(), Resultado.LOCAL);
+
+        BoletoVista vista = boletos.vista(boleto);
+        assertThat(vista.lineas().get(0).cuota()).isEqualByComparingTo(normal);
+        // La primera se añadió como simple, con la supercuota: se avisa de que ahora vale la normal
+        assertThat(vista.lineas().get(0).cambiada()).isTrue();
+    }
+
+    @Test
+    void cambiarElImporteDeUnaSimpleConSupercuotaLaMantieneConSuMaximo() {
+        supercuotas.crear(partido.getId(), Resultado.LOCAL, mejorada(), new BigDecimal("50"), 24);
+        Apuesta simple = apuestas.apostar(ANA, partido.getId(), Resultado.LOCAL, new BigDecimal("20"));
+
+        apuestas.modificarImporte(ANA, simple.getId(), new BigDecimal("30"));
+        assertThat(simple.getCuota()).isEqualByComparingTo(mejorada());
+        assertThatThrownBy(() -> apuestas.modificarImporte(ANA, simple.getId(), new BigDecimal("80")))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("como mucho 50");
+    }
+
     @Test
     void tieneQueMejorarLaNormalSinPasarDelDoble() {
         assertThatThrownBy(() -> supercuotas.crear(partido.getId(), Resultado.LOCAL, normal, BigDecimal.TEN, 24))
@@ -163,5 +203,11 @@ class SupercuotaWebTest {
         BigDecimal mejor = calculadora.calcular(otro).local().add(new BigDecimal("0.10"));
         Supercuota corta = supercuotas.crear(otro.getId(), Resultado.LOCAL, mejor, BigDecimal.TEN, 24);
         assertThat(corta.getHasta()).isEqualTo(otro.getFechaHora());
+    }
+
+    @Test
+    void retirarLaSupercuotaDeUnEventoQueNoExisteDa404() throws Exception {
+        mvc.perform(post("/gestion/eventos/{id}/supercuota/quitar", 999_999).with(CREADOR).with(csrf()))
+                .andExpect(status().isNotFound());
     }
 }

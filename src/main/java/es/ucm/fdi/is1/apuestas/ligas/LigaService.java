@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,14 +37,17 @@ public class LigaService {
     private final UsuarioRepository usuarios;
     private final RankingService rankings;
     private final Clock reloj;
+    private final ApplicationEventPublisher publicador;
     /** SecureRandom y no Random: los códigos no se pueden adivinar a partir de otros. */
     private final SecureRandom azar = new SecureRandom();
 
-    public LigaService(LigaRepository ligas, UsuarioRepository usuarios, RankingService rankings, Clock reloj) {
+    public LigaService(LigaRepository ligas, UsuarioRepository usuarios, RankingService rankings, Clock reloj,
+                       ApplicationEventPublisher publicador) {
         this.ligas = ligas;
         this.usuarios = usuarios;
         this.rankings = rankings;
         this.reloj = reloj;
+        this.publicador = publicador;
     }
 
     /** Ligas en las que está el usuario, por nombre. */
@@ -131,6 +135,8 @@ public class LigaService {
             throw new IllegalArgumentException("Has creado tú la liga: si no quieres seguir, bórrala");
         }
         liga.salir(usuario);
+        // Sus retos pendientes con quien ya no comparta ninguna liga se devuelven (RetoService)
+        publicador.publishEvent(new MiembrosLigaCambiados(List.of(usuario.getId())));
         return liga;
     }
 
@@ -146,7 +152,9 @@ public class LigaService {
         if (!liga.esCreador(usuario(email))) {
             throw new IllegalArgumentException("Solo quien ha creado la liga la puede borrar");
         }
+        List<Long> miembros = List.copyOf(liga.getIdsMiembros());
         ligas.delete(liga);
+        publicador.publishEvent(new MiembrosLigaCambiados(miembros));
         return liga;
     }
 

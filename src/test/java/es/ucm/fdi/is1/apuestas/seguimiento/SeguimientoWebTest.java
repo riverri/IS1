@@ -220,4 +220,10 @@ class SeguimientoWebTest {
                 .andExpect(flash().attribute("mensajeAlerta", "Alerta borrada."));
         assertThat(alertaRepository.findById(mia.getId())).isEmpty();
     }
+
+    @Test
+    void marcarComoFavoritoUnEquipoQueNoExisteDa404() throws Exception {
+        mvc.perform(post("/equipos/{id}/favorito", 999_999).with(user(ANA)).with(csrf()))
+                .andExpect(status().isNotFound());
+    }
 }

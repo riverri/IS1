@@ -38,4 +38,12 @@ class FormatoTest {
         assertThat(formato.apellido("Pedri")).isEqualTo("Pedri");
         assertThat(formato.apellido("  Frenkie de  Jong ")).isEqualTo("de Jong");
     }
+
+    @Test
+    void inicialesDeNombresSinLetrasAlPrincipio() {
+        // Antes, "-Ana" y "/" lanzaban una excepción y el ranking daba un error 500 a todos los visitantes
+        assertThat(formato.iniciales("-Ana")).isEqualTo("A");
+        assertThat(formato.iniciales("/")).isEqualTo("?");
+        assertThat(formato.iniciales(" - ")).isEqualTo("?");
+    }
 }

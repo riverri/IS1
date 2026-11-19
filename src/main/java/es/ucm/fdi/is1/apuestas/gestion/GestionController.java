@@ -461,10 +461,10 @@ public class GestionController {
                             + " no coincide con el resultado marcado (" + resultado.getDescripcion()
                             + "). Corrige el marcador o deja marcado solo uno de los dos.");
                 }
-                resueltas = resolucion.introducirMarcador(id, golesLocal, golesVisitante);
+                resueltas = resolucion.introducirMarcadorAMano(id, golesLocal, golesVisitante);
                 guardado = golesLocal + "-" + golesVisitante;
             } else if (resultado != null) {
-                resueltas = resolucion.introducirResultado(id, resultado);
+                resueltas = resolucion.introducirResultadoAMano(id, resultado);
                 guardado = resultado.getDescripcion();
             } else {
                 throw new IllegalArgumentException("Indica el marcador o el ganador");

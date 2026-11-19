@@ -59,7 +59,9 @@ public class FavoritosService {
         if (usuario.isCreador()) {
             throw new IllegalArgumentException("El creador de apuestas no sigue equipos");
         }
-        Equipo equipo = equipos.findById(equipoId).orElseThrow();
+        // Un equipo que no existe responde 404, como su ficha (sin esto, error 500)
+        Equipo equipo = equipos.findById(equipoId)
+                .orElseThrow(() -> new es.ucm.fdi.is1.apuestas.eventos.EquipoNoEncontradoException(equipoId));
         return favoritos.findByUsuarioAndEquipo(usuario, equipo).map(f -> {
             favoritos.delete(f);
             return false;

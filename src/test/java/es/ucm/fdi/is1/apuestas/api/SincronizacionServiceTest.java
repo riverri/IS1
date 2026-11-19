@@ -207,6 +207,49 @@ class SincronizacionServiceTest {
         assertThat(resumen.getErrores()).anyMatch(e -> e.contains("introdúcelo a mano"));
     }
 
+    @Test
+    void elAvisoDeLaProrrogaNoSeRepiteCuandoElCreadorYaHaPuestoElResultado() {
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        devuelve(partido(900010, fecha, "TIMED", null, elche, celta));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900010L).orElseThrow();
+        devuelve(new PartidoApi(900010L, utc(fecha), "FINISHED", 10, elche, celta,
+                new PartidoApi.MarcadorApi("HOME_TEAM", "EXTRA_TIME", new PartidoApi.GolesApi(2, 1))));
+        assertThat(sincronizacion.sincronizar().getErrores()).anyMatch(e -> e.contains("introdúcelo a mano"));
+
+        // El creador mete el marcador de los 90 minutos: el aviso ya no sale
+        resolucion.introducirMarcadorAMano(evento.getId(), 1, 1);
+        assertThat(sincronizacion.sincronizar().getErrores()).noneMatch(e -> e.contains("introdúcelo a mano"));
+    }
+
+    /** Si la API se equivoca y el creador corrige el resultado en Gestión, la siguiente sincronización no lo pisa. */
+    @Test
+    void laSincronizacionNoPisaUnResultadoCorregidoAMano() {
+        LocalDateTime fecha = Hora.ahora().plusHours(1).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi elche = equipo(285, "Elche CF", "Elche");
+        PartidoApi.EquipoApi celta = equipo(558, "RC Celta de Vigo", "Celta");
+        devuelve(partido(900011, fecha, "TIMED", null, elche, celta));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900011L).orElseThrow();
+        Apuesta local = apuestas.apostar("usuario@apuestas.es", evento.getId(), Resultado.LOCAL, new BigDecimal("10"));
+
+        // La API da 0-3 por error; el creador lo corrige a 2-0
+        PartidoApi equivocado = new PartidoApi(900011L, utc(fecha), "FINISHED", 10, elche, celta,
+                new PartidoApi.MarcadorApi("AWAY_TEAM", "REGULAR", new PartidoApi.GolesApi(0, 3)));
+        devuelve(equivocado);
+        sincronizacion.sincronizar();
+        assertThat(local.getEstado()).isEqualTo(EstadoApuesta.PERDIDA);
+        resolucion.introducirMarcadorAMano(evento.getId(), 2, 0);
+        assertThat(local.getEstado()).isEqualTo(EstadoApuesta.GANADA);
+
+        devuelve(equivocado);
+        assertThat(sincronizacion.sincronizar().getResultados()).isZero();
+        assertThat(evento.getGolesLocal()).isEqualTo(2);
+        assertThat(local.getEstado()).isEqualTo(EstadoApuesta.GANADA);
+    }
+
     /** N-02: un partido que anuló el creador no rompe la sincronización ni se le pone resultado. */
     @Test
     void unPartidoAnuladoNoBloqueaLosDemas() {

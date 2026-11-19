@@ -220,4 +220,74 @@ class RetoWebTest {
                         .param("evento", partido.getId().toString()).param("pronostico", "LOCAL").param("importe", "10"))
                 .andExpect(flash().attribute("error", "No tienes saldo suficiente para el reto"));
     }
+
+    @Test
+    void siSeCorrigeElResultadoElRetoSeRecalcula() {
+        BigDecimal anaAntes = saldo(ANA);
+        BigDecimal luisAntes = saldo(LUIS);
+        Reto reto = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        retos.aceptar(LUIS, reto.getId(), Resultado.VISITANTE);
+        resolucion.introducirResultado(partido.getId(), Resultado.LOCAL);
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes.add(BigDecimal.TEN));
+
+        // El creador se equivocó: ganó el visitante. Ana devuelve el bote y lo cobra Luis
+        resolucion.introducirResultado(partido.getId(), Resultado.VISITANTE);
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.RESUELTO);
+        assertThat(reto.getGanador().getEmail()).isEqualTo(LUIS);
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes.subtract(BigDecimal.TEN));
+        assertThat(saldo(LUIS)).isEqualByComparingTo(luisAntes.add(BigDecimal.TEN));
+
+        // Empate: nadie acierta y se devuelve a cada uno lo suyo
+        resolucion.introducirResultado(partido.getId(), Resultado.EMPATE);
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes);
+        assertThat(saldo(LUIS)).isEqualByComparingTo(luisAntes);
+
+        // Volver a guardar el mismo resultado no cambia nada
+        resolucion.introducirResultado(partido.getId(), Resultado.EMPATE);
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes);
+    }
+
+    @Test
+    void siSeAnulaUnPartidoYaResueltoSeDevuelveElReto() {
+        BigDecimal anaAntes = saldo(ANA);
+        BigDecimal luisAntes = saldo(LUIS);
+        Reto reto = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        retos.aceptar(LUIS, reto.getId(), Resultado.VISITANTE);
+        resolucion.introducirResultado(partido.getId(), Resultado.LOCAL);
+        resolucion.anular(partido.getId());
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes);
+        assertThat(saldo(LUIS)).isEqualByComparingTo(luisAntes);
+    }
+
+    @Test
+    void siDejanDeCompartirLigaLosRetosPendientesSeDevuelven() {
+        BigDecimal antes = saldo(ANA);
+        Reto alSalir = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        ligas.salir(liga.getId(), LUIS);
+        assertThat(alSalir.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
+        assertThat(saldo(ANA)).isEqualByComparingTo(antes);
+
+        // Si comparten otra liga, el reto sigue (se ve y se contesta desde esa)
+        Liga otra = ligas.crear(ANA, "Otra liga");
+        ligas.unirse(LUIS, otra.getCodigo());
+        ligas.unirse(LUIS, liga.getCodigo());
+        Reto sigue = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        ligas.salir(liga.getId(), LUIS);
+        assertThat(sigue.getEstado()).isEqualTo(EstadoReto.PENDIENTE);
+
+        // Al borrar la última liga en común, también se devuelve
+        ligas.borrar(otra.getId(), ANA);
+        assertThat(sigue.getEstado()).isEqualTo(EstadoReto.DEVUELTO);
+        assertThat(saldo(ANA)).isEqualByComparingTo(antes);
+    }
+
+    @Test
+    void elImporteDelRetoLlevaDosDecimalesComoMucho() {
+        assertThatThrownBy(() -> retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, new BigDecimal("1.005")))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("2 decimales");
+        assertThatThrownBy(() -> retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, new BigDecimal("-5")))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
