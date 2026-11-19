@@ -12,6 +12,11 @@ public class ImporteFueraDeLimitesException extends IllegalArgumentException {
         super("El importe debe estar entre " + texto(minimo) + " y " + texto(maximo) + " monedas");
     }
 
+    /** Con otro mensaje: por ejemplo, el importe máximo de una supercuota (HU-87). */
+    ImporteFueraDeLimitesException(String mensaje) {
+        super(mensaje);
+    }
+
     /** "1" en lugar de "1.00" y "2,5" en lugar de "2.50": formato español sin ceros de sobra. */
     private static String texto(BigDecimal cantidad) {
         return cantidad.stripTrailingZeros().toPlainString().replace('.', ',');

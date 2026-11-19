@@ -87,7 +87,7 @@ class JuegoResponsableWebTest {
     @Test
     void elLimiteDiarioCuentaLoYaApostado() throws Exception {
         mvc.perform(post("/cuenta/limites").with(COMO_ANA).with(csrf()).param("diario", "50").param("semanal", ""))
-                .andExpect(redirectedUrl("/cuenta#juego-responsable"));
+                .andExpect(redirectedUrl("/cuenta"));
         assertThat(ana().getLimiteDiario()).isEqualByComparingTo("50");
         assertThat(ana().getLimiteSemanal()).isNull();
 

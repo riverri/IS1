@@ -131,6 +131,7 @@ public class GestionService {
                 .orElseThrow(() -> new DatosInvalidosException("competicionId", "La competición no existe"));
         Equipo local = equipoDeLaCompeticion(form.getLocalId(), competicion, "localId");
         Equipo visitante = equipoDeLaCompeticion(form.getVisitanteId(), competicion, "visitanteId");
+        comprobarFutura(form.getFechaHora());
         Evento evento = new Evento(competicion, local, visitante, form.getFechaHora());
         // La fase es opcional (jornada, semifinal...): si viene vacía el evento se queda sin ella
         if (form.getFase() != null && !form.getFase().isBlank()) {
@@ -181,6 +182,7 @@ public class GestionService {
             throw new DatosInvalidosException("localId",
                     "El evento viene de la API de partidos: no se pueden cambiar los equipos. Si está mal, anúlalo.");
         }
+        comprobarFutura(form.getFechaHora());
         String fase = form.getFase() == null || form.getFase().isBlank() ? null : form.getFase().trim();
         // El propio evento comprueba que aún no ha empezado; su error se convierte en un error del formulario
         // (se "traduce" una excepción en otra para que el controlador sepa a qué campo asociarla)
@@ -218,6 +220,16 @@ public class GestionService {
     @Transactional(readOnly = true)
     public Evento evento(Long eventoId) {
         return eventos.findById(eventoId).orElseThrow(() -> new EventoNoDisponibleException(eventoId));
+    }
+
+    /**
+     * La fecha tiene que ser futura según el reloj de la aplicación (hora de Madrid). El {@code @Future} del formulario
+     * usa la zona del ordenador: en uno en UTC (la CI, un contenedor sin TZ) aceptaba una hora de Madrid ya pasada.
+     */
+    private void comprobarFutura(LocalDateTime fecha) {
+        if (fecha != null && !fecha.isAfter(LocalDateTime.now(reloj))) {
+            throw new DatosInvalidosException("fechaHora", "La fecha debe ser futura");
+        }
     }
 
     /**

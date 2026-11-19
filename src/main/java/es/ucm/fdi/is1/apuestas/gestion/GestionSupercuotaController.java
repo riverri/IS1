@@ -35,7 +35,7 @@ public class GestionSupercuotaController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/gestion/eventos/" + id + "#supercuota";
+        return "redirect:/gestion/eventos/" + id;
     }
 
     /** POST /gestion/eventos/{id}/supercuota/quitar. */
@@ -43,6 +43,6 @@ public class GestionSupercuotaController {
     public String quitar(@PathVariable Long id, RedirectAttributes redireccion) {
         supercuotas.quitar(id);
         redireccion.addFlashAttribute("mensaje", "Supercuota retirada.");
-        return "redirect:/gestion/eventos/" + id + "#supercuota";
+        return "redirect:/gestion/eventos/" + id;
     }
 }

@@ -15,14 +15,16 @@
     <form class="tarjeta formulario" th:action="@{/gestion/quinielas}" method="post">
         <h2>Nueva quiniela</h2>
         <label for="nombre">Nombre</label>
-        <input id="nombre" name="nombre" type="text" maxlength="100" required placeholder="Jornada 14">
+        <input id="nombre" name="nombre" type="text" maxlength="100" required placeholder="Jornada 14" th:value="${nombreEscrito}">
         <label for="precio">Precio del boleto</label>
-        <input id="precio" name="precio" type="number" step="0.01" min="0.01" max="100000" value="2" required>
+        <input id="precio" name="precio" type="number" step="0.01" min="0.01" max="100000" required
+               th:value="${precioEscrito != null ? precioEscrito : 2}">
         <fieldset>
             <legend>Partidos (de 3 a 15)</legend>
             <p class="aviso" th:if="${#lists.isEmpty(disponibles)}">No hay partidos programados de deportes con empate.</p>
             <label class="casilla" th:each="e : ${disponibles}">
-                <input type="checkbox" name="eventos" th:value="${e.id}">
+                <input type="checkbox" name="eventos" th:value="${e.id}"
+                       th:checked="${eventosElegidos != null and #lists.contains(eventosElegidos, e.id)}">
                 <span th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.competicion.nombre} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 16:15 · LaLiga · Getafe CF – Sevilla FC</span>
             </label>
         </fieldset>

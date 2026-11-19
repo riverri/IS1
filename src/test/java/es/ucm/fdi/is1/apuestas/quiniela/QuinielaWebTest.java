@@ -340,6 +340,33 @@ class QuinielaWebTest {
         assertThat(quinielas.boletoDe(ANA, quiniela.getId()).orElseThrow().isDevuelto()).isTrue();
     }
 
+    /** Crear una quiniela con un error devuelve lo escrito, para corregir solo lo que falla. */
+    @Test
+    void unErrorAlCrearLaQuinielaConservaLoEscrito() throws Exception {
+        mvc.perform(post("/gestion/quinielas").with(CREADOR).with(csrf())
+                        .param("nombre", "Prueba Q").param("precio", "3.50")
+                        .param("eventos", primero.getId().toString(), segundo.getId().toString()))
+                .andExpect(flash().attribute("error", containsString("3")))
+                .andExpect(flash().attribute("nombreEscrito", "Prueba Q"))
+                .andExpect(flash().attribute("eventosElegidos", List.of(primero.getId(), segundo.getId())));
+    }
+
+    /**
+     * El panel del creador pinta las quinielas fuera de la transacción: sus partidos tienen que venir ya cargados
+     * aunque esté repartida o anulada. Antes solo se cargaban en las abiertas y la página daba error 500.
+     */
+    @Test
+    void elPanelTraeLosPartidosDeLasQuinielasRepartidasYAnuladas() {
+        Quiniela anulada = crear();
+        quinielas.anular(anulada.getId());
+        em.flush();
+        em.clear();
+
+        QuinielaService.Resumen resumen = quinielas.todas().stream()
+                .filter(r -> r.quiniela().getId().equals(anulada.getId())).findFirst().orElseThrow();
+        assertThat(org.hibernate.Hibernate.isInitialized(resumen.quiniela().getPartidos())).isTrue();
+    }
+
     /** Con todos los partidos anulados no se ha jugado nada: se devuelve el precio entero, sin comisión de la casa. */
     @Test
     void siSeAnulanTodosLosPartidosSeDevuelveElPrecioEntero() {

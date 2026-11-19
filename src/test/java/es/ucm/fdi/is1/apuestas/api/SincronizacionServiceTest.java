@@ -102,8 +102,12 @@ class SincronizacionServiceTest {
     void enlazaConLosPartidosYEquiposQueYaExistian() {
         long antes = eventos.count();
         // Barça - Getafe de la jornada 8 ya está cargado a mano; en la API el Barça se llama igual
-        // y el Getafe se reconoce por su identificador o por el nombre
-        devuelve(partido(900002, LocalDateTime.of(2026, 10, 10, 18, 30), "TIMED", null,
+        // y el Getafe se reconoce por su identificador o por el nombre. Su fecha se mueve con la de hoy (DatosIniciales)
+        LocalDateTime jornada8 = eventos.findAll().stream()
+                .filter(e -> e.getLocal().getNombre().equals("FC Barcelona") && e.getVisitante().getNombre().equals("Getafe CF")
+                        && "Jornada 8".equals(e.getFase()))
+                .findFirst().orElseThrow().getFechaHora();
+        devuelve(partido(900002, jornada8.plusMinutes(30), "TIMED", null,
                 equipo(81, "FC Barcelona", "Barça"), equipo(82, "Getafe CF", "Getafe")));
 
         ResumenSincronizacion resumen = sincronizacion.sincronizar();

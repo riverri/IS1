@@ -70,6 +70,9 @@ public class QuinielaService {
     }
 
     private Resumen resumen(Quiniela quiniela, LocalDateTime ahora) {
+        // Los partidos se cargan aquí: la página se pinta fuera de la transacción y los cuenta. Antes solo se
+        // cargaban de paso al mirar si admite boletos, que en una repartida o anulada no los recorre (error 500)
+        quiniela.getPartidos().forEach(p -> p.getEvento().getLocal().getNombre());
         long n = boletos.countByQuiniela(quiniela);
         return new Resumen(quiniela, n, quiniela.bote(quiniela.getPrecio().multiply(BigDecimal.valueOf(n))),
                 quiniela.admiteBoletos(ahora));

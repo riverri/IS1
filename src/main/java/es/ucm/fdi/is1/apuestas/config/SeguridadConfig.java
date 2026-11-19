@@ -65,8 +65,8 @@ public class SeguridadConfig {
                         .usernameParameter("email")
                         .successHandler(alEntrar)
                         .permitAll())
-                // Al cerrar sesión se vuelve a la portada
-                .logout(logout -> logout.logoutSuccessUrl("/"))
+                // Al cerrar sesión se vuelve a la portada, con el aviso «Has cerrado sesión»
+                .logout(logout -> logout.logoutSuccessUrl("/?logout"))
                 // Registro de sesiones: al eliminar la cuenta o cambiar la contraseña se cierran las de otros navegadores
                 // (-1 = sin límite de sesiones por usuario; una sesión cerrada así lleva a /login?expirada)
                 .sessionManagement(sesiones -> sesiones

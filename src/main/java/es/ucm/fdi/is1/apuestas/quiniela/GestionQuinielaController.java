@@ -45,6 +45,10 @@ public class GestionQuinielaController {
             redireccion.addFlashAttribute("mensaje", "Quiniela «" + quiniela.getNombre() + "» creada con "
                     + quiniela.getPartidos().size() + " partidos.");
         } catch (IllegalArgumentException e) {
+            // Lo que había escrito vuelve al formulario, para corregir solo lo que falla
+            redireccion.addFlashAttribute("nombreEscrito", nombre);
+            redireccion.addFlashAttribute("precioEscrito", precio);
+            redireccion.addFlashAttribute("eventosElegidos", eventos == null ? List.of() : eventos);
             redireccion.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/gestion/quinielas";

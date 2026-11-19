@@ -48,6 +48,15 @@ class UsuariosWebTest {
         assertThat(ana.getRol()).isEqualTo(Rol.USUARIO);
     }
 
+    /** Al cerrar sesión se vuelve a la portada y se dice que se ha cerrado (antes el aviso no salía nunca). */
+    @Test
+    void alCerrarSesionLaPortadaLoDice() throws Exception {
+        mvc.perform(post("/logout").with(org.springframework.security.test.web.servlet.request
+                        .SecurityMockMvcRequestPostProcessors.user("usuario@apuestas.es")).with(csrf()))
+                .andExpect(redirectedUrl("/?logout"));
+        mvc.perform(get("/?logout")).andExpect(content().string(containsString("Has cerrado sesión")));
+    }
+
     @Test
     void registroConEmailExistenteAvisa() throws Exception {
         mvc.perform(post("/registro").with(csrf())

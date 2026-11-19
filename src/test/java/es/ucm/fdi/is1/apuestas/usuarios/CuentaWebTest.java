@@ -121,6 +121,18 @@ class CuentaWebTest {
         assertThat(passwordEncoder.matches("secreta123", ana().getPasswordHash())).isTrue();
     }
 
+    /** El creador no apuesta: ni «Mis apuestas» ni «Boleto» en el menú, ni juego responsable, ni pausa. */
+    @Test
+    void elCreadorNoVeLasOpcionesDeJugadorNiSePonePausa() throws Exception {
+        RequestPostProcessor creador = user("creador@apuestas.es").roles("CREADOR");
+        mvc.perform(get("/cuenta").with(creador))
+                .andExpect(content().string(org.hamcrest.Matchers.not(containsString("Juego responsable"))))
+                .andExpect(content().string(org.hamcrest.Matchers.not(containsString(">Mis apuestas<"))));
+        mvc.perform(post("/cuenta/pausa").with(creador).with(csrf()).param("dias", "7"))
+                .andExpect(flash().attribute("error", containsString("no se pone pausas")));
+        assertThat(usuarios.findByEmail("creador@apuestas.es").orElseThrow().getPausaHasta()).isNull();
+    }
+
     /** Con la sesión abierta tampoco se pueden probar contraseñas sin límite: cinco fallos y espera 15 minutos. */
     @Test
     void cincoFallosConLaContrasenaActualFrenanLosSiguientesIntentos() throws Exception {
