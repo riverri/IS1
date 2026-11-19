@@ -58,6 +58,12 @@ public class BoletoService {
     public void anadir(Boleto boleto, Long eventoId, Resultado resultado, Especial especial) {
         Evento evento = disponible(eventoId);
         BigDecimal cuota = apuestas.cuota(evento, resultado, especial);
+        // Si es la primera, el boleto es una simple: con supercuota (HU-87) se ve la que se va a pagar
+        Supercuota supercuota = boleto.getTamano() == 0 && especial == null
+                ? apuestas.supercuotaVigente(evento, resultado, LocalDateTime.now(reloj)) : null;
+        if (supercuota != null) {
+            cuota = supercuota.getCuota();
+        }
         int maximo = limites.actuales().getMaxSelecciones();
         if (boleto.getTamano() >= maximo) {
             throw new IllegalArgumentException("El boleto admite como máximo " + maximo + " selecciones");
@@ -105,7 +111,9 @@ public class BoletoService {
     private BoletoVista vista(Boleto boleto, boolean quitarNoDisponibles) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         List<BoletoVista.LineaVista> lineas = new ArrayList<>();
-        // Se recorre una copia porque el bucle puede quitar líneas del boleto
+        // Primero los eventos que siguen admitiendo apuestas. Se recorre una copia porque se pueden quitar líneas
+        List<Boleto.Linea> disponibles = new ArrayList<>();
+        List<Evento> suyos = new ArrayList<>();
         for (Boleto.Linea linea : List.copyOf(boleto.getLineas())) {
             Evento evento = eventos.findById(linea.eventoId()).filter(e -> e.admiteApuestas(ahora)).orElse(null);
             if (evento == null) {
@@ -115,8 +123,20 @@ public class BoletoService {
                 // continue: salta a la siguiente vuelta del bucle sin ejecutar lo de abajo
                 continue;
             }
+            disponibles.add(linea);
+            suyos.add(evento);
+        }
+        for (int i = 0; i < disponibles.size(); i++) {
+            Boleto.Linea linea = disponibles.get(i);
+            Evento evento = suyos.get(i);
             // La cuota puede haber cambiado desde que se añadió (por ejemplo, por el ajuste por volumen)
             BigDecimal cuota = calculadora.cuota(evento, linea.resultado(), linea.especial());
+            // Una sola selección es una simple: con supercuota (HU-87) vale la supercuota, como al confirmar
+            Supercuota supercuota = disponibles.size() == 1 && linea.especial() == null
+                    ? apuestas.supercuotaVigente(evento, linea.resultado(), ahora) : null;
+            if (supercuota != null) {
+                cuota = supercuota.getCuota();
+            }
             lineas.add(new BoletoVista.LineaVista(evento, linea.resultado(), linea.especial(), cuota,
                     cuota.compareTo(linea.cuotaVista()) != 0));
         }
