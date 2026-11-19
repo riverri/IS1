@@ -2,6 +2,7 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 
 import java.io.IOException;
 
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,13 @@ public class RecargaAlEntrarHandler extends SavedRequestAwareAuthenticationSucce
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
         // authentication.getName() es el email con el que ha entrado
-        usuarios.consultarConRecarga(authentication.getName());
+        try {
+            usuarios.consultarConRecarga(authentication.getName());
+        } catch (ObjectOptimisticLockingFailureException e) {
+            // Doble clic en «Entrar»: la otra petición ya ha aplicado la recarga (@Version evita que se dé dos veces).
+            // Aquí no llega ConcurrenciaAdvice (es un filtro, no un controlador): sin esto, error 500 con la sesión ya
+            // iniciada
+        }
         // super: ejecuta lo que hacía la clase padre (redirigir a la página que se pedía antes del login)
         super.onAuthenticationSuccess(request, response, authentication);
     }

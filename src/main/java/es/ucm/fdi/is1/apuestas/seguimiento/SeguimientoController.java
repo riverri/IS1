@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.seguimiento;
 import java.math.BigDecimal;
 import java.security.Principal;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,9 @@ public class SeguimientoController {
                     : "Quitado de tus favoritos.");
         } catch (IllegalArgumentException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            // Doble clic: la otra petición lo acaba de marcar. Ya es favorito (sin esto, error 500)
+            redireccion.addFlashAttribute("mensaje", "Añadido a tus favoritos.");
         }
         return "redirect:/equipos/" + id;
     }

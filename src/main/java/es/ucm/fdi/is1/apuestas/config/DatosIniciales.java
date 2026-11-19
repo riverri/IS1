@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.config;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -49,6 +50,7 @@ public class DatosIniciales implements ApplicationRunner {
     private final String passwordCreador;
     private final String passwordUsuario;
     private final boolean passwordCreadorFija;
+    private final boolean passwordUsuarioFija;
     /**
      * Los partidos y los mercados de ejemplo solo se cargan en una base de datos vacía. Si se buscaran cada vez
      * por equipos y fecha, un partido al que la API o el creador cambian la hora (o que el creador borra)
@@ -60,8 +62,10 @@ public class DatosIniciales implements ApplicationRunner {
     /**
      * Las contraseñas de los usuarios de prueba se pueden cambiar con las variables de entorno
      * CREADOR_PASSWORD y USUARIO_PASSWORD. En los perfiles {@code compartir} y {@code nube} la del creador es
-     * obligatoria y se le aplica aunque ya exista ({@code passwordCreadorFija}); en {@code nube} el usuario de
-     * prueba solo se crea si se le da contraseña.
+     * obligatoria y se le aplica aunque ya exista ({@code passwordCreadorFija}); en {@code nube} y {@code compartir}
+     * el usuario de prueba solo se crea si se le da contraseña. En {@code compartir} la base de datos es la local, donde
+     * ya existe con la contraseña del README: con {@code passwordUsuarioFija} se le pone la de USUARIO_PASSWORD o, sin
+     * ella, una al azar que nadie conoce.
      *
      * <p>Spring llama a este constructor y le pasa los repositorios y servicios (inyección de dependencias).
      * {@code @Value("${clave:valorPorDefecto}")} lee un valor de {@code application.properties} (o de una variable
@@ -71,7 +75,8 @@ public class DatosIniciales implements ApplicationRunner {
                           MercadoRepository mercados, UsuarioRepository usuarioRepository, UsuarioService usuarios,
                           @Value("${apuestas.creador.password}") String passwordCreador,
                           @Value("${apuestas.usuario.password}") String passwordUsuario,
-                          @Value("${apuestas.creador.password-fija:false}") boolean passwordCreadorFija) {
+                          @Value("${apuestas.creador.password-fija:false}") boolean passwordCreadorFija,
+                          @Value("${apuestas.usuario.password-fija:false}") boolean passwordUsuarioFija) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
@@ -81,6 +86,7 @@ public class DatosIniciales implements ApplicationRunner {
         this.passwordCreador = passwordCreador;
         this.passwordUsuario = passwordUsuario;
         this.passwordCreadorFija = passwordCreadorFija;
+        this.passwordUsuarioFija = passwordUsuarioFija;
     }
 
     /**
@@ -141,9 +147,15 @@ public class DatosIniciales implements ApplicationRunner {
             // Perfiles públicos (compartir, nube): manda la contraseña de la variable, no la que ya hubiera
             usuarios.fijarPassword("creador@apuestas.es", passwordCreador);
         }
-        // Sin contraseña (perfil nube sin USUARIO_PASSWORD) no se crea el usuario de prueba
+        // Sin contraseña (perfiles nube y compartir sin USUARIO_PASSWORD) no se crea el usuario de prueba
         if (!passwordUsuario.isBlank()) {
             usuario("usuario@apuestas.es", "Usuario de prueba", passwordUsuario, Rol.USUARIO);
+        }
+        if (passwordUsuarioFija) {
+            // Perfil compartir: el usuario de prueba de la base local deja de entrar con la contraseña del README.
+            // fijarPassword no hace nada si la cuenta no existe
+            usuarios.fijarPassword("usuario@apuestas.es",
+                    passwordUsuario.isBlank() ? UUID.randomUUID().toString() : passwordUsuario);
         }
 
         // Se decide antes de crear nada: con la base de datos vacía se cargan partidos y mercados de ejemplo

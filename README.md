@@ -102,6 +102,7 @@ Antes de arrancar pide una contraseña para `creador@apuestas.es` (o la toma de 
 
 - El enlace solo funciona mientras ese ordenador esté encendido y con las dos ventanas abiertas, y **cambia cada vez** que se lanza.
 - Usa el perfil `compartir`, que desactiva la consola de H2: no tiene contraseña y con el túnel cualquiera podría entrar en la base de datos. **No compartas nunca la aplicación arrancada desde IntelliJ sin ese perfil.**
+- Con el túnel las contraseñas de prueba de este README son públicas: el creador usa la de `CREADOR_PASSWORD` (el script la pide) y `usuario@apuestas.es` solo entra si defines `USUARIO_PASSWORD`. Cada uno puede registrarse con su propia cuenta.
 - Si la red de la facultad bloquea el túnel, prueba con los datos del móvil.
 
 ## Publicarla en Internet (servidor permanente y gratuito)
