@@ -7,9 +7,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +43,18 @@ class CuentaWebTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private IntentosLogin intentos;
+
     @BeforeEach
     void crearUsuaria() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
+    }
+
+    /** Los fallos se guardan en memoria, fuera de la transacción de la prueba: se olvidan para no afectar a otras. */
+    @AfterEach
+    void olvidarFallos() {
+        intentos.olvidar(ANA);
     }
 
     private Usuario ana() {
@@ -108,6 +119,24 @@ class CuentaWebTest {
                 .andExpect(content().string(containsString("Las contraseñas no coinciden")));
 
         assertThat(passwordEncoder.matches("secreta123", ana().getPasswordHash())).isTrue();
+    }
+
+    /** Con la sesión abierta tampoco se pueden probar contraseñas sin límite: cinco fallos y espera 15 minutos. */
+    @Test
+    void cincoFallosConLaContrasenaActualFrenanLosSiguientesIntentos() throws Exception {
+        for (int i = 0; i < IntentosLogin.MAXIMO_FALLOS; i++) {
+            mvc.perform(post("/cuenta/password").with(COMO_ANA).with(csrf())
+                            .param("actual", "prueba" + i).param("nueva", "nuevaClave99").param("confirmacion", "nuevaClave99"))
+                    .andExpect(content().string(containsString("La contraseña actual no es correcta")));
+        }
+        // Ni con la buena
+        mvc.perform(post("/cuenta/password").with(COMO_ANA).with(csrf())
+                        .param("actual", "secreta123").param("nueva", "nuevaClave99").param("confirmacion", "nuevaClave99"))
+                .andExpect(content().string(containsString("espera 15 minutos")));
+        mvc.perform(post("/cuenta/eliminar").with(COMO_ANA).with(csrf()).param("password", "secreta123"))
+                .andExpect(flash().attribute("errorBaja", containsString("espera 15 minutos")));
+        assertThat(passwordEncoder.matches("secreta123", ana().getPasswordHash())).isTrue();
+        assertThat(intentos.bloqueado(ANA)).isTrue();
     }
 
     @Test
