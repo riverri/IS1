@@ -15,6 +15,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Reintentar descarga de Maven
+        run: |
+          for intento in 1 2 3; do
+            if ./mvnw -v; then
+              exit 0
+            fi
+            if [ "$intento" -lt 3 ]; then
+              echo "No se pudo preparar Maven (intento $intento/3); esperando antes de reintentar."
+              sleep $((intento * 10))
+            fi
+          done
+          echo "No se pudo descargar Maven tras 3 intentos." >&2
+          exit 1
       - name: Compilar y ejecutar pruebas
         run: ./mvnw -B verify
       # Cobertura de las pruebas (JaCoCo): el resumen sale en la página de la ejecución y el informe completo,
@@ -60,6 +73,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Reintentar descarga de Maven
+        run: |
+          for intento in 1 2 3; do
+            if ./mvnw -v; then
+              exit 0
+            fi
+            if [ "$intento" -lt 3 ]; then
+              echo "No se pudo preparar Maven (intento $intento/3); esperando antes de reintentar."
+              sleep $((intento * 10))
+            fi
+          done
+          echo "No se pudo descargar Maven tras 3 intentos." >&2
+          exit 1
       - name: Ejecutar pruebas con PostgreSQL
         run: ./mvnw -B test
 
@@ -75,6 +101,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Reintentar descarga de Maven
+        run: |
+          for intento in 1 2 3; do
+            if ./mvnw -v; then
+              exit 0
+            fi
+            if [ "$intento" -lt 3 ]; then
+              echo "No se pudo preparar Maven (intento $intento/3); esperando antes de reintentar."
+              sleep $((intento * 10))
+            fi
+          done
+          echo "No se pudo descargar Maven tras 3 intentos." >&2
+          exit 1
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

@@ -157,6 +157,25 @@ class QuinielaWebTest {
     }
 
     @Test
+    void crearValidaNombrePrecioDuplicadosYPartidosInexistentes() {
+        assertThatThrownBy(() -> quinielas.crear("   ", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Ponle un nombre");
+        assertThatThrownBy(() -> quinielas.crear("Sin precio", BigDecimal.ZERO,
+                List.of(primero.getId(), segundo.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("precio del boleto");
+        assertThatThrownBy(() -> quinielas.crear("Demasiados decimales", new BigDecimal("1.001"),
+                List.of(primero.getId(), segundo.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("2 decimales");
+        assertThatThrownBy(() -> quinielas.crear("Duplicado", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), tercero.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("has elegido 3");
+        assertThatThrownBy(() -> quinielas.crear("Desaparecido", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), Long.MAX_VALUE)))
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("Alguno de los partidos ya no existe");
+    }
+
+    @Test
     void noValenPartidosDeDeportesSinEmpateNiYaEmpezados() {
         Evento basket = eventos.save(new Evento(competiciones.findByNombre("Liga ACB").orElseThrow(),
                 equipos.findByNombre("Unicaja").orElseThrow(), equipos.findByNombre("Baskonia").orElseThrow(),
@@ -216,6 +235,28 @@ class QuinielaWebTest {
         Quiniela quiniela = crear();
         assertThatThrownBy(() -> quinielas.echarBoleto(ANA, quiniela.getId(), java.util.Arrays.asList(Resultado.LOCAL, null, Resultado.LOCAL)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessage("Elige 1, X o 2 en cada partido");
+    }
+
+    @Test
+    void importeDeBoletoRespetaLimitesDeJuegoResponsable() {
+        Quiniela quiniela = quinielas.crear("Boleto caro", new BigDecimal("100000"),
+                List.of(primero.getId(), segundo.getId(), tercero.getId()));
+        assertThatThrownBy(() -> quinielas.echarBoleto(ANA, quiniela.getId(),
+                List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.VISITANTE)))
+                .isInstanceOf(RuntimeException.class);
+        assertThat(quinielas.boletoDe(ANA, quiniela.getId())).isEmpty();
+    }
+
+    @Test
+    void pronosticoWebDesconocidoSeDevuelveComoErrorYNoRompeLaPeticion() throws Exception {
+        Quiniela quiniela = crear();
+        mvc.perform(post("/quinielas/{id}/boleto", quiniela.getId()).with(user(ANA)).with(csrf())
+                        .param("p0", "LOCAL").param("p1", "EMPATE").param("p2", "EMPATE"))
+                .andExpect(status().is3xxRedirection());
+        mvc.perform(post("/quinielas/{id}/boleto", quiniela.getId()).with(user(BEA)).with(csrf())
+                        .param("p0", "LOCAL").param("p1", "INVALIDO").param("p2", "VISITANTE"))
+                .andExpect(flash().attribute("error", "No enum constant es.ucm.fdi.is1.apuestas.cuotas.Resultado.INVALIDO"));
+        assertThat(quinielas.boletoDe(BEA, quiniela.getId())).isEmpty();
     }
 
     @Test
@@ -305,6 +346,19 @@ class QuinielaWebTest {
                 .andExpect(content().string(containsString("13,50")));
 
         assertThatThrownBy(() -> quinielas.repartir(quiniela.getId())).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void noSePuedeRepartirNiAnularUnaQuinielaYaRepartida() {
+        Quiniela quiniela = crear();
+        resolucion.introducirResultado(primero.getId(), Resultado.LOCAL);
+        resolucion.introducirResultado(segundo.getId(), Resultado.EMPATE);
+        resolucion.introducirResultado(tercero.getId(), Resultado.VISITANTE);
+        quinielas.repartir(quiniela.getId());
+        assertThatThrownBy(() -> quinielas.repartir(quiniela.getId()))
+                .isInstanceOf(IllegalStateException.class).hasMessage("Esta quiniela ya está repartida");
+        assertThatThrownBy(() -> quinielas.anular(quiniela.getId()))
+                .isInstanceOf(IllegalStateException.class).hasMessage("Esta quiniela ya está repartida");
     }
 
     @Test
