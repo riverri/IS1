@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -22,6 +23,8 @@ import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+// Contexto propio (otro bean o base de datos): se cierra al terminar para no quedarse con conexiones abiertas
+@DirtiesContext
 class PingSinBaseDeDatosTest {
 
     @Autowired

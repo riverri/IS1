@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
@@ -14,6 +15,8 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
  */
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:password-usuario-fija",
         "apuestas.usuario.password=", "apuestas.usuario.password-fija=true"})
+// Contexto propio (otro bean o base de datos): se cierra al terminar para no quedarse con conexiones abiertas
+@DirtiesContext
 class PasswordUsuarioFijaTest {
 
     @Autowired
