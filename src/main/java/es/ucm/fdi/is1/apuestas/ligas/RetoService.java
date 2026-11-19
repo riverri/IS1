@@ -217,6 +217,11 @@ public class RetoService {
 
     /** Un reto aceptado que ya se había cerrado: el resultado ha cambiado y se ajusta la diferencia a cada uno. */
     private void corregir(Reto reto, Evento evento, LocalDateTime ahora) {
+        if (reto.getRetador().isEliminado() || reto.getRetado().isEliminado()) {
+            // A una cuenta eliminada no se le abona ni se le retira nada (su saldo ya se puso a cero): corregir solo al
+            // otro crearía o haría desaparecer dinero. El reto se queda como se cerró
+            return;
+        }
         Usuario antes = reto.getGanador();
         boolean devueltoAntes = reto.getEstado() == EstadoReto.DEVUELTO;
         Usuario ahoraGana = ganadorAhora(reto, evento);
@@ -227,7 +232,8 @@ public class RetoService {
                     .subtract(cobro(reto, jugador, antes, devueltoAntes));
             if (diferencia.signum() != 0) {
                 cambia = true;
-                jugador.ajustar(diferencia, TipoMovimiento.CORRECCION, "Reto corregido: " + titulo(evento), ahora);
+                // RETO_PREMIO y no CORRECCION: es dinero entre los dos jugadores, no de la casa (beneficio diario)
+                jugador.ajustar(diferencia, TipoMovimiento.RETO_PREMIO, "Reto corregido: " + titulo(evento), ahora);
             }
         }
         if (!cambia) {

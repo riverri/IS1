@@ -298,6 +298,25 @@ class RetoWebTest {
         assertThat(saldo(ANA)).isEqualByComparingTo(antes);
     }
 
+    /**
+     * Si después de resolverse uno de los dos elimina su cuenta y se corrige el resultado, el reto se queda como se
+     * cerró: a la cuenta eliminada no se le puede retirar nada, y pagar al otro crearía dinero de la nada.
+     */
+    @Test
+    void corregirUnRetoConUnaCuentaEliminadaNoCreaDinero() {
+        Reto reto = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+        retos.aceptar(LUIS, reto.getId(), Resultado.VISITANTE);
+        resolucion.introducirResultado(partido.getId(), Resultado.LOCAL);
+        assertThat(reto.getGanador().getEmail()).isEqualTo(ANA);
+
+        bajas.eliminarCuenta(ANA, "secreta123");
+        BigDecimal luisAntes = saldo(LUIS);
+        resolucion.introducirResultado(partido.getId(), Resultado.VISITANTE);
+
+        assertThat(saldo(LUIS)).isEqualByComparingTo(luisAntes);
+        assertThat(reto.getEstado()).isEqualTo(EstadoReto.RESUELTO);
+    }
+
     @Test
     void elImporteDelRetoLlevaDosDecimalesComoMucho() {
         assertThatThrownBy(() -> retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, new BigDecimal("1.005")))
