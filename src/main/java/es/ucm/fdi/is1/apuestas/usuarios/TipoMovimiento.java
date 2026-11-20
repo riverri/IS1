@@ -56,7 +56,9 @@ public enum TipoMovimiento {
     /** Reto rechazado, caducado, anulado o sin ganador (HU-89). */
     RETO_DEVOLUCION("Reto: devolución"),
     /** Coste de impedir temporalmente que un compañero apueste en un evento (HU-105). */
-    BLOQUEO_LIGA("Bloqueo de liga");
+    BLOQUEO_LIGA("Bloqueo de liga"),
+    /** Abono de una combinada cerrada antes de que empiece cualquiera de sus eventos (HU-103). */
+    COBRO_ANTICIPADO("Cobro anticipado");
 
     private final String descripcion;
     private final boolean juego;

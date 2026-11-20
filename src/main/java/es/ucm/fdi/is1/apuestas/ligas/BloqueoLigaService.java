@@ -61,12 +61,34 @@ public class BloqueoLigaService {
         return bloqueos.save(new BloqueoLiga(liga, creador, objetivo, evento, seleccionado, ahora));
     }
 
+    /** Paga 100 monedas para bloquear el mismo alcance a todos los miembros salvo quien lo activa (HU-106). */
+    @Transactional
+    public BloqueoLiga crearParaLiga(Long ligaId, String email, Long eventoId, String alcance) {
+        Usuario creador = usuario(email);
+        Liga liga = ligas.findById(ligaId).filter(l -> l.esMiembro(creador))
+                .orElseThrow(() -> new LigaNoEncontradaException(ligaId));
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        Evento evento = eventos.paraApostar(eventoId).filter(e -> e.admiteApuestas(ahora))
+                .orElseThrow(() -> new IllegalArgumentException("Solo puedes bloquear un partido futuro y programado"));
+        String seleccionado = normalizarAlcance(alcance, evento);
+        if (bloqueos.existsByLigaAndEventoAndAlcanceAndObjetivoIsNull(liga, evento, seleccionado)) {
+            throw new IllegalArgumentException("Ya hay un bloqueo activo para toda la liga en ese alcance");
+        }
+        creador.cargar(new BigDecimal("100.00"), TipoMovimiento.BLOQUEO_LIGA,
+                "Bloqueo para toda la liga en " + evento.getLocal().getNombre() + " – "
+                        + evento.getVisitante().getNombre(), ahora);
+        return bloqueos.save(new BloqueoLiga(liga, creador, null, evento, seleccionado, ahora));
+    }
+
     /** Comprueba la regla al apostar; no se confía en que la interfaz oculte la selección. */
     @Transactional(readOnly = true)
     public void comprobar(Usuario apostador, Evento evento, Resultado resultado, Especial especial) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        for (BloqueoLiga bloqueo : bloqueos.findByObjetivoAndEvento(apostador, evento)) {
-            if (!bloqueo.activa(ahora) || !bloqueo.getLiga().esMiembro(apostador)) continue;
+        for (BloqueoLiga bloqueo : bloqueos.findByEvento(evento)) {
+            boolean destinatario = bloqueo.getObjetivo() == null
+                    ? !bloqueo.getCreador().getId().equals(apostador.getId())
+                    : bloqueo.getObjetivo().getId().equals(apostador.getId());
+            if (!destinatario || !bloqueo.activa(ahora) || !bloqueo.getLiga().esMiembro(apostador)) continue;
             String alcance = bloqueo.getAlcance();
             if (alcance.equals("PARTIDO") || alcance.equals(resultado == null ? "" : resultado.name())
                     || alcance.equals(especial == null ? "" : especial.name())) {

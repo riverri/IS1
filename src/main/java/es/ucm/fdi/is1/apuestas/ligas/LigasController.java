@@ -121,6 +121,21 @@ public class LigasController {
         return "redirect:/ligas/" + id;
     }
 
+    /** POST /ligas/{id}/bloqueos/todos: aplica el alcance elegido a los demás miembros por 100 monedas. */
+    @PostMapping("/{id}/bloqueos/todos")
+    public String bloquearLiga(@PathVariable Long id, @RequestParam Long evento, @RequestParam String alcance,
+                               Principal principal, RedirectAttributes redireccion) {
+        try {
+            bloqueos.crearParaLiga(id, principal.getName(), evento, alcance);
+            redireccion.addFlashAttribute("mensaje", "Bloqueo aplicado a toda la liga por 100 monedas.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        } catch (SaldoInsuficienteException e) {
+            redireccion.addFlashAttribute("error", "No tienes saldo suficiente para pagar el bloqueo de 100 monedas.");
+        }
+        return "redirect:/ligas/" + id;
+    }
+
     /** POST /ligas/{id}/salir: sale de la liga (el creador no puede; tiene que borrarla) (CA-51.3). */
     @PostMapping("/{id}/salir")
     public String salir(@PathVariable Long id, Principal principal, RedirectAttributes redireccion) {

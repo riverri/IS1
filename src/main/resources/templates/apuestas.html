@@ -48,10 +48,15 @@
                 <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
                 <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
             </dl>
-            <p class="aviso" th:if="${a.combinada and ofertasCashOut.containsKey(a.id)}"
-               th:text="'Cobro anticipado disponible: ' + ${#numbers.formatDecimal(ofertasCashOut.get(a.id), 1, 'POINT', 2, 'COMMA')} + ' monedas por toda la combinada.'">
-                Cobro anticipado disponible: 10,00 monedas por toda la combinada.
-            </p>
+            <form class="aviso" th:if="${a.combinada and ofertasCashOut.containsKey(a.id)}"
+                  th:action="@{/apuestas/{id}/cash-out(id=${a.id})}" method="post"
+                  onsubmit="return confirm('¿Cobrar ahora toda la combinada por el importe indicado?');">
+                <span th:text="'Cobro anticipado disponible: ' + ${#numbers.formatDecimal(ofertasCashOut.get(a.id), 1, 'POINT', 2, 'COMMA')} + ' monedas por toda la combinada.'">
+                    Cobro anticipado disponible: 10,00 monedas por toda la combinada.
+                </span>
+                <input type="hidden" name="ofertaVista" th:value="${ofertasCashOut.get(a.id)}">
+                <button class="boton boton-pequeno" type="submit">Cobrar ya</button>
+            </form>
             <!-- Si la cuota ha cambiado (HU-29), el formulario de esta apuesta sale abierto y con la cuota nueva -->
             <details class="cambiar-importe" th:if="${a.cancelable(ahora)}"
                      th:with="cambiada=${cuotaNuevaId != null and cuotaNuevaId == a.id}" th:open="${cambiada}">
@@ -120,7 +125,12 @@
                 <td th:text="${a.combinada} ? ('Combinada · ' + ${#lists.size(a.selecciones)}) : (${a.selecciones[0].simbolo} + ' · ' + ${a.selecciones[0].descripcionPronostico})">1 · Real Madrid</td>
                 <td th:text="${@formato.cuota(a.cuota)}">1,85</td>
                 <td th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</td>
-                <td><span class="estado" th:classappend="${#strings.toLowerCase(a.estado)}" th:text="${a.estado}">GANADA</span></td>
+                <td>
+                    <span class="estado" th:classappend="${#strings.toLowerCase(a.estado)}"
+                          th:text="${a.estado.name() == 'COBRADA'} ? 'Cobro anticipado' : ${a.estado}">GANADA</span>
+                    <small th:if="${a.estado.name() == 'COBRADA'}"
+                           th:text="'Abonado ' + ${#numbers.formatDecimal(a.pagado, 1, 'POINT', 2, 'COMMA')} + ' el ' + ${#temporals.format(a.fechaCobroAnticipado, 'dd/MM/yyyy HH:mm')}">Abonado 20,00</small>
+                </td>
                 <td th:classappend="${a.beneficio.signum() > 0} ? 'positivo' : (${a.beneficio.signum() < 0} ? 'negativo')"
                     th:text="${a.beneficio.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(a.beneficio, 1, 'POINT', 2, 'COMMA')}">+8,50</td>
             </tr>

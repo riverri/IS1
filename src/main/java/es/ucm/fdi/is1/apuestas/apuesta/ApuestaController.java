@@ -217,6 +217,25 @@ public class ApuestaController {
         return "redirect:/apuestas";
     }
 
+    /** POST /apuestas/{id}/cash-out: confirma la oferta de la combinada tras validar de nuevo cuotas y eventos. */
+    @PostMapping("/apuestas/{id}/cash-out")
+    public String cashOut(@PathVariable Long id, @RequestParam(required = false) BigDecimal ofertaVista,
+                          Principal principal, RedirectAttributes redireccion) {
+        try {
+            Apuesta apuesta = apuestas.cobrarAnticipado(principal.getName(), id, ofertaVista);
+            redireccion.addFlashAttribute("mensaje", "Combinada cerrada. Se han abonado "
+                    + apuesta.getPagado().toPlainString().replace('.', ',') + " monedas.");
+        } catch (OfertaCashOutCambiadaException e) {
+            redireccion.addFlashAttribute("aviso", e.getMessage() + " Nueva oferta: "
+                    + e.getOfertaNueva().toPlainString().replace('.', ',') + " monedas.");
+            redireccion.addFlashAttribute("cashOutNuevaId", id);
+            redireccion.addFlashAttribute("cashOutNuevaOferta", e.getOfertaNueva());
+        } catch (ApuestaNoEncontradaException | IllegalStateException e) {
+            redireccion.addFlashAttribute("error", "No se pudo completar el cash-out: " + e.getMessage());
+        }
+        return "redirect:/apuestas";
+    }
+
     /**
      * POST /apuestas/{id}/importe: cambia el importe de una apuesta activa (HU-27) y vuelve a Mis apuestas
      * con la nueva cuota y la nueva ganancia potencial, o con el error.

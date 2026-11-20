@@ -21,13 +21,16 @@ public class BloqueoLiga {
     private Liga liga;
     @ManyToOne(optional = false)
     private Usuario creador;
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Usuario objetivo;
     @ManyToOne(optional = false)
     private Evento evento;
     /** PARTIDO, nombre de Resultado o nombre de Especial. */
     @Column(nullable = false, length = 20)
     private String alcance;
+    /** Clave estable para impedir duplicados de un amigo o del bloqueo global de la liga. */
+    @Column(name = "destinatario_key", nullable = false, length = 50)
+    private String destinatarioKey;
     @Column(nullable = false)
     private LocalDateTime creada;
 
@@ -39,6 +42,7 @@ public class BloqueoLiga {
         this.objetivo = objetivo;
         this.evento = evento;
         this.alcance = alcance;
+        this.destinatarioKey = objetivo == null ? "TODOS" : "AMIGO:" + objetivo.getId();
         this.creada = creada;
     }
 
@@ -48,6 +52,7 @@ public class BloqueoLiga {
     public Usuario getObjetivo() { return objetivo; }
     public Evento getEvento() { return evento; }
     public String getAlcance() { return alcance; }
+    public boolean isParaTodaLaLiga() { return objetivo == null; }
     public LocalDateTime getCreada() { return creada; }
 
     boolean activa(LocalDateTime ahora) {
