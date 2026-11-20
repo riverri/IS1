@@ -79,6 +79,20 @@ class AccesibilidadWebTest {
         }
     }
 
+    @Test
+    void laBarraDeLaHomeMuestraElRankingDeLigasAunqueNoHayaSesion() throws Exception {
+        String html = mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(html).contains("href=\"/ligas/clasificacion\"")
+                .contains("class=\"ranking-ligas")
+                .contains("Ranking</span><small>Ligas</small>");
+        int rankingGeneral = html.indexOf("href=\"/ranking\"");
+        int rankingLigas = html.indexOf("href=\"/ligas/clasificacion\"");
+        assertThat(html.indexOf("</a>", rankingGeneral)).isLessThan(rankingLigas);
+    }
+
     /** CA-98.1: cada cuota dice a qué resultado es, no solo el número. */
     @Test
     void cadaCuotaDiceAQueResultadoEs() throws Exception {
