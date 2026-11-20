@@ -63,7 +63,7 @@ public class UsuarioActualAdvice {
     /** Solo Mi cuenta necesita saber si el creador ha desactivado el juego responsable. */
     @ModelAttribute("juegoResponsableActivo")
     public boolean juegoResponsableActivo(HttpServletRequest peticion) {
-        return peticion.getServletPath().startsWith("/cuenta")
+        return peticion.getRequestURI().startsWith(peticion.getContextPath() + "/cuenta")
                 && limitesActuales(peticion).isJuegoResponsable();
     }
 
