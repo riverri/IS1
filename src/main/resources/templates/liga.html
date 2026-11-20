@@ -20,9 +20,13 @@
         <p class="aviso" th:with="n=${#lists.size(liga.miembrosActivos)}" th:text="'Creada por ' + ${liga.creador.nombre} + ' · ' + ${n} + (${n == 1} ? ' miembro' : ' miembros')">Creada por Ana · 4 miembros</p>
     </div>
 
-    <section class="tarjeta" aria-label="Visibilidad de la liga">
-        <p>Visibilidad: <strong th:text="${liga.publica} ? 'Pública' : 'Privada'">Privada</strong></p>
-        <p class="aviso">La clasificación global solo muestra el nombre, el número de miembros activos y el saldo total.</p>
+    <section class="tarjeta tarjeta-formulario liga-visibilidad" aria-labelledby="titulo-visibilidad">
+        <div class="liga-panel-cabecera">
+            <h2 id="titulo-visibilidad">Visibilidad de la liga</h2>
+            <span class="liga-estado" th:classappend="${liga.publica} ? ' liga-estado-publica' : ' liga-estado-privada'"
+                  th:text="${liga.publica} ? 'Pública' : 'Privada'">Privada</span>
+        </div>
+        <p class="aviso">Las ligas públicas aparecen en la clasificación global, que solo muestra el nombre, el número de miembros activos y el saldo total.</p>
         <form th:if="${soyCreador}" th:action="@{/ligas/{id}/visibilidad(id=${liga.id})}" method="post">
             <button class="boton boton-secundario" type="submit" name="publica" th:value="${!liga.publica}"
                     th:text="${liga.publica} ? 'Hacer privada' : 'Hacer pública'">Hacer pública</button>
@@ -48,40 +52,62 @@
     </ol>
     <p class="aviso" th:if="${#lists.size(puestos) < 2}">Pasa el código a tus amigos: en cuanto se unan aparecerán aquí.</p>
 
-    <h2>Bloquear una apuesta a un amigo</h2>
-    <p class="aviso">Cuesta 50 monedas. El bloqueo dura hasta que empiece el partido y no afecta a apuestas que ya estén aceptadas.</p>
-    <form class="tarjeta formulario" th:if="${!#lists.isEmpty(rivales) and !#lists.isEmpty(partidosBloqueables)}"
-          th:action="@{/ligas/{id}/bloqueos(id=${liga.id})}" method="post">
-        <select name="objetivo" aria-label="Amigo" required>
-            <option th:each="u : ${rivales}" th:value="${u.id}" th:text="${u.nombre}">Luis</option>
-        </select>
-        <select name="evento" aria-label="Partido" required>
-            <option th:each="e : ${partidosBloqueables}" th:value="${e.id}"
-                    th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 · Getafe CF – Sevilla FC</option>
-        </select>
-        <select name="alcance" aria-label="Partido o selección" required>
-            <option value="PARTIDO">Todo el partido</option>
-            <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
-            <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
-        </select>
-        <button class="boton" type="submit" onclick="return confirm('El bloqueo cuesta 50 monedas. ¿Continuar?');">Bloquear por 50 monedas</button>
-    </form>
-    <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya otro miembro en la liga, podrás bloquearle una apuesta.</p>
-    <h3>Bloquear para toda la liga</h3>
-    <p class="aviso">Cuesta 100 monedas y afecta a los demás miembros, no a ti. Dura hasta que empiece el partido.</p>
-    <form class="tarjeta formulario" th:if="${!#lists.isEmpty(rivales) and !#lists.isEmpty(partidosBloqueables)}"
-          th:action="@{/ligas/{id}/bloqueos/todos(id=${liga.id})}" method="post">
-        <select name="evento" aria-label="Partido" required>
-            <option th:each="e : ${partidosBloqueables}" th:value="${e.id}"
-                    th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 · Getafe CF – Sevilla FC</option>
-        </select>
-        <select name="alcance" aria-label="Partido o selección" required>
-            <option value="PARTIDO">Todo el partido</option>
-            <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
-            <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
-        </select>
-        <button class="boton" type="submit" onclick="return confirm('El bloqueo para toda la liga cuesta 100 monedas. ¿Continuar?');">Bloquear a la liga por 100 monedas</button>
-    </form>
+    <h2>Bloqueos de apuestas</h2>
+    <div class="liga-bloqueos">
+        <section class="tarjeta tarjeta-formulario formulario liga-bloqueo" aria-labelledby="titulo-bloqueo-amigo">
+            <div class="liga-panel-cabecera">
+                <h3 id="titulo-bloqueo-amigo">Bloquear a un amigo</h3>
+                <span class="liga-coste">50 monedas</span>
+            </div>
+            <p class="aviso">Impide que esa persona apueste en el partido o selección elegidos hasta que empiece. No afecta a apuestas ya aceptadas.</p>
+            <form th:if="${!#lists.isEmpty(rivales) and !#lists.isEmpty(partidosBloqueables)}"
+                  th:action="@{/ligas/{id}/bloqueos(id=${liga.id})}" method="post">
+                <label for="objetivo-bloqueo">Amigo</label>
+                <select id="objetivo-bloqueo" name="objetivo" required>
+                    <option th:each="u : ${rivales}" th:value="${u.id}" th:text="${u.nombre}">Luis</option>
+                </select>
+                <label for="evento-bloqueo">Partido</label>
+                <select id="evento-bloqueo" name="evento" required>
+                    <option th:each="e : ${partidosBloqueables}" th:value="${e.id}"
+                            th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 · Getafe CF – Sevilla FC</option>
+                </select>
+                <label for="alcance-amigo">Qué bloquear</label>
+                <select id="alcance-amigo" name="alcance" required>
+                    <option value="PARTIDO">Todo el partido</option>
+                    <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
+                    <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
+                </select>
+                <button class="boton" type="submit" onclick="return confirm('El bloqueo cuesta 50 monedas. ¿Continuar?');">Bloquear a un amigo</button>
+            </form>
+            <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya otro miembro en la liga, podrás bloquearle una apuesta.</p>
+            <p class="aviso" th:if="${!#lists.isEmpty(rivales) and #lists.isEmpty(partidosBloqueables)}">No hay partidos disponibles para bloquear ahora.</p>
+        </section>
+
+        <section class="tarjeta tarjeta-formulario formulario liga-bloqueo" aria-labelledby="titulo-bloqueo-liga">
+            <div class="liga-panel-cabecera">
+                <h3 id="titulo-bloqueo-liga">Bloquear para toda la liga</h3>
+                <span class="liga-coste">100 monedas</span>
+            </div>
+            <p class="aviso">Impide que los demás miembros apuesten en el partido o selección elegidos hasta que empiece. No te afecta a ti.</p>
+            <form th:if="${!#lists.isEmpty(rivales) and !#lists.isEmpty(partidosBloqueables)}"
+                  th:action="@{/ligas/{id}/bloqueos/todos(id=${liga.id})}" method="post">
+                <label for="evento-bloqueo-liga">Partido</label>
+                <select id="evento-bloqueo-liga" name="evento" required>
+                    <option th:each="e : ${partidosBloqueables}" th:value="${e.id}"
+                            th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 · Getafe CF – Sevilla FC</option>
+                </select>
+                <label for="alcance-liga">Qué bloquear</label>
+                <select id="alcance-liga" name="alcance" required>
+                    <option value="PARTIDO">Todo el partido</option>
+                    <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
+                    <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
+                </select>
+                <button class="boton" type="submit" onclick="return confirm('El bloqueo para toda la liga cuesta 100 monedas. ¿Continuar?');">Bloquear a la liga</button>
+            </form>
+            <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya otro miembro en la liga, podrás bloquear apuestas para todo el grupo.</p>
+            <p class="aviso" th:if="${!#lists.isEmpty(rivales) and #lists.isEmpty(partidosBloqueables)}">No hay partidos disponibles para bloquear ahora.</p>
+        </section>
+    </div>
     <div class="tarjeta tabla" th:unless="${#lists.isEmpty(bloqueosActivos)}">
         <table>
             <thead><tr><th>Amigo</th><th>Partido</th><th>Alcance</th><th>Hasta</th></tr></thead>
