@@ -7,7 +7,7 @@
 - El tablero de GitHub Projects enseña tarjetas sueltas: no se ve qué tarea depende de cuál, qué pruebas tiene cada historia ni cuánto trabajo lleva cada persona.
 
 ## Decisión
-El Sprint Backlog se sigue en un grafo de tareas compartido: **https://grafo-better.vercel.app**.
+El Sprint Backlog se sigue en un grafo de tareas compartido: **https://grafo-better.vercel.app** (en solo lectura, sin cuenta: https://grafo-better.vercel.app/?presentacion=8FeSBocO1rjfr6U1N9CJ1BBq).
 
 | Qué | Cómo |
 |---|---|
@@ -15,7 +15,7 @@ El Sprint Backlog se sigue en un grafo de tareas compartido: **https://grafo-bet
 | Acceso | Cada miembro entra con el correo con el que hace sus commits, con un enlace que llega por correo (sin contraseña) |
 | Tiempo real | Los cambios de uno aparecen al momento en las pantallas de los demás |
 | GitHub | Cada nodo puede enlazar su issue o pull request; el botón «Comprobar estados» trae su estado de GitHub |
-| Product Owner | Un enlace de solo lectura, sin cuenta, que se saca en los ajustes del grafo |
+| Product Owner | Un enlace de solo lectura, sin cuenta: https://grafo-better.vercel.app/?presentacion=8FeSBocO1rjfr6U1N9CJ1BBq (se renueva en los ajustes del grafo) |
 | Otros módulos | Riesgos, burndown, carga de trabajo por persona, entregas y comentarios |
 | Infraestructura | Supabase (base de datos y acceso) y Vercel (web), en sus planes gratuitos |
 
