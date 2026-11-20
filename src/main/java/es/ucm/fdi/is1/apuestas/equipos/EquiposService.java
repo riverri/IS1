@@ -51,9 +51,11 @@ public class EquiposService {
     /** Número de equipos de cada deporte, para las pestañas. */
     @Transactional(readOnly = true)
     public Map<Deporte, Long> recuentoPorDeporte() {
-        return equipos.findAll().stream()
-                .collect(Collectors.groupingBy(Equipo::getDeporte, () -> new EnumMap<>(Deporte.class),
-                        Collectors.counting()));
+        Map<Deporte, Long> recuento = new EnumMap<>(Deporte.class);
+        for (Object[] fila : equipos.contarPorDeporte()) {
+            recuento.put((Deporte) fila[0], (Long) fila[1]);
+        }
+        return recuento;
     }
 
     /** Competiciones de un deporte, para filtrar dentro de la pestaña. */

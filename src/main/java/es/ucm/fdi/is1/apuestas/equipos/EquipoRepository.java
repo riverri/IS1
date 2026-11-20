@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /** Repositorio Spring Data de {@link Equipo}; las consultas salen del nombre de cada método. */
 public interface EquipoRepository extends JpaRepository<Equipo, Long> {
@@ -30,4 +31,8 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
     Optional<Equipo> findByIdExterno(Integer idExterno);
 
     List<Equipo> findByDeporte(Deporte deporte);
+
+    /** Recuento por deporte sin cargar equipos ni sus competiciones. */
+    @Query("select e.deporte, count(e) from Equipo e group by e.deporte")
+    List<Object[]> contarPorDeporte();
 }
