@@ -156,9 +156,10 @@ public class ApuestaController {
         // La vista llama a cancelable(ahora) para mostrar o no los botones de cancelar y cambiar importe
         model.addAttribute("ahora", LocalDateTime.now(reloj));
         model.addAttribute("ofertasCashOut", apuestas.ofertasCashOut(activas, LocalDateTime.now(reloj)));
-        model.addAttribute("historial", apuestas.historial(principal.getName()));
-        model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
-        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(principal.getName()));
+        List<Apuesta> historial = apuestas.historial(principal.getName());
+        model.addAttribute("historial", historial);
+        model.addAttribute("estadisticas", apuestas.estadisticas(historial));
+        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(historial));
         return "apuestas";
     }
 

@@ -339,7 +339,12 @@ public class ApuestaService {
     /** Porcentaje de aciertos y rentabilidad del usuario (HU-35). */
     @Transactional(readOnly = true)
     public Estadisticas estadisticas(String email) {
-        return Estadisticas.de(historial(email));
+        return estadisticas(historial(email));
+    }
+
+    /** Calcula las estadísticas sobre el historial ya cargado por la página "Mis apuestas". */
+    Estadisticas estadisticas(List<Apuesta> historial) {
+        return Estadisticas.de(historial);
     }
 
     /** Estadísticas de un grupo de apuestas: una competición, las combinadas o las de largo plazo (HU-96). */
@@ -353,8 +358,13 @@ public class ApuestaService {
      */
     @Transactional(readOnly = true)
     public List<EstadisticasGrupo> estadisticasPorCompeticion(String email) {
+        return estadisticasPorCompeticion(historial(email));
+    }
+
+    /** Agrupa el historial ya cargado para evitar repetir la consulta al pintarlo junto a las estadísticas. */
+    List<EstadisticasGrupo> estadisticasPorCompeticion(List<Apuesta> historial) {
         java.util.Map<String, List<Apuesta>> grupos = new java.util.LinkedHashMap<>();
-        for (Apuesta apuesta : historial(email)) {
+        for (Apuesta apuesta : historial) {
             if (!apuesta.isResuelta() && apuesta.getEstado() != EstadoApuesta.COBRADA) {
                 continue;
             }
