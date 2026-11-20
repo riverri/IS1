@@ -1564,4 +1564,9 @@ button:focus-visible, summary:focus-visible, textarea:focus-visible, [tabindex]:
     .buscador { flex: 1 1 100%; min-width: 0; max-width: none; }
     /* Sin esto, el ancho propio del campo empuja el botón fuera de la pantalla */
     .buscador input { width: 0; }
+    /* En el podio, el ancho mínimo de un nombre largo no debe ensanchar las tres columnas. */
+    .podio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .podio-puesto { min-width: 0; padding-right: 4px; padding-left: 4px; }
+    .podio-nombre { width: 100%; min-width: 0; }
+    .podio-puesto .ranking-saldo { max-width: 100%; overflow-wrap: anywhere; }
 }
