@@ -60,4 +60,6 @@ _Por completar por el equipo en la retrospectiva._
 ### Acciones de mejora para el Sprint 5
 | Acción | Responsable | Cómo se comprueba |
 |---|---|---|
-| | | |
+| Tener más conciencia del uso de la IA | Todo el grupo | Aunque no se revise concienzudamente el código antes de hacer un commit o un pull request, haya una revisión por parte de algún integrante|
+| Mejorar la comunicación | Todo el grupo | Aunque se han diseñado métodos para mejorar la comunicación entre los miembros, no todos han hecho un buen uso de ellos y se insta a comunicar todos los cambios que se realicen en el repositorio|
+| Notificaciones de cambios | Todo el grupo | Uno de nuestros grandes problemas es la falta de actualización de los cambios, se cree que es uno de los grandes problemas de nuestro equipo y vamos a trabajar en ello |
