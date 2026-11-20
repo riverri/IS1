@@ -35,4 +35,11 @@ public interface PosicionPrediccionRepository extends JpaRepository<PosicionPred
     @Query("select p from PosicionPrediccion p join fetch p.mercado m join fetch p.usuario"
             + " where m.estado = es.ucm.fdi.is1.apuestas.prediccion.EstadoPrediccion.RESUELTO")
     List<PosicionPrediccion> deMercadosResueltos();
+
+    /** Totales para el ranking sin cargar cada posición ni sus entidades relacionadas en memoria. */
+    @Query("select p.usuario.id, count(p), sum(case when p.lado = m.resultado then 1 else 0 end),"
+            + " sum(p.invertido), sum(p.pagado) from PosicionPrediccion p join p.mercado m"
+            + " where m.estado = es.ucm.fdi.is1.apuestas.prediccion.EstadoPrediccion.RESUELTO"
+            + " group by p.usuario.id")
+    List<Object[]> resumenResueltasPorUsuario();
 }
