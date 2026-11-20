@@ -100,8 +100,7 @@ public class BloqueoLigaService {
     @Transactional(readOnly = true)
     public List<BloqueoLiga> deLiga(Liga liga) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        return bloqueos.findAll().stream().filter(b -> b.getLiga().getId().equals(liga.getId()))
-                .filter(b -> b.activa(ahora)).toList();
+        return bloqueos.activosDeLiga(liga, ahora);
     }
 
     private Usuario usuario(String email) {
