@@ -107,13 +107,13 @@ public class RankingService {
      */
     @Transactional(readOnly = true)
     public PerfilJugador perfil(Long usuarioId, String emailActual) {
-        Usuario usuario = usuarios.findById(usuarioId).orElseThrow();
+        Usuario usuario = usuarios.findById(usuarioId).orElseThrow(() -> new JugadorNoEncontradoException(usuarioId));
         if (usuario.isEliminado() || usuario.getRol() != Rol.USUARIO) {
             throw new JugadorNoEncontradoException(usuarioId);
         }
         long anteriores = usuarios.contarJugadoresAntes(Rol.USUARIO, usuario.getSaldo(), usuario.getNombre());
         int totalJugadores = Math.toIntExact(usuarios.countByRolAndEliminadoFalse(Rol.USUARIO));
-        Object[] resumen = apuestas.resumenResueltasDe(usuarioId);
+        Object[] resumen = apuestas.resumenResueltasDe(usuarioId).getFirst();
         Estadisticas estadisticas = Estadisticas.de(((Number) resumen[0]).longValue(),
                 ((Number) resumen[1]).longValue(), (java.math.BigDecimal) resumen[2],
                 (java.math.BigDecimal) resumen[3]);

@@ -61,7 +61,7 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
             + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"
             + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,"
             + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)")
-    Object[] resumenResueltasDe(@org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
+    List<Object[]> resumenResueltasDe(@org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
 
     /**
      * Importe apostado desde una fecha, sin contar las apuestas canceladas (HU-10).
