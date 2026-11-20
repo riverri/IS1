@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
@@ -13,4 +15,8 @@ public interface PosicionCriptoRepository extends JpaRepository<PosicionCripto, 
     Optional<PosicionCripto> findByUsuarioAndCripto(Usuario usuario, Criptomoneda cripto);
 
     List<PosicionCripto> findByUsuario(Usuario usuario);
+
+    /** Solo posiciones de una categoría, usadas al calcular el ranking de ese tipo de cripto. */
+    @Query("select p from PosicionCripto p where p.cripto.categoria = :categoria")
+    List<PosicionCripto> porCategoria(@Param("categoria") CategoriaCripto categoria);
 }

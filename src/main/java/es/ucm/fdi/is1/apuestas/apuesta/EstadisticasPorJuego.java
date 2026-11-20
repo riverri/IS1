@@ -88,8 +88,8 @@ class EstadisticasPorJuego {
             sumar(porUsuario, (Long) fila[0], new Estadisticas((int) ((Number) fila[2]).longValue(), 0,
                     compra ? importe : BigDecimal.ZERO, compra ? importe.negate() : importe));
         }
-        for (PosicionCripto p : posicionesCripto.findAll()) {
-            if (p.getCripto().getCategoria() == categoria && porUsuario.containsKey(p.getUsuario().getId())) {
+        for (PosicionCripto p : posicionesCripto.porCategoria(categoria)) {
+            if (porUsuario.containsKey(p.getUsuario().getId())) {
                 sumar(porUsuario, p.getUsuario().getId(), new Estadisticas(0, 0, BigDecimal.ZERO, p.getValor()));
             }
         }
