@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Nombres;
@@ -105,10 +106,9 @@ public class CatalogoService {
     /** Los próximos partidos disponibles, para la portada. Como mucho {@code cuantos}. */
     @Transactional(readOnly = true)
     public List<Evento> proximos(int cuantos) {
-        return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj))
-                .stream()
-                .limit(cuantos)
-                .toList();
+        if (cuantos <= 0) return List.of();
+        return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(
+                EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), PageRequest.of(0, cuantos));
     }
 
     /**
