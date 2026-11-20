@@ -43,7 +43,7 @@
     <section class="mis-equipos" th:unless="${#lists.isEmpty(deMisEquipos)}">
         <h2>★ Tus equipos</h2>
         <div class="rejilla-partidos">
-            <th:block th:each="ev : ${deMisEquipos}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
+            <th:block th:each="ev : ${deMisEquipos}"><article th:replace="~{fragments/comun :: partido(${ev}, ${cuotasPorEvento})}"></article></th:block>
         </div>
     </section>
 
@@ -52,7 +52,7 @@
         <section class="competicion" th:each="comp : ${grupo.value}" th:id="${@formato.ancla(comp.key)}">
             <h3 th:text="${comp.key}">LaLiga</h3>
             <div class="rejilla-partidos">
-                <th:block th:each="ev : ${comp.value}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
+                <th:block th:each="ev : ${comp.value}"><article th:replace="~{fragments/comun :: partido(${ev}, ${cuotasPorEvento})}"></article></th:block>
             </div>
         </section>
     </section>

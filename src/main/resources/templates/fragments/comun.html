@@ -144,7 +144,7 @@
     </svg>
 </span>
 
-<article class="partido" th:fragment="partido(ev)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
+<article class="partido" th:fragment="partido(ev, cuotasPorEvento)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
          th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
     <div class="partido-cabecera">
         <span class="partido-competicion">
@@ -169,7 +169,7 @@
         </ul>
     </a>
     <!--/* Las mismas cuotas que en la página del partido: con supercuota, la supercuota (HU-87) */-->
-    <div class="partido-pie" th:with="c=${@supercuotaService.cuotasConSupercuota(ev)}">
+    <div class="partido-pie" th:with="c=${cuotasPorEvento[ev.id]}">
         <div class="cuotas">
             <th:block th:each="op : ${ {'LOCAL', 'EMPATE', 'VISITANTE'} }"
                       th:with="cuota=${op == 'LOCAL' ? c.local : (op == 'EMPATE' ? c.empate : c.visitante)},

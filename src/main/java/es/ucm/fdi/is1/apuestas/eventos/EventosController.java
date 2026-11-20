@@ -2,12 +2,14 @@ package es.ucm.fdi.is1.apuestas.eventos;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.ucm.fdi.is1.apuestas.apuesta.SupercuotaService;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.seguimiento.FavoritosService;
 
@@ -20,10 +22,12 @@ public class EventosController {
 
     private final CatalogoService catalogo;
     private final FavoritosService favoritos;
+    private final SupercuotaService supercuotas;
 
-    public EventosController(CatalogoService catalogo, FavoritosService favoritos) {
+    public EventosController(CatalogoService catalogo, FavoritosService favoritos, SupercuotaService supercuotas) {
         this.catalogo = catalogo;
         this.favoritos = favoritos;
+        this.supercuotas = supercuotas;
     }
 
     /**
@@ -38,10 +42,16 @@ public class EventosController {
                            @RequestParam(required = false) String q, Principal principal,
                            Model model) {
         // HU-86: los próximos partidos de mis equipos, arriba del todo (sin filtros ni búsqueda)
-        model.addAttribute("deMisEquipos", principal == null || deporte != null || (q != null && !q.isBlank())
-                ? List.of() : favoritos.proximosPartidos(principal.getName()));
+        List<Evento> deMisEquipos = principal == null || deporte != null || (q != null && !q.isBlank())
+                ? List.of() : favoritos.proximosPartidos(principal.getName());
+        model.addAttribute("deMisEquipos", deMisEquipos);
         // Spring convierte el texto "FUTBOL" de la URL en el valor Deporte.FUTBOL del enum automáticamente
-        model.addAttribute("eventosPorDeporte", catalogo.buscar(deporte, q));
+        var eventosPorDeporte = catalogo.buscar(deporte, q);
+        model.addAttribute("eventosPorDeporte", eventosPorDeporte);
+        List<Evento> visibles = new ArrayList<>(deMisEquipos);
+        eventosPorDeporte.values().forEach(competiciones ->
+                competiciones.values().forEach(visibles::addAll));
+        model.addAttribute("cuotasPorEvento", supercuotas.cuotasConSupercuota(visibles));
         // El recuento de las pestañas no depende de los filtros: siempre se ven todos los deportes
         model.addAttribute("recuento", catalogo.recuentoPorDeporte());
         model.addAttribute("deporteElegido", deporte);

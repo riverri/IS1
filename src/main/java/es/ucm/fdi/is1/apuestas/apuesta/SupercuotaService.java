@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.context.event.EventListener;
@@ -31,14 +33,16 @@ public class SupercuotaService {
 
     private final SupercuotaRepository supercuotas;
     private final EventoRepository eventos;
+    private final VolumenApuestas volumen;
     private final CalculadoraCuotas calculadora;
     private final LimitesService limites;
     private final Clock reloj;
 
-    public SupercuotaService(SupercuotaRepository supercuotas, EventoRepository eventos, CalculadoraCuotas calculadora,
-                             LimitesService limites, Clock reloj) {
+    public SupercuotaService(SupercuotaRepository supercuotas, EventoRepository eventos, VolumenApuestas volumen,
+                             CalculadoraCuotas calculadora, LimitesService limites, Clock reloj) {
         this.supercuotas = supercuotas;
         this.eventos = eventos;
+        this.volumen = volumen;
         this.calculadora = calculadora;
         this.limites = limites;
         this.reloj = reloj;
@@ -124,20 +128,72 @@ public class SupercuotaService {
     @Transactional(readOnly = true)
     public List<Supercuota> vigentes() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        List<Supercuota> lista = supercuotas.findByHastaAfterOrderByHastaAsc(ahora).stream()
-                .filter(s -> s.isVigente(ahora) && mejora(s)).toList();
-        lista.forEach(s -> s.getEvento().getLocal().getNombre());
-        return lista;
+        List<Supercuota> candidatas = supercuotas.findByHastaAfterOrderByHastaAsc(ahora).stream()
+                .filter(s -> s.isVigente(ahora)).toList();
+        Map<Long, Cuotas> normales = cuotasNormales(eventosUnicos(candidatas.stream()
+                .map(Supercuota::getEvento).toList()));
+        return candidatas.stream().filter(s -> mejora(s, normales.get(s.getEvento().getId()))).toList();
     }
 
     /** Las cuotas del evento tal como se enseñan: con la supercuota en su resultado, si la hay. */
     @Transactional(readOnly = true)
     public Cuotas cuotasConSupercuota(Evento evento) {
-        Cuotas normales = calculadora.calcular(evento);
-        return vigente(evento).map(s -> new Cuotas(
-                s.getResultado() == Resultado.LOCAL ? s.getCuota() : normales.local(),
+        if (evento.getId() == null) {
+            return calculadora.calcular(evento);
+        }
+        return cuotasConSupercuota(List.of(evento)).get(evento.getId());
+    }
+
+    /** Cuotas de una lista de eventos con un solo acceso a volúmenes y otro a supercuotas. */
+    @Transactional(readOnly = true)
+    public Map<Long, Cuotas> cuotasConSupercuota(List<Evento> eventosVisibles) {
+        List<Evento> unicos = eventosVisibles.stream().filter(e -> e.getId() != null)
+                .collect(java.util.stream.Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
+                        java.util.LinkedHashMap::new)).values().stream().toList();
+        if (unicos.isEmpty()) {
+            return Map.of();
+        }
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        Map<Long, Cuotas> normales = cuotasNormales(unicos);
+        Map<Long, Supercuota> porEvento = new HashMap<>();
+        for (Supercuota s : supercuotas.findByEventoInAndHastaAfter(unicos, ahora)) {
+            if (s.isVigente(ahora)) {
+                porEvento.putIfAbsent(s.getEvento().getId(), s);
+            }
+        }
+        Map<Long, Cuotas> resultado = new HashMap<>(normales);
+        porEvento.forEach((eventoId, supercuota) -> {
+            Cuotas cuotaNormal = normales.get(eventoId);
+            if (mejora(supercuota, cuotaNormal)) {
+                resultado.put(eventoId, sustituir(cuotaNormal, supercuota));
+            }
+        });
+        return resultado;
+    }
+
+    private Map<Long, Cuotas> cuotasNormales(List<Evento> eventosVisibles) {
+        Map<Long, Map<Resultado, BigDecimal>> volumenes = volumen.importes(eventosVisibles);
+        Map<Long, Cuotas> cuotas = new HashMap<>();
+        for (Evento evento : eventosVisibles) {
+            cuotas.put(evento.getId(), calculadora.calcular(evento,
+                    volumenes.getOrDefault(evento.getId(), Map.of())));
+        }
+        return cuotas;
+    }
+
+    private static Cuotas sustituir(Cuotas normales, Supercuota s) {
+        return new Cuotas(s.getResultado() == Resultado.LOCAL ? s.getCuota() : normales.local(),
                 s.getResultado() == Resultado.EMPATE ? s.getCuota() : normales.empate(),
-                s.getResultado() == Resultado.VISITANTE ? s.getCuota() : normales.visitante())).orElse(normales);
+                s.getResultado() == Resultado.VISITANTE ? s.getCuota() : normales.visitante());
+    }
+
+    private boolean mejora(Supercuota supercuota, Cuotas normales) {
+        return normales != null && supercuota.getCuota().compareTo(normales.de(supercuota.getResultado())) > 0;
+    }
+
+    private static List<Evento> eventosUnicos(List<Evento> eventos) {
+        return eventos.stream().collect(java.util.stream.Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
+                java.util.LinkedHashMap::new)).values().stream().toList();
     }
 
     private static String texto(BigDecimal valor) {

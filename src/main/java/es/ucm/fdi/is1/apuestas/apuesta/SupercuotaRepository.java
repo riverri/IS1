@@ -14,5 +14,8 @@ public interface SupercuotaRepository extends JpaRepository<Supercuota, Long> {
 
     List<Supercuota> findByHastaAfterOrderByHastaAsc(LocalDateTime ahora);
 
+    /** Supercuotas candidatas de varios eventos, para no consultar una por cada tarjeta del catálogo. */
+    List<Supercuota> findByEventoInAndHastaAfter(List<Evento> eventos, LocalDateTime ahora);
+
     void deleteByEvento(Evento evento);
 }

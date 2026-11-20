@@ -21,7 +21,7 @@
       </div>
       <div class="portada-destacado" th:if="${destacado != null}">
         <p class="destacado-etiqueta">⭐ Partido destacado</p>
-        <article th:replace="~{fragments/comun :: partido(${destacado})}"></article>
+        <article th:replace="~{fragments/comun :: partido(${destacado}, ${cuotasPorEvento})}"></article>
       </div>
     </div>
 </section>
@@ -81,7 +81,7 @@
             <a th:href="@{/eventos}">Ver todos →</a>
         </div>
         <div class="rejilla-partidos">
-            <th:block th:each="ev : ${proximos}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
+            <th:block th:each="ev : ${proximos}"><article th:replace="~{fragments/comun :: partido(${ev}, ${cuotasPorEvento})}"></article></th:block>
         </div>
     </section>
 </main>
