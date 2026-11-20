@@ -197,8 +197,17 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-99 | Leer bien con poca visión | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-100 | No depender solo del color | Integrada (Sprint 5) | 3 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-101 | Menos movimiento | Integrada (Sprint 5) | 2 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-102 | Ver la oferta de cash-out de una combinada | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
+| HU-103 | Confirmar el cash-out de toda la combinada | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
+| HU-104 | Consultar el cobro anticipado en el historial | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
+| HU-105 | Bloquear a un amigo en un partido o selección | Propuesta | 5 | 3 (Media) | — | — | — | — | — |
+| HU-106 | Bloquear a toda la liga en un partido o selección | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
+| HU-107 | Aplicar y caducar los bloqueos de la liga | Propuesta | 5 | 3 (Media) | — | — | — | — | — |
+| HU-108 | Consultar la clasificación de una liga | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
+| HU-109 | Ordenar la clasificación y consultar mi puesto | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
+| HU-110 | Mantener la clasificación limitada a los miembros | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
 
-**101 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83) y 8 descartadas. Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **232 criterios de aceptación** en total; 97 son de historias hechas, 88 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer y 13 de las descartadas.
+**110 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **268 criterios de aceptación** en total; 98 son de historias hechas, 88 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -826,12 +835,64 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
-| CA-75.1 | Una apuesta activa cuyos partidos pendientes no han empezado | Abro *Mis apuestas* | Veo «Cobrar ya» con lo que vale ahora: importe × cuotas ya acertadas × (cuota apostada / cuota actual) de las pendientes, sin pasar de lo que cobraría acertando. Recién hecha vale lo apostado. |
-| CA-75.2 | Algún partido pendiente ha empezado o está suspendido | Abro *Mis apuestas* | No se ofrece cobrar. |
-| CA-75.3 | He cobrado una apuesta | Después se juegan sus partidos | La apuesta queda «Cobrada» y el resultado ya no la cambia. |
+| CA-75.1 | Una apuesta activa, simple o combinada, y todos sus eventos siguen programados y futuros | Abro *Mis apuestas* | Veo «Cobrar ya» con el valor actual de la apuesta completa: importe × producto de (cuota aceptada al apostar / cuota actual) para todas sus selecciones, sin pasar de la ganancia potencial original. Recién hecha vale lo apostado. Para una combinada se aplican las reglas detalladas en HU-102 a HU-104. |
+| CA-75.2 | Ha empezado, se ha suspendido o se ha anulado cualquiera de los eventos de la apuesta | Abro *Mis apuestas* | No se ofrece cobrar la apuesta. |
+| CA-75.3 | He cobrado una apuesta | Después se juegan sus partidos | La apuesta queda cerrada con el estado «Cobro anticipado» y el resultado ya no cambia el importe recibido. |
 | CA-75.4 | Las cuotas cambian mientras decido | Pulso «Cobrar ya» | No se cobra y se me enseña la oferta nueva. |
 
-La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto.
+La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. El cash-out cierra la apuesta completa: no se pueden retirar selecciones sueltas de una combinada. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto.
+
+### HU-102 · Ver la oferta de cash-out de una combinada (propuesta)
+
+**Como** usuario, **quiero** ver cuánto recibiría por cerrar una apuesta combinada completa antes de que empiece cualquiera de sus eventos, **para** decidir si aseguro el importe ofrecido.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 42 (ampliación de HU-75) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-102.1 | Tengo una combinada activa con dos o más selecciones y todos sus eventos siguen programados y no han empezado | Abro *Mis apuestas* | Veo una oferta de cash-out para la apuesta principal completa, no una oferta independiente por selección. |
+| CA-102.2 | La oferta se calcula para una combinada que todavía no ha empezado | El sistema calcula su valor | Usa importe × producto(cuota aceptada al apostar / cuota actual) para todas las selecciones, redondea a dos decimales, no supera la ganancia potencial original y muestra el importe total que se abonará. |
+| CA-102.3 | La combinada acaba de hacerse y ninguna cuota ha cambiado | Consulto su oferta | La oferta inicial coincide con el importe apostado; la propia apuesta no se cuenta al calcular las cuotas actuales. |
+| CA-102.4 | Ha empezado, se ha suspendido o se ha anulado cualquiera de los eventos de la combinada | Abro *Mis apuestas* | No veo la acción de cash-out para esa combinada, aunque los demás eventos aún no hayan empezado. |
+
+### HU-103 · Confirmar el cash-out de toda la combinada (propuesta)
+
+**Como** usuario con una combinada activa, **quiero** confirmar una oferta de cash-out vigente, **para** recibirla una sola vez y cerrar todas las selecciones juntas.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 42 (ampliación de HU-75) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-103.1 | La combinada conserva la oferta mostrada y todos sus eventos siguen programados y futuros | Pulso «Cobrar ya» | Se cierra la apuesta principal completa y se abona exactamente el importe ofrecido. |
+| CA-103.2 | Cambió una cuota desde que vi la oferta | Confirmo el cobro | No se cierra ni se abona nada; se muestra la oferta recalculada y tengo que confirmarla de nuevo. |
+| CA-103.3 | Un evento empieza, se suspende o se anula mientras confirmo | Se procesa la solicitud | El sistema vuelve a comprobar todos los eventos; si alguno ya no cumple las condiciones, rechaza el cash-out sin abono parcial. |
+| CA-103.4 | Envío dos veces la misma confirmación, por ejemplo al pulsar dos veces o reintentar la petición | El servidor procesa las solicitudes | La combinada se cierra y el importe se abona como máximo una vez. |
+
+### HU-104 · Consultar el cobro anticipado en el historial (propuesta)
+
+**Como** usuario que ha cerrado una combinada con cash-out, **quiero** reconocerla en mi saldo, mis apuestas y mis estadísticas, **para** entender cómo terminó y cuánto gané o perdí.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 42 (ampliación de HU-75) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-104.1 | Cobré anticipadamente una combinada | Abro *Mis apuestas* o el historial | La veo con el estado «Cobro anticipado», su importe original, el importe abonado y la fecha del cobro. |
+| CA-104.2 | Una combinada ya se cerró con cash-out | Se introducen después los resultados de sus eventos | Sus selecciones no vuelven a resolverse ni cambian el importe que recibí. |
+| CA-104.3 | Se calculan el saldo, el balance y las estadísticas | La combinada se cerró con cash-out | El abono y el resultado neto (importe abonado menos importe apostado) cuentan en el balance; no se clasifica como acierto ni como apuesta ganada. |
+
+Estas tres propuestas concretan HU-75 para combinadas y quedan fuera de la [matriz de trazabilidad](trazabilidad.md) hasta que se acepten y se implementen.
 
 ---
 
@@ -1245,6 +1306,108 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-51.1 | Soy un jugador | Creo una liga | Se genera un código que puedo compartir y yo quedo como miembro. |
 | CA-51.2 | Tengo el código de una liga | Lo introduzco | Entro en ella y veo su ranking con los mismos criterios que el ranking general. |
 | CA-51.3 | Soy miembro | Salgo de la liga | Dejo de aparecer en su ranking; si soy quien la creó, puedo borrarla. |
+
+### HU-105 · Bloquear a un amigo en un partido o selección (propuesta)
+
+**Como** miembro de una liga, **quiero** pagar 50 monedas para impedir que un compañero apueste en un partido o en una selección concreta, **para** poner una regla temporal entre amigos.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-105.1 | Comparto una liga con el amigo al que quiero bloquear y el evento sigue programado | Elijo bloquearle el evento completo o una selección concreta de ese evento | Se aplica el bloqueo solo a ese amigo y se descuentan 50 monedas una sola vez. |
+| CA-105.2 | El amigo no comparte mi liga, intento bloquearme a mí mismo o el evento ya empezó, está suspendido o anulado | Solicito el bloqueo | Se rechaza y no se descuentan monedas. |
+| CA-105.3 | El amigo ya tenía una apuesta aceptada antes del bloqueo | Se activa el bloqueo | Su apuesta existente no se cancela ni se modifica. |
+| CA-105.4 | Ya existe un bloqueo activo para el mismo amigo y alcance | Vuelvo a solicitarlo | No se crea otro bloqueo ni se vuelven a cobrar 50 monedas. |
+| CA-105.5 | Mi saldo es inferior a 50 monedas | Confirmo el bloqueo | No se aplica y mi saldo no cambia. |
+
+### HU-106 · Bloquear a toda la liga en un partido o selección (propuesta)
+
+**Como** miembro de una liga, **quiero** pagar 100 monedas para impedir que los demás miembros apuesten en un partido o en una selección concreta, **para** que la regla afecte al grupo entero y no solo a una persona.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-106.1 | Soy miembro de una liga y el evento sigue programado | Elijo bloquear el evento completo o una selección concreta para la liga | Se impide apostar en ese alcance a todos los demás miembros de la liga durante la vigencia del bloqueo y se descuentan 100 monedas una sola vez. |
+| CA-106.2 | Solicito el bloqueo para toda la liga | Se aplica | Mi propia posibilidad de apostar no queda bloqueada; sí quedan cubiertos los demás miembros mientras pertenezcan a la liga. |
+| CA-106.3 | No pertenezco a la liga, el evento ya empezó, está suspendido o anulado | Solicito el bloqueo | Se rechaza sin descontar monedas. |
+| CA-106.4 | Ya hay un bloqueo activo para el mismo alcance en esa liga, o mi saldo es inferior a 100 monedas | Intento crearlo | No se crea un bloqueo duplicado ni se descuenta saldo. |
+
+### HU-107 · Aplicar y caducar los bloqueos de la liga (propuesta)
+
+**Como** miembro de una liga, **quiero** que los bloqueos se apliquen de forma visible y temporal, **para** saber qué apuestas están restringidas y cuándo vuelven a estar disponibles.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-107.1 | Tengo un bloqueo activo sobre un evento o una selección | Un miembro afectado intenta apostar, también enviando una petición directa | El servidor rechaza la apuesta y explica que está bloqueada por una regla de la liga. |
+| CA-107.2 | Se activa un bloqueo | Un miembro afectado abre el partido o su boleto | Ve qué evento o selección está bloqueado y hasta cuándo; no se oculta ni se cambia el resto de las cuotas. |
+| CA-107.3 | Había apuestas aceptadas antes del bloqueo | El bloqueo entra en vigor | Se mantienen con sus condiciones originales; el bloqueo solo impide apuestas nuevas dentro del alcance elegido. |
+| CA-107.4 | Llega la hora de inicio del evento, o el evento se suspende o anula antes de empezar | El sistema actualiza los bloqueos | El bloqueo caduca y se devuelve el coste pagado. No se puede crear un bloqueo nuevo para un evento empezado, suspendido o anulado. |
+| CA-107.5 | El evento empieza a la vez que se solicita un bloqueo, o falla la operación al guardar el bloqueo o cobrar su coste | El sistema procesa la solicitud | El bloqueo y el descuento se confirman juntos o se cancelan juntos; nunca se cobra sin aplicar el bloqueo ni se bloquea sin cobrar. |
+
+### HU-108 · Consultar la clasificación de una liga (propuesta)
+
+**Como** miembro de una liga, **quiero** consultar su clasificación desde un apartado propio, **para** comparar mi posición con la de mis amigos.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-108.1 | Soy miembro de una liga | Abro su apartado «Clasificación» | Veo una tabla con los miembros de esa liga y sus posiciones, separada del ranking general. |
+| CA-108.2 | La liga aún no tiene actividad suficiente para comparar a sus miembros | Consulto su clasificación | Se muestra un estado vacío que explica que todavía no hay resultados para clasificar. |
+| CA-108.3 | Una liga tiene muchos miembros | Abro su clasificación | Puedo recorrer la lista completa sin que se omitan miembros por el tamaño inicial de la página. |
+
+### HU-109 · Ordenar la clasificación y consultar mi puesto (propuesta)
+
+**Como** miembro de una liga, **quiero** ordenar su clasificación con los mismos criterios que el ranking general y localizar mi puesto, **para** entender cómo se compara mi rendimiento con el del grupo.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-109.1 | Estoy viendo la clasificación de una liga | Elijo ganancias, porcentaje de aciertos o saldo | Los miembros se ordenan usando ese criterio, con el mismo cálculo que en el ranking general. |
+| CA-109.2 | Cambio el criterio de ordenación | Se actualiza la lista | Se indica qué criterio está activo y el orden corresponde a los valores mostrados. |
+| CA-109.3 | Mi puesto queda fuera de los primeros resultados visibles | Consulto la clasificación | Puedo localizar mi posición y ver mi puesto dentro de la liga. |
+| CA-109.4 | Dos miembros tienen el mismo valor para el criterio elegido | Se calcula su posición | Se aplica un desempate estable y se muestra el mismo puesto a quienes estén empatados. |
+
+### HU-110 · Mantener la clasificación limitada a los miembros (propuesta)
+
+**Como** miembro de una liga, **quiero** que su clasificación solo esté disponible para sus miembros, **para** comparar resultados dentro del grupo sin hacer públicas las estadísticas de la liga.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-110.1 | No pertenezco a una liga | Intento abrir su clasificación, también mediante una petición directa | No puedo consultar ni obtener sus datos. |
+| CA-110.2 | Un usuario deja de pertenecer a una liga | Se consulta su clasificación | Ya no aparece como miembro clasificado de esa liga. |
+| CA-110.3 | Soy miembro de una liga y veo su clasificación | Consulto la fila de otra persona | Veo las estadísticas permitidas por el ranking, pero no sus apuestas individuales. |
 
 ---
 

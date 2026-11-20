@@ -155,6 +155,7 @@ public class ApuestaController {
         model.addAttribute("comprometido", comprometido);
         // La vista llama a cancelable(ahora) para mostrar o no los botones de cancelar y cambiar importe
         model.addAttribute("ahora", LocalDateTime.now(reloj));
+        model.addAttribute("ofertasCashOut", apuestas.ofertasCashOut(activas, LocalDateTime.now(reloj)));
         model.addAttribute("historial", apuestas.historial(principal.getName()));
         model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
         model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(principal.getName()));

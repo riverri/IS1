@@ -48,6 +48,10 @@
                 <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
                 <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
             </dl>
+            <p class="aviso" th:if="${a.combinada and ofertasCashOut.containsKey(a.id)}"
+               th:text="'Cobro anticipado disponible: ' + ${#numbers.formatDecimal(ofertasCashOut.get(a.id), 1, 'POINT', 2, 'COMMA')} + ' monedas por toda la combinada.'">
+                Cobro anticipado disponible: 10,00 monedas por toda la combinada.
+            </p>
             <!-- Si la cuota ha cambiado (HU-29), el formulario de esta apuesta sale abierto y con la cuota nueva -->
             <details class="cambiar-importe" th:if="${a.cancelable(ahora)}"
                      th:with="cambiada=${cuotaNuevaId != null and cuotaNuevaId == a.id}" th:open="${cambiada}">

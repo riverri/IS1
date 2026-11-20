@@ -117,6 +117,15 @@ public class CalculadoraCuotas {
         return resultado == null ? null : calcular(evento).de(resultado);
     }
 
+    /** Cuota vigente excluyendo una apuesta activa al recalcular su oferta de cash-out. */
+    public BigDecimal cuota(Evento evento, Resultado resultado, Especial especial, Long apuestaExcluida) {
+        if (especial != null) {
+            return especiales(nivelLocal(evento), nivelVisitante(evento)).get(especial);
+        }
+        return resultado == null ? null : calcular(nivelLocal(evento), nivelVisitante(evento),
+                evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento, apuestaExcluida)).de(resultado);
+    }
+
     /** Cuotas especiales de fútbol a partir del nivel de los dos equipos (HU-52). */
     public Map<Especial, BigDecimal> especiales(double nivelLocal, double nivelVisitante) {
         // Probabilidades 1X2 por nivel, siempre con empate (es fútbol) y sin ajuste por volumen
