@@ -60,6 +60,13 @@ public class UsuarioActualAdvice {
         return TemaController.OSCURO.equals(tema);
     }
 
+    /** Solo Mi cuenta necesita saber si el creador ha desactivado el juego responsable. */
+    @ModelAttribute("juegoResponsableActivo")
+    public boolean juegoResponsableActivo(HttpServletRequest peticion) {
+        return peticion.getServletPath().startsWith("/cuenta")
+                && limitesActuales(peticion).isJuegoResponsable();
+    }
+
     /** Fin de la pausa de apuestas del usuario, o null si no tiene una activa (HU-10). */
     @ModelAttribute("pausaHasta")
     public LocalDateTime pausaHasta(Principal principal, HttpServletRequest peticion) {
