@@ -20,6 +20,15 @@
         <p class="aviso" th:with="n=${#lists.size(liga.miembrosActivos)}" th:text="'Creada por ' + ${liga.creador.nombre} + ' · ' + ${n} + (${n == 1} ? ' miembro' : ' miembros')">Creada por Ana · 4 miembros</p>
     </div>
 
+    <section class="tarjeta" aria-label="Visibilidad de la liga">
+        <p>Visibilidad: <strong th:text="${liga.publica} ? 'Pública' : 'Privada'">Privada</strong></p>
+        <p class="aviso">La clasificación global solo muestra el nombre, el número de miembros activos y el saldo total.</p>
+        <form th:if="${soyCreador}" th:action="@{/ligas/{id}/visibilidad(id=${liga.id})}" method="post">
+            <button class="boton boton-secundario" type="submit" name="publica" th:value="${!liga.publica}"
+                    th:text="${liga.publica} ? 'Hacer privada' : 'Hacer pública'">Hacer pública</button>
+        </form>
+    </section>
+
     <nav class="pestanas" aria-label="Ordenar por">
         <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
            th:href="@{/ligas/{id}(id=${liga.id}, orden=${c})}" th:text="${c.nombre}">Saldo</a>

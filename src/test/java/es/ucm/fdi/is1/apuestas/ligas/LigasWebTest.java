@@ -52,6 +52,9 @@ class LigasWebTest {
     @Autowired
     private LigaRepository ligas;
 
+    @Autowired
+    private LigaService ligaService;
+
     @BeforeEach
     void preparar() {
         usuarioService.crear("ana@ucm.es", "Ana", "secreta123", Rol.USUARIO);
@@ -90,6 +93,63 @@ class LigasWebTest {
         int rankingGeneral = html.indexOf("href=\"/ranking\"");
         int rankingLigas = html.indexOf("href=\"/ligas/clasificacion\"");
         assertThat(html.indexOf("</a>", rankingGeneral)).isLessThan(rankingLigas);
+    }
+
+    @Test
+    void laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas() throws Exception {
+        Liga privada = crear("Liga privada confidencial");
+        Liga publica = crear("Liga pública visible");
+        mvc.perform(post("/ligas/{id}/visibilidad", publica.getId()).with(ANA).with(csrf())
+                        .param("publica", "true"))
+                .andExpect(redirectedUrl("/ligas/" + publica.getId()));
+        mvc.perform(post("/ligas/unirse").with(LUIS).with(csrf()).param("codigo", publica.getCodigo()))
+                .andExpect(redirectedUrl("/ligas/" + publica.getId()));
+
+        String html = mvc.perform(get("/ligas/clasificacion"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(html).contains("Liga pública visible", "Global")
+                .doesNotContain("Liga privada confidencial", ">Ana<", ">Luis<");
+        PuestoClasificacionLiga puesto = ligaService.clasificacionGlobal().getFirst();
+        assertThat(puesto.ligaId()).isEqualTo(publica.getId());
+        assertThat(puesto.miembros()).isEqualTo(2);
+        assertThat(puesto.saldoTotal()).isEqualByComparingTo(
+                usuarios.findByEmail("ana@ucm.es").orElseThrow().getSaldo()
+                        .add(usuarios.findByEmail("luis@ucm.es").orElseThrow().getSaldo()));
+        String misLigas = mvc.perform(get("/ligas/clasificacion").with(ANA).param("vista", "mias"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(misLigas).contains("Liga privada confidencial", "Liga pública visible", "Visibilidad");
+        assertThat(ligaService.clasificacion("ana@ucm.es")).extracting(PuestoClasificacionLiga::ligaId)
+                .contains(privada.getId(), publica.getId());
+    }
+
+    @Test
+    void soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion() throws Exception {
+        Liga liga = crear("La liga de Ana");
+        mvc.perform(post("/ligas/unirse").with(LUIS).with(csrf()).param("codigo", liga.getCodigo()));
+
+        mvc.perform(post("/ligas/{id}/visibilidad", liga.getId()).with(LUIS).with(csrf())
+                        .param("publica", "true"))
+                .andExpect(redirectedUrl("/ligas/" + liga.getId()))
+                .andExpect(flash().attribute("error", containsString("Solo quien ha creado")));
+        assertThat(ligas.findById(liga.getId()).orElseThrow().isPublica()).isFalse();
+
+        mvc.perform(post("/ligas/{id}/visibilidad", liga.getId()).with(ANA).with(csrf())
+                        .param("publica", "true"))
+                .andExpect(flash().attribute("mensaje", containsString("pública")));
+        assertThat(ligas.findById(liga.getId()).orElseThrow().isPublica()).isTrue();
+        assertThat(ligaService.clasificacionGlobal()).extracting(PuestoClasificacionLiga::ligaId)
+                .contains(liga.getId());
+
+        mvc.perform(post("/ligas/{id}/visibilidad", liga.getId()).with(ANA).with(csrf())
+                        .param("publica", "false"))
+                .andExpect(flash().attribute("mensaje", containsString("privada")));
+        assertThat(ligas.findById(liga.getId()).orElseThrow().isPublica()).isFalse();
+        assertThat(ligaService.clasificacionGlobal()).isEmpty();
+        assertThat(ligaService.clasificacion("luis@ucm.es")).extracting(PuestoClasificacionLiga::ligaId)
+                .contains(liga.getId());
     }
 
     @Test

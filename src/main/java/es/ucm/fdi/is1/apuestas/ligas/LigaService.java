@@ -31,6 +31,9 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 @Service
 public class LigaService {
 
+    private record TotalLiga(Liga liga, int miembros, BigDecimal saldo) {
+    }
+
     /** Sin letras ni números que se confundan al dictarlos (0/O, 1/I/L). */
     static final String ALFABETO = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
     static final int LONGITUD_CODIGO = 6;
@@ -63,10 +66,17 @@ public class LigaService {
     /** Clasificación de las ligas del usuario por la suma del saldo de sus miembros activos. */
     @Transactional(readOnly = true)
     public List<PuestoClasificacionLiga> clasificacion(String email) {
-        record TotalLiga(Liga liga, int miembros, BigDecimal saldo) {
-        }
+        return clasificar(ligas.deMiembro(usuario(email)));
+    }
 
-        List<TotalLiga> totales = ligas.deMiembro(usuario(email)).stream()
+    /** Clasificación global de ligas públicas; solo salen sus datos agregados. */
+    @Transactional(readOnly = true)
+    public List<PuestoClasificacionLiga> clasificacionGlobal() {
+        return clasificar(ligas.publicasConMiembros());
+    }
+
+    private List<PuestoClasificacionLiga> clasificar(List<Liga> ligasVisibles) {
+        List<TotalLiga> totales = ligasVisibles.stream()
                 .map(liga -> {
                     List<Usuario> miembros = liga.getMiembrosActivos();
                     BigDecimal saldo = miembros.stream().map(Usuario::getSaldo)
@@ -82,9 +92,20 @@ public class LigaService {
                 .mapToObj(i -> {
                     TotalLiga total = totales.get(i);
                     return new PuestoClasificacionLiga(i + 1, total.liga().getId(), total.liga().getNombre(),
-                            total.miembros(), total.saldo());
+                            total.miembros(), total.saldo(), total.liga().isPublica());
                 })
                 .toList();
+    }
+
+    /** Cambia la visibilidad; solo quien creó la liga puede hacerlo (HU-113). */
+    @Transactional
+    public Liga cambiarVisibilidad(Long id, String email, boolean publica) {
+        Liga liga = ver(id, email);
+        if (!liga.esCreador(usuario(email))) {
+            throw new IllegalArgumentException("Solo quien ha creado la liga puede cambiar su visibilidad");
+        }
+        liga.cambiarVisibilidad(publica);
+        return liga;
     }
 
     /**

@@ -3,29 +3,43 @@
 <head th:replace="~{fragments/comun :: cabeza('Clasificación de ligas')}"></head>
 <body>
 <header th:replace="~{fragments/comun :: cabecera}"></header>
-<main class="estrecho ancho-medio">
+<main class="ancho-medio">
     <div class="titulo-pagina">
-        <h1>Clasificación de ligas</h1>
-        <a class="boton boton-secundario" th:href="@{/ligas}">Volver a mis ligas</a>
+        <h1>Ranking de ligas</h1>
+        <a class="boton boton-secundario" th:if="${puedeVerMisLigas}" th:href="@{/ligas}">Volver a mis ligas</a>
     </div>
-    <p class="subtitulo">Suma del saldo de los miembros activos. Solo aparecen las ligas de las que formas parte.</p>
+    <nav class="pestanas" aria-label="Clasificación de ligas">
+        <a class="pestana" th:if="${puedeVerMisLigas}" th:classappend="${vista == 'mias'} ? 'activa'"
+           th:href="@{/ligas/clasificacion(vista='mias')}">Mis ligas</a>
+        <a class="pestana" th:classappend="${vista == 'global'} ? 'activa'"
+           th:href="@{/ligas/clasificacion(vista='global')}">Global</a>
+    </nav>
+    <p class="subtitulo" th:if="${vista == 'mias'}">Suma del saldo de los miembros activos de tus ligas, públicas y privadas.</p>
+    <p class="subtitulo" th:if="${vista == 'global'}">Ligas públicas ordenadas por la suma del saldo de sus miembros activos.</p>
 
     <div class="vacio" th:if="${#lists.isEmpty(clasificacion)}">
-        <p>Todavía no estás en ninguna liga.</p>
-        <a class="boton" th:href="@{/ligas}">Ver ligas</a>
+        <p th:if="${vista == 'mias'}">Todavía no estás en ninguna liga.</p>
+        <p th:if="${vista == 'global'}">Todavía no hay ligas públicas en la clasificación.</p>
+        <a class="boton" th:if="${vista == 'mias'}" th:href="@{/ligas}">Ver ligas</a>
     </div>
 
     <div class="tarjeta tabla" th:unless="${#lists.isEmpty(clasificacion)}">
         <table>
             <thead>
-            <tr><th scope="col">Puesto</th><th scope="col">Liga</th><th scope="col">Miembros</th><th scope="col">Saldo total</th></tr>
+            <tr>
+                <th scope="col">Puesto</th><th scope="col">Liga</th><th scope="col">Miembros</th>
+                <th scope="col">Saldo total</th>
+                <th scope="col" th:if="${vista == 'mias'}">Visibilidad</th>
+            </tr>
             </thead>
             <tbody>
             <tr th:each="puesto : ${clasificacion}">
                 <td th:text="${puesto.posicion}">1</td>
-                <td><a th:href="@{/ligas/{id}(id=${puesto.ligaId})}" th:text="${puesto.nombre}">Los de IS1</a></td>
+                <td th:if="${vista == 'mias'}"><a th:href="@{/ligas/{id}(id=${puesto.ligaId})}" th:text="${puesto.nombre}">Los de IS1</a></td>
+                <td th:if="${vista == 'global'}" th:text="${puesto.nombre}">Los de IS1</td>
                 <td th:text="${puesto.miembros}">4</td>
                 <td th:text="${#numbers.formatDecimal(puesto.saldoTotal, 1, 'POINT', 2, 'COMMA')} + ' monedas'">4.000,00 monedas</td>
+                <td th:if="${vista == 'mias'}" th:text="${puesto.publica} ? 'Pública' : 'Privada'">Privada</td>
             </tr>
             </tbody>
         </table>

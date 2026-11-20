@@ -45,10 +45,14 @@ public class LigasController {
         return "ligas";
     }
 
-    /** GET /ligas/clasificacion: compara solo las ligas de las que es miembro el usuario. */
+    /** GET /ligas/clasificacion: clasificación personal o global de las ligas públicas. */
     @GetMapping("/clasificacion")
-    public String clasificacion(Principal principal, Model model) {
-        model.addAttribute("clasificacion", ligas.clasificacion(principal.getName()));
+    public String clasificacion(@RequestParam(defaultValue = "mias") String vista, Principal principal, Model model) {
+        boolean global = principal == null || "global".equalsIgnoreCase(vista);
+        model.addAttribute("vista", global ? "global" : "mias");
+        model.addAttribute("puedeVerMisLigas", principal != null);
+        model.addAttribute("clasificacion", global ? ligas.clasificacionGlobal()
+                : ligas.clasificacion(principal.getName()));
         return "clasificacion-ligas";
     }
 
@@ -167,5 +171,20 @@ public class LigasController {
             redireccion.addFlashAttribute("error", e.getMessage());
             return "redirect:/ligas/" + id;
         }
+    }
+
+    /** POST /ligas/{id}/visibilidad: cambia si la liga se incluye en la clasificación global. */
+    @PostMapping("/{id}/visibilidad")
+    public String cambiarVisibilidad(@PathVariable Long id, @RequestParam boolean publica, Principal principal,
+                                     RedirectAttributes redireccion) {
+        try {
+            ligas.cambiarVisibilidad(id, principal.getName(), publica);
+            redireccion.addFlashAttribute("mensaje", publica
+                    ? "La liga es pública y aparece en el ranking global."
+                    : "La liga es privada y ya no aparece en el ranking global.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/ligas/" + id;
     }
 }

@@ -69,7 +69,7 @@ class AccesibilidadWebTest {
     /** CA-97.3: el primer enlace de cada página salta el menú y lleva al contenido. */
     @Test
     void cadaPaginaEmpiezaConUnEnlaceParaSaltarAlContenido() throws Exception {
-        for (String pagina : new String[] {"/", "/eventos", "/login", "/ranking"}) {
+        for (String pagina : new String[] {"/", "/eventos", "/login", "/ranking", "/ligas/clasificacion"}) {
             String html = mvc.perform(get(pagina)).andReturn().getResponse().getContentAsString();
             int saltar = html.indexOf("class=\"saltar-contenido\" href=\"#contenido\"");
             assertThat(saltar).as(pagina).isPositive();

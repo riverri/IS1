@@ -22,4 +22,8 @@ public interface LigaRepository extends JpaRepository<Liga, Long> {
      */
     @Query("select l from Liga l join l.miembros m where m = :usuario order by l.nombre")
     List<Liga> deMiembro(Usuario usuario);
+
+    /** Ligas públicas con sus miembros cargados para calcular y exponer solo el resumen global. */
+    @Query("select distinct l from Liga l left join fetch l.miembros where l.publica = true")
+    List<Liga> publicasConMiembros();
 }

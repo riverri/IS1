@@ -206,8 +206,11 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-108 | Consultar la clasificación de una liga | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
 | HU-109 | Ordenar la clasificación y consultar mi puesto | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
 | HU-110 | Mantener la clasificación limitada a los miembros | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
+| HU-111 | Alternar entre mis ligas y la clasificación global | Implementada | 3 | 3 (Media) | — | — | — | — | — |
+| HU-112 | Consultar la clasificación global de ligas públicas | Implementada | 4 | 3 (Media) | — | — | — | — | — |
+| HU-113 | Cambiar la visibilidad de una liga | Implementada | 3 | 3 (Media) | — | — | — | — | — |
 
-**110 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **268 criterios de aceptación** en total; 98 son de historias hechas, 88 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**113 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5), 3 implementadas (HU-111 a HU-113), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **281 criterios de aceptación** en total; 98 son de historias hechas, 88 de las integradas, 13 de las implementadas, 20 de las pendientes de subir, 14 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -1408,6 +1411,58 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-110.1 | No pertenezco a una liga | Intento abrir su clasificación, también mediante una petición directa | No puedo consultar ni obtener sus datos. |
 | CA-110.2 | Un usuario deja de pertenecer a una liga | Se consulta su clasificación | Ya no aparece como miembro clasificado de esa liga. |
 | CA-110.3 | Soy miembro de una liga y veo su clasificación | Consulto la fila de otra persona | Veo las estadísticas permitidas por el ranking, pero no sus apuestas individuales. |
+
+### HU-111 · Alternar entre mis ligas y la clasificación global (propuesta)
+
+**Como** usuario, **quiero** cambiar entre la clasificación de las ligas a las que pertenezco y la clasificación global desde la misma página, **para** comparar mis grupos con las ligas que se han hecho públicas.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-111.1 | Abro «Ranking de ligas» | Se carga la página | Puedo elegir entre «Mis ligas» y «Global» sin salir de esa página. |
+| CA-111.2 | Elijo «Mis ligas» | Se muestra la clasificación | Solo aparecen las ligas de las que soy miembro, tanto públicas como privadas. |
+| CA-111.3 | Elijo «Global» | Se muestra la clasificación | Solo aparecen las ligas públicas, incluidas las mías si son públicas; las privadas quedan excluidas. |
+| CA-111.4 | Cambio de una vista a otra o recargo la página | Se vuelve a mostrar la clasificación | La vista activa queda identificada claramente y no se mezclan filas de ambas clasificaciones. |
+
+### HU-112 · Consultar la clasificación global de ligas públicas (propuesta)
+
+**Como** usuario, **quiero** consultar el ranking global de las ligas públicas, **para** descubrir qué grupos reúnen más monedas sin pertenecer a ellos.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-112.1 | Consulto la vista «Global» del ranking de ligas | Se calcula el orden | Las ligas públicas se ordenan de mayor a menor por la suma de los saldos de sus miembros activos. |
+| CA-112.2 | Dos ligas tienen el mismo saldo total | Se genera la clasificación | El desempate es estable y la posición coincide con el orden mostrado. |
+| CA-112.3 | Una liga no tiene miembros activos o no hay ligas públicas | Abro la vista global | Se muestra un estado vacío comprensible y no se incluyen ligas privadas. |
+| CA-112.4 | No pertenezco a una liga pública que aparece en el ranking | Consulto su fila global | Solo veo los datos públicos de la liga —nombre, número de miembros activos y saldo total—, nunca los saldos individuales ni las apuestas de sus miembros. |
+
+### HU-113 · Cambiar la visibilidad de una liga (propuesta)
+
+**Como** creador de una liga, **quiero** cambiarla entre pública y privada, **para** decidir si aparece en la clasificación global sin perder la clasificación interna de sus miembros.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-113.1 | Creo una liga | Se guarda por primera vez | Es privada de forma predeterminada y no aparece en la clasificación global. |
+| CA-113.2 | Soy quien creó la liga | Cambio su visibilidad a pública | La liga aparece en la clasificación global y se muestran únicamente sus datos públicos agregados. |
+| CA-113.3 | Soy quien creó una liga pública | Cambio su visibilidad a privada | Deja de aparecer en la clasificación global y sigue apareciendo en «Mis ligas» para sus miembros. |
+| CA-113.4 | No soy quien creó la liga, o no pertenezco a ella | Intento cambiar su visibilidad, también mediante una petición directa | El servidor rechaza la operación y conserva la visibilidad anterior. |
+| CA-113.5 | Cambio la visibilidad de la liga | Se actualizan las clasificaciones | No cambian los miembros, los retos ni los bloqueos de la liga; solo cambia su inclusión en la vista global y el acceso a sus datos públicos agregados. |
 
 ---
 
