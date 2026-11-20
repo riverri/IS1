@@ -147,6 +147,12 @@ public class SupercuotaService {
     /** Cuotas de una lista de eventos con un solo acceso a volúmenes y otro a supercuotas. */
     @Transactional(readOnly = true)
     public Map<Long, Cuotas> cuotasConSupercuota(List<Evento> eventosVisibles) {
+        return cuotasConSupercuota(eventosVisibles, true);
+    }
+
+    /** Opción para el boleto combinado: las supercuotas solo se aplican a apuestas simples. */
+    @Transactional(readOnly = true)
+    public Map<Long, Cuotas> cuotasConSupercuota(List<Evento> eventosVisibles, boolean aplicarSupercuotas) {
         List<Evento> unicos = eventosVisibles.stream().filter(e -> e.getId() != null)
                 .collect(java.util.stream.Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
                         java.util.LinkedHashMap::new)).values().stream().toList();
@@ -155,6 +161,9 @@ public class SupercuotaService {
         }
         LocalDateTime ahora = LocalDateTime.now(reloj);
         Map<Long, Cuotas> normales = cuotasNormales(unicos);
+        if (!aplicarSupercuotas) {
+            return normales;
+        }
         Map<Long, Supercuota> porEvento = new HashMap<>();
         for (Supercuota s : supercuotas.findByEventoInAndHastaAfter(unicos, ahora)) {
             if (s.isVigente(ahora)) {

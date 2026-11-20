@@ -136,7 +136,7 @@ public class BoletoService {
         }
         List<Evento> eventosConCuota = disponibles.stream().filter(linea -> linea.especial() == null)
                 .map(linea -> suyosPorId.get(linea.eventoId())).distinct().toList();
-        Map<Long, Cuotas> cuotasPorEvento = supercuotas.cuotasConSupercuota(eventosConCuota);
+        Map<Long, Cuotas> cuotasPorEvento = supercuotas.cuotasConSupercuota(eventosConCuota, disponibles.size() == 1);
         for (int i = 0; i < disponibles.size(); i++) {
             Boleto.Linea linea = disponibles.get(i);
             Evento evento = suyosPorId.get(linea.eventoId());

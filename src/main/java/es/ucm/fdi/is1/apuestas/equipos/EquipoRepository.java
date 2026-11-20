@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /** Repositorio Spring Data de {@link Equipo}; las consultas salen del nombre de cada método. */
 public interface EquipoRepository extends JpaRepository<Equipo, Long> {
@@ -31,6 +32,15 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
     Optional<Equipo> findByIdExterno(Integer idExterno);
 
     List<Equipo> findByDeporte(Deporte deporte);
+
+    /** Equipos que participan en una competición, filtrados en base de datos. */
+    @Query("select distinct e from Equipo e join e.competiciones c where c.id = :competicionId")
+    List<Equipo> deCompeticion(@Param("competicionId") Long competicionId);
+
+    /** Equipos de un deporte y una competición, filtrados antes de hidratar sus entidades. */
+    @Query("select distinct e from Equipo e join e.competiciones c where e.deporte = :deporte and c.id = :competicionId")
+    List<Equipo> deDeporteYCompeticion(@Param("deporte") Deporte deporte,
+                                       @Param("competicionId") Long competicionId);
 
     /** Recuento por deporte sin cargar equipos ni sus competiciones. */
     @Query("select e.deporte, count(e) from Equipo e group by e.deporte")
