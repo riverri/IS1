@@ -52,6 +52,17 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
             group by a.usuario.id""")
     List<Object[]> resumenResueltasPorUsuario();
 
+    /** Estadísticas de un único jugador para su perfil público. */
+    @Query("select coalesce(sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA) then 1 else 0 end), 0),"
+            + " coalesce(sum(case when a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA"
+            + " then 1 else 0 end), 0), coalesce(sum(a.importe), 0), coalesce(sum(a.pagado), 0)"
+            + " from Apuesta a where a.usuario.id = :usuarioId and a.estado in ("
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,"
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)")
+    Object[] resumenResueltasDe(@org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
+
     /**
      * Importe apostado desde una fecha, sin contar las apuestas canceladas (HU-10).
      * {@code :usuario} y {@code :desde} se sustituyen por los parámetros del método con el mismo nombre;
