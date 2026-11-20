@@ -188,7 +188,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-90 | Alerta de cuota | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-91 | Evolución de la cuota | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-92 | Resumen semanal por correo | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-93 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-93 | Publicidad de Better | Por integrar (sprint 5 o 6) | 2 | 2 (Alta) | - | - | - | - | - |
 | HU-94 | Modo oscuro | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-96 | Estadísticas por competición | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
@@ -209,6 +209,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-111 | Alternar entre mis ligas y la clasificación global | Implementada | 3 | 3 (Media) | — | — | — | — | — |
 | HU-112 | Consultar la clasificación global de ligas públicas | Implementada | 4 | 3 (Media) | — | — | — | — | — |
 | HU-113 | Cambiar la visibilidad de una liga | Implementada | 3 | 3 (Media) | — | — | — | — | — |
+| HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **113 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5), 3 implementadas (HU-111 a HU-113), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **281 criterios de aceptación** en total; 98 son de historias hechas, 88 de las integradas, 13 de las implementadas, 20 de las pendientes de subir, 14 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
@@ -2000,24 +2001,22 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 **Pruebas:** `EvolucionCuotaWebTest`.
 
-## Mis datos
+### HU-93 · Publicidad y ofertas de Better
 
-### HU-93 · Exportar mi historial
-
-**Como** usuario, **quiero** descargar mis apuestas y mis movimientos en CSV, **para** tener mis datos fuera de la web.
+**Como** Product Owner, **quiero** que se dé a conocer la aplicación de Better **para** expandir el número de usuarios y que la aplicación crezca.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 53 | 4 (Baja) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| - | 2 (Alta) | - | Por hacer (Sprint 5-6) | 2 | - | - | - | - |
 
 **Criterios de aceptación**
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
-| CA-93.1 | Tengo apuestas | Pulso «Descargar» en *Mis apuestas* | Me baja un CSV con todas: fecha, apuesta, importe, cuota, estado y cobrado. Se abre con Excel (punto y coma y coma decimal). |
-| CA-93.2 | Estoy en *Mi cuenta* | Descargo mis movimientos | Me baja un CSV con cada cambio del saldo, su motivo y el saldo que dejó. Sin sesión no se descarga nada. |
+| CA-93.1 | Tengo un banner en una página web externa | Hago click en el banner | Me lleva a la página web de Better y me muestra un overview de la app para que vea como es |
+| CA-93.2 | Quiero crear una oferta temporal que aparezca en la página principal | Accedo desde el usuario admin a la web | Soy capaz de crear nuevas ofertas en forma de banner y el destino al que llevan al hacer click |
 
-**Pruebas:** `ExportacionWebTest`.
+**Pruebas:** Por determinar.
 
 ### HU-96 · Estadísticas por competición
 
@@ -2131,6 +2130,23 @@ Tener una discapacidad o usar la web de otra forma no quita el derecho a apostar
 |---|---|---|---|
 | CA-101.1 | Tengo activada la opción «reducir movimiento» del sistema | Uso la web | No hay animaciones ni transiciones de movimiento: los cambios se ven de golpe. |
 | CA-101.2 | Cualquier página | La abro | Nada parpadea más de tres veces por segundo ni se mueve solo durante más de cinco segundos. |
+
+### HU-114 · Exportar mi historial
+
+**Como** usuario, **quiero** descargar mis apuestas y mis movimientos en CSV, **para** tener mis datos fuera de la web.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 53 | 4 (Baja) | 5 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-114.1 | Tengo apuestas | Pulso «Descargar» en *Mis apuestas* | Me baja un CSV con todas: fecha, apuesta, importe, cuota, estado y cobrado. Se abre con Excel (punto y coma y coma decimal). |
+| CA-114.2 | Estoy en *Mi cuenta* | Descargo mis movimientos | Me baja un CSV con cada cambio del saldo, su motivo y el saldo que dejó. Sin sesión no se descarga nada. |
+
+**Pruebas:** `ExportacionWebTest`.
 
 ---
 
