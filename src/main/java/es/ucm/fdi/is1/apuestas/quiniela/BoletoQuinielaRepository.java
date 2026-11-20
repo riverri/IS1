@@ -25,4 +25,11 @@ public interface BoletoQuinielaRepository extends JpaRepository<BoletoQuiniela, 
             select b from BoletoQuiniela b join fetch b.usuario
             where b.quiniela.estado = es.ucm.fdi.is1.apuestas.quiniela.EstadoQuiniela.REPARTIDA""")
     List<BoletoQuiniela> deQuinielasRepartidas();
+
+    /** Totales del ranking sin cargar en memoria todos los boletos y sus usuarios. */
+    @Query("select b.usuario.id, count(b), sum(case when b.premio > 0 then 1 else 0 end),"
+            + " sum(b.pagado), sum(b.premio) from BoletoQuiniela b"
+            + " where b.quiniela.estado = es.ucm.fdi.is1.apuestas.quiniela.EstadoQuiniela.REPARTIDA"
+            + " and b.devuelto = false group by b.usuario.id")
+    List<Object[]> resumenRepartidasPorUsuario();
 }

@@ -12,7 +12,6 @@ import es.ucm.fdi.is1.apuestas.cripto.OperacionCriptoRepository;
 import es.ucm.fdi.is1.apuestas.cripto.PosicionCripto;
 import es.ucm.fdi.is1.apuestas.cripto.PosicionCriptoRepository;
 import es.ucm.fdi.is1.apuestas.prediccion.PosicionPrediccionRepository;
-import es.ucm.fdi.is1.apuestas.quiniela.BoletoQuiniela;
 import es.ucm.fdi.is1.apuestas.quiniela.BoletoQuinielaRepository;
 
 /**
@@ -96,11 +95,9 @@ class EstadisticasPorJuego {
 
     private Map<Long, Estadisticas> quiniela() {
         Map<Long, Estadisticas> porUsuario = new HashMap<>();
-        for (BoletoQuiniela b : boletos.deQuinielasRepartidas()) {
-            if (!b.isDevuelto()) {
-                sumar(porUsuario, b.getUsuario().getId(),
-                        new Estadisticas(1, b.isGanador() ? 1 : 0, b.getPagado(), b.getBeneficio()));
-            }
+        for (Object[] fila : boletos.resumenRepartidasPorUsuario()) {
+            porUsuario.put((Long) fila[0], Estadisticas.de(((Number) fila[1]).longValue(),
+                    ((Number) fila[2]).longValue(), (BigDecimal) fila[3], (BigDecimal) fila[4]));
         }
         return porUsuario;
     }
