@@ -40,6 +40,16 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     /** Eventos en un estado que empiezan después de una fecha, del más próximo al más lejano (catálogo, HU-19). */
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha);
 
+    /** Recuento del catálogo sin cargar todas las entidades Evento. */
+    @Query("""
+            select e.competicion.deporte, count(e)
+            from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha
+            group by e.competicion.deporte
+            """)
+    List<Object[]> contarDisponiblesPorDeporte(@Param("estado") EstadoEvento estado,
+                                               @Param("fecha") LocalDateTime fecha);
+
     List<Evento> findAllByOrderByFechaHoraAsc();
 
     boolean existsByLocalAndVisitanteAndFechaHora(Equipo local, Equipo visitante, LocalDateTime fechaHora);

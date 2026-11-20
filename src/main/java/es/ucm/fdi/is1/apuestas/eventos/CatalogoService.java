@@ -71,10 +71,12 @@ public class CatalogoService {
     /** Número de eventos disponibles de cada deporte, para las pestañas del catálogo. */
     @Transactional(readOnly = true)
     public Map<Deporte, Long> recuentoPorDeporte() {
-        return disponibles().stream()
-                .collect(Collectors.groupingBy(Evento::getDeporte,
-                        () -> new EnumMap<>(Deporte.class),
-                        Collectors.counting()));
+        Map<Deporte, Long> recuento = new EnumMap<>(Deporte.class);
+        for (Object[] fila : eventos.contarDisponiblesPorDeporte(
+                EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj))) {
+            recuento.put((Deporte) fila[0], (Long) fila[1]);
+        }
+        return recuento;
     }
 
     /** Eventos programados que aún no han empezado, del más próximo al más lejano (CA-19.2). */
