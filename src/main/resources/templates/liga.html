@@ -38,6 +38,37 @@
     </ol>
     <p class="aviso" th:if="${#lists.size(puestos) < 2}">Pasa el código a tus amigos: en cuanto se unan aparecerán aquí.</p>
 
+    <h2>Bloquear una apuesta a un amigo</h2>
+    <p class="aviso">Cuesta 50 monedas. El bloqueo dura hasta que empiece el partido y no afecta a apuestas que ya estén aceptadas.</p>
+    <form class="tarjeta formulario" th:if="${!#lists.isEmpty(rivales) and !#lists.isEmpty(partidosBloqueables)}"
+          th:action="@{/ligas/{id}/bloqueos(id=${liga.id})}" method="post">
+        <select name="objetivo" aria-label="Amigo" required>
+            <option th:each="u : ${rivales}" th:value="${u.id}" th:text="${u.nombre}">Luis</option>
+        </select>
+        <select name="evento" aria-label="Partido" required>
+            <option th:each="e : ${partidosBloqueables}" th:value="${e.id}"
+                    th:text="${#temporals.format(e.fechaHora, 'dd/MM HH:mm')} + ' · ' + ${e.local.nombre} + ' – ' + ${e.visitante.nombre}">22/11 · Getafe CF – Sevilla FC</option>
+        </select>
+        <select name="alcance" aria-label="Partido o selección" required>
+            <option value="PARTIDO">Todo el partido</option>
+            <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
+            <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
+        </select>
+        <button class="boton" type="submit" onclick="return confirm('El bloqueo cuesta 50 monedas. ¿Continuar?');">Bloquear por 50 monedas</button>
+    </form>
+    <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya otro miembro en la liga, podrás bloquearle una apuesta.</p>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(bloqueosActivos)}">
+        <table>
+            <thead><tr><th>Amigo</th><th>Partido</th><th>Alcance</th><th>Hasta</th></tr></thead>
+            <tbody><tr th:each="b : ${bloqueosActivos}">
+                <td th:text="${b.objetivo.nombre}">Luis</td>
+                <td th:text="${b.evento.local.nombre} + ' – ' + ${b.evento.visitante.nombre}">Getafe CF – Sevilla FC</td>
+                <td th:text="${b.alcance == 'PARTIDO'} ? 'Partido completo' : ${b.alcance}">LOCAL</td>
+                <td th:text="${#temporals.format(b.evento.fechaHora, 'dd/MM HH:mm')}">22/11 18:00</td>
+            </tr></tbody>
+        </table>
+    </div>
+
     <!-- HU-89: retos 1 contra 1 -->
     <h2 id="retos">Retos 1 contra 1</h2>
     <p class="aviso">Reta a un compañero en un partido: cada uno pone lo mismo y elige un resultado distinto. El que

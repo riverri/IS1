@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.ucm.fdi.is1.apuestas.apuesta.CriterioRanking;
 import es.ucm.fdi.is1.apuestas.apuesta.PuestoRanking;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
+import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 
 /**
  * Controlador de las ligas privadas (HU-51): mis ligas, crear, unirse con un código, ver su ranking, salir
@@ -28,10 +30,12 @@ public class LigasController {
 
     private final LigaService ligas;
     private final RetoService retos;
+    private final BloqueoLigaService bloqueos;
 
-    public LigasController(LigaService ligas, RetoService retos) {
+    public LigasController(LigaService ligas, RetoService retos, BloqueoLigaService bloqueos) {
         this.ligas = ligas;
         this.retos = retos;
+        this.bloqueos = bloqueos;
     }
 
     /** GET /ligas: ligas del usuario, con los formularios para crear una o unirse con un código. */
@@ -96,7 +100,25 @@ public class LigasController {
                 .filter(r -> liga.getIdsMiembros().contains(r.getRetador().getId())
                         && liga.getIdsMiembros().contains(r.getRetado().getId())).toList());
         model.addAttribute("resultados", Resultado.values());
+        model.addAttribute("especiales", Especial.values());
+        model.addAttribute("partidosBloqueables", retos.partidosDisponibles());
+        model.addAttribute("bloqueosActivos", bloqueos.deLiga(liga));
         return "liga";
+    }
+
+    /** POST /ligas/{id}/bloqueos: paga y aplica un bloqueo al compañero y alcance seleccionados. */
+    @PostMapping("/{id}/bloqueos")
+    public String bloquear(@PathVariable Long id, @RequestParam Long objetivo, @RequestParam Long evento,
+                           @RequestParam String alcance, Principal principal, RedirectAttributes redireccion) {
+        try {
+            bloqueos.crear(id, principal.getName(), objetivo, evento, alcance);
+            redireccion.addFlashAttribute("mensaje", "Bloqueo aplicado por 50 monedas hasta el inicio del partido.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        } catch (SaldoInsuficienteException e) {
+            redireccion.addFlashAttribute("error", "No tienes saldo suficiente para pagar el bloqueo de 50 monedas.");
+        }
+        return "redirect:/ligas/" + id;
     }
 
     /** POST /ligas/{id}/salir: sale de la liga (el creador no puede; tiene que borrarla) (CA-51.3). */

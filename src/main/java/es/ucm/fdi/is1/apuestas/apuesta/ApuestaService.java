@@ -1,6 +1,8 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.CandidatoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoRepository;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaService;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -49,12 +52,13 @@ public class ApuestaService {
     private final RegistroCuotas registroCuotas;
     private final SupercuotaRepository supercuotas;
     private final Clock reloj;
+    private final BloqueoLigaService bloqueosLiga;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
                           CandidatoRepository candidatos, MercadoRepository mercados, CalculadoraCuotas calculadora,
                           LimitesService limites,
                           JuegoResponsableService juegoResponsable, RegistroCuotas registroCuotas,
-                          SupercuotaRepository supercuotas, Clock reloj) {
+                          SupercuotaRepository supercuotas, Clock reloj, BloqueoLigaService bloqueosLiga) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
@@ -66,6 +70,7 @@ public class ApuestaService {
         this.registroCuotas = registroCuotas;
         this.supercuotas = supercuotas;
         this.reloj = reloj;
+        this.bloqueosLiga = bloqueosLiga;
     }
 
     /** Apuesta simple (HU-23): una combinada de una sola selección, con la cuota vigente. */
@@ -112,6 +117,7 @@ public class ApuestaService {
             Evento evento = eventos.paraApostar(pedida.eventoId())
                     .filter(e -> e.admiteApuestas(ahora))
                     .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));
+            bloqueosLiga.comprobar(usuario, evento, pedida.resultado(), pedida.especial());
             // La cuota se calcula aquí, nunca se fía de la que envía la página
             BigDecimal cuota = cuota(evento, pedida.resultado(), pedida.especial());
             // HU-87: en una simple a un resultado con supercuota vale la supercuota, hasta su importe máximo
@@ -369,5 +375,30 @@ public class ApuestaService {
     public List<Apuesta> activas(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         return apuestas.findByUsuarioAndEstadoOrderByFechaDesc(usuario, EstadoApuesta.ACTIVA);
+    }
+
+    /** Ofertas informativas de HU-102 para combinadas futuras; el cobro requiere una historia posterior. */
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, BigDecimal> ofertasCashOut(List<Apuesta> activas, LocalDateTime ahora) {
+        java.util.Map<Long, BigDecimal> ofertas = new java.util.HashMap<>();
+        for (Apuesta apuesta : activas) {
+            if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || !apuesta.cancelable(ahora)) {
+                continue;
+            }
+            BigDecimal factor = BigDecimal.ONE;
+            for (Seleccion seleccion : apuesta.getSelecciones()) {
+                BigDecimal actual = calculadora.cuota(seleccion.getEvento(), seleccion.getPronostico(),
+                        seleccion.getEspecial(), apuesta.getId());
+                if (actual == null || actual.signum() <= 0) {
+                    factor = BigDecimal.ZERO;
+                    break;
+                }
+                factor = factor.multiply(seleccion.getCuota().divide(actual, MathContext.DECIMAL64));
+            }
+            BigDecimal importe = apuesta.getImporte().multiply(factor).setScale(2, RoundingMode.DOWN)
+                    .min(apuesta.getGananciaPotencial());
+            ofertas.put(apuesta.getId(), importe);
+        }
+        return ofertas;
     }
 }
