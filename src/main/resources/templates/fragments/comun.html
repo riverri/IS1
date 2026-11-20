@@ -30,7 +30,11 @@
             <a th:href="@{/cripto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/cripto')} ? 'activo'">Cripto</a>
             <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
             <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
-            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas')} ? 'activo'">Ligas</a>
+            <a class="ranking-ligas" th:if="${usuarioActual != null and !usuarioActual.creador}"
+               th:href="@{/ligas/clasificacion}"
+               th:classappend="${ruta != null and ruta == '/ligas/clasificacion'} ? 'activo'"><span>Ranking</span><small>Ligas</small></a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}"
+               th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'activo'">Ligas</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>

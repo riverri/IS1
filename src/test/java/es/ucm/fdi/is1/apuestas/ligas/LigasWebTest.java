@@ -79,6 +79,20 @@ class LigasWebTest {
     }
 
     @Test
+    void laBarraIncluyeElRankingDeLigasJuntoAlRankingGeneral() throws Exception {
+        String html = mvc.perform(get("/ligas/clasificacion").with(ANA))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(html).contains("href=\"/ligas/clasificacion\"")
+                .contains("class=\"ranking-ligas")
+                .contains("Ranking</span><small>Ligas</small>");
+        int rankingGeneral = html.indexOf("href=\"/ranking\"");
+        int rankingLigas = html.indexOf("href=\"/ligas/clasificacion\"");
+        assertThat(html.indexOf("</a>", rankingGeneral)).isLessThan(rankingLigas);
+    }
+
+    @Test
     void conElCodigoSeEntraYElRankingEsSoloDeSusMiembros() throws Exception {
         Liga liga = crear("Los de IS1");
         String escrito = " " + liga.getCodigo().toLowerCase().substring(0, 3) + " " + liga.getCodigo().substring(3);
