@@ -27,7 +27,9 @@ import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaRepository;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaService;
 import es.ucm.fdi.is1.apuestas.ligas.Liga;
 import es.ucm.fdi.is1.apuestas.ligas.LigaService;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
@@ -52,6 +54,8 @@ class CashOutYBloqueoLigaWebTest {
     @Autowired private ApuestaService apuestas;
     @Autowired private LigaService ligas;
     @Autowired private BloqueoLigaRepository bloqueos;
+    @Autowired private BloqueoLigaService bloqueoService;
+    @Autowired private ResolucionService resolucion;
 
     private Evento futbol;
     private Evento baloncesto;
@@ -81,6 +85,53 @@ class CashOutYBloqueoLigaWebTest {
     }
 
     @Test
+    void confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian() throws Exception {
+        Apuesta apuesta = apuestas.apostar(ANA, List.of(
+                new SeleccionPedida(futbol.getId(), Resultado.LOCAL, null),
+                new SeleccionPedida(baloncesto.getId(), Resultado.VISITANTE, null)), new BigDecimal("20"));
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/apuestas/{id}/cash-out", apuesta.getId()).with(user(ANA)).with(csrf())
+                        .param("ofertaVista", "20.00"))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(apuesta.getEstado()).isEqualTo(EstadoApuesta.COBRADA);
+        assertThat(apuesta.getPagado()).isEqualByComparingTo("20.00");
+        assertThat(apuesta.getFechaCobroAnticipado()).isNotNull();
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("1000.00");
+        assertThat(apuestas.estadisticas(ANA).resueltas()).isZero();
+        assertThat(apuestas.estadisticas(ANA).beneficio()).isEqualByComparingTo(BigDecimal.ZERO);
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/apuestas/{id}/cash-out", apuesta.getId()).with(user(ANA)).with(csrf())
+                        .param("ofertaVista", "20.00"))
+                .andExpect(status().is3xxRedirection());
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("1000.00");
+
+        resolucion.introducirResultado(futbol.getId(), Resultado.LOCAL);
+        resolucion.introducirResultado(baloncesto.getId(), Resultado.LOCAL);
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/apuestas").with(user(ANA)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Cobro anticipado")))
+                .andExpect(content().string(containsString("Abonado 20,00")));
+        assertThat(apuesta.getEstado()).isEqualTo(EstadoApuesta.COBRADA);
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("1000.00");
+    }
+
+    @Test
+    void siLaOfertaCambioNoCierraLaCombinadaNiAbonaNada() {
+        Apuesta apuesta = apuestas.apostar(ANA, List.of(
+                new SeleccionPedida(futbol.getId(), Resultado.LOCAL, null),
+                new SeleccionPedida(baloncesto.getId(), Resultado.VISITANTE, null)), new BigDecimal("20"));
+        equipos.findByNombre("Getafe CF").orElseThrow().setCalidad(9.5);
+
+        assertThatThrownBy(() -> apuestas.cobrarAnticipado(ANA, apuesta.getId(), new BigDecimal("20.00")))
+                .isInstanceOf(OfertaCashOutCambiadaException.class);
+        assertThat(apuesta.getEstado()).isEqualTo(EstadoApuesta.ACTIVA);
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("980.00");
+    }
+
+    @Test
     void bloqueoCuestaCincuentaYElServidorImpideApostarEnElAlcance() throws Exception {
         Liga liga = ligas.crear(ANA, "Amigos");
         ligas.unirse(LUIS, liga.getCodigo());
@@ -103,5 +154,33 @@ class CashOutYBloqueoLigaWebTest {
         // El bloqueo solo limita esa selección, no el partido completo.
         assertThat(apuestas.apostar(LUIS,
                 List.of(new SeleccionPedida(futbol.getId(), Resultado.VISITANTE, null)), BigDecimal.TEN)).isNotNull();
+    }
+
+    @Test
+    void bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo() throws Exception {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal saldoInicial = usuarios.findByEmail(ANA).orElseThrow().getSaldo();
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/ligas/{id}/bloqueos/todos", liga.getId()).with(user(ANA)).with(csrf())
+                        .param("evento", futbol.getId().toString()).param("alcance", "LOCAL"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("mensaje", containsString("100 monedas")));
+
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo())
+                .isEqualByComparingTo(saldoInicial.subtract(new BigDecimal("100.00")));
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/ligas/{id}", liga.getId()).with(user(LUIS)))
+                .andExpect(status().isOk()).andExpect(content().string(containsString("Toda la liga")));
+        assertThatThrownBy(() -> apuestas.apostar(LUIS,
+                List.of(new SeleccionPedida(futbol.getId(), Resultado.LOCAL, null)), BigDecimal.TEN))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("bloqueada");
+        assertThat(apuestas.apostar(ANA,
+                List.of(new SeleccionPedida(futbol.getId(), Resultado.LOCAL, null)), BigDecimal.TEN)).isNotNull();
+        assertThatThrownBy(() -> bloqueoService.crearParaLiga(liga.getId(), ANA, futbol.getId(), "LOCAL"))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Ya hay un bloqueo");
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo())
+                .isEqualByComparingTo(saldoInicial.subtract(new BigDecimal("110.00")));
     }
 }

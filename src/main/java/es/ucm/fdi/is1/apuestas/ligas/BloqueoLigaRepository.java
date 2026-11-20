@@ -9,5 +9,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
 public interface BloqueoLigaRepository extends JpaRepository<BloqueoLiga, Long> {
     boolean existsByLigaAndObjetivoAndEventoAndAlcance(Liga liga, Usuario objetivo, Evento evento, String alcance);
+    boolean existsByLigaAndEventoAndAlcanceAndObjetivoIsNull(Liga liga, Evento evento, String alcance);
     List<BloqueoLiga> findByObjetivoAndEvento(Usuario objetivo, Evento evento);
+    List<BloqueoLiga> findByEvento(Evento evento);
 }

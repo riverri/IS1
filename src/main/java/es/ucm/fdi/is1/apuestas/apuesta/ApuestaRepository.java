@@ -40,12 +40,15 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
      * varias líneas. "case when ... then 1 else 0 end" suma 1 por cada apuesta ganada, es decir, las cuenta.
      */
     @Query("""
-            select a.usuario.id, count(a),
+            select a.usuario.id,
+                   sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
+                                              es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA) then 1 else 0 end),
                    sum(case when a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA then 1 else 0 end),
                    sum(a.importe), sum(a.pagado)
             from Apuesta a
             where a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
-                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA)
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)
             group by a.usuario.id""")
     List<Object[]> resumenResueltasPorUsuario();
 

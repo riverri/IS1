@@ -333,7 +333,7 @@ public class ApuestaService {
     public List<Apuesta> historial(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         return apuestas.findByUsuarioAndEstadoInOrderByFechaDesc(usuario, EnumSet.of(EstadoApuesta.GANADA,
-                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA));
+                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA, EstadoApuesta.COBRADA));
     }
 
     /** Porcentaje de aciertos y rentabilidad del usuario (HU-35). */
@@ -355,7 +355,7 @@ public class ApuestaService {
     public List<EstadisticasGrupo> estadisticasPorCompeticion(String email) {
         java.util.Map<String, List<Apuesta>> grupos = new java.util.LinkedHashMap<>();
         for (Apuesta apuesta : historial(email)) {
-            if (!apuesta.isResuelta()) {
+            if (!apuesta.isResuelta() && apuesta.getEstado() != EstadoApuesta.COBRADA) {
                 continue;
             }
             String grupo = apuesta.isLargoPlazo() ? "Largo plazo"
@@ -382,23 +382,55 @@ public class ApuestaService {
     public java.util.Map<Long, BigDecimal> ofertasCashOut(List<Apuesta> activas, LocalDateTime ahora) {
         java.util.Map<Long, BigDecimal> ofertas = new java.util.HashMap<>();
         for (Apuesta apuesta : activas) {
-            if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || !apuesta.cancelable(ahora)) {
-                continue;
-            }
-            BigDecimal factor = BigDecimal.ONE;
-            for (Seleccion seleccion : apuesta.getSelecciones()) {
-                BigDecimal actual = calculadora.cuota(seleccion.getEvento(), seleccion.getPronostico(),
-                        seleccion.getEspecial(), apuesta.getId());
-                if (actual == null || actual.signum() <= 0) {
-                    factor = BigDecimal.ZERO;
-                    break;
-                }
-                factor = factor.multiply(seleccion.getCuota().divide(actual, MathContext.DECIMAL64));
-            }
-            BigDecimal importe = apuesta.getImporte().multiply(factor).setScale(2, RoundingMode.DOWN)
-                    .min(apuesta.getGananciaPotencial());
-            ofertas.put(apuesta.getId(), importe);
+            BigDecimal importe = ofertaCashOut(apuesta, ahora, false);
+            if (importe != null) ofertas.put(apuesta.getId(), importe);
         }
         return ofertas;
+    }
+
+    /** Confirma una oferta vigente. Los eventos se bloquean para que no empiecen mientras se abona. */
+    @Transactional
+    public Apuesta cobrarAnticipado(String email, Long apuestaId, BigDecimal ofertaVista) {
+        Apuesta apuesta = apuestas.findById(apuestaId).filter(a -> a.getUsuario().getEmail().equalsIgnoreCase(email))
+                .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || apuesta.getEstado() != EstadoApuesta.ACTIVA) {
+            throw new IllegalStateException("Esta combinada ya no admite un cobro anticipado");
+        }
+        BigDecimal nueva = ofertaCashOut(apuesta, ahora, true);
+        if (nueva == null) {
+            throw new IllegalStateException("Algún partido ya ha empezado, se ha suspendido o se ha anulado");
+        }
+        if (ofertaVista == null || ofertaVista.compareTo(nueva) != 0) {
+            throw new OfertaCashOutCambiadaException(nueva);
+        }
+        apuesta.cobrarAnticipado(nueva, ahora);
+        return apuesta;
+    }
+
+    /** Recalcula la oferta; en confirmación también vuelve a comprobar y bloquea cada evento. */
+    private BigDecimal ofertaCashOut(Apuesta apuesta, LocalDateTime ahora, boolean bloquearEventos) {
+        if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || !apuesta.cancelable(ahora)) return null;
+        java.util.Map<Long, Evento> eventosBloqueados = new java.util.HashMap<>();
+        if (bloquearEventos) {
+            for (Seleccion seleccion : apuesta.getSelecciones().stream()
+                    .sorted(java.util.Comparator.comparing(s -> s.getEvento().getId())).toList()) {
+                Evento bloqueado = eventos.paraCambiar(seleccion.getEvento().getId())
+                        .filter(e -> e.admiteApuestas(ahora)).orElse(null);
+                if (bloqueado == null) return null;
+                eventosBloqueados.put(bloqueado.getId(), bloqueado);
+            }
+        }
+        BigDecimal factor = BigDecimal.ONE;
+        for (Seleccion seleccion : apuesta.getSelecciones()) {
+            Evento evento = bloquearEventos ? eventosBloqueados.get(seleccion.getEvento().getId())
+                    : seleccion.getEvento();
+            BigDecimal actual = calculadora.cuota(evento, seleccion.getPronostico(), seleccion.getEspecial(),
+                    apuesta.getId());
+            if (actual == null || actual.signum() <= 0) return null;
+            factor = factor.multiply(seleccion.getCuota().divide(actual, MathContext.DECIMAL64));
+        }
+        return apuesta.getImporte().multiply(factor).setScale(2, RoundingMode.DOWN)
+                .min(apuesta.getGananciaPotencial());
     }
 }

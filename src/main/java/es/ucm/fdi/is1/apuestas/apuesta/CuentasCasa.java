@@ -17,8 +17,8 @@ public record CuentasCasa(Fila total, List<Fila> porTipo, List<Fila> porDeporte,
                           BigDecimal margenTeorico) {
 
     /**
-     * Una fila del panel. {@code apostado} y {@code pagado} son de las apuestas ya cerradas (ganadas, perdidas
-     * o anuladas); {@code enJuego} es lo apostado en las activas.
+     * Una fila del panel. {@code apostado} y {@code pagado} son de las apuestas ya cerradas; {@code enJuego} es lo
+     * apostado en las activas.
      */
     public record Fila(String nombre, int apuestas, BigDecimal enJuego, BigDecimal apostado, BigDecimal pagado) {
 

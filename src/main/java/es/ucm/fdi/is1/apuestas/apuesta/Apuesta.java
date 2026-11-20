@@ -97,6 +97,9 @@ public class Apuesta {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
+    /** Momento en que se abonó el cash-out; null en apuestas terminadas de otra forma. */
+    private LocalDateTime fechaCobroAnticipado;
+
     protected Apuesta() {
         // requerido por JPA
     }
@@ -149,7 +152,7 @@ public class Apuesta {
 
     /** El creador ha marcado (o corregido) el ganador del mercado (HU-45). */
     public void resolver(Mercado mercado, Candidato ganador, LocalDateTime ahora) {
-        if (estado == EstadoApuesta.CANCELADA) {
+        if (estado == EstadoApuesta.CANCELADA || estado == EstadoApuesta.COBRADA) {
             return;
         }
         seleccionDe(mercado).resolver(ganador);
@@ -158,7 +161,7 @@ public class Apuesta {
 
     /** El mercado se ha anulado: se devuelve el importe. */
     public void anular(Mercado mercado, LocalDateTime ahora) {
-        if (estado == EstadoApuesta.CANCELADA) {
+        if (estado == EstadoApuesta.CANCELADA || estado == EstadoApuesta.COBRADA) {
             return;
         }
         seleccionDe(mercado).anular();
@@ -168,7 +171,7 @@ public class Apuesta {
     /** Resultado de uno de sus eventos: se resuelve la selección y se recalcula la apuesta (HU-25, HU-30). */
     public void resolver(Evento evento, Resultado resultado, LocalDateTime ahora) {
         // Una apuesta cancelada ya devolvió el importe: no se resuelve (igual en los otros resolver y anular)
-        if (estado == EstadoApuesta.CANCELADA) {
+        if (estado == EstadoApuesta.CANCELADA || estado == EstadoApuesta.COBRADA) {
             return;
         }
         seleccionDe(evento).resolver(resultado, evento.getGolesLocal(), evento.getGolesVisitante());
@@ -177,7 +180,7 @@ public class Apuesta {
 
     /** Uno de sus eventos se ha anulado: esa selección cuenta con cuota 1,00 (HU-05, HU-30). */
     public void anular(Evento evento, LocalDateTime ahora) {
-        if (estado == EstadoApuesta.CANCELADA) {
+        if (estado == EstadoApuesta.CANCELADA || estado == EstadoApuesta.COBRADA) {
             return;
         }
         seleccionDe(evento).anular();
@@ -265,6 +268,21 @@ public class Apuesta {
         usuario.abonar(importe, TipoMovimiento.DEVOLUCION, "Cancelación: " + descripcion(), ahora);
     }
 
+    /** Cierra toda la combinada y abona la oferta vigente una sola vez (HU-103). */
+    public void cobrarAnticipado(BigDecimal importeCobro, LocalDateTime ahora) {
+        if (estado != EstadoApuesta.ACTIVA || !isCombinada() || isLargoPlazo()) {
+            throw new IllegalStateException("Esta combinada ya no admite un cobro anticipado");
+        }
+        if (importeCobro == null || importeCobro.signum() < 0 || importeCobro.scale() > 2) {
+            throw new IllegalArgumentException("El importe de cobro no es válido");
+        }
+        usuario.abonar(importeCobro, TipoMovimiento.COBRO_ANTICIPADO,
+                "Cobro anticipado: " + descripcion(), ahora);
+        estado = EstadoApuesta.COBRADA;
+        pagado = usuario.isEliminado() ? BigDecimal.ZERO : importeCobro;
+        fechaCobroAnticipado = ahora;
+    }
+
     /**
      * Cambia el importe mientras se pueda cancelar (HU-27): se cobra o se devuelve la diferencia
      * y se aplican las cuotas actuales, una por selección y en el mismo orden.
@@ -320,6 +338,7 @@ public class Apuesta {
         return switch (estado) {
             case GANADA -> getGananciaPotencial().subtract(importe);
             case PERDIDA -> importe.negate();
+            case COBRADA -> pagado.subtract(importe);
             default -> BigDecimal.ZERO;
         };
     }
@@ -392,4 +411,6 @@ public class Apuesta {
     public LocalDateTime getFecha() {
         return fecha;
     }
+
+    public LocalDateTime getFechaCobroAnticipado() { return fechaCobroAnticipado; }
 }
