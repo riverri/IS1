@@ -108,7 +108,9 @@ class CombinadaWebTest {
     private Apuesta confirmar(String importe) throws Exception {
         mvc.perform(post("/boleto/confirmar").session(sesion).with(COMO_ANA).with(csrf()).param("importe", importe))
                 .andExpect(redirectedUrl("/apuestas"));
-        return apuestas.findAll().stream().filter(a -> a.getUsuario().getEmail().equals(ANA)).findFirst().orElseThrow();
+        // La de id más alto: findAll() no tiene orden (en PostgreSQL puede cambiar al actualizar filas)
+        return apuestas.findAll().stream().filter(a -> a.getUsuario().getEmail().equals(ANA))
+                .max(java.util.Comparator.comparing(Apuesta::getId)).orElseThrow();
     }
 
     private void resultado(Evento evento, String resultado) throws Exception {

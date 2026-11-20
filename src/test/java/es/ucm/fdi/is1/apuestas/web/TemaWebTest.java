@@ -52,6 +52,13 @@ class TemaWebTest {
         org.assertj.core.api.Assertions.assertThat(mvc.perform(get("/eventos")).andReturn().getRequest().getSession(false)).isNull();
     }
 
+    /** Tras un formulario de Mi cuenta con errores, la dirección es la del POST: se vuelve a Mi cuenta (antes, 405). */
+    @Test
+    void desdeUnFormularioDeMiCuentaConErroresVuelveAMiCuenta() throws Exception {
+        mvc.perform(get("/tema").header("Referer", "http://localhost/cuenta/limites"))
+                .andExpect(redirectedUrl("/cuenta"));
+    }
+
     @Test
     void noVuelveAUnaDireccionDeOtraWeb() throws Exception {
         mvc.perform(get("/tema").header("Referer", "https://otra-web.com/robar"))

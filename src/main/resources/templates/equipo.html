@@ -156,7 +156,7 @@
         <h2>Próximos partidos</h2>
         <div class="rejilla-partidos">
             <th:block th:each="ev : ${ficha.proximos}">
-                <article th:replace="~{fragments/comun :: partido(${ev})}"></article>
+                <article th:replace="~{fragments/comun :: partido(${ev}, ${cuotasPorEvento})}"></article>
             </th:block>
         </div>
     </th:block>

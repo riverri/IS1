@@ -47,6 +47,8 @@ public class SeguridadConfig {
                         .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
                         // Quiniela (HU-79): cualquiera ve las quinielas; echar un boleto exige sesión
                         .requestMatchers(HttpMethod.GET, "/quinielas", "/quinielas/*").permitAll()
+                        // La clasificación global solo expone datos agregados de las ligas públicas (HU-112)
+                        .requestMatchers(HttpMethod.GET, "/ligas/clasificacion").permitAll()
                         // Criptomonedas (HU-69): la lista y cada cripto son públicas; la cartera, comprar y vender no.
                         // Va primero la cartera porque "/cripto/*" también la abarcaría
                         .requestMatchers("/cripto/cartera").authenticated()
@@ -65,8 +67,8 @@ public class SeguridadConfig {
                         .usernameParameter("email")
                         .successHandler(alEntrar)
                         .permitAll())
-                // Al cerrar sesión se vuelve a la portada
-                .logout(logout -> logout.logoutSuccessUrl("/"))
+                // Al cerrar sesión se vuelve a la portada, con el aviso «Has cerrado sesión»
+                .logout(logout -> logout.logoutSuccessUrl("/?logout"))
                 // Registro de sesiones: al eliminar la cuenta o cambiar la contraseña se cierran las de otros navegadores
                 // (-1 = sin límite de sesiones por usuario; una sesión cerrada así lleva a /login?expirada)
                 .sessionManagement(sesiones -> sesiones

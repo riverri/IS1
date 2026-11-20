@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${titulo} + ' · Better'">Better</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <meta name="color-scheme" th:content="${temaOscuro} ? 'dark' : 'light'">
     <link th:if="${temaOscuro}" rel="stylesheet" th:href="@{/css/oscuro.css}">
@@ -33,10 +30,13 @@
             <a th:href="@{/cripto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/cripto')} ? 'activo'">Cripto</a>
             <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
             <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
-            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas')} ? 'activo'">Ligas</a>
+            <a class="ranking-ligas" th:href="@{/ligas/clasificacion}"
+               th:classappend="${ruta != null and ruta == '/ligas/clasificacion'} ? 'activo'"><span>Ranking</span><small>Ligas</small></a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}"
+               th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'activo'">Ligas</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'">Casino</a>
-            <a th:if="${usuarioActual != null}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
-            <a th:if="${usuarioActual != null}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>
             <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/gestion')} ? 'activo'">Gestión</a>
             <a th:if="${usuarioActual != null}" class="campana" th:href="@{/notificaciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/notificaciones')} ? 'activo'"
@@ -90,7 +90,7 @@
         <text x="20" y="25" text-anchor="middle" font-size="13" font-weight="800"
               th:attr="fill=${col[2]}" th:text="${ini}">CA</text>
     </svg>
-    <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy"
+    <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy" decoding="async"
          referrerpolicy="no-referrer"
          onerror="this.parentElement.classList.remove('con-imagen'); this.remove();">
 </span>
@@ -145,7 +145,7 @@
     </svg>
 </span>
 
-<article class="partido" th:fragment="partido(ev)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
+<article class="partido" th:fragment="partido(ev, cuotasPorEvento)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
          th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
     <div class="partido-cabecera">
         <span class="partido-competicion">
@@ -169,7 +169,8 @@
             </li>
         </ul>
     </a>
-    <div class="partido-pie" th:with="c=${@calculadoraCuotas.calcular(ev)}">
+    <!--/* Las mismas cuotas que en la página del partido: con supercuota, la supercuota (HU-87) */-->
+    <div class="partido-pie" th:with="c=${cuotasPorEvento[ev.id]}">
         <div class="cuotas">
             <th:block th:each="op : ${ {'LOCAL', 'EMPATE', 'VISITANTE'} }"
                       th:with="cuota=${op == 'LOCAL' ? c.local : (op == 'EMPATE' ? c.empate : c.visitante)},

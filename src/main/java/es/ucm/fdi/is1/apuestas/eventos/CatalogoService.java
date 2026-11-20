@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Nombres;
@@ -53,8 +54,7 @@ public class CatalogoService {
     @Transactional(readOnly = true)
     public Map<Deporte, Map<String, List<Evento>>> buscar(Deporte deporte, String texto) {
         String buscado = Nombres.normalizar(texto);
-        return disponibles().stream()
-                .filter(e -> deporte == null || e.getDeporte() == deporte)
+        return disponibles(deporte).stream()
                 .filter(e -> buscado.isEmpty() || coincide(e, buscado))
                 // EnumMap: los deportes salen en el orden del enum, no en uno aleatorio.
                 // LinkedHashMap: las competiciones salen en el orden en que aparece su primer evento,
@@ -71,15 +71,22 @@ public class CatalogoService {
     /** Número de eventos disponibles de cada deporte, para las pestañas del catálogo. */
     @Transactional(readOnly = true)
     public Map<Deporte, Long> recuentoPorDeporte() {
-        return disponibles().stream()
-                .collect(Collectors.groupingBy(Evento::getDeporte,
-                        () -> new EnumMap<>(Deporte.class),
-                        Collectors.counting()));
+        Map<Deporte, Long> recuento = new EnumMap<>(Deporte.class);
+        for (Object[] fila : eventos.contarDisponiblesPorDeporte(
+                EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj))) {
+            recuento.put((Deporte) fila[0], (Long) fila[1]);
+        }
+        return recuento;
     }
 
     /** Eventos programados que aún no han empezado, del más próximo al más lejano (CA-19.2). */
     private List<Evento> disponibles() {
         return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj));
+    }
+
+    private List<Evento> disponibles(Deporte deporte) {
+        if (deporte == null) return disponibles();
+        return eventos.disponiblesPorDeporte(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), deporte);
     }
 
     /** El texto (ya normalizado) aparece en el nombre del local, del visitante o de la competición. */
@@ -95,18 +102,21 @@ public class CatalogoService {
      */
     @Transactional(readOnly = true)
     public Evento destacado() {
-        List<Evento> disponibles = disponibles();
-        return disponibles.stream().filter(e -> e.getDeporte() == Deporte.FUTBOL).findFirst()
-                .orElse(disponibles.isEmpty() ? null : disponibles.get(0));
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<Evento> futbol = eventos.proximosPorDeporte(
+                EstadoEvento.PROGRAMADO, Deporte.FUTBOL, ahora, PageRequest.of(0, 1));
+        return futbol.isEmpty()
+                ? eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(
+                        EstadoEvento.PROGRAMADO, ahora, PageRequest.of(0, 1)).stream().findFirst().orElse(null)
+                : futbol.get(0);
     }
 
     /** Los próximos partidos disponibles, para la portada. Como mucho {@code cuantos}. */
     @Transactional(readOnly = true)
     public List<Evento> proximos(int cuantos) {
-        return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj))
-                .stream()
-                .limit(cuantos)
-                .toList();
+        if (cuantos <= 0) return List.of();
+        return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(
+                EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), PageRequest.of(0, cuantos));
     }
 
     /**

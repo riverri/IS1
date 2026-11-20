@@ -18,10 +18,14 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
     /** A partir de las apuestas de un usuario; se queda solo con las ganadas y perdidas. */
     public static Estadisticas de(List<Apuesta> apuestas) {
         // Método "fábrica" static: se llama Estadisticas.de(lista), sin necesidad de un objeto previo
-        List<Apuesta> resueltas = apuestas.stream().filter(Apuesta::isResuelta).toList();
+        List<Apuesta> resultadoConBeneficio = apuestas.stream()
+                .filter(a -> a.isResuelta() || a.getEstado() == EstadoApuesta.COBRADA).toList();
+        List<Apuesta> resueltas = resultadoConBeneficio.stream().filter(Apuesta::isResuelta).toList();
         int ganadas = (int) resueltas.stream().filter(a -> a.getEstado() == EstadoApuesta.GANADA).count();
-        BigDecimal apostado = resueltas.stream().map(Apuesta::getImporte).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal beneficio = resueltas.stream().map(Apuesta::getBeneficio).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal apostado = resultadoConBeneficio.stream().map(Apuesta::getImporte)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal beneficio = resultadoConBeneficio.stream().map(Apuesta::getBeneficio)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new Estadisticas(resueltas.size(), ganadas, apostado, beneficio);
     }
 
@@ -57,6 +61,6 @@ public record Estadisticas(int resueltas, int ganadas, BigDecimal apostado, BigD
     }
 
     public boolean isTieneDatos() {
-        return resueltas > 0;
+        return resueltas > 0 || apostado.signum() > 0;
     }
 }

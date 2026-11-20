@@ -16,7 +16,7 @@ Profesor: Gonzalo Rubén Méndez Pozo.
 
 > El **Scrum Master** es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/issues/28)). Ver [docs/scrum/proceso.md](docs/scrum/proceso.md).
 
-**Tablero del sprint:** desde el Sprint 4, el Sprint Backlog se sigue en el [grafo del equipo](https://grafo-better.vercel.app), que enlaza cada tarea con su issue o pull request ([decisión 0003](docs/decisiones/0003-seguimiento-en-el-grafo.md)). Los [issues](https://github.com/riverri/IS1/issues) siguen en el tablero de GitHub Projects (pestaña *Projects*).
+**Tablero del sprint:** desde el Sprint 4, el Sprint Backlog se sigue en el [grafo del equipo](https://grafo-better.vercel.app) (o [en solo lectura, sin cuenta](https://grafo-better.vercel.app/?presentacion=8FeSBocO1rjfr6U1N9CJ1BBq)), que enlaza cada tarea con su issue o pull request ([decisión 0003](docs/decisiones/0003-seguimiento-en-el-grafo.md)). Los [issues](https://github.com/riverri/IS1/issues) siguen en el tablero de GitHub Projects (pestaña *Projects*).
 
 ## ¿Qué es?
 

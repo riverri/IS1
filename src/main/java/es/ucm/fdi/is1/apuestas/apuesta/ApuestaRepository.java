@@ -40,14 +40,28 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
      * varias líneas. "case when ... then 1 else 0 end" suma 1 por cada apuesta ganada, es decir, las cuenta.
      */
     @Query("""
-            select a.usuario.id, count(a),
+            select a.usuario.id,
+                   sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
+                                              es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA) then 1 else 0 end),
                    sum(case when a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA then 1 else 0 end),
                    sum(a.importe), sum(a.pagado)
             from Apuesta a
             where a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
-                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA)
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)
             group by a.usuario.id""")
     List<Object[]> resumenResueltasPorUsuario();
+
+    /** Estadísticas de un único jugador para su perfil público. */
+    @Query("select coalesce(sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA) then 1 else 0 end), 0),"
+            + " coalesce(sum(case when a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA"
+            + " then 1 else 0 end), 0), coalesce(sum(a.importe), 0), coalesce(sum(a.pagado), 0)"
+            + " from Apuesta a where a.usuario.id = :usuarioId and a.estado in ("
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,"
+            + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)")
+    List<Object[]> resumenResueltasDe(@org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
 
     /**
      * Importe apostado desde una fecha, sin contar las apuestas canceladas (HU-10).

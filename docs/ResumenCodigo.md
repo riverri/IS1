@@ -76,3 +76,5 @@ Hemos dado una visión general del proyecto sin adentrarnos en el código en pro
 
 &#x20;
 
+
+<!-- Verificación de commit y push desde Codex, 2026-11-19. -->

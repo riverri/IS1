@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.ucm.fdi.is1.apuestas.apuesta.CriterioRanking;
 import es.ucm.fdi.is1.apuestas.apuesta.PuestoRanking;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
+import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 
 /**
  * Controlador de las ligas privadas (HU-51): mis ligas, crear, unirse con un código, ver su ranking, salir
@@ -28,10 +30,12 @@ public class LigasController {
 
     private final LigaService ligas;
     private final RetoService retos;
+    private final BloqueoLigaService bloqueos;
 
-    public LigasController(LigaService ligas, RetoService retos) {
+    public LigasController(LigaService ligas, RetoService retos, BloqueoLigaService bloqueos) {
         this.ligas = ligas;
         this.retos = retos;
+        this.bloqueos = bloqueos;
     }
 
     /** GET /ligas: ligas del usuario, con los formularios para crear una o unirse con un código. */
@@ -39,6 +43,17 @@ public class LigasController {
     public String mias(Principal principal, Model model) {
         model.addAttribute("ligas", ligas.mias(principal.getName()));
         return "ligas";
+    }
+
+    /** GET /ligas/clasificacion: clasificación personal o global de las ligas públicas. */
+    @GetMapping("/clasificacion")
+    public String clasificacion(@RequestParam(defaultValue = "mias") String vista, Principal principal, Model model) {
+        boolean global = principal == null || "global".equalsIgnoreCase(vista);
+        model.addAttribute("vista", global ? "global" : "mias");
+        model.addAttribute("puedeVerMisLigas", principal != null);
+        model.addAttribute("clasificacion", global ? ligas.clasificacionGlobal()
+                : ligas.clasificacion(principal.getName()));
+        return "clasificacion-ligas";
     }
 
     /**
@@ -96,7 +111,40 @@ public class LigasController {
                 .filter(r -> liga.getIdsMiembros().contains(r.getRetador().getId())
                         && liga.getIdsMiembros().contains(r.getRetado().getId())).toList());
         model.addAttribute("resultados", Resultado.values());
+        model.addAttribute("especiales", Especial.values());
+        model.addAttribute("partidosBloqueables", retos.partidosDisponibles());
+        model.addAttribute("bloqueosActivos", bloqueos.deLiga(liga));
         return "liga";
+    }
+
+    /** POST /ligas/{id}/bloqueos: paga y aplica un bloqueo al compañero y alcance seleccionados. */
+    @PostMapping("/{id}/bloqueos")
+    public String bloquear(@PathVariable Long id, @RequestParam Long objetivo, @RequestParam Long evento,
+                           @RequestParam String alcance, Principal principal, RedirectAttributes redireccion) {
+        try {
+            bloqueos.crear(id, principal.getName(), objetivo, evento, alcance);
+            redireccion.addFlashAttribute("mensaje", "Bloqueo aplicado por 50 monedas hasta el inicio del partido.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        } catch (SaldoInsuficienteException e) {
+            redireccion.addFlashAttribute("error", "No tienes saldo suficiente para pagar el bloqueo de 50 monedas.");
+        }
+        return "redirect:/ligas/" + id;
+    }
+
+    /** POST /ligas/{id}/bloqueos/todos: aplica el alcance elegido a los demás miembros por 100 monedas. */
+    @PostMapping("/{id}/bloqueos/todos")
+    public String bloquearLiga(@PathVariable Long id, @RequestParam Long evento, @RequestParam String alcance,
+                               Principal principal, RedirectAttributes redireccion) {
+        try {
+            bloqueos.crearParaLiga(id, principal.getName(), evento, alcance);
+            redireccion.addFlashAttribute("mensaje", "Bloqueo aplicado a toda la liga por 100 monedas.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        } catch (SaldoInsuficienteException e) {
+            redireccion.addFlashAttribute("error", "No tienes saldo suficiente para pagar el bloqueo de 100 monedas.");
+        }
+        return "redirect:/ligas/" + id;
     }
 
     /** POST /ligas/{id}/salir: sale de la liga (el creador no puede; tiene que borrarla) (CA-51.3). */
@@ -123,5 +171,20 @@ public class LigasController {
             redireccion.addFlashAttribute("error", e.getMessage());
             return "redirect:/ligas/" + id;
         }
+    }
+
+    /** POST /ligas/{id}/visibilidad: cambia si la liga se incluye en la clasificación global. */
+    @PostMapping("/{id}/visibilidad")
+    public String cambiarVisibilidad(@PathVariable Long id, @RequestParam boolean publica, Principal principal,
+                                     RedirectAttributes redireccion) {
+        try {
+            ligas.cambiarVisibilidad(id, principal.getName(), publica);
+            redireccion.addFlashAttribute("mensaje", publica
+                    ? "La liga es pública y aparece en el ranking global."
+                    : "La liga es privada y ya no aparece en el ranking global.");
+        } catch (IllegalArgumentException e) {
+            redireccion.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/ligas/" + id;
     }
 }

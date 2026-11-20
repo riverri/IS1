@@ -1,6 +1,8 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import es.ucm.fdi.is1.apuestas.mercados.Candidato;
 import es.ucm.fdi.is1.apuestas.mercados.CandidatoRepository;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoRepository;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaService;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -49,12 +52,13 @@ public class ApuestaService {
     private final RegistroCuotas registroCuotas;
     private final SupercuotaRepository supercuotas;
     private final Clock reloj;
+    private final BloqueoLigaService bloqueosLiga;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
                           CandidatoRepository candidatos, MercadoRepository mercados, CalculadoraCuotas calculadora,
                           LimitesService limites,
                           JuegoResponsableService juegoResponsable, RegistroCuotas registroCuotas,
-                          SupercuotaRepository supercuotas, Clock reloj) {
+                          SupercuotaRepository supercuotas, Clock reloj, BloqueoLigaService bloqueosLiga) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
@@ -66,6 +70,7 @@ public class ApuestaService {
         this.registroCuotas = registroCuotas;
         this.supercuotas = supercuotas;
         this.reloj = reloj;
+        this.bloqueosLiga = bloqueosLiga;
     }
 
     /** Apuesta simple (HU-23): una combinada de una sola selección, con la cuota vigente. */
@@ -112,6 +117,7 @@ public class ApuestaService {
             Evento evento = eventos.paraApostar(pedida.eventoId())
                     .filter(e -> e.admiteApuestas(ahora))
                     .orElseThrow(() -> new EventoNoDisponibleException(pedida.eventoId()));
+            bloqueosLiga.comprobar(usuario, evento, pedida.resultado(), pedida.especial());
             // La cuota se calcula aquí, nunca se fía de la que envía la página
             BigDecimal cuota = cuota(evento, pedida.resultado(), pedida.especial());
             // HU-87: en una simple a un resultado con supercuota vale la supercuota, hasta su importe máximo
@@ -119,7 +125,7 @@ public class ApuestaService {
                 Supercuota supercuota = supercuotaVigente(evento, pedida.resultado(), ahora);
                 if (supercuota != null) {
                     if (importe.compareTo(supercuota.getImporteMaximo()) > 0) {
-                        throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
+                        throw new ImporteFueraDeLimitesException("Con la supercuota se pueden apostar como mucho "
                                 + supercuota.getImporteMaximo().toPlainString().replace('.', ',') + " monedas");
                     }
                     cuota = supercuota.getCuota();
@@ -243,7 +249,7 @@ public class ApuestaService {
                 : supercuotaVigente(unica.getEvento(), unica.getPronostico(), ahora);
         if (supercuota != null) {
             if (nuevo.compareTo(supercuota.getImporteMaximo()) > 0) {
-                throw new IllegalArgumentException("Con la supercuota se pueden apostar como mucho "
+                throw new ImporteFueraDeLimitesException("Con la supercuota se pueden apostar como mucho "
                         + supercuota.getImporteMaximo().toPlainString().replace('.', ',') + " monedas");
             }
             cuotas = List.of(supercuota.getCuota());
@@ -327,13 +333,18 @@ public class ApuestaService {
     public List<Apuesta> historial(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         return apuestas.findByUsuarioAndEstadoInOrderByFechaDesc(usuario, EnumSet.of(EstadoApuesta.GANADA,
-                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA));
+                EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA, EstadoApuesta.COBRADA));
     }
 
     /** Porcentaje de aciertos y rentabilidad del usuario (HU-35). */
     @Transactional(readOnly = true)
     public Estadisticas estadisticas(String email) {
-        return Estadisticas.de(historial(email));
+        return estadisticas(historial(email));
+    }
+
+    /** Calcula las estadísticas sobre el historial ya cargado por la página "Mis apuestas". */
+    Estadisticas estadisticas(List<Apuesta> historial) {
+        return Estadisticas.de(historial);
     }
 
     /** Estadísticas de un grupo de apuestas: una competición, las combinadas o las de largo plazo (HU-96). */
@@ -347,9 +358,14 @@ public class ApuestaService {
      */
     @Transactional(readOnly = true)
     public List<EstadisticasGrupo> estadisticasPorCompeticion(String email) {
+        return estadisticasPorCompeticion(historial(email));
+    }
+
+    /** Agrupa el historial ya cargado para evitar repetir la consulta al pintarlo junto a las estadísticas. */
+    List<EstadisticasGrupo> estadisticasPorCompeticion(List<Apuesta> historial) {
         java.util.Map<String, List<Apuesta>> grupos = new java.util.LinkedHashMap<>();
-        for (Apuesta apuesta : historial(email)) {
-            if (!apuesta.isResuelta()) {
+        for (Apuesta apuesta : historial) {
+            if (!apuesta.isResuelta() && apuesta.getEstado() != EstadoApuesta.COBRADA) {
                 continue;
             }
             String grupo = apuesta.isLargoPlazo() ? "Largo plazo"
@@ -369,5 +385,62 @@ public class ApuestaService {
     public List<Apuesta> activas(String email) {
         Usuario usuario = usuarios.findByEmail(email).orElseThrow();
         return apuestas.findByUsuarioAndEstadoOrderByFechaDesc(usuario, EstadoApuesta.ACTIVA);
+    }
+
+    /** Ofertas informativas de HU-102 para combinadas futuras; el cobro requiere una historia posterior. */
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, BigDecimal> ofertasCashOut(List<Apuesta> activas, LocalDateTime ahora) {
+        java.util.Map<Long, BigDecimal> ofertas = new java.util.HashMap<>();
+        for (Apuesta apuesta : activas) {
+            BigDecimal importe = ofertaCashOut(apuesta, ahora, false);
+            if (importe != null) ofertas.put(apuesta.getId(), importe);
+        }
+        return ofertas;
+    }
+
+    /** Confirma una oferta vigente. Los eventos se bloquean para que no empiecen mientras se abona. */
+    @Transactional
+    public Apuesta cobrarAnticipado(String email, Long apuestaId, BigDecimal ofertaVista) {
+        Apuesta apuesta = apuestas.findById(apuestaId).filter(a -> a.getUsuario().getEmail().equalsIgnoreCase(email))
+                .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || apuesta.getEstado() != EstadoApuesta.ACTIVA) {
+            throw new IllegalStateException("Esta combinada ya no admite un cobro anticipado");
+        }
+        BigDecimal nueva = ofertaCashOut(apuesta, ahora, true);
+        if (nueva == null) {
+            throw new IllegalStateException("Algún partido ya ha empezado, se ha suspendido o se ha anulado");
+        }
+        if (ofertaVista == null || ofertaVista.compareTo(nueva) != 0) {
+            throw new OfertaCashOutCambiadaException(nueva);
+        }
+        apuesta.cobrarAnticipado(nueva, ahora);
+        return apuesta;
+    }
+
+    /** Recalcula la oferta; en confirmación también vuelve a comprobar y bloquea cada evento. */
+    private BigDecimal ofertaCashOut(Apuesta apuesta, LocalDateTime ahora, boolean bloquearEventos) {
+        if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || !apuesta.cancelable(ahora)) return null;
+        java.util.Map<Long, Evento> eventosBloqueados = new java.util.HashMap<>();
+        if (bloquearEventos) {
+            for (Seleccion seleccion : apuesta.getSelecciones().stream()
+                    .sorted(java.util.Comparator.comparing(s -> s.getEvento().getId())).toList()) {
+                Evento bloqueado = eventos.paraCambiar(seleccion.getEvento().getId())
+                        .filter(e -> e.admiteApuestas(ahora)).orElse(null);
+                if (bloqueado == null) return null;
+                eventosBloqueados.put(bloqueado.getId(), bloqueado);
+            }
+        }
+        BigDecimal factor = BigDecimal.ONE;
+        for (Seleccion seleccion : apuesta.getSelecciones()) {
+            Evento evento = bloquearEventos ? eventosBloqueados.get(seleccion.getEvento().getId())
+                    : seleccion.getEvento();
+            BigDecimal actual = calculadora.cuota(evento, seleccion.getPronostico(), seleccion.getEspecial(),
+                    apuesta.getId());
+            if (actual == null || actual.signum() <= 0) return null;
+            factor = factor.multiply(seleccion.getCuota().divide(actual, MathContext.DECIMAL64));
+        }
+        return apuesta.getImporte().multiply(factor).setScale(2, RoundingMode.DOWN)
+                .min(apuesta.getGananciaPotencial());
     }
 }

@@ -37,6 +37,23 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
               and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA""")
     List<Object[]> seleccionesActivasPorPronostico(Evento evento);
 
+    /** Igual que arriba, excluyendo la combinada cuyo cash-out se está valorando. */
+    @Query("""
+            select s.pronostico, s.apuesta.usuario.id, s.apuesta.importe, size(s.apuesta.selecciones)
+            from Seleccion s
+            where s.evento = :evento and s.pronostico is not null
+              and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA
+              and (:apuestaExcluida is null or s.apuesta.id <> :apuestaExcluida)""")
+    List<Object[]> seleccionesActivasPorPronosticoExcepto(Evento evento, Long apuestaExcluida);
+
+    /** Volumen 1X2 de todos los eventos visibles, para calcular las cuotas de un catálogo en lote. */
+    @Query("""
+            select s.evento.id, s.pronostico, s.apuesta.usuario.id, s.apuesta.importe, size(s.apuesta.selecciones)
+            from Seleccion s
+            where s.evento in :eventos and s.pronostico is not null
+              and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA""")
+    List<Object[]> seleccionesActivasPorPronosticoDeEventos(List<Evento> eventos);
+
     /** Selecciones a eventos (no a mercados) de apuestas activas, con su apuesta y su evento: riesgo (HU-76). */
     @Query("""
             select s from Seleccion s join fetch s.apuesta a join fetch s.evento

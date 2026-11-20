@@ -31,7 +31,8 @@ public class BeneficioDiarioService {
 
     /** Movimientos de los juegos contra la casa: apuestas, casino, predicciones y quiniela. */
     static final Set<TipoMovimiento> DE_LA_CASA = EnumSet.of(TipoMovimiento.APUESTA, TipoMovimiento.PREMIO,
-            TipoMovimiento.DEVOLUCION, TipoMovimiento.CORRECCION, TipoMovimiento.CASINO_APUESTA,
+            TipoMovimiento.DEVOLUCION, TipoMovimiento.CORRECCION, TipoMovimiento.COBRO_ANTICIPADO,
+            TipoMovimiento.CASINO_APUESTA,
             TipoMovimiento.CASINO_PREMIO, TipoMovimiento.PREDICCION_COMPRA, TipoMovimiento.PREDICCION_VENTA,
             TipoMovimiento.PREDICCION_PAGO, TipoMovimiento.QUINIELA_BOLETO, TipoMovimiento.QUINIELA_PREMIO);
 

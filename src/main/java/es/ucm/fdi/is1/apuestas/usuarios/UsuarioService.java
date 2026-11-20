@@ -163,6 +163,10 @@ public class UsuarioService {
             throw new IllegalArgumentException("Elige una pausa de 1, 7 o 30 días");
         }
         Usuario usuario = usuarios.findByEmail(normalizar(email)).orElseThrow();
+        if (usuario.isCreador()) {
+            // No apuesta; la pausa no se puede quitar y el aviso saldría en todas sus páginas, también en Gestión
+            throw new IllegalArgumentException("El creador de apuestas no se pone pausas: no apuesta");
+        }
         usuario.pausarHasta(LocalDateTime.now(reloj).plusDays(dias));
         return usuario.getPausaHasta();
     }

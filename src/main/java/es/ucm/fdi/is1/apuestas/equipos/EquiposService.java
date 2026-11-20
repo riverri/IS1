@@ -37,9 +37,11 @@ public class EquiposService {
         String buscado = Nombres.normalizar(texto);
         // Cada filter deja pasar solo los equipos que cumplen la condición. Las condiciones "x == null || ..."
         // significan "si no hay filtro, pasan todos"
-        return equipos.findAll().stream()
-                .filter(e -> deporte == null || e.getDeporte() == deporte)
-                .filter(e -> competicionId == null || e.participaEn(competicionId))
+        List<Equipo> candidatos = competicionId != null
+                ? (deporte == null ? equipos.deCompeticion(competicionId)
+                        : equipos.deDeporteYCompeticion(deporte, competicionId))
+                : (deporte == null ? equipos.findAll() : equipos.findByDeporte(deporte));
+        return candidatos.stream()
                 .filter(e -> buscado.isEmpty() || Nombres.normalizar(e.getNombre()).contains(buscado))
                 // Por el nombre normalizado, para que una inicial con tilde ("Á") no quede detrás de la "Z"
                 .sorted(Comparator.comparing(e -> Nombres.normalizar(e.getNombre())))
@@ -51,16 +53,16 @@ public class EquiposService {
     /** Número de equipos de cada deporte, para las pestañas. */
     @Transactional(readOnly = true)
     public Map<Deporte, Long> recuentoPorDeporte() {
-        return equipos.findAll().stream()
-                .collect(Collectors.groupingBy(Equipo::getDeporte, () -> new EnumMap<>(Deporte.class),
-                        Collectors.counting()));
+        Map<Deporte, Long> recuento = new EnumMap<>(Deporte.class);
+        for (Object[] fila : equipos.contarPorDeporte()) {
+            recuento.put((Deporte) fila[0], (Long) fila[1]);
+        }
+        return recuento;
     }
 
     /** Competiciones de un deporte, para filtrar dentro de la pestaña. */
     @Transactional(readOnly = true)
     public List<Competicion> competiciones(Deporte deporte) {
-        return competiciones.findAllByOrderByDeporteAscNombreAsc().stream()
-                .filter(c -> c.getDeporte() == deporte)
-                .toList();
+        return competiciones.findByDeporteOrderByNombreAsc(deporte);
     }
 }

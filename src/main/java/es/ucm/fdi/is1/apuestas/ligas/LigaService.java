@@ -3,6 +3,8 @@ package es.ucm.fdi.is1.apuestas.ligas;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +30,9 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
  */
 @Service
 public class LigaService {
+
+    private record TotalLiga(Liga liga, int miembros, BigDecimal saldo) {
+    }
 
     /** Sin letras ni números que se confundan al dictarlos (0/O, 1/I/L). */
     static final String ALFABETO = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -56,6 +61,51 @@ public class LigaService {
     @Transactional(readOnly = true)
     public List<Liga> mias(String email) {
         return ligas.deMiembro(usuario(email));
+    }
+
+    /** Clasificación de las ligas del usuario por la suma del saldo de sus miembros activos. */
+    @Transactional(readOnly = true)
+    public List<PuestoClasificacionLiga> clasificacion(String email) {
+        return clasificar(ligas.deMiembro(usuario(email)));
+    }
+
+    /** Clasificación global de ligas públicas; solo salen sus datos agregados. */
+    @Transactional(readOnly = true)
+    public List<PuestoClasificacionLiga> clasificacionGlobal() {
+        return clasificar(ligas.publicasConMiembros());
+    }
+
+    private List<PuestoClasificacionLiga> clasificar(List<Liga> ligasVisibles) {
+        List<TotalLiga> totales = ligasVisibles.stream()
+                .map(liga -> {
+                    List<Usuario> miembros = liga.getMiembrosActivos();
+                    BigDecimal saldo = miembros.stream().map(Usuario::getSaldo)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    return new TotalLiga(liga, miembros.size(), saldo);
+                })
+                .sorted(Comparator.comparing(TotalLiga::saldo).reversed()
+                        .thenComparing(t -> t.liga().getNombre(), String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(t -> t.liga().getId()))
+                .toList();
+
+        return java.util.stream.IntStream.range(0, totales.size())
+                .mapToObj(i -> {
+                    TotalLiga total = totales.get(i);
+                    return new PuestoClasificacionLiga(i + 1, total.liga().getId(), total.liga().getNombre(),
+                            total.miembros(), total.saldo(), total.liga().isPublica());
+                })
+                .toList();
+    }
+
+    /** Cambia la visibilidad; solo quien creó la liga puede hacerlo (HU-113). */
+    @Transactional
+    public Liga cambiarVisibilidad(Long id, String email, boolean publica) {
+        Liga liga = ver(id, email);
+        if (!liga.esCreador(usuario(email))) {
+            throw new IllegalArgumentException("Solo quien ha creado la liga puede cambiar su visibilidad");
+        }
+        liga.cambiarVisibilidad(publica);
+        return liga;
     }
 
     /**

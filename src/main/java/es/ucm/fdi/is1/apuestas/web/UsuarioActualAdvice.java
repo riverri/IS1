@@ -3,19 +3,20 @@ package es.ucm.fdi.is1.apuestas.web;
 import java.security.Principal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
 import es.ucm.fdi.is1.apuestas.apuesta.Boleto;
 import es.ucm.fdi.is1.apuestas.apuesta.BoletoService;
 import es.ucm.fdi.is1.apuestas.apuesta.BoletoVista;
+import es.ucm.fdi.is1.apuestas.apuesta.Limites;
 import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Datos comunes a todas las vistas: usuario con sesión iniciada (cabecera, saldo) y su boleto.
@@ -59,19 +60,20 @@ public class UsuarioActualAdvice {
         return TemaController.OSCURO.equals(tema);
     }
 
-    /** Si el creador ha desactivado el juego responsable, Mi cuenta no lo muestra (HU-10). */
+    /** Solo Mi cuenta necesita saber si el creador ha desactivado el juego responsable. */
     @ModelAttribute("juegoResponsableActivo")
-    public boolean juegoResponsableActivo() {
-        return limites.actuales().isJuegoResponsable();
+    public boolean juegoResponsableActivo(HttpServletRequest peticion) {
+        return peticion.getRequestURI().startsWith(peticion.getContextPath() + "/cuenta")
+                && limitesActuales(peticion).isJuegoResponsable();
     }
 
     /** Fin de la pausa de apuestas del usuario, o null si no tiene una activa (HU-10). */
     @ModelAttribute("pausaHasta")
-    public LocalDateTime pausaHasta(Principal principal) {
-        if (principal == null || !limites.actuales().isJuegoResponsable()) {
+    public LocalDateTime pausaHasta(Principal principal, HttpServletRequest peticion) {
+        if (principal == null || !limitesActuales(peticion).isJuegoResponsable()) {
             return null;
         }
-        return usuarios.buscar(principal.getName())
+        return usuario(principal, peticion)
                 .filter(u -> u.enPausa(LocalDateTime.now(reloj)))
                 .map(u -> u.getPausaHasta())
                 .orElse(null);
@@ -106,10 +108,36 @@ public class UsuarioActualAdvice {
      * No aplica la recarga gratuita: eso se hace al entrar y en Mi cuenta.
      */
     @ModelAttribute("usuarioActual")
-    public Usuario usuarioActual(Principal principal) {
+    public Usuario usuarioActual(Principal principal, HttpServletRequest peticion) {
+        return usuario(principal, peticion).orElse(null);
+    }
+
+    private Optional<Usuario> usuario(Principal principal, HttpServletRequest peticion) {
         if (principal == null) {
-            return null;
+            return Optional.empty();
         }
-        return usuarios.buscar(principal.getName()).orElse(null);
+        String email = principal.getName();
+        String clave = UsuarioActualAdvice.class.getName() + ".usuario." + email;
+        Object almacenado = peticion.getAttribute(clave);
+        if (almacenado instanceof Optional<?> existente) {
+            @SuppressWarnings("unchecked")
+            Optional<Usuario> usuario = (Optional<Usuario>) existente;
+            return usuario;
+        }
+        Optional<Usuario> usuario = usuarios.buscar(email);
+        peticion.setAttribute(clave, usuario);
+        return usuario;
+    }
+
+    /** Reutiliza en la misma petición la única fila de configuración global. */
+    private Limites limitesActuales(HttpServletRequest peticion) {
+        String clave = UsuarioActualAdvice.class.getName() + ".limites";
+        Object almacenado = peticion.getAttribute(clave);
+        if (almacenado instanceof Limites existentes) {
+            return existentes;
+        }
+        Limites actuales = limites.actuales();
+        peticion.setAttribute(clave, actuales);
+        return actuales;
     }
 }

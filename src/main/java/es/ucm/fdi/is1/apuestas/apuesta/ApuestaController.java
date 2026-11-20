@@ -24,6 +24,7 @@ import es.ucm.fdi.is1.apuestas.seguimiento.AlertasService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
 import jakarta.validation.Valid;
@@ -95,7 +96,13 @@ public class ApuestaController {
     public String apostar(@PathVariable Long id, @Valid @ModelAttribute("apuesta") ApuestaForm form,
                           BindingResult errores, Principal principal, Model model,
                           RedirectAttributes redireccion) {
-        Evento evento = catalogo.eventoDisponible(id);
+        Evento evento;
+        try {
+            evento = catalogo.eventoDisponible(id);
+        } catch (EventoNoDisponibleException e) {
+            // Ha empezado o se ha suspendido mientras rellenaba el formulario: un aviso en vez de un 404
+            return yaNoAdmiteApuestas(redireccion);
+        }
         // Primero las validaciones del formulario (@Valid); solo si pasan se intenta apostar
         if (!errores.hasErrors()) {
             try {
@@ -105,6 +112,8 @@ public class ApuestaController {
                 redireccion.addFlashAttribute("mensaje", "Apuesta registrada. Si aciertas cobras "
                         + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
                 return "redirect:/apuestas";
+            } catch (EventoNoDisponibleException e) {
+                return yaNoAdmiteApuestas(redireccion);
             } catch (SaldoInsuficienteException e) {
                 // Cada catch recoge un tipo de error y lo enseña junto al campo que corresponde.
                 // "A | B" en un catch recoge cualquiera de las dos excepciones
@@ -127,6 +136,12 @@ public class ApuestaController {
         return vista(evento, principal, model);
     }
 
+    /** El partido ya no admite apuestas (ha empezado, se ha suspendido…): al catálogo con el aviso, sin apostar. */
+    static String yaNoAdmiteApuestas(RedirectAttributes redireccion) {
+        redireccion.addFlashAttribute("errorBoleto", "Ese partido ya no admite apuestas: no se ha apostado nada.");
+        return "redirect:/eventos";
+    }
+
     /**
      * GET /apuestas: Mis apuestas. Las activas con el total comprometido (HU-24), el historial (HU-34)
      * y las estadísticas (HU-35).
@@ -140,9 +155,11 @@ public class ApuestaController {
         model.addAttribute("comprometido", comprometido);
         // La vista llama a cancelable(ahora) para mostrar o no los botones de cancelar y cambiar importe
         model.addAttribute("ahora", LocalDateTime.now(reloj));
-        model.addAttribute("historial", apuestas.historial(principal.getName()));
-        model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
-        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(principal.getName()));
+        model.addAttribute("ofertasCashOut", apuestas.ofertasCashOut(activas, LocalDateTime.now(reloj)));
+        List<Apuesta> historial = apuestas.historial(principal.getName());
+        model.addAttribute("historial", historial);
+        model.addAttribute("estadisticas", apuestas.estadisticas(historial));
+        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(historial));
         return "apuestas";
     }
 
@@ -197,6 +214,25 @@ public class ApuestaController {
         } catch (IllegalStateException e) {
             // El mensaje lo da Apuesta.motivoNoCancelable: partido empezado, mercado cerrado o apuesta no activa
             redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede cancelar: " + e.getMessage() + ".");
+        }
+        return "redirect:/apuestas";
+    }
+
+    /** POST /apuestas/{id}/cash-out: confirma la oferta de la combinada tras validar de nuevo cuotas y eventos. */
+    @PostMapping("/apuestas/{id}/cash-out")
+    public String cashOut(@PathVariable Long id, @RequestParam(required = false) BigDecimal ofertaVista,
+                          Principal principal, RedirectAttributes redireccion) {
+        try {
+            Apuesta apuesta = apuestas.cobrarAnticipado(principal.getName(), id, ofertaVista);
+            redireccion.addFlashAttribute("mensaje", "Combinada cerrada. Se han abonado "
+                    + apuesta.getPagado().toPlainString().replace('.', ',') + " monedas.");
+        } catch (OfertaCashOutCambiadaException e) {
+            redireccion.addFlashAttribute("aviso", e.getMessage() + " Nueva oferta: "
+                    + e.getOfertaNueva().toPlainString().replace('.', ',') + " monedas.");
+            redireccion.addFlashAttribute("cashOutNuevaId", id);
+            redireccion.addFlashAttribute("cashOutNuevaOferta", e.getOfertaNueva());
+        } catch (ApuestaNoEncontradaException | IllegalStateException e) {
+            redireccion.addFlashAttribute("error", "No se pudo completar el cash-out: " + e.getMessage());
         }
         return "redirect:/apuestas";
     }

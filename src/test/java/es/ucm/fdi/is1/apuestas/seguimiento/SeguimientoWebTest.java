@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -204,6 +205,13 @@ class SeguimientoWebTest {
 
         alertas.repasar();
         assertThat(alertaRepository.findById(alerta.getId())).isPresent();
+
+        // Aplazado: pasa su hora original y después se le pone la nueva fecha
+        LocalDateTime nueva = partido.getFechaHora().plusDays(7);
+        partido.cambiarFecha(Hora.ahora().minusMinutes(5));
+        alertas.repasar();
+        assertThat(alertaRepository.findById(alerta.getId())).isPresent();
+        partido.cambiarFecha(nueva);
 
         resolucion.reactivar(partido.getId());
         alertas.repasar();

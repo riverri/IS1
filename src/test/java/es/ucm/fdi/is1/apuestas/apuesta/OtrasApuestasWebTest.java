@@ -89,8 +89,12 @@ class OtrasApuestasWebTest {
         mvc.perform(post("/eventos/{id}/apostar", evento.getId()).with(COMO_ANA).with(csrf())
                         .param("opcion", opcion).param("importe", "10"))
                 .andExpect(redirectedUrl("/apuestas"));
-        return apuestas.findAll().stream().filter(a -> a.getUsuario().getEmail().equals(ANA))
-                .reduce((primera, segunda) -> segunda).orElseThrow();
+        return apuestas.findAll().stream()
+                .filter(a -> a.getUsuario().getEmail().equals(ANA))
+                .filter(a -> a.getSelecciones().stream()
+                        .anyMatch(s -> s.getEvento().getId().equals(evento.getId())))
+                .findFirst().orElseThrow();
+
     }
 
     private BigDecimal saldo() {

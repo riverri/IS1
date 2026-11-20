@@ -21,12 +21,13 @@
       </div>
       <div class="portada-destacado" th:if="${destacado != null}">
         <p class="destacado-etiqueta">⭐ Partido destacado</p>
-        <article th:replace="~{fragments/comun :: partido(${destacado})}"></article>
+        <article th:replace="~{fragments/comun :: partido(${destacado}, ${cuotasPorEvento})}"></article>
       </div>
     </div>
 </section>
 
 <main>
+    <p role="status" class="alerta alerta-exito" th:if="${param.logout != null}">Has cerrado sesión.</p>
     <p role="status" class="alerta alerta-exito" th:if="${param.cuentaEliminada != null}">Tu cuenta se ha eliminado. ¡Gracias por jugar!</p>
     <section class="ventajas">
         <div class="ventaja">
@@ -80,7 +81,7 @@
             <a th:href="@{/eventos}">Ver todos →</a>
         </div>
         <div class="rejilla-partidos">
-            <th:block th:each="ev : ${proximos}"><article th:replace="~{fragments/comun :: partido(${ev})}"></article></th:block>
+            <th:block th:each="ev : ${proximos}"><article th:replace="~{fragments/comun :: partido(${ev}, ${cuotasPorEvento})}"></article></th:block>
         </div>
     </section>
 </main>

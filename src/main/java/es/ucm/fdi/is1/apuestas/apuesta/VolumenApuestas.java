@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -40,6 +41,11 @@ class VolumenApuestas implements VolumenApostado {
     /** Importe que cuenta en cada resultado del evento; los resultados sin apuestas no aparecen en el mapa. */
     @Override
     public Map<Resultado, BigDecimal> importes(Evento evento) {
+        return importes(evento, null);
+    }
+
+    @Override
+    public Map<Resultado, BigDecimal> importes(Evento evento, Long apuestaExcluida) {
         Map<Resultado, BigDecimal> importes = new EnumMap<>(Resultado.class);
         // Un evento sin guardar (sin id) aún no puede tener apuestas
         if (evento.getId() == null) {
@@ -49,7 +55,7 @@ class VolumenApuestas implements VolumenApostado {
         }
         Map<Clave, BigDecimal> porUsuario = new HashMap<>();
         // fila = [pronóstico, id del usuario, importe de la apuesta, número de selecciones]
-        for (Object[] fila : selecciones.seleccionesActivasPorPronostico(evento)) {
+        for (Object[] fila : selecciones.seleccionesActivasPorPronosticoExcepto(evento, apuestaExcluida)) {
             // Parte de la apuesta que corresponde a esta selección: importe / número de selecciones.
             // MathContext.DECIMAL64 fija cuántas cifras guardar: sin él, 10 / 3 lanzaría una excepción
             // porque BigDecimal no sabe dónde cortar un decimal infinito (3,333...)
@@ -62,5 +68,25 @@ class VolumenApuestas implements VolumenApostado {
         porUsuario.forEach((clave, importe) ->
                 importes.merge(clave.resultado(), importe.min(APORTACION_MAXIMA), BigDecimal::add));
         return importes;
+    }
+
+    /** Volumen por evento, consultado en una sola operación para las cuotas de un listado de partidos. */
+    Map<Long, Map<Resultado, BigDecimal>> importes(List<Evento> eventos) {
+        if (eventos.isEmpty()) {
+            return Map.of();
+        }
+        record Clave(Long evento, Resultado resultado, Long usuario) {
+        }
+        Map<Clave, BigDecimal> porUsuario = new HashMap<>();
+        for (Object[] fila : selecciones.seleccionesActivasPorPronosticoDeEventos(eventos)) {
+            BigDecimal parte = ((BigDecimal) fila[3])
+                    .divide(BigDecimal.valueOf(((Number) fila[4]).longValue()), MathContext.DECIMAL64);
+            porUsuario.merge(new Clave((Long) fila[0], (Resultado) fila[1], (Long) fila[2]), parte, BigDecimal::add);
+        }
+        Map<Long, Map<Resultado, BigDecimal>> porEvento = new HashMap<>();
+        porUsuario.forEach((clave, importe) -> porEvento
+                .computeIfAbsent(clave.evento(), id -> new EnumMap<>(Resultado.class))
+                .merge(clave.resultado(), importe.min(APORTACION_MAXIMA), BigDecimal::add));
+        return porEvento;
     }
 }

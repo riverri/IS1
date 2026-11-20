@@ -6,6 +6,7 @@
 <main class="estrecho ancho-medio">
     <div class="titulo-pagina">
         <h1>Ligas con amigos</h1>
+        <a class="boton boton-secundario" th:href="@{/ligas/clasificacion}">Clasificación de ligas</a>
     </div>
     <p class="subtitulo">Crea una liga, pasa el código a tus amigos y competid en un ranking solo entre vosotros.</p>
     <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
@@ -23,7 +24,8 @@
         <p>Todavía no estás en ninguna liga.</p>
     </div>
 
-    <div class="ligas-formularios">
+    <p class="aviso" th:if="${usuarioActual != null and usuarioActual.creador}">El creador de apuestas no juega en las ligas.</p>
+    <div class="ligas-formularios" th:unless="${usuarioActual != null and usuarioActual.creador}">
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/ligas}" method="post">
             <h2>Crear una liga</h2>
             <label for="nombre">Nombre</label>

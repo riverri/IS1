@@ -44,6 +44,10 @@ public class Liga {
     @Column(nullable = false)
     private LocalDateTime creada;
 
+    /** Una liga pública aparece en la clasificación global con datos agregados, sin exponer sus miembros. */
+    @Column(nullable = false)
+    private boolean publica;
+
     /**
      * Relación muchos a muchos con los usuarios, en la tabla intermedia liga_miembro.
      * Se cargan con la liga: las páginas los muestran fuera de la transacción (open-in-view desactivado).
@@ -89,6 +93,10 @@ public class Liga {
         miembros.removeIf(m -> m.getId().equals(usuario.getId()));
     }
 
+    void cambiarVisibilidad(boolean publica) {
+        this.publica = publica;
+    }
+
     /** Ids de los miembros, para filtrar el ranking general y quedarse solo con la liga. */
     public Set<Long> getIdsMiembros() {
         return miembros.stream().map(Usuario::getId).collect(Collectors.toSet());
@@ -118,5 +126,9 @@ public class Liga {
 
     public LocalDateTime getCreada() {
         return creada;
+    }
+
+    public boolean isPublica() {
+        return publica;
     }
 }

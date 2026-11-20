@@ -157,6 +157,26 @@ class QuinielaWebTest {
     }
 
     @Test
+    void crearValidaNombrePrecioDuplicadosYPartidosInexistentes() {
+        assertThatThrownBy(() -> quinielas.crear("   ", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Ponle un nombre");
+        assertThatThrownBy(() -> quinielas.crear("Sin precio", BigDecimal.ZERO,
+                List.of(primero.getId(), segundo.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("precio del boleto");
+        assertThatThrownBy(() -> quinielas.crear("Demasiados decimales", new BigDecimal("1.001"),
+                List.of(primero.getId(), segundo.getId(), tercero.getId())))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("2 decimales");
+        Quiniela sinDuplicados = quinielas.crear("Duplicado", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), tercero.getId(), tercero.getId()));
+        assertThat(sinDuplicados.getPartidos()).extracting(PartidoQuiniela::getEvento)
+                .containsExactly(primero, segundo, tercero);
+        assertThatThrownBy(() -> quinielas.crear("Desaparecido", BigDecimal.ONE,
+                List.of(primero.getId(), segundo.getId(), Long.MAX_VALUE)))
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("Alguno de los partidos ya no existe");
+    }
+
+    @Test
     void noValenPartidosDeDeportesSinEmpateNiYaEmpezados() {
         Evento basket = eventos.save(new Evento(competiciones.findByNombre("Liga ACB").orElseThrow(),
                 equipos.findByNombre("Unicaja").orElseThrow(), equipos.findByNombre("Baskonia").orElseThrow(),
@@ -216,6 +236,28 @@ class QuinielaWebTest {
         Quiniela quiniela = crear();
         assertThatThrownBy(() -> quinielas.echarBoleto(ANA, quiniela.getId(), java.util.Arrays.asList(Resultado.LOCAL, null, Resultado.LOCAL)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessage("Elige 1, X o 2 en cada partido");
+    }
+
+    @Test
+    void importeDeBoletoRespetaLimitesDeJuegoResponsable() {
+        Quiniela quiniela = quinielas.crear("Boleto caro", new BigDecimal("100000"),
+                List.of(primero.getId(), segundo.getId(), tercero.getId()));
+        assertThatThrownBy(() -> quinielas.echarBoleto(ANA, quiniela.getId(),
+                List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.VISITANTE)))
+                .isInstanceOf(RuntimeException.class);
+        assertThat(quinielas.boletoDe(ANA, quiniela.getId())).isEmpty();
+    }
+
+    @Test
+    void pronosticoWebDesconocidoSeDevuelveComoErrorYNoRompeLaPeticion() throws Exception {
+        Quiniela quiniela = crear();
+        mvc.perform(post("/quinielas/{id}/boleto", quiniela.getId()).with(user(ANA)).with(csrf())
+                        .param("p0", "LOCAL").param("p1", "EMPATE").param("p2", "EMPATE"))
+                .andExpect(status().is3xxRedirection());
+        mvc.perform(post("/quinielas/{id}/boleto", quiniela.getId()).with(user(BEA)).with(csrf())
+                        .param("p0", "LOCAL").param("p1", "INVALIDO").param("p2", "VISITANTE"))
+                .andExpect(flash().attribute("error", "No enum constant es.ucm.fdi.is1.apuestas.cuotas.Resultado.INVALIDO"));
+        assertThat(quinielas.boletoDe(BEA, quiniela.getId())).isEmpty();
     }
 
     @Test
@@ -308,6 +350,19 @@ class QuinielaWebTest {
     }
 
     @Test
+    void noSePuedeRepartirNiAnularUnaQuinielaYaRepartida() {
+        Quiniela quiniela = crear();
+        resolucion.introducirResultado(primero.getId(), Resultado.LOCAL);
+        resolucion.introducirResultado(segundo.getId(), Resultado.EMPATE);
+        resolucion.introducirResultado(tercero.getId(), Resultado.VISITANTE);
+        quinielas.repartir(quiniela.getId());
+        assertThatThrownBy(() -> quinielas.repartir(quiniela.getId()))
+                .isInstanceOf(IllegalStateException.class).hasMessage("Esta quiniela ya está repartida");
+        assertThatThrownBy(() -> quinielas.anular(quiniela.getId()))
+                .isInstanceOf(IllegalStateException.class).hasMessage("Esta quiniela ya está repartida");
+    }
+
+    @Test
     void unPartidoAnuladoCuentaComoAciertoParaTodos() {
         Quiniela quiniela = crear();
         quinielas.echarBoleto(ANA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.LOCAL, Resultado.LOCAL));
@@ -338,6 +393,33 @@ class QuinielaWebTest {
         assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes.add(BigDecimal.TEN));
         assertThat(movimientosDe(ANA, TipoMovimiento.DEVOLUCION)).hasSize(1);
         assertThat(quinielas.boletoDe(ANA, quiniela.getId()).orElseThrow().isDevuelto()).isTrue();
+    }
+
+    /** Crear una quiniela con un error devuelve lo escrito, para corregir solo lo que falla. */
+    @Test
+    void unErrorAlCrearLaQuinielaConservaLoEscrito() throws Exception {
+        mvc.perform(post("/gestion/quinielas").with(CREADOR).with(csrf())
+                        .param("nombre", "Prueba Q").param("precio", "3.50")
+                        .param("eventos", primero.getId().toString(), segundo.getId().toString()))
+                .andExpect(flash().attribute("error", containsString("3")))
+                .andExpect(flash().attribute("nombreEscrito", "Prueba Q"))
+                .andExpect(flash().attribute("eventosElegidos", List.of(primero.getId(), segundo.getId())));
+    }
+
+    /**
+     * El panel del creador pinta las quinielas fuera de la transacción: sus partidos tienen que venir ya cargados
+     * aunque esté repartida o anulada. Antes solo se cargaban en las abiertas y la página daba error 500.
+     */
+    @Test
+    void elPanelTraeLosPartidosDeLasQuinielasRepartidasYAnuladas() {
+        Quiniela anulada = crear();
+        quinielas.anular(anulada.getId());
+        em.flush();
+        em.clear();
+
+        QuinielaService.Resumen resumen = quinielas.todas().stream()
+                .filter(r -> r.quiniela().getId().equals(anulada.getId())).findFirst().orElseThrow();
+        assertThat(org.hibernate.Hibernate.isInitialized(resumen.quiniela().getPartidos())).isTrue();
     }
 
     /** Con todos los partidos anulados no se ha jugado nada: se devuelve el precio entero, sin comisión de la casa. */

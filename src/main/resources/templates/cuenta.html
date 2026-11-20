@@ -73,7 +73,8 @@
         </div>
     </th:block>
 
-    <th:block th:if="${juegoResponsableActivo}">
+    <!--/* El creador no apuesta: una pausa suya no se podría quitar y saldría el aviso en todas las páginas */-->
+    <th:block th:if="${juegoResponsableActivo and !usuario.creador}">
         <h2 id="juego-responsable">Juego responsable</h2>
         <p class="aviso">Aunque aquí no se juega con dinero real, puedes ponerte límites o tomarte un descanso.</p>
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/limites}" th:object="${limitesPersonales}" method="post">

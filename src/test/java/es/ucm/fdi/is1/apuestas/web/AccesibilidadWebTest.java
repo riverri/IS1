@@ -69,7 +69,7 @@ class AccesibilidadWebTest {
     /** CA-97.3: el primer enlace de cada página salta el menú y lleva al contenido. */
     @Test
     void cadaPaginaEmpiezaConUnEnlaceParaSaltarAlContenido() throws Exception {
-        for (String pagina : new String[] {"/", "/eventos", "/login", "/ranking"}) {
+        for (String pagina : new String[] {"/", "/eventos", "/login", "/ranking", "/ligas/clasificacion"}) {
             String html = mvc.perform(get(pagina)).andReturn().getResponse().getContentAsString();
             int saltar = html.indexOf("class=\"saltar-contenido\" href=\"#contenido\"");
             assertThat(saltar).as(pagina).isPositive();
@@ -77,6 +77,20 @@ class AccesibilidadWebTest {
             assertThat(html.indexOf("<a ")).as(pagina).isEqualTo(html.lastIndexOf("<a ", saltar));
             assertThat(html).as(pagina).contains("id=\"contenido\" tabindex=\"-1\"");
         }
+    }
+
+    @Test
+    void laBarraDeLaHomeMuestraElRankingDeLigasAunqueNoHayaSesion() throws Exception {
+        String html = mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(html).contains("href=\"/ligas/clasificacion\"")
+                .contains("class=\"ranking-ligas")
+                .contains("Ranking</span><small>Ligas</small>");
+        int rankingGeneral = html.indexOf("href=\"/ranking\"");
+        int rankingLigas = html.indexOf("href=\"/ligas/clasificacion\"");
+        assertThat(html.indexOf("</a>", rankingGeneral)).isLessThan(rankingLigas);
     }
 
     /** CA-98.1: cada cuota dice a qué resultado es, no solo el número. */

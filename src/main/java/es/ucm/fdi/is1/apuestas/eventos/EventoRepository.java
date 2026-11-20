@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import jakarta.persistence.LockModeType;
 
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
+import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 
 /**
@@ -38,7 +41,46 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     Optional<Evento> paraCambiar(@Param("id") Long id);
 
     /** Eventos en un estado que empiezan después de una fecha, del más próximo al más lejano (catálogo, HU-19). */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha);
+
+    /** Eventos del deporte seleccionado: evita cargar en Java los eventos de los demás deportes. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha and e.competicion.deporte = :deporte
+            order by e.fechaHora asc
+            """)
+    List<Evento> disponiblesPorDeporte(@Param("estado") EstadoEvento estado,
+                                       @Param("fecha") LocalDateTime fecha,
+                                       @Param("deporte") Deporte deporte);
+
+    /** Próximos eventos paginados para no hidratar el catálogo entero en la portada. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha,
+                                                                  Pageable pageable);
+
+    /** Próximo evento de un deporte, limitado en base de datos para seleccionar el destacado. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha and e.competicion.deporte = :deporte
+            order by e.fechaHora asc
+            """)
+    List<Evento> proximosPorDeporte(@Param("estado") EstadoEvento estado,
+                                   @Param("deporte") Deporte deporte,
+                                   @Param("fecha") LocalDateTime fecha,
+                                   Pageable pageable);
+
+    /** Recuento del catálogo sin cargar todas las entidades Evento. */
+    @Query("""
+            select e.competicion.deporte, count(e)
+            from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha
+            group by e.competicion.deporte
+            """)
+    List<Object[]> contarDisponiblesPorDeporte(@Param("estado") EstadoEvento estado,
+                                               @Param("fecha") LocalDateTime fecha);
 
     List<Evento> findAllByOrderByFechaHoraAsc();
 

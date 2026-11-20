@@ -5,11 +5,13 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
+import es.ucm.fdi.is1.apuestas.cuotas.Cuotas;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -27,14 +29,16 @@ public class BoletoService {
     private final EventoRepository eventos;
     private final CalculadoraCuotas calculadora;
     private final ApuestaService apuestas;
+    private final SupercuotaService supercuotas;
     private final LimitesService limites;
     private final Clock reloj;
 
     public BoletoService(EventoRepository eventos, CalculadoraCuotas calculadora, ApuestaService apuestas,
-                         LimitesService limites, Clock reloj) {
+                         SupercuotaService supercuotas, LimitesService limites, Clock reloj) {
         this.eventos = eventos;
         this.calculadora = calculadora;
         this.apuestas = apuestas;
+        this.supercuotas = supercuotas;
         this.limites = limites;
         this.reloj = reloj;
     }
@@ -113,9 +117,13 @@ public class BoletoService {
         List<BoletoVista.LineaVista> lineas = new ArrayList<>();
         // Primero los eventos que siguen admitiendo apuestas. Se recorre una copia porque se pueden quitar líneas
         List<Boleto.Linea> disponibles = new ArrayList<>();
-        List<Evento> suyos = new ArrayList<>();
+        List<Long> ids = boleto.getLineas().stream().map(Boleto.Linea::eventoId).toList();
+        Map<Long, Evento> eventosPorId = new java.util.HashMap<>();
+        eventos.findAllById(ids).forEach(evento -> eventosPorId.put(evento.getId(), evento));
+        Map<Long, Evento> suyosPorId = new java.util.HashMap<>();
         for (Boleto.Linea linea : List.copyOf(boleto.getLineas())) {
-            Evento evento = eventos.findById(linea.eventoId()).filter(e -> e.admiteApuestas(ahora)).orElse(null);
+            Evento encontrado = eventosPorId.get(linea.eventoId());
+            Evento evento = encontrado != null && encontrado.admiteApuestas(ahora) ? encontrado : null;
             if (evento == null) {
                 if (quitarNoDisponibles) {
                     boleto.quitar(linea.eventoId());
@@ -124,19 +132,19 @@ public class BoletoService {
                 continue;
             }
             disponibles.add(linea);
-            suyos.add(evento);
+            suyosPorId.put(evento.getId(), evento);
         }
+        List<Evento> eventosConCuota = disponibles.stream().filter(linea -> linea.especial() == null)
+                .map(linea -> suyosPorId.get(linea.eventoId())).distinct().toList();
+        Map<Long, Cuotas> cuotasPorEvento = supercuotas.cuotasConSupercuota(eventosConCuota, disponibles.size() == 1);
         for (int i = 0; i < disponibles.size(); i++) {
             Boleto.Linea linea = disponibles.get(i);
-            Evento evento = suyos.get(i);
+            Evento evento = suyosPorId.get(linea.eventoId());
             // La cuota puede haber cambiado desde que se añadió (por ejemplo, por el ajuste por volumen)
-            BigDecimal cuota = calculadora.cuota(evento, linea.resultado(), linea.especial());
+            BigDecimal cuota = linea.especial() == null
+                    ? cuotasPorEvento.get(evento.getId()).de(linea.resultado())
+                    : calculadora.cuota(evento, null, linea.especial());
             // Una sola selección es una simple: con supercuota (HU-87) vale la supercuota, como al confirmar
-            Supercuota supercuota = disponibles.size() == 1 && linea.especial() == null
-                    ? apuestas.supercuotaVigente(evento, linea.resultado(), ahora) : null;
-            if (supercuota != null) {
-                cuota = supercuota.getCuota();
-            }
             lineas.add(new BoletoVista.LineaVista(evento, linea.resultado(), linea.especial(), cuota,
                     cuota.compareTo(linea.cuotaVista()) != 0));
         }

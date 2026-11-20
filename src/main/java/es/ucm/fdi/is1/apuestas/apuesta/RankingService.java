@@ -107,11 +107,20 @@ public class RankingService {
      */
     @Transactional(readOnly = true)
     public PerfilJugador perfil(Long usuarioId, String emailActual) {
-        List<PuestoRanking> porSaldo = ranking(emailActual, CriterioRanking.SALDO);
-        PuestoRanking puesto = porSaldo.stream().filter(p -> p.usuarioId().equals(usuarioId)).findFirst()
-                .orElseThrow(() -> new JugadorNoEncontradoException(usuarioId));
-        Usuario usuario = usuarios.findById(usuarioId).orElseThrow();
+        Usuario usuario = usuarios.findById(usuarioId).orElseThrow(() -> new JugadorNoEncontradoException(usuarioId));
+        if (usuario.isEliminado() || usuario.getRol() != Rol.USUARIO) {
+            throw new JugadorNoEncontradoException(usuarioId);
+        }
+        long anteriores = usuarios.contarJugadoresAntes(Rol.USUARIO, usuario.getSaldo(), usuario.getNombre());
+        int totalJugadores = Math.toIntExact(usuarios.countByRolAndEliminadoFalse(Rol.USUARIO));
+        Object[] resumen = apuestas.resumenResueltasDe(usuarioId).getFirst();
+        Estadisticas estadisticas = Estadisticas.de(((Number) resumen[0]).longValue(),
+                ((Number) resumen[1]).longValue(), (java.math.BigDecimal) resumen[2],
+                (java.math.BigDecimal) resumen[3]);
+        boolean soyYo = emailActual != null && usuario.getEmail().equals(emailActual.trim().toLowerCase(Locale.ROOT));
+        PuestoRanking puesto = new PuestoRanking(Math.toIntExact(anteriores + 1), usuario.getId(),
+                usuario.getNombre(), usuario.getSaldo(), estadisticas, soyYo);
         long enJuego = apuestas.countByUsuarioAndEstado(usuario, EstadoApuesta.ACTIVA);
-        return new PerfilJugador(puesto, porSaldo.size(), enJuego);
+        return new PerfilJugador(puesto, totalJugadores, enJuego);
     }
 }

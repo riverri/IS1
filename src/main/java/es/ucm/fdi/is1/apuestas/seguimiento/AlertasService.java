@@ -144,7 +144,8 @@ public class AlertasService {
         porEvento.forEach((evento, lista) -> {
             if (evento.admiteApuestas(ahora)) {
                 comprobar(lista, supercuotas.cuotasConSupercuota(evento), ahora);
-            } else if (evento.getEstado() != EstadoEvento.SUSPENDIDO || evento.haEmpezado(ahora)) {
+            } else if (evento.getEstado() != EstadoEvento.SUSPENDIDO) {
+                // Suspendido no: aunque haya pasado su hora (un aplazado), se le pone fecha nueva y se reactiva
                 alertas.deleteAll(lista);
             }
         });

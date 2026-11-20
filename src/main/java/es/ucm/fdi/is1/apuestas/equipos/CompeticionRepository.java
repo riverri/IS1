@@ -11,6 +11,9 @@ public interface CompeticionRepository extends JpaRepository<Competicion, Long> 
     /** Todas, agrupadas por deporte (en el orden del enum) y por nombre dentro de cada deporte. */
     List<Competicion> findAllByOrderByDeporteAscNombreAsc();
 
+    /** Solo las competiciones del deporte activo en el catálogo. */
+    List<Competicion> findByDeporteOrderByNombreAsc(Deporte deporte);
+
     /**
      * Por nombre. Si hubiera dos con el mismo nombre (bases de datos de antes de impedirlo), devuelve el más
      * antiguo en lugar de fallar: con un error aquí, la aplicación no llegaba a arrancar.

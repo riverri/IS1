@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Repositorio Spring Data de {@link Usuario}. Las consultas las genera Spring a partir del nombre
@@ -24,4 +26,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     /** Usuarios de un rol, de más a menos saldo y, con el mismo saldo, por nombre (ranking, HU-36). */
     List<Usuario> findByRolOrderBySaldoDescNombreAsc(Rol rol);
+
+    /** Número de jugadores que aparecerían antes de este usuario en el ranking por saldo. */
+    @Query("select count(u) from Usuario u where u.rol = :rol and u.eliminado = false"
+            + " and (u.saldo > :saldo or (u.saldo = :saldo and u.nombre < :nombre))")
+    long contarJugadoresAntes(@Param("rol") Rol rol, @Param("saldo") java.math.BigDecimal saldo,
+                              @Param("nombre") String nombre);
+
+    /** Jugadores visibles en el ranking, sin cargar sus entidades. */
+    long countByRolAndEliminadoFalse(Rol rol);
 }

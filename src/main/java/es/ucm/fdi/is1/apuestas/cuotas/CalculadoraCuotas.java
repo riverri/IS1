@@ -97,8 +97,12 @@ public class CalculadoraCuotas {
      * apostado a cada resultado. La de empate es null si el deporte no lo admite.
      */
     public Cuotas calcular(Evento evento) {
-        return calcular(nivelLocal(evento), nivelVisitante(evento),
-                evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento));
+        return calcular(evento, volumen.importes(evento));
+    }
+
+    /** Cuotas del evento usando un volumen que ya se ha consultado en lote. */
+    public Cuotas calcular(Evento evento, Map<Resultado, BigDecimal> apostado) {
+        return calcular(nivelLocal(evento), nivelVisitante(evento), evento.getDeporte().isAdmiteEmpate(), apostado);
     }
 
     /** Cuotas de doble oportunidad, goles y ambos marcan (HU-52). Vacío si el deporte no es fútbol. */
@@ -115,6 +119,15 @@ public class CalculadoraCuotas {
             return especiales(evento).get(especial);
         }
         return resultado == null ? null : calcular(evento).de(resultado);
+    }
+
+    /** Cuota vigente excluyendo una apuesta activa al recalcular su oferta de cash-out. */
+    public BigDecimal cuota(Evento evento, Resultado resultado, Especial especial, Long apuestaExcluida) {
+        if (especial != null) {
+            return especiales(nivelLocal(evento), nivelVisitante(evento)).get(especial);
+        }
+        return resultado == null ? null : calcular(nivelLocal(evento), nivelVisitante(evento),
+                evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento, apuestaExcluida)).de(resultado);
     }
 
     /** Cuotas especiales de fútbol a partir del nivel de los dos equipos (HU-52). */
