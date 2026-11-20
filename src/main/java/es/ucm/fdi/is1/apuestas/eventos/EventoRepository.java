@@ -42,6 +42,16 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     /** Eventos en un estado que empiezan después de una fecha, del más próximo al más lejano (catálogo, HU-19). */
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha);
 
+    /** Eventos del deporte seleccionado: evita cargar en Java los eventos de los demás deportes. */
+    @Query("""
+            select e from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha and e.competicion.deporte = :deporte
+            order by e.fechaHora asc
+            """)
+    List<Evento> disponiblesPorDeporte(@Param("estado") EstadoEvento estado,
+                                       @Param("fecha") LocalDateTime fecha,
+                                       @Param("deporte") Deporte deporte);
+
     /** Próximos eventos paginados para no hidratar el catálogo entero en la portada. */
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha,
                                                                   Pageable pageable);

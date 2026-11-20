@@ -54,8 +54,7 @@ public class CatalogoService {
     @Transactional(readOnly = true)
     public Map<Deporte, Map<String, List<Evento>>> buscar(Deporte deporte, String texto) {
         String buscado = Nombres.normalizar(texto);
-        return disponibles().stream()
-                .filter(e -> deporte == null || e.getDeporte() == deporte)
+        return disponibles(deporte).stream()
                 .filter(e -> buscado.isEmpty() || coincide(e, buscado))
                 // EnumMap: los deportes salen en el orden del enum, no en uno aleatorio.
                 // LinkedHashMap: las competiciones salen en el orden en que aparece su primer evento,
@@ -83,6 +82,11 @@ public class CatalogoService {
     /** Eventos programados que aún no han empezado, del más próximo al más lejano (CA-19.2). */
     private List<Evento> disponibles() {
         return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj));
+    }
+
+    private List<Evento> disponibles(Deporte deporte) {
+        if (deporte == null) return disponibles();
+        return eventos.disponiblesPorDeporte(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), deporte);
     }
 
     /** El texto (ya normalizado) aparece en el nombre del local, del visitante o de la competición. */
