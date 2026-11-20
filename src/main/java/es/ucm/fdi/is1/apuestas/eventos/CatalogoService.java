@@ -98,9 +98,13 @@ public class CatalogoService {
      */
     @Transactional(readOnly = true)
     public Evento destacado() {
-        List<Evento> disponibles = disponibles();
-        return disponibles.stream().filter(e -> e.getDeporte() == Deporte.FUTBOL).findFirst()
-                .orElse(disponibles.isEmpty() ? null : disponibles.get(0));
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<Evento> futbol = eventos.proximosPorDeporte(
+                EstadoEvento.PROGRAMADO, Deporte.FUTBOL, ahora, PageRequest.of(0, 1));
+        return futbol.isEmpty()
+                ? eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(
+                        EstadoEvento.PROGRAMADO, ahora, PageRequest.of(0, 1)).stream().findFirst().orElse(null)
+                : futbol.get(0);
     }
 
     /** Los próximos partidos disponibles, para la portada. Como mucho {@code cuantos}. */

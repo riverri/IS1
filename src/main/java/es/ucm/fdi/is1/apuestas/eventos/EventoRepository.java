@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
+import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 
 /**
@@ -44,6 +45,17 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     /** Próximos eventos paginados para no hidratar el catálogo entero en la portada. */
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha,
                                                                   Pageable pageable);
+
+    /** Próximo evento de un deporte, limitado en base de datos para seleccionar el destacado. */
+    @Query("""
+            select e from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha and e.competicion.deporte = :deporte
+            order by e.fechaHora asc
+            """)
+    List<Evento> proximosPorDeporte(@Param("estado") EstadoEvento estado,
+                                   @Param("deporte") Deporte deporte,
+                                   @Param("fecha") LocalDateTime fecha,
+                                   Pageable pageable);
 
     /** Recuento del catálogo sin cargar todas las entidades Evento. */
     @Query("""
