@@ -3,6 +3,8 @@ package es.ucm.fdi.is1.apuestas.ligas;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +58,33 @@ public class LigaService {
     @Transactional(readOnly = true)
     public List<Liga> mias(String email) {
         return ligas.deMiembro(usuario(email));
+    }
+
+    /** Clasificación de las ligas del usuario por la suma del saldo de sus miembros activos. */
+    @Transactional(readOnly = true)
+    public List<PuestoClasificacionLiga> clasificacion(String email) {
+        record TotalLiga(Liga liga, int miembros, BigDecimal saldo) {
+        }
+
+        List<TotalLiga> totales = ligas.deMiembro(usuario(email)).stream()
+                .map(liga -> {
+                    List<Usuario> miembros = liga.getMiembrosActivos();
+                    BigDecimal saldo = miembros.stream().map(Usuario::getSaldo)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    return new TotalLiga(liga, miembros.size(), saldo);
+                })
+                .sorted(Comparator.comparing(TotalLiga::saldo).reversed()
+                        .thenComparing(t -> t.liga().getNombre(), String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(t -> t.liga().getId()))
+                .toList();
+
+        return java.util.stream.IntStream.range(0, totales.size())
+                .mapToObj(i -> {
+                    TotalLiga total = totales.get(i);
+                    return new PuestoClasificacionLiga(i + 1, total.liga().getId(), total.liga().getNombre(),
+                            total.miembros(), total.saldo());
+                })
+                .toList();
     }
 
     /**

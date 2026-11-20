@@ -45,6 +45,13 @@ public class LigasController {
         return "ligas";
     }
 
+    /** GET /ligas/clasificacion: compara solo las ligas de las que es miembro el usuario. */
+    @GetMapping("/clasificacion")
+    public String clasificacion(Principal principal, Model model) {
+        model.addAttribute("clasificacion", ligas.clasificacion(principal.getName()));
+        return "clasificacion-ligas";
+    }
+
     /**
      * POST /ligas: crea una liga y lleva a su página, con el código que hay que compartir (CA-51.1).
      * (Misma dirección que el GET de arriba, pero con otro método HTTP: GET la muestra y POST la crea.)

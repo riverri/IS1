@@ -7,6 +7,7 @@
     <a class="enlace-volver" th:href="@{/ligas}">← Mis ligas</a>
     <div class="titulo-pagina">
         <h1 th:text="${liga.nombre}">Los de clase</h1>
+        <a class="boton boton-secundario" th:href="@{/ligas/clasificacion}">Clasificación de ligas</a>
     </div>
     <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
     <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>

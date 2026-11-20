@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Clasificación de ligas')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>Clasificación de ligas</h1>
+        <a class="boton boton-secundario" th:href="@{/ligas}">Volver a mis ligas</a>
+    </div>
+    <p class="subtitulo">Suma del saldo de los miembros activos. Solo aparecen las ligas de las que formas parte.</p>
+
+    <div class="vacio" th:if="${#lists.isEmpty(clasificacion)}">
+        <p>Todavía no estás en ninguna liga.</p>
+        <a class="boton" th:href="@{/ligas}">Ver ligas</a>
+    </div>
+
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(clasificacion)}">
+        <table>
+            <thead>
+            <tr><th scope="col">Puesto</th><th scope="col">Liga</th><th scope="col">Miembros</th><th scope="col">Saldo total</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="puesto : ${clasificacion}">
+                <td th:text="${puesto.posicion}">1</td>
+                <td><a th:href="@{/ligas/{id}(id=${puesto.ligaId})}" th:text="${puesto.nombre}">Los de IS1</a></td>
+                <td th:text="${puesto.miembros}">4</td>
+                <td th:text="${#numbers.formatDecimal(puesto.saldoTotal, 1, 'POINT', 2, 'COMMA')} + ' monedas'">4.000,00 monedas</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

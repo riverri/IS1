@@ -6,6 +6,7 @@
 <main class="estrecho ancho-medio">
     <div class="titulo-pagina">
         <h1>Ligas con amigos</h1>
+        <a class="boton boton-secundario" th:href="@{/ligas/clasificacion}">Clasificación de ligas</a>
     </div>
     <p class="subtitulo">Crea una liga, pasa el código a tus amigos y competid en un ranking solo entre vosotros.</p>
     <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Hecho</p>
