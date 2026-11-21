@@ -1,14 +1,13 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Resumen semanal por correo (HU-92): cada lunes, a quien ha jugado en los últimos 7 días y no lo ha desactivado, lo
@@ -34,18 +34,23 @@ public class ResumenSemanalService {
     private static final Set<TipoMovimiento> AJENOS = EnumSet.of(TipoMovimiento.BIENVENIDA, TipoMovimiento.RECARGA,
             TipoMovimiento.SALDO_INICIAL, TipoMovimiento.BAJA);
     private static final DateTimeFormatter DIA = DateTimeFormatter.ofPattern("dd/MM");
+    /** Nombre en la tabla tarea_realizada. */
+    static final String TAREA = "resumen-semanal";
 
     private final UsuarioRepository usuarios;
     private final MovimientoSaldoRepository movimientos;
     private final EnvioResumen envio;
+    private final TareaRealizadaRepository tareas;
     private final Clock reloj;
     private final String urlPublica;
 
     public ResumenSemanalService(UsuarioRepository usuarios, MovimientoSaldoRepository movimientos, EnvioResumen envio,
-                                 Clock reloj, @Value("${apuestas.url-publica}") String urlPublica) {
+                                 TareaRealizadaRepository tareas, Clock reloj,
+                                 @Value("${apuestas.url-publica}") String urlPublica) {
         this.usuarios = usuarios;
         this.movimientos = movimientos;
         this.envio = envio;
+        this.tareas = tareas;
         this.reloj = reloj;
         this.urlPublica = urlPublica;
     }
@@ -58,8 +63,40 @@ public class ResumenSemanalService {
         }
     }
 
-    /** Cada lunes a las 9:00 (hora de Madrid). @return a cuántos se ha mandado */
-    @Scheduled(cron = "${apuestas.resumen.cron:0 0 9 * * MON}", zone = "Europe/Madrid")
+    /**
+     * Toca mandarlo cada lunes a las 9:00 (hora de Madrid). Se mira cada hora si ya se ha mandado el de esta semana:
+     * si la aplicación estaba parada o reiniciándose justo a las 9:00 (Render la vuelve a publicar con cada cambio),
+     * se manda en cuanto vuelve, en vez de perder esa semana. La última vez queda en la tabla tarea_realizada.
+     *
+     * <p>La primera vez que arranca con esta tabla no manda nada: solo apunta el último lunes, porque el de esta
+     * semana puede haberlo mandado ya la versión anterior.
+     *
+     * @return a cuántos se ha mandado (0 si aún no tocaba)
+     */
+    @Scheduled(cron = "${apuestas.resumen.cron:0 7 * * * *}", zone = "Europe/Madrid")
+    @Transactional
+    public int enviarSiToca() {
+        LocalDateTime tocaba = ultimoLunes(LocalDateTime.now(reloj));
+        TareaRealizada tarea = tareas.findById(TAREA).orElse(null);
+        if (tarea == null) {
+            tareas.save(new TareaRealizada(TAREA, tocaba));
+            return 0;
+        }
+        if (!tarea.getUltima().isBefore(tocaba)) {
+            return 0;
+        }
+        // Se apunta antes de mandar: si a mitad falla un correo, no se vuelve a mandar a todos dentro de una hora
+        tarea.marcar(tocaba);
+        return enviar();
+    }
+
+    /** El último lunes a las 9:00 que ya ha pasado (el de esta semana o, si aún no son las 9 del lunes, el anterior). */
+    static LocalDateTime ultimoLunes(LocalDateTime ahora) {
+        LocalDateTime lunes = ahora.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toLocalDate().atTime(9, 0);
+        return lunes.isAfter(ahora) ? lunes.minusWeeks(1) : lunes;
+    }
+
+    /** Manda el resumen de los últimos 7 días a quien le toque. @return a cuántos se ha mandado */
     @Transactional(readOnly = true)
     public int enviar() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
@@ -101,15 +138,12 @@ public class ResumenSemanalService {
     private String texto(Semana s, LocalDateTime desde, LocalDateTime hasta) {
         BigDecimal balance = s.cobrado().subtract(s.jugado());
         return "Tu semana del " + desde.format(DIA) + " al " + hasta.format(DIA) + ":\n\n"
-                + "- Has jugado " + monedas(s.jugado()) + " monedas.\n"
-                + "- Has cobrado " + monedas(s.cobrado()) + " monedas (" + (balance.signum() >= 0 ? "+" : "")
-                + monedas(balance) + " de balance).\n"
-                + "- Tu saldo es de " + monedas(s.saldo()) + " monedas.\n"
+                + "- Has jugado " + Monedas.texto(s.jugado()) + " monedas.\n"
+                + "- Has cobrado " + Monedas.texto(s.cobrado()) + " monedas (" + (balance.signum() >= 0 ? "+" : "")
+                + Monedas.texto(balance) + " de balance).\n"
+                + "- Tu saldo es de " + Monedas.texto(s.saldo()) + " monedas.\n"
                 + "- Vas " + s.puesto() + "º de " + s.jugadores() + " en el ranking.\n\n"
                 + "Tus apuestas: " + urlPublica.replaceAll("/+$", "") + "/apuestas";
     }
 
-    private static String monedas(BigDecimal cantidad) {
-        return new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.forLanguageTag("es-ES"))).format(cantidad);
-    }
 }

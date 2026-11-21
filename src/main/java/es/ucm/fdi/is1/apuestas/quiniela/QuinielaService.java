@@ -2,8 +2,6 @@ package es.ucm.fdi.is1.apuestas.quiniela;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -26,6 +24,7 @@ import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Quinielas (HU-78 a HU-80): el creador las monta, los usuarios echan un boleto y, cuando se han jugado todos los
@@ -202,10 +201,10 @@ public class QuinielaService {
                 .allMatch(p -> p.getEvento().getEstado() == EstadoEvento.ANULADO);
         if (todosAnulados) {
             todos.forEach(b -> devolver(b, "Se han anulado todos los partidos de la quiniela «" + quiniela.getNombre()
-                    + "»: te hemos devuelto " + monedas(b.getPagado()) + " monedas.", ahora));
+                    + "»: te hemos devuelto " + Monedas.texto(b.getPagado()) + " monedas.", ahora));
         } else if (maximo == 0) {
             todos.forEach(b -> devolver(b, "Nadie ha acertado ningún partido de la quiniela «" + quiniela.getNombre()
-                    + "»: te hemos devuelto " + monedas(b.getPagado()) + " monedas.", ahora));
+                    + "»: te hemos devuelto " + Monedas.texto(b.getPagado()) + " monedas.", ahora));
         } else {
             List<BoletoQuiniela> ganadores = todos.stream().filter(b -> b.getAciertos() == maximo).toList();
             BigDecimal bote = quiniela.bote(todos.stream().map(BoletoQuiniela::getPagado).reduce(BigDecimal.ZERO, BigDecimal::add));
@@ -217,7 +216,7 @@ public class QuinielaService {
                     boleto.premiar(parte);
                     boleto.getUsuario().abonar(parte, TipoMovimiento.QUINIELA_PREMIO,
                             "Premio de la quiniela «" + quiniela.getNombre() + "»", ahora);
-                    notificaciones.avisar(boleto.getUsuario(), "ganada", "¡Has ganado " + monedas(parte)
+                    notificaciones.avisar(boleto.getUsuario(), "ganada", "¡Has ganado " + Monedas.texto(parte)
                             + " monedas en la quiniela «" + quiniela.getNombre() + "» con " + aciertos + " aciertos!");
                 } else {
                     notificaciones.avisar(boleto.getUsuario(), "perdida", "Se ha repartido la quiniela «"
@@ -243,7 +242,7 @@ public class QuinielaService {
             throw new IllegalStateException("Esta quiniela ya está " + quiniela.getEstado().name().toLowerCase(Locale.ROOT));
         }
         boletos.findByQuinielaOrderByIdAsc(quiniela).forEach(b -> devolver(b, "Se ha anulado la quiniela «"
-                + quiniela.getNombre() + "»: te hemos devuelto " + monedas(b.getPagado()) + " monedas.", ahora));
+                + quiniela.getNombre() + "»: te hemos devuelto " + Monedas.texto(b.getPagado()) + " monedas.", ahora));
         quiniela.anular();
         return quiniela;
     }
@@ -259,9 +258,4 @@ public class QuinielaService {
         return evento.getLocal().getNombre() + " – " + evento.getVisitante().getNombre();
     }
 
-    /** Importe en formato español: "1.234,50". */
-    private static String monedas(BigDecimal cantidad) {
-        return new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.forLanguageTag("es-ES")))
-                .format(cantidad);
-    }
 }

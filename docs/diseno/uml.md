@@ -9,6 +9,7 @@ Diagramas del sistema tal como está implementado (actualizados en octubre de 20
 5. [Secuencia: apostar una combinada](#5-secuencia-apostar-una-combinada)
 6. [Secuencia: resolver un partido](#6-secuencia-resolver-un-partido)
 7. [Modelo de datos](#7-modelo-de-datos)
+8. [Despliegue y recorrido de una petición](#8-despliegue-y-recorrido-de-una-petición)
 
 ## 1. Casos de uso
 
@@ -87,7 +88,7 @@ flowchart TB
 
     subgraph datos [Acceso a datos]
         repositorios["Repositorios Spring Data JPA"]
-        flyway["Migraciones Flyway<br/>V1 … V8"]
+        flyway["Migraciones Flyway<br/>V1 … V29"]
         h2[("Base de datos<br/>H2 en local (./datos/apuestas)<br/>PostgreSQL en el servidor")]
     end
 
@@ -926,3 +927,50 @@ erDiagram
         boolean juego_responsable
     }
 ```
+
+## 8. Despliegue y recorrido de una petición
+
+Cómo está publicada la aplicación (noviembre de 2026) y por qué capas pasa cada petición antes de llegar a un controlador. Los pasos para publicarla están en el [README](../../README.md#publicarla-en-internet-servidor-permanente-y-gratuito).
+
+```mermaid
+flowchart LR
+    navegador["Navegador"]
+    uptime["UptimeRobot (opcional)<br/>vigila /ping"]
+
+    subgraph github [GitHub]
+        repo["Repositorio riverri/IS1<br/>rama main"]
+        ci["GitHub Actions<br/>build · postgresql · mutacion · accesibilidad"]
+        dependabot["Dependabot<br/>un PR al mes por dependencia nueva"]
+    end
+
+    subgraph render [Render · plan gratuito · imagen Docker con caché de clases]
+        direction TB
+        id["IdPeticion<br/>X-Request-Id en la respuesta y en el registro"]
+        seguridad["Spring Security<br/>sesión, roles, CSRF, cabeceras CSP"]
+        limite["LimitePeticiones<br/>registro y recuperar: 10 cada 15 min por IP"]
+        controladores["Controladores · servicios · repositorios"]
+        tareas["Tareas programadas<br/>sincronización, cripto, alertas,<br/>resumen semanal, keep-alive"]
+        id --> seguridad --> limite --> controladores
+        tareas --> controladores
+    end
+
+    neon[("Neon<br/>PostgreSQL")]
+    futbol["football-data.org<br/>partidos y resultados"]
+    coingecko["CoinGecko<br/>precios de criptomonedas"]
+    correo["Servidor de correo<br/>(Brevo por el puerto 2525)"]
+
+    navegador -->|HTTPS| id
+    uptime -->|GET /ping| id
+    controladores -->|JDBC| neon
+    tareas -->|HTTPS| futbol
+    tareas -->|HTTPS| coingecko
+    controladores -->|SMTP| correo
+    tareas -->|GET /ping cada 10 min| id
+    repo --> ci
+    dependabot --> repo
+    repo -->|al fusionar en main| render
+```
+
+- **Orden de los filtros:** `IdPeticion` va el primero para que también las líneas de Spring Security lleven el identificador. `LimitePeticiones` va después de Spring Security, así que una petición sin token CSRF se rechaza antes de contar.
+- **Keep-alive:** la propia aplicación se pide `/ping` por su dirección pública, entrando como cualquier otra petición, para que Render no la apague tras 15 minutos sin visitas (HU-85).
+- **Correo:** el plan gratuito de Render no deja salir por los puertos 25, 465 ni 587; ver la [ADR 0006](../decisiones/0006-correo-en-render.md).

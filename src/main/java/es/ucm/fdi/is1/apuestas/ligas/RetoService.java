@@ -22,6 +22,7 @@ import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Retos 1 contra 1 entre compañeros de liga (HU-89). El retador elige partido, resultado e importe y paga; el retado
@@ -87,7 +88,7 @@ public class RetoService {
         retador.cargar(importe, TipoMovimiento.RETO_APUESTA, "Reto a " + retado.getNombre() + ": " + titulo(evento), ahora);
         Reto reto = retos.save(new Reto(retador, retado, evento, pronostico, importe, ahora));
         notificaciones.avisar(retado, "info", retador.getNombre() + " te reta en " + titulo(evento) + ": "
-                + monedas(importe) + " monedas cada uno a que sale «" + pronostico.getDescripcion() + "». Acepta o rechaza en tus ligas.");
+                + Monedas.texto(importe) + " monedas cada uno a que sale «" + pronostico.getDescripcion() + "». Acepta o rechaza en tus ligas.");
         return reto;
     }
 
@@ -189,7 +190,7 @@ public class RetoService {
                 gana.abonar(reto.getBote(), TipoMovimiento.RETO_PREMIO, "Reto ganado: " + titulo(evento), ahora);
                 reto.cerrar(EstadoReto.RESUELTO, gana);
                 notificaciones.avisar(gana, "ganada", "¡Has ganado el reto contra " + reto.rival(gana).getNombre()
-                        + " en " + titulo(evento) + "! Cobras " + monedas(reto.getBote()) + " monedas.");
+                        + " en " + titulo(evento) + "! Cobras " + Monedas.texto(reto.getBote()) + " monedas.");
                 notificaciones.avisar(reto.rival(gana), "perdida", "Has perdido el reto contra " + gana.getNombre()
                         + " en " + titulo(evento) + ".");
             } else {
@@ -241,7 +242,7 @@ public class RetoService {
         }
         reto.cerrar(devueltoAhora ? EstadoReto.DEVUELTO : EstadoReto.RESUELTO, ahoraGana);
         String como = devueltoAhora ? "se devuelve a cada uno lo suyo"
-                : "lo gana " + ahoraGana.getNombre() + " (" + monedas(reto.getBote()) + " monedas)";
+                : "lo gana " + ahoraGana.getNombre() + " (" + Monedas.texto(reto.getBote()) + " monedas)";
         for (Usuario jugador : List.of(reto.getRetador(), reto.getRetado())) {
             notificaciones.avisar(jugador, "info", "Se ha corregido el resultado de " + titulo(evento)
                     + ": tu reto con " + reto.rival(jugador).getNombre() + " " + como + ".");
@@ -282,11 +283,11 @@ public class RetoService {
         String concepto = "Reto devuelto: " + titulo(reto.getEvento());
         reto.getRetador().abonar(reto.getImporte(), TipoMovimiento.RETO_DEVOLUCION, concepto, ahora);
         notificaciones.avisar(reto.getRetador(), "anulada", "Se ha devuelto tu reto en " + titulo(reto.getEvento())
-                + ": " + monedas(reto.getImporte()) + " monedas.");
+                + ": " + Monedas.texto(reto.getImporte()) + " monedas.");
         if (reto.getEstado() == EstadoReto.ACEPTADO) {
             reto.getRetado().abonar(reto.getImporte(), TipoMovimiento.RETO_DEVOLUCION, concepto, ahora);
             notificaciones.avisar(reto.getRetado(), "anulada", "Se ha devuelto tu reto en " + titulo(reto.getEvento())
-                    + ": " + monedas(reto.getImporte()) + " monedas.");
+                    + ": " + Monedas.texto(reto.getImporte()) + " monedas.");
         }
         reto.cerrar(EstadoReto.DEVUELTO, null);
     }
@@ -309,7 +310,4 @@ public class RetoService {
         return evento.getLocal().getNombre() + " – " + evento.getVisitante().getNombre();
     }
 
-    private static String monedas(BigDecimal cantidad) {
-        return cantidad.setScale(2).toPlainString().replace('.', ',');
-    }
 }
