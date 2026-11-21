@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Liga fantasy')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <div class="titulo-pagina">
+        <h1>⭐ Liga fantasy</h1>
+        <a class="boton boton-secundario" th:href="@{/quinielas}">Quiniela</a>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Guardado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="aviso" th:text="'Ficha a siete futbolistas (1 portero, 2 defensas, 2 centrocampistas y 2 delanteros) con '
+            + ${#numbers.formatDecimal(presupuesto, 1, 'POINT', 1, 'COMMA')} + ' millones ficticios y como mucho '
+            + ${maximoPorClub} + ' del mismo club. Suman puntos con los partidos que juega su equipo después de ficharlos. Es gratis: no se juegan moneditas.'">
+        Reglas</p>
+
+    <!-- Sin equipo: formulario para crearlo (CA-81.1) -->
+    <form class="tarjeta formulario" th:if="${equipo == null and !usuarioActual.creador}" th:action="@{/fantasy/crear}" method="post">
+        <h2>Crea tu equipo</h2>
+        <label for="nombre">Nombre del equipo</label>
+        <input id="nombre" name="nombre" type="text" maxlength="40" required placeholder="Los Galácticos del Aula 3">
+        <button class="boton" type="submit">Crear equipo</button>
+    </form>
+
+    <th:block th:if="${equipo != null}">
+        <div class="estadisticas">
+            <div class="tarjeta estadistica"><span th:text="${total}">12</span>puntos</div>
+            <div class="tarjeta estadistica"><span th:text="${#lists.size(equipo.plantilla)} + '/7'">5/7</span>jugadores</div>
+            <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(equipo.caja, 1, 'POINT', 1, 'COMMA')} + ' M'">14,5 M</span>de presupuesto libre</div>
+        </div>
+
+        <div class="titulo-pagina">
+            <h2 th:text="${equipo.nombre}">Mi equipo</h2>
+            <a class="boton" th:href="@{/fantasy/mercado}">Ir al mercado de fichajes</a>
+        </div>
+        <div class="tarjeta tabla">
+            <table>
+                <thead><tr><th>Posición</th><th>Jugador</th><th>Club</th><th>Precio</th><th>Puntos</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="h : ${huecos}">
+                    <td th:text="${h.posicion.nombre}">Portero</td>
+                    <th:block th:if="${h.ocupante != null}" th:with="f=${h.ocupante.fichaje}">
+                        <td>
+                            <strong th:text="${f.jugador.nombre}">Hugo Arranz</strong>
+                            <details th:unless="${#lists.isEmpty(h.ocupante.partidos)}">
+                                <summary th:text="${#lists.size(h.ocupante.partidos)} + ' partidos'">2 partidos</summary>
+                                <small class="aviso" th:each="pp : ${h.ocupante.partidos}"
+                                       th:text="${pp.partido.local.nombre} + ' ' + (${pp.partido.conMarcador} ? ${pp.partido.golesLocal} + '-' + ${pp.partido.golesVisitante} : ${pp.partido.resultado.simbolo}) + ' ' + ${pp.partido.visitante.nombre} + ': ' + ${pp.puntos} + ' pts'">Getafe 2-0 Sevilla: 7 pts<br></small>
+                            </details>
+                        </td>
+                        <td th:text="${f.jugador.equipo.nombre}">Getafe CF</td>
+                        <td th:text="${#numbers.formatDecimal(f.precio, 1, 'POINT', 1, 'COMMA')} + ' M'">12,0 M</td>
+                        <td><strong th:text="${h.ocupante.total}">7</strong></td>
+                        <td>
+                            <form th:action="@{/fantasy/vender}" method="post" class="en-linea">
+                                <input type="hidden" name="jugador" th:value="${f.jugador.id}">
+                                <button class="enlace peligro" type="submit">Vender</button>
+                            </form>
+                        </td>
+                    </th:block>
+                    <th:block th:if="${h.ocupante == null}">
+                        <td colspan="4" class="aviso">Hueco libre</td>
+                        <td><a th:href="@{/fantasy/mercado(posicion=${h.posicion})}">Fichar</a></td>
+                    </th:block>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="aviso" th:unless="${#lists.isEmpty(vendidos)}"
+           th:text="'Además, los jugadores que ya vendiste te dejaron ' + ${#aggregates.sum(vendidos.![total])} + ' puntos.'">Vendidos</p>
+    </th:block>
+
+    <h2>Clasificación</h2>
+    <div class="vacio" th:if="${#lists.isEmpty(clasificacion)}"><p>Todavía no hay ningún equipo. ¡Sé el primero!</p></div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(clasificacion)}">
+        <table>
+            <thead><tr><th>#</th><th>Equipo</th><th>Mánager</th><th>Puntos</th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${clasificacion}" th:classappend="${p.mio} ? 'yo'">
+                <td th:text="${p.puesto}">1</td>
+                <td><strong th:text="${p.equipo.nombre}">Los Galácticos</strong></td>
+                <td th:text="${p.equipo.usuario.nombre}">Ana</td>
+                <td th:text="${p.puntos}">31</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <details class="tarjeta">
+        <summary><strong>¿Cómo se puntúa?</strong></summary>
+        <ul>
+            <li>Victoria de su equipo: 3 puntos; empate: 1.</li>
+            <li>Portería a cero: portero +4, defensa +3, centrocampista +1.</li>
+            <li>Cada gol de su equipo: delantero +2, centrocampista +1.</li>
+            <li>Si su equipo encaja 3 o más: portero y defensa −1.</li>
+            <li>Solo cuentan los partidos que empiezan cuando el jugador ya está en tu equipo. Si lo vendes, lo que sumó se queda.</li>
+        </ul>
+    </details>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

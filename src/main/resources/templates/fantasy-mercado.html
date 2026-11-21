@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Mercado de fichajes')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho ancho-medio">
+    <a th:href="@{/fantasy}">← Mi equipo</a>
+    <div class="titulo-pagina">
+        <h1>Mercado de fichajes</h1>
+        <span class="chip" th:text="'Te quedan ' + ${#numbers.formatDecimal(equipo.caja, 1, 'POINT', 1, 'COMMA')} + ' M'">Te quedan 14,5 M</span>
+    </div>
+    <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Fichado</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <nav class="filtros" aria-label="Posición">
+        <a class="chip chip-filtro" th:href="@{/fantasy/mercado(club=${club})}" th:classappend="${posicion == null} ? 'activo'">Todas</a>
+        <a class="chip chip-filtro" th:each="p : ${posiciones}" th:href="@{/fantasy/mercado(posicion=${p}, club=${club})}"
+           th:classappend="${posicion == p} ? 'activo'"
+           th:text="${p.plural} + ' (' + ${equipo.huecos(p)} + ' libres)'">Porteros (1 libre)</a>
+    </nav>
+    <form class="filtros" th:action="@{/fantasy/mercado}" method="get">
+        <input type="hidden" name="posicion" th:if="${posicion != null}" th:value="${posicion}">
+        <label for="club" class="solo-lectores">Club</label>
+        <select id="club" name="club">
+            <option value="">Todos los clubes</option>
+            <option th:each="c : ${clubes}" th:value="${c.id}" th:text="${c.nombre}" th:selected="${club == c.id}">Getafe CF</option>
+        </select>
+        <button class="boton boton-secundario boton-pequeno" type="submit">Filtrar</button>
+    </form>
+
+    <div class="vacio" th:if="${#lists.isEmpty(ofertas)}">
+        <p>No hay futbolistas con estos filtros. Las plantillas se cargan desde Equipos (o con la API de plantillas).</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(ofertas)}">
+        <table>
+            <thead><tr><th>Jugador</th><th>Posición</th><th>Club</th><th>Nota</th><th>Precio</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="o : ${ofertas}">
+                <td th:text="${o.jugador.nombre}">Hugo Arranz</td>
+                <td th:text="${o.jugador.posicion.nombre}">Portero</td>
+                <td th:text="${o.jugador.equipo.nombre}">Getafe CF</td>
+                <td th:text="${#numbers.formatDecimal(o.jugador.nota, 1, 'POINT', 1, 'COMMA')}">6,5</td>
+                <td th:text="${#numbers.formatDecimal(o.precio, 1, 'POINT', 1, 'COMMA')} + ' M'">12,0 M</td>
+                <td>
+                    <form th:if="${o.motivo == null}" th:action="@{/fantasy/fichar}" method="post" class="en-linea">
+                        <input type="hidden" name="jugador" th:value="${o.jugador.id}">
+                        <input type="hidden" name="posicion" th:if="${posicion != null}" th:value="${posicion}">
+                        <input type="hidden" name="club" th:if="${club != null}" th:value="${club}">
+                        <button class="boton boton-pequeno" type="submit">Fichar</button>
+                    </form>
+                    <small class="aviso" th:unless="${o.motivo == null}" th:text="${o.motivo}">No te llega el presupuesto</small>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>
