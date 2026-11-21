@@ -460,4 +460,22 @@ class CasinoWebTest {
         assertThat(cerrada.isEnCurso()).isFalse();
         assertThat(saldo()).isEqualByComparingTo(antes.add(cerrada.getPremio()));
     }
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.BajaService bajas;
+
+    @Test
+    void laManoAbandonadaDeUnaCuentaEliminadaNoCuentaComoPagada() {
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+        assertThat(partida.isEnCurso()).isTrue();
+        bajas.eliminarCuenta(ANA, "secreta123");
+        em.flush();
+        em.createQuery("update Partida p set p.fecha = :fecha where p.id = :id")
+                .setParameter("fecha", es.ucm.fdi.is1.apuestas.Hora.ahora().minusDays(2))
+                .setParameter("id", partida.getId()).executeUpdate();
+        em.clear();
+
+        assertThat(casino.cerrarManosAbandonadas()).isEqualTo(1);
+        assertThat(partidas.findById(partida.getId()).orElseThrow().getPremio()).isEqualByComparingTo("0");
+    }
 }

@@ -60,6 +60,12 @@ class TemaWebTest {
     }
 
     @Test
+    void desdeMisMovimientosVuelveAMisMovimientos() throws Exception {
+        mvc.perform(get("/tema").header("Referer", "http://localhost/cuenta/movimientos"))
+                .andExpect(redirectedUrl("/cuenta/movimientos"));
+    }
+
+    @Test
     void noVuelveAUnaDireccionDeOtraWeb() throws Exception {
         mvc.perform(get("/tema").header("Referer", "https://otra-web.com/robar"))
                 .andExpect(redirectedUrl("/robar"));

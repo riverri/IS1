@@ -123,7 +123,8 @@ public class BloqueoLigaService {
         List<BloqueoLiga> deLaLiga = bloqueos.findByLiga(borrada.liga());
         LocalDateTime ahora = LocalDateTime.now(reloj);
         for (BloqueoLiga bloqueo : deLaLiga) {
-            if (bloqueo.activa(ahora)) {
+            // También los de un partido aplazado: aún no han servido
+            if (bloqueo.sinJugar(ahora)) {
                 devolverCoste(bloqueo, "liga borrada", ahora);
             }
         }

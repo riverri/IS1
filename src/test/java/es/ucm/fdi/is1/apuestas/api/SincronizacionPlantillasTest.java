@@ -157,4 +157,30 @@ class SincronizacionPlantillasTest {
 
         assertThat(jugadores.findByIdExterno(9301)).isEmpty();
     }
+
+    @Test
+    void siFallaLaLigaDelEquipoNuevoElTraspasadoNoSeBorra() {
+        Equipo sevilla = equipos.findByNombre("Sevilla FC").orElseThrow();
+        Equipo destino = equipos.findByNombre("Getafe CF").orElseThrow();   // como si fuera de otra liga (PL)
+        devuelve(new PlantillaApi(sevilla.getIdExterno(), "Sevilla FC", "Sevilla", List.of(
+                jugador(9301, "Viajero", "Central Midfield", 8))));
+        sincronizacion.sincronizar();
+        Jugador viajero = jugadores.findByIdExterno(9301).orElseThrow();
+        viajero.cambiarNota(9.5);
+        Long id = viajero.getId();
+
+        // Se va al otro equipo; esa liga da error 429 hoy
+        devuelve(new PlantillaApi(sevilla.getIdExterno(), "Sevilla FC", "Sevilla", List.of(
+                jugador(9302, "Otro", "Goalkeeper", 13))));
+        when(fuente.plantillas(eq("PL"))).thenThrow(new org.springframework.web.client.RestClientException("429"));
+        sincronizacion.sincronizar();
+        // Mañana la liga responde
+        when(fuente.plantillas(eq("PL"))).thenReturn(List.of(new PlantillaApi(destino.getIdExterno(), "Getafe CF",
+                "Getafe", List.of(jugador(9301, "Viajero", "Central Midfield", 6)))));
+        sincronizacion.sincronizar();
+
+        Jugador traspasado = jugadores.findByIdExterno(9301).orElseThrow();
+        assertThat(traspasado.getId()).as("es el mismo jugador").isEqualTo(id);
+        assertThat(traspasado.getNota()).isEqualTo(9.5);
+    }
 }

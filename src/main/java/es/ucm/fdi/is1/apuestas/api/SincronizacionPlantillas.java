@@ -103,7 +103,12 @@ public class SincronizacionPlantillas {
             }
         }
         // Los de la API que ya no salen en la plantilla de su equipo lo han dejado (y no han llegado a otro de los
-        // nuestros, que ya los habría cambiado de equipo); los dados de alta a mano (sin identificador) se quedan (CA-50.2)
+        // nuestros, que ya los habría cambiado de equipo); los dados de alta a mano (sin identificador) se quedan (CA-50.2).
+        // Si alguna liga no se ha podido descargar, no se borra a nadie: puede que se haya ido a un equipo de esa liga,
+        // y borrarlo para crearlo otra vez mañana perdería su nota y el enlace con sus fichajes de la fantasy
+        if (!errores.isEmpty()) {
+            plantillas.clear();
+        }
         plantillas.forEach((equipo, enLaPlantilla) -> {
             for (Jugador jugador : jugadores.findByEquipo(equipo)) {
                 if (jugador.isDeLaApi() && !enLaPlantilla.contains(jugador.getIdExterno())) {

@@ -87,6 +87,13 @@ class ImpresionesYDestinosWebTest {
     }
 
     @Test
+    void unDestinoConFiltrosTambienSeEnsenaAUnVisitante() throws Exception {
+        Anuncio futbol = anuncio("/eventos?deporte=FUTBOL", Ubicacion.EQUIPOS);
+        mvc.perform(get("/equipos"))
+                .andExpect(content().string(containsString("/anuncios/" + futbol.getId() + "/ir")));
+    }
+
+    @Test
     void unDestinoConPuntosNoEsDeNingunaSeccion() {
         assertThat(Ubicacion.de("/cuenta/../tema")).isEmpty();
         assertThat(Ubicacion.de("/eventos/./1")).isEmpty();

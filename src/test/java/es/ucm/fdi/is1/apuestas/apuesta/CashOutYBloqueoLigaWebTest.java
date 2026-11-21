@@ -375,6 +375,18 @@ class CashOutYBloqueoLigaWebTest {
     }
 
     @Test
+    void borrarUnaLigaDevuelveTambienLosBloqueosDeUnPartidoAplazado() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal luisAntes = saldoDe(LUIS);
+        bloqueoService.crear(liga.getId(), LUIS, usuarios.findByEmail(ANA).orElseThrow().getId(), futbol.getId(), "LOCAL");
+        resolucion.suspender(futbol.getId());
+
+        ligas.borrar(liga.getId(), ANA);
+        assertThat(saldoDe(LUIS)).isEqualByComparingTo(luisAntes);
+    }
+
+    @Test
     void eliminarLaCuentaDeQuienCreoUnaLigaConBloqueosFunciona() {
         Liga liga = ligas.crear(ANA, "Amigos");
         ligas.unirse(LUIS, liga.getCodigo());

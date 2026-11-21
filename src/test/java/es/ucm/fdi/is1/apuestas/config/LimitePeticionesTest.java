@@ -66,6 +66,16 @@ class LimitePeticionesTest {
     }
 
     @Test
+    void laRutaCodificadaCuentaComoLaMisma() throws Exception {
+        // Spring MVC descodifica la ruta: /regis%74ro y /registro;x=1 llegan también al formulario de registro
+        enviar("POST", "/registro", "1.2.3.4");
+        enviar("POST", "/regis%74ro", "1.2.3.4");
+        enviar("POST", "/registro;x=1", "1.2.3.4");
+        assertThat(enviar("POST", "/registro", "1.2.3.4")).isEqualTo(429);
+        assertThat(enviar("POST", "/regis%74ro", "1.2.3.4")).isEqualTo(429);
+    }
+
+    @Test
     void verLaPaginaYOtrasRutasNoCuentan() throws Exception {
         for (int i = 0; i < 5; i++) {
             assertThat(enviar("GET", "/registro", "1.2.3.4")).isEqualTo(200);

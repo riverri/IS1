@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -101,8 +102,13 @@ public class ResumenSemanalService {
     public int enviar() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         LocalDateTime desde = ahora.minusDays(7);
+        // Mismo orden que el ranking (RankingService): saldo, nombre e id, ordenado en Java. El de la base de datos
+        // no vale: en PostgreSQL «bea» va antes que «Carla», y con el mismo nombre no hay orden fijo
         List<Usuario> ranking = usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
-                .filter(u -> !u.isEliminado()).toList();
+                .filter(u -> !u.isEliminado())
+                .sorted(Comparator.comparing(Usuario::getSaldo).reversed().thenComparing(Usuario::getNombre)
+                        .thenComparing(Usuario::getId))
+                .toList();
         int enviados = 0;
         for (int i = 0; i < ranking.size(); i++) {
             Usuario usuario = ranking.get(i);
