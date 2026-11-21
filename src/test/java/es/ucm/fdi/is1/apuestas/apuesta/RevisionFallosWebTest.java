@@ -259,9 +259,9 @@ class RevisionFallosWebTest {
         jugadores.save(new Jugador(getafe, "N'Golo Kanté", Posicion.CENTROCAMPISTA));
 
         mvc.perform(get("/gestion/equipos/{id}/editar", getafe.getId()).with(CREADOR))
-                .andExpect(content().string(containsString("data-nombre=\"N&#39;Golo Kant")))
-                .andExpect(content().string(containsString("this.dataset.nombre")))
-                .andExpect(content().string(not(containsString("confirm('¿Quitar a N"))));
+                // El texto va escapado en un atributo y lo lee js/comun.js: ya no hay JavaScript en la página
+                .andExpect(content().string(containsString("data-confirmar=\"¿Quitar a N&#39;Golo Kant")))
+                .andExpect(content().string(not(containsString("confirm("))));
     }
 
     // --- N-11: marcador y ganador contradictorios ---

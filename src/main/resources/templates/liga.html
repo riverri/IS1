@@ -77,7 +77,7 @@
                     <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
                     <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
                 </select>
-                <button class="boton" type="submit" onclick="return confirm('El bloqueo cuesta 50 monedas. ¿Continuar?');">Bloquear a un amigo</button>
+                <button class="boton" type="submit" data-confirmar="El bloqueo cuesta 50 monedas. ¿Continuar?">Bloquear a un amigo</button>
             </form>
             <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya otro miembro en la liga, podrás bloquearle una apuesta.</p>
             <p class="aviso" th:if="${!#lists.isEmpty(rivales) and #lists.isEmpty(partidosBloqueables)}">No hay partidos disponibles para bloquear ahora.</p>
@@ -102,7 +102,7 @@
                     <option th:each="r : ${resultados}" th:value="${r.name()}" th:text="'Solo ' + ${r.descripcion}">Solo gana el local</option>
                     <option th:each="e : ${especiales}" th:value="${e.name()}" th:text="'Solo ' + ${e.descripcion}">Solo más de 2,5 goles</option>
                 </select>
-                <button class="boton" type="submit" onclick="return confirm('El bloqueo para toda la liga cuesta 100 monedas. ¿Continuar?');">Bloquear a la liga</button>
+                <button class="boton" type="submit" data-confirmar="El bloqueo para toda la liga cuesta 100 monedas. ¿Continuar?">Bloquear a la liga</button>
             </form>
             <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya otro miembro en la liga, podrás bloquear apuestas para todo el grupo.</p>
             <p class="aviso" th:if="${!#lists.isEmpty(rivales) and #lists.isEmpty(partidosBloqueables)}">No hay partidos disponibles para bloquear ahora.</p>
@@ -170,11 +170,11 @@
 
     <div class="acciones">
         <form th:unless="${soyCreador}" th:action="@{/ligas/{id}/salir(id=${liga.id})}" method="post"
-              onsubmit="return confirm('¿Salir de la liga?');">
+              data-confirmar="¿Salir de la liga?">
             <button class="boton boton-secundario" type="submit">Salir de la liga</button>
         </form>
         <form th:if="${soyCreador}" th:action="@{/ligas/{id}/borrar(id=${liga.id})}" method="post"
-              onsubmit="return confirm('¿Borrar la liga? Sus miembros dejarán de verla.');">
+              data-confirmar="¿Borrar la liga? Sus miembros dejarán de verla.">
             <button class="boton boton-peligro" type="submit">Borrar la liga</button>
         </form>
     </div>

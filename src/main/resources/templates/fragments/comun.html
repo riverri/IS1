@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <meta name="color-scheme" th:content="${temaOscuro} ? 'dark' : 'light'">
     <link th:if="${temaOscuro}" rel="stylesheet" th:href="@{/css/oscuro.css}">
+    <script th:src="@{/js/comun.js}" defer></script>
     <script th:src="@{/js/accesible.js}" defer></script>
 </head>
 <body>
@@ -95,8 +96,7 @@
               th:attr="fill=${col[2]}" th:text="${ini}">CA</text>
     </svg>
     <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy" decoding="async"
-         referrerpolicy="no-referrer"
-         onerror="this.parentElement.classList.remove('con-imagen'); this.remove();">
+         referrerpolicy="no-referrer">
 </span>
 
 <section class="acceso-panel" th:fragment="panelAcceso">

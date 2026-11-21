@@ -50,7 +50,7 @@
             </dl>
             <form class="aviso" th:if="${ofertasCashOut.containsKey(a.id)}"
                   th:action="@{/apuestas/{id}/cash-out(id=${a.id})}" method="post"
-                  th:attr="onsubmit=|return confirm('¿Cobrar ahora ${a.combinada ? 'toda la combinada' : 'la apuesta'} por el importe indicado?');|">
+                  th:data-confirmar="|¿Cobrar ahora ${a.combinada ? 'toda la combinada' : 'la apuesta'} por el importe indicado?|">
                 <span th:text="'Cobro anticipado disponible: ' + ${#numbers.formatDecimal(ofertasCashOut.get(a.id), 1, 'POINT', 2, 'COMMA')} + ' monedas' + (${a.combinada} ? ' por toda la combinada.' : '.')">
                     Cobro anticipado disponible: 10,00 monedas por toda la combinada.
                 </span>
@@ -75,7 +75,7 @@
                 </form>
             </details>
             <form th:if="${a.cancelable(ahora)}" th:action="@{/apuestas/{id}/cancelar(id=${a.id})}" method="post"
-                  onsubmit="return confirm('¿Cancelar la apuesta? Se te devolverá el importe.');">
+                  data-confirmar="¿Cancelar la apuesta? Se te devolverá el importe.">
                 <button class="boton boton-secundario boton-bloque" type="submit">Cancelar apuesta</button>
             </form>
         </article>
