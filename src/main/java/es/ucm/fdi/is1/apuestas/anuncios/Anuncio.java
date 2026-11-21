@@ -69,7 +69,12 @@ public class Anuncio {
     private LocalDateTime hasta;
 
     /** Veces que se ha mostrado (HU-62). Lo incrementa una consulta de {@link AnuncioRepository}. */
-    @Column(nullable = false)
+    /**
+     * Veces que se ha mostrado. Solo la suma la consulta de {@link AnuncioRepository#sumarImpresion} (updatable = false):
+     * si no, al guardar una edición del anuncio se escribiría el valor leído al cargarlo y se perderían las impresiones
+     * contadas mientras tanto.
+     */
+    @Column(nullable = false, updatable = false)
     private long impresiones;
 
     protected Anuncio() {
@@ -120,12 +125,15 @@ public class Anuncio {
      */
     public boolean seMuestra(Ubicacion donde, boolean conSesion, LocalDateTime ahora) {
         Optional<Ubicacion> seccionDestino = Ubicacion.de(destino);
-        return activo
-                && (desde == null || !ahora.isBefore(desde))
-                && (hasta == null || ahora.isBefore(hasta))
+        return vigente(ahora)
                 && ubicaciones.contains(donde)
                 && seccionDestino.isPresent() && seccionDestino.get() != donde
                 && (conSesion || !seccionDestino.get().isRequiereSesion());
+    }
+
+    /** Activo y dentro de sus fechas: se puede mostrar y sus clics cuentan. */
+    public boolean vigente(LocalDateTime ahora) {
+        return activo && (desde == null || !ahora.isBefore(desde)) && (hasta == null || ahora.isBefore(hasta));
     }
 
     public void activar(boolean activar) {

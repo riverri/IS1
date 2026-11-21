@@ -10,16 +10,19 @@ import java.util.List;
  * @param cartasBanca  la primera carta si la mano sigue; todas si ha terminado
  * @param valorBanca   valor de las cartas que se ven
  * @param resultado    null mientras la mano sigue
+ * @param apuestaInicial lo que se apostó al repartir (sin lo doblado)
  */
 public record MesaBlackjack(Long partidaId, List<Carta> cartasJugador, int valorJugador, List<Carta> cartasBanca,
                             int valorBanca, boolean terminada, boolean puedeDoblar, BigDecimal apostado,
-                            BigDecimal premio, ResultadoMano resultado) {
+                            BigDecimal premio, ResultadoMano resultado, BigDecimal apuestaInicial) {
 
     static MesaBlackjack de(Partida partida) {
         ManoBlackjack mano = partida.mano();
         List<Carta> banca = mano.isTerminada() ? mano.getBanca() : List.of(mano.getBanca().get(0));
         return new MesaBlackjack(partida.getId(), mano.getJugador(), ManoBlackjack.valor(mano.getJugador()), banca,
                 ManoBlackjack.valor(banca), mano.isTerminada(), mano.isPuedeDoblar(), partida.getApostado(),
-                partida.getPremio(), mano.isTerminada() ? mano.resultado() : null);
+                partida.getPremio(), mano.isTerminada() ? mano.resultado() : null,
+                // Lo que se apostó al repartir, sin lo doblado: es lo que propone «Otra mano»
+                mano.isDoblada() ? partida.getApostado().divide(BigDecimal.valueOf(2)) : partida.getApostado());
     }
 }

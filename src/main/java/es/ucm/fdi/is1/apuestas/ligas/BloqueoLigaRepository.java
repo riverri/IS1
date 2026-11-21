@@ -15,6 +15,7 @@ public interface BloqueoLigaRepository extends JpaRepository<BloqueoLiga, Long> 
     boolean existsByLigaAndEventoAndAlcanceAndObjetivoIsNull(Liga liga, Evento evento, String alcance);
     List<BloqueoLiga> findByObjetivoAndEvento(Usuario objetivo, Evento evento);
     List<BloqueoLiga> findByEvento(Evento evento);
+    List<BloqueoLiga> findByLiga(Liga liga);
 
     /** Solo bloqueos vigentes de la liga, con los datos que muestra la página ya cargados. */
     @Query("select distinct b from BloqueoLiga b join fetch b.evento e"

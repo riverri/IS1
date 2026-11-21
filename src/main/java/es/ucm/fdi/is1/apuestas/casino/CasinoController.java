@@ -3,7 +3,10 @@ package es.ucm.fdi.is1.apuestas.casino;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.springframework.stereotype.Controller;
@@ -14,8 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Páginas del casino (HU-56 a HU-58 y HU-74). Todas cuelgan de {@code /casino} y exigen haber iniciado sesión (ver
@@ -43,7 +48,8 @@ public class CasinoController {
 
     /** GET /casino/ruleta: el tapete con las apuestas posibles y el resultado de la última tirada. */
     @GetMapping("/ruleta")
-    public String ruleta(Model model) {
+    public String ruleta(Model model, HttpSession sesion) {
+        model.addAttribute("envio", nuevoEnvio(sesion));
         model.addAttribute("configuracion", casino.configuracion());
         model.addAttribute("apuestas", ApuestaRuleta.values());
         return "casino/ruleta";
@@ -53,9 +59,11 @@ public class CasinoController {
     @PostMapping("/ruleta")
     public String girar(@RequestParam(required = false) ApuestaRuleta tipo,
                         @RequestParam(required = false) Integer numero,
-                        @RequestParam(required = false) BigDecimal importe, Principal principal,
+                        @RequestParam(required = false) BigDecimal importe,
+                        @RequestParam(required = false) String envio, HttpSession sesion, Principal principal,
                         RedirectAttributes redireccion) {
-        Partida partida = intentar(() -> casino.girarRuleta(principal.getName(), tipo, numero, importe), redireccion);
+        Partida partida = gastarEnvio(sesion, envio, redireccion)
+                ? intentar(() -> casino.girarRuleta(principal.getName(), tipo, numero, importe), redireccion) : null;
         if (partida != null) {
             redireccion.addFlashAttribute("tirada", new Tirada(partida.getApuesta(), partida.getResultado(),
                     partida.getApostado(), partida.getPremio()));
@@ -69,7 +77,8 @@ public class CasinoController {
 
     /** GET /casino/baccarat: la mesa con las tres apuestas y, si se acaba de jugar, las cartas que salieron. */
     @GetMapping("/baccarat")
-    public String baccarat(Model model) {
+    public String baccarat(Model model, HttpSession sesion) {
+        model.addAttribute("envio", nuevoEnvio(sesion));
         model.addAttribute("configuracion", casino.configuracion());
         model.addAttribute("apuestas", ApuestaBaccarat.values());
         return "casino/baccarat";
@@ -78,9 +87,13 @@ public class CasinoController {
     /** POST /casino/baccarat: una mano entera (CA-74.1 a CA-74.3); el resultado vuelve como mensaje. */
     @PostMapping("/baccarat")
     public String jugarBaccarat(@RequestParam(required = false) ApuestaBaccarat apuesta,
-                                @RequestParam(required = false) BigDecimal importe, Principal principal,
+                                @RequestParam(required = false) BigDecimal importe,
+                                @RequestParam(required = false) String envio, HttpSession sesion, Principal principal,
                                 RedirectAttributes redireccion) {
         try {
+            if (!gastarEnvio(sesion, envio, redireccion)) {
+                return "redirect:/casino/baccarat";
+            }
             CasinoService.JugadaBaccarat jugada = casino.jugarBaccarat(principal.getName(), apuesta, importe);
             redireccion.addFlashAttribute("baza", Baza.de(jugada));
         } catch (SaldoInsuficienteException e) {
@@ -126,7 +139,9 @@ public class CasinoController {
      * esté a medias o el formulario para empezar.
      */
     @GetMapping("/blackjack")
-    public String blackjack(@RequestParam(required = false) Long mano, Principal principal, Model model) {
+    public String blackjack(@RequestParam(required = false) Long mano, Principal principal, Model model,
+                            HttpSession sesion) {
+        model.addAttribute("envio", nuevoEnvio(sesion));
         ConfiguracionCasino configuracion = casino.configuracion();
         model.addAttribute("configuracion", configuracion);
         (mano != null ? casino.manoDelUsuario(principal.getName(), mano) : casino.blackjackEnCurso(principal.getName()))
@@ -136,16 +151,21 @@ public class CasinoController {
 
     /** POST /casino/blackjack: empieza una mano; si ya hay una a medias, se sigue con ella (CA-57.5). */
     @PostMapping("/blackjack")
-    public String empezar(@RequestParam(required = false) BigDecimal importe, Principal principal,
+    public String empezar(@RequestParam(required = false) BigDecimal importe,
+                          @RequestParam(required = false) String envio, HttpSession sesion, Principal principal,
                           RedirectAttributes redireccion) {
+        if (!gastarEnvio(sesion, envio, redireccion)) {
+            return "redirect:/casino/blackjack";
+        }
         Partida partida = intentar(() -> casino.empezarBlackjack(principal.getName(), importe), redireccion);
         return partida == null ? "redirect:/casino/blackjack" : "redirect:/casino/blackjack?mano=" + partida.getId();
     }
 
     /** POST /casino/blackjack/{id}/pedir: una carta más. */
     @PostMapping("/blackjack/{id}/pedir")
-    public String pedir(@PathVariable Long id, Principal principal, RedirectAttributes redireccion) {
-        intentar(() -> casino.pedir(principal.getName(), id), redireccion);
+    public String pedir(@PathVariable Long id, @RequestParam(required = false) Integer cartas, Principal principal,
+                        RedirectAttributes redireccion) {
+        intentar(() -> casino.pedir(principal.getName(), id, cartas), redireccion);
         return "redirect:/casino/blackjack?mano=" + id;
     }
 
@@ -180,6 +200,53 @@ public class CasinoController {
         public boolean isGanada() {
             return premio.signum() > 0;
         }
+    }
+
+    /** Atributo de la sesión con los códigos de envío que se han dado y aún no se han usado. */
+    private static final String ENVIOS = CasinoController.class.getName() + ".envios";
+    /** Se guardan los últimos 20 (varias pestañas abiertas a la vez). */
+    private static final int MAXIMO_ENVIOS = 20;
+
+    /**
+     * Código de un solo uso para el formulario de jugar, que va en un campo oculto. Un doble clic manda dos veces el
+     * mismo código: la segunda petición ya no lo encuentra y no juega ni cobra (CA-57.5).
+     */
+    static String nuevoEnvio(HttpSession sesion) {
+        String envio = UUID.randomUUID().toString();
+        synchronized (WebUtils.getSessionMutex(sesion)) {
+            @SuppressWarnings("unchecked")
+            Deque<String> envios = (Deque<String>) sesion.getAttribute(ENVIOS);
+            Deque<String> nuevos = envios == null ? new ArrayDeque<>() : new ArrayDeque<>(envios);
+            nuevos.addLast(envio);
+            while (nuevos.size() > MAXIMO_ENVIOS) {
+                nuevos.removeFirst();
+            }
+            sesion.setAttribute(ENVIOS, nuevos);
+        }
+        return envio;
+    }
+
+    /**
+     * Gasta el código del formulario. Si ya se había gastado (doble clic), deja el aviso y devuelve false. Sin código
+     * (otros clientes, pruebas) se juega como siempre.
+     */
+    static boolean gastarEnvio(HttpSession sesion, String envio, RedirectAttributes redireccion) {
+        if (envio == null) {
+            return true;
+        }
+        boolean gastado;
+        synchronized (WebUtils.getSessionMutex(sesion)) {
+            @SuppressWarnings("unchecked")
+            Deque<String> envios = (Deque<String>) sesion.getAttribute(ENVIOS);
+            Deque<String> quedan = envios == null ? new ArrayDeque<>() : new ArrayDeque<>(envios);
+            gastado = quedan.remove(envio);
+            sesion.setAttribute(ENVIOS, quedan);
+        }
+        if (!gastado) {
+            redireccion.addFlashAttribute("error", "Esa jugada ya se había hecho (has pulsado dos veces): "
+                    + "no se ha vuelto a jugar ni a cobrar.");
+        }
+        return gastado;
     }
 
     /**

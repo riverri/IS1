@@ -73,6 +73,9 @@ class CasinoWebTest {
     @Autowired
     private MovimientoSaldoRepository movimientos;
 
+    @Autowired
+    private jakarta.persistence.EntityManager em;
+
     @BeforeEach
     void preparar() {
         usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
@@ -353,5 +356,108 @@ class CasinoWebTest {
         mvc.perform(get("/casino/baccarat").with(COMO_ANA))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Punto Banco")));
+    }
+
+    // --- Cuarta depuración ---
+
+    private long cobrosDeCasino() {
+        return movimientos.findByUsuarioOrderByIdAsc(usuarios.findByEmail(ANA).orElseThrow()).stream()
+                .filter(m -> m.getTipo() == es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.CASINO_APUESTA).count();
+    }
+
+    /** El código de envío que lleva el formulario de la página. */
+    private String envioDe(String ruta, org.springframework.mock.web.MockHttpSession sesion) throws Exception {
+        String pagina = mvc.perform(get(ruta).session(sesion).with(COMO_ANA)).andReturn().getResponse().getContentAsString();
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("name=\"envio\" value=\"([^\"]+)\"").matcher(pagina);
+        assertThat(m.find()).as("la página lleva el código de envío").isTrue();
+        return m.group(1);
+    }
+
+    @Test
+    void unDobleClicEnLaRuletaSoloJuegaYCobraUnaVez() throws Exception {
+        sale(17);
+        var sesion = new org.springframework.mock.web.MockHttpSession();
+        String envio = envioDe("/casino/ruleta", sesion);
+        for (int i = 0; i < 2; i++) {
+            mvc.perform(post("/casino/ruleta").session(sesion).with(COMO_ANA).with(csrf())
+                    .param("tipo", "NEGRO").param("importe", "10").param("envio", envio));
+        }
+        assertThat(cobrosDeCasino()).isEqualTo(1);
+        // El segundo envío lo dice y no juega
+        mvc.perform(post("/casino/ruleta").session(sesion).with(COMO_ANA).with(csrf())
+                        .param("tipo", "NEGRO").param("importe", "10").param("envio", envio))
+                .andExpect(flash().attribute("error", containsString("has pulsado dos veces")));
+        assertThat(cobrosDeCasino()).isEqualTo(1);
+        // Con el código nuevo de la página siguiente se vuelve a jugar
+        mvc.perform(post("/casino/ruleta").session(sesion).with(COMO_ANA).with(csrf())
+                .param("tipo", "NEGRO").param("importe", "10").param("envio", envioDe("/casino/ruleta", sesion)));
+        assertThat(cobrosDeCasino()).isEqualTo(2);
+    }
+
+    @Test
+    void unDobleClicAlRepartirOEnElBaccaratTampocoCobraDosVeces() throws Exception {
+        var sesion = new org.springframework.mock.web.MockHttpSession();
+        String envio = envioDe("/casino/baccarat", sesion);
+        for (int i = 0; i < 2; i++) {
+            mvc.perform(post("/casino/baccarat").session(sesion).with(COMO_ANA).with(csrf())
+                    .param("apuesta", "BANCA").param("importe", "10").param("envio", envio));
+        }
+        assertThat(cobrosDeCasino()).isEqualTo(1);
+        envio = envioDe("/casino/blackjack", sesion);
+        for (int i = 0; i < 2; i++) {
+            mvc.perform(post("/casino/blackjack").session(sesion).with(COMO_ANA).with(csrf())
+                    .param("importe", "10").param("envio", envio));
+        }
+        assertThat(cobrosDeCasino()).isEqualTo(2);
+    }
+
+    @Test
+    void unDobleClicEnPedirCartaSoloDaUna() throws Exception {
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+        assertThat(partida.isEnCurso()).isTrue();
+        for (int i = 0; i < 2; i++) {
+            mvc.perform(post("/casino/blackjack/" + partida.getId() + "/pedir").with(COMO_ANA).with(csrf())
+                    .param("cartas", "2"));
+        }
+        em.flush();
+        em.clear();
+        assertThat(partidas.findById(partida.getId()).orElseThrow().mano().getJugador()).hasSize(3);
+    }
+
+    @Test
+    void otraManoProponeLaApuestaInicialAunqueSeDoblara() throws Exception {
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+        casino.doblar(ANA, partida.getId());
+        assertThat(casino.mesa(partida).apuestaInicial()).isEqualByComparingTo("10");
+        mvc.perform(get("/casino/blackjack").param("mano", partida.getId().toString()).with(COMO_ANA))
+                .andExpect(content().string(containsString("name=\"importe\" type=\"number\" step=\"0.01\" min=\"0.01\" value=\"10")));
+    }
+
+    @Test
+    void cambiarLaReglaDel17NoAfectaALaManoYaRepartida() {
+        ConfiguracionCasino actual = casino.configuracion();
+        boolean regla = actual.isBancaPideCon17Blando();
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+        casino.cambiarConfiguracion(actual.isActivo(), actual.getImporteMinimo(), actual.getImporteMaximo(),
+                actual.getBarajas(), !regla, actual.getPagoBlackjack());
+        assertThat(partida.mano().regla17Blando(!regla)).as("la de cuando se repartió").isEqualTo(regla);
+    }
+
+    @Test
+    void lasManosAbandonadasSePlantanSolasPasadoUnDia() {
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+        assertThat(casino.cerrarManosAbandonadas()).as("recién repartida no").isZero();
+        em.flush();
+        em.createQuery("update Partida p set p.fecha = :fecha where p.id = :id")
+                .setParameter("fecha", es.ucm.fdi.is1.apuestas.Hora.ahora().minusDays(2))
+                .setParameter("id", partida.getId()).executeUpdate();
+        em.clear();
+        BigDecimal antes = saldo();
+
+        assertThat(casino.cerrarManosAbandonadas()).isEqualTo(1);
+
+        Partida cerrada = partidas.findById(partida.getId()).orElseThrow();
+        assertThat(cerrada.isEnCurso()).isFalse();
+        assertThat(saldo()).isEqualByComparingTo(antes.add(cerrada.getPremio()));
     }
 }

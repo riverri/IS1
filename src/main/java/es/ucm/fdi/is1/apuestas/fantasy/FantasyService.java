@@ -90,7 +90,7 @@ public class FantasyService {
      */
     @Transactional
     public FichajeFantasy fichar(String email, Long jugadorId) {
-        EquipoFantasy equipo = equipoDe(email).orElseThrow(() -> new IllegalStateException("Primero crea tu equipo"));
+        EquipoFantasy equipo = paraCambiar(email);
         Jugador jugador = jugadores.findById(jugadorId)
                 .orElseThrow(() -> new IllegalArgumentException("Ese jugador no existe"));
         return equipo.fichar(jugador, LocalDateTime.now(reloj));
@@ -104,8 +104,19 @@ public class FantasyService {
      */
     @Transactional
     public FichajeFantasy vender(String email, Long jugadorId) {
-        EquipoFantasy equipo = equipoDe(email).orElseThrow(() -> new IllegalStateException("Primero crea tu equipo"));
-        return equipo.vender(jugadorId, LocalDateTime.now(reloj));
+        return paraCambiar(email).vender(jugadorId, LocalDateTime.now(reloj));
+    }
+
+    /** Vende un fichaje por su id (también si el jugador ya no existe). */
+    @Transactional
+    public FichajeFantasy venderFichaje(String email, Long fichajeId) {
+        return paraCambiar(email).venderFichaje(fichajeId, LocalDateTime.now(reloj));
+    }
+
+    /** El equipo del usuario, bloqueado para cambiarlo (ver {@link EquipoFantasyRepository#paraCambiar}). */
+    private EquipoFantasy paraCambiar(String email) {
+        return usuarios.findByEmail(email).flatMap(equipos::paraCambiar)
+                .orElseThrow(() -> new IllegalStateException("Primero crea tu equipo"));
     }
 
     /** Futbolistas que se pueden fichar, del más caro al más barato; posición y club son filtros opcionales. */
@@ -145,7 +156,8 @@ public class FantasyService {
         record Fila(EquipoFantasy equipo, int puntos) {
         }
         List<Fila> filas = new ArrayList<>();
-        for (EquipoFantasy equipo : equipos.findAll()) {
+        // Las cuentas eliminadas no salen, como en el resto de clasificaciones (HU-18)
+        for (EquipoFantasy equipo : equipos.findAll().stream().filter(e -> !e.getUsuario().isEliminado()).toList()) {
             int total = puntos(equipo, partidosPorClub).stream().mapToInt(PuntosFichaje::getTotal).sum();
             filas.add(new Fila(equipo, total));
         }
@@ -164,12 +176,12 @@ public class FantasyService {
     private List<PuntosFichaje> puntos(EquipoFantasy equipo, Map<Long, List<Evento>> partidosPorClub) {
         List<PuntosFichaje> resultado = new ArrayList<>();
         for (FichajeFantasy fichaje : equipo.getFichajes()) {
-            Jugador jugador = fichaje.getJugador();
-            Equipo club = jugador.getEquipo();
+            // Con el club y la posición de cuando se fichó (no los de ahora: ver FichajeFantasy)
+            Equipo club = fichaje.getClub();
             List<Evento> partidos = partidosPorClub.computeIfAbsent(club.getId(),
                     id -> eventos.partidosDe(club, EstadoEvento.FINALIZADO));
             List<PartidoPuntuado> cuentan = partidos.stream().filter(fichaje::cuenta)
-                    .map(p -> new PartidoPuntuado(p, PuntosFantasy.puntos(jugador.getPosicion(), club, p)))
+                    .map(p -> new PartidoPuntuado(p, PuntosFantasy.puntos(fichaje.getPosicion(), club, p)))
                     .toList();
             resultado.add(new PuntosFichaje(fichaje, cuentan));
         }

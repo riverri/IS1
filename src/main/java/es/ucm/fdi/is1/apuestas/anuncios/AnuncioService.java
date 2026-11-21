@@ -10,6 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.random.RandomGenerator;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +35,20 @@ public class AnuncioService {
     private final UsuarioRepository usuarios;
     private final RandomGenerator azar;
     private final Clock reloj;
+    private final ObjectProvider<WebInvocationPrivilegeEvaluator> permisos;
+
+    /** Un visitante sin sesión, para preguntar a Spring Security si podría abrir una página. */
+    private static final AnonymousAuthenticationToken VISITANTE = new AnonymousAuthenticationToken("anuncios",
+            "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 
     public AnuncioService(AnuncioRepository anuncios, ClicAnuncioRepository clics, UsuarioRepository usuarios,
-                          RandomGenerator azar, Clock reloj) {
+                          RandomGenerator azar, Clock reloj, ObjectProvider<WebInvocationPrivilegeEvaluator> permisos) {
         this.anuncios = anuncios;
         this.clics = clics;
         this.usuarios = usuarios;
         this.azar = azar;
         this.reloj = reloj;
+        this.permisos = permisos;
     }
 
     /**
@@ -47,14 +57,39 @@ public class AnuncioService {
      */
     @Transactional
     public Optional<Anuncio> mostrar(String ruta, boolean conSesion) {
+        Optional<Anuncio> elegido = elegirPara(ruta, conSesion);
+        elegido.ifPresent(a -> anuncios.sumarImpresion(a.getId()));
+        return elegido;
+    }
+
+    /**
+     * El anuncio para esa página, sin contar la impresión: la cuenta {@link ImpresionesAnuncio} cuando la página se
+     * llega a pintar (no en una descarga, una redirección o un error).
+     *
+     * <p>A un visitante sin sesión solo se le enseñan anuncios cuyo destino puede abrir, según las mismas reglas de
+     * {@code SeguridadConfig}: /eventos sí, pero /eventos/7/apostar o /cripto/cartera no (CA-60.3).
+     */
+    @Transactional(readOnly = true)
+    public Optional<Anuncio> elegirPara(String ruta, boolean conSesion) {
         Optional<Ubicacion> donde = Ubicacion.de(ruta);
         if (donde.isEmpty()) {
             return Optional.empty();
         }
-        Optional<Anuncio> elegido = elegir(anuncios.findByActivoTrue(), donde.get(), conSesion,
-                LocalDateTime.now(reloj), azar);
-        elegido.ifPresent(a -> anuncios.sumarImpresion(a.getId()));
-        return elegido;
+        List<Anuncio> candidatos = anuncios.findByActivoTrue();
+        WebInvocationPrivilegeEvaluator evaluador = permisos.getIfAvailable();
+        if (!conSesion && evaluador != null) {
+            candidatos = candidatos.stream()
+                    .filter(a -> evaluador.isAllowed("", a.getDestino(), "GET", VISITANTE)).toList();
+            // Ya se ha comprobado con las reglas de verdad: la de la sección (Ubicacion.requiereSesion) sobra
+            return elegir(candidatos, donde.get(), true, LocalDateTime.now(reloj), azar);
+        }
+        return elegir(candidatos, donde.get(), conSesion, LocalDateTime.now(reloj), azar);
+    }
+
+    /** Cuenta una impresión (HU-62). */
+    @Transactional
+    public void contarImpresion(Long id) {
+        anuncios.sumarImpresion(id);
     }
 
     /** CA-60.1: los de prioridad más alta que se pueden mostrar, y uno al azar entre ellos. */
@@ -81,7 +116,8 @@ public class AnuncioService {
      */
     @Transactional
     public String registrarClic(Long id, String origen, String email) {
-        Optional<Anuncio> anuncio = anuncios.findById(id).filter(Anuncio::isActivo);
+        // Solo cuenta si se podía ver: activo y dentro de sus fechas (un enlace viejo a uno caducado no suma)
+        Optional<Anuncio> anuncio = anuncios.findById(id).filter(a -> a.vigente(LocalDateTime.now(reloj)));
         if (anuncio.isEmpty()) {
             return "/";
         }

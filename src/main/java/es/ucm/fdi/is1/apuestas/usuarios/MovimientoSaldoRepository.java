@@ -11,11 +11,11 @@ import org.springframework.data.jpa.repository.Query;
 /** Repositorio Spring Data del libro de movimientos del saldo (HU-55). Las consultas salen del nombre del método. */
 public interface MovimientoSaldoRepository extends JpaRepository<MovimientoSaldo, Long> {
 
-    /**
-     * Los 100 movimientos más recientes del usuario. Con la misma fecha, el último creado primero, así el de
-     * arriba es siempre el que deja el saldo actual.
+        /**
+     * Los últimos 100, del más reciente al más antiguo. Por id y no por fecha: la fecha es la hora de Madrid y, al
+     * atrasar el reloj en octubre, un movimiento posterior puede tener una hora anterior (CA-55.2).
      */
-    List<MovimientoSaldo> findTop100ByUsuarioOrderByFechaDescIdDesc(Usuario usuario);
+    List<MovimientoSaldo> findTop100ByUsuarioOrderByIdDesc(Usuario usuario);
 
     /** Todos, del primero al último; lo usan las pruebas para comprobar que el saldo cuadra. */
     List<MovimientoSaldo> findByUsuarioOrderByIdAsc(Usuario usuario);

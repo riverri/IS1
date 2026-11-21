@@ -1,7 +1,7 @@
 # Revisión de fallos
 
 Se partió de un informe del proyecto con 14 fallos (**F-01 a F-14**) y una revisión completa del código encontró 20 más (**N-01 a N-20**). Los 34 están corregidos en `main`, con 34 pruebas nuevas, y sus issues (#34–#67) están cerrados.
-En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado.
+En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo.
 
 Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a quien no debe · **media** = comportamiento incorrecto · **baja** = molestia o caso raro.
 
@@ -74,6 +74,30 @@ Revisión del código de `main` del 5/11 (**R-01 a R-12**) y de las ramas #86 a 
 R-11 (cambiar el workflow de la wiki) se descartó por decisión del equipo.
 
 Se dejaron como están a propósito: avisar en el registro de que un email ya existe (lo pide HU-11) y recuperar la contraseña, que no era un fallo sino una funcionalidad nueva (HU-17, hecha después).
+
+## Cuarta depuración (21/11/2026)
+
+Revisión de lo que entró en `main` después de la tercera depuración: el casino con el baccarat, la liga fantasy, los anuncios y *Mis movimientos* y las optimizaciones de cuotas, clasificaciones y estadísticas. Además, la prueba aleatoria del dinero (`InvariantesDineroTest`) hace ahora también cobros anticipados y bloqueos de liga, y comprueba que su dinero cuadra. Cada arreglo tiene su prueba, y se ha comprobado que las nuevas fallan con el código anterior.
+
+| Fallo | Gravedad | Qué pasaba | Cómo se arregló | Prueba |
+|---|---|---|---|---|
+| D4-01 · Liga con bloqueos | Alta | No se podía borrar una liga con bloqueos, ni eliminar la cuenta de quien la creó (error al guardar). Lo encontró la prueba aleatoria del dinero | Antes de borrar la liga, sus bloqueos se borran y se devuelven los que aún no se han jugado (evento `LigaBorrada`) | `CashOutYBloqueoLigaWebTest.borrarUnaLigaConBloqueosLosDevuelveYLaBorra`, `.eliminarLaCuentaDeQuienCreoUnaLigaConBloqueosFunciona` |
+| D4-02 · Doble clic en el casino | Media | Un doble clic en la ruleta, el baccarat o al repartir jugaba y cobraba dos veces; en «Pedir carta» daba dos cartas (CA-57.5) | Cada formulario lleva un código de un solo uso; «Pedir carta» lleva las cartas que se veían | `CasinoWebTest.unDobleClicEnLaRuletaSoloJuegaYCobraUnaVez`, `.unDobleClicAlRepartirOEnElBaccaratTampocoCobraDosVeces`, `.unDobleClicEnPedirCartaSoloDaUna` |
+| D4-03 · Doble clic al fichar | Media | Se podía fichar dos veces al mismo jugador o pasarse del presupuesto y de la formación: añadir un fichaje no subía la versión del equipo | El equipo se bloquea en la base de datos al fichar o vender | `FantasyConcurrenteTest` |
+| D4-04 · Traspasos en la fantasy | Media | Si la API cambiaba a un jugador de club o de posición, sus puntos pasados se recalculaban (de 7 a 0) y la formación se rompía (8 jugadores, uno sin poder venderse) | Cada fichaje guarda el club, la posición y el nombre de cuando se fichó (migración V30) | `FantasyWebTest.unTraspasoNoCambiaLoQueYaSumoNiDesdeQueClubPuntua` |
+| D4-05 · Jugador borrado | Media | Al borrar un jugador (o desaparecer de la API) se borraban sus fichajes y con ellos sus puntos (CA-82.1) | Los fichajes se quedan sin jugador (`on delete set null`) y se pueden vender | `FantasyWebTest.borrarUnJugadorNoBorraSusPuntosYSePuedeVenderSuFichaje` |
+| D4-06 · Puesto del perfil | Media | Con el mismo saldo, el perfil no daba el puesto del ranking: dos jugadores con el mismo nombre salían los dos 1.º, y en PostgreSQL «bea» iba antes que «Carla» | Los empatados se ordenan en Java, como en el ranking (nombre e id) | `PerfilYMovimientosWebTest.elPuestoDelPerfilEsElDelRankingAunqueSeLlamenIgual` |
+| D4-07 · Impresiones de anuncios | Media | Contaban también las descargas CSV, las redirecciones y las páginas que daban error (HU-62) | Se cuentan al pintar la página (`ImpresionesAnuncio`) | `ImpresionesYDestinosWebTest.soloCuentaLaImpresionSiSePintaLaPagina` |
+| D4-08 · Anuncios para visitantes | Media | A un visitante se le enseñaban anuncios que llevaban a páginas con sesión (al pulsarlos, al login), y no los de páginas públicas de secciones con sesión (CA-60.3); se aceptaban destinos como `/cuenta/../tema` | Se pregunta a Spring Security si un visitante puede abrir el destino; los destinos con `..` no valen | `ImpresionesYDestinosWebTest` |
+| D4-09 · Cuentas eliminadas en la fantasy | Baja | Seguían en la clasificación | Se quitan, como en el resto de clasificaciones | `FantasyWebTest.lasCuentasEliminadasNoSalenEnLaClasificacion` |
+| D4-10 · «Otra mano» doblada | Baja | Tras doblar, «Otra mano» proponía el importe doblado | Propone la apuesta inicial | `CasinoWebTest.otraManoProponeLaApuestaInicialAunqueSeDoblara` |
+| D4-11 · Regla del 17 blando | Baja | Cambiarla en Gestión afectaba a las manos ya repartidas (CA-59.1) | Se guarda con la mano al repartir | `CasinoWebTest.cambiarLaReglaDel17NoAfectaALaManoYaRepartida` |
+| D4-12 · Manos abandonadas | Baja | Una mano de blackjack a medias no terminaba nunca y no entraba en las cuentas de la casa | Pasado un día se planta sola | `CasinoWebTest.lasManosAbandonadasSePlantanSolasPasadoUnDia` |
+| D4-13 · Mis movimientos | Baja | Si la recarga se aplicaba al abrir la página, la cabecera enseñaba el saldo anterior (CA-55.2); al atrasar la hora en octubre el orden fallaba | Cabecera con el saldo recargado; orden por id | `PerfilYMovimientosWebTest.laCabeceraDeMisMovimientosEnsenaElSaldoYaRecargado` |
+| D4-14 · Clics de anuncios caducados | Baja | Un enlace viejo a un anuncio caducado seguía sumando clics; editar un anuncio podía pisar impresiones contadas a la vez | Solo cuentan los vigentes (y el enlace lleva `nofollow`); las impresiones no se escriben al editar | `ImpresionesYDestinosWebTest.unAnuncioCaducadoNoSumaClics` |
+| D4-15 · Doble clic al crear el equipo fantasy | Baja | El segundo envío daba un error 500 | Mensaje «Ya tienes un equipo» | — |
+
+**Para decidir en equipo:** en la fantasy se puede vender a un jugador cuyo partido ya se ha jugado y fichar a otro que juega más tarde, así que un mismo hueco suma los puntos de varios partidos de la jornada. Las historias (HU-81 a HU-83) no dicen si hay cierre de jornada o un límite de cambios, así que no se ha tocado.
 
 ## En producción
 

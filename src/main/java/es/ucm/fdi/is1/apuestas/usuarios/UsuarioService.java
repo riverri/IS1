@@ -213,7 +213,7 @@ public class UsuarioService {
         Usuario usuario = consultarConRecarga(email);
         // flush: la recarga recién aplicada se escribe antes de consultar, para que salga en la lista
         usuarios.flush();
-        return movimientos.findTop100ByUsuarioOrderByFechaDescIdDesc(usuario);
+        return movimientos.findTop100ByUsuarioOrderByIdDesc(usuario);
     }
 
     /** Busca la cuenta por email, sin aplicar la recarga. */

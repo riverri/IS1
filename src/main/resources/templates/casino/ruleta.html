@@ -19,6 +19,7 @@
         </div>
 
         <form class="formulario" th:action="@{/casino/ruleta}" method="post">
+            <input type="hidden" name="envio" th:value="${envio}">
             <fieldset>
                 <legend>Apuesta</legend>
                 <label class="casilla" th:each="a : ${apuestas}">

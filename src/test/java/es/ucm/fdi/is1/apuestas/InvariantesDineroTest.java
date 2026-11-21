@@ -59,6 +59,9 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.gestion.EdicionEventoForm;
 import es.ucm.fdi.is1.apuestas.gestion.EventoForm;
 import es.ucm.fdi.is1.apuestas.gestion.GestionService;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLiga;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaRepository;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaService;
 import es.ucm.fdi.is1.apuestas.ligas.EstadoReto;
 import es.ucm.fdi.is1.apuestas.ligas.Liga;
 import es.ucm.fdi.is1.apuestas.ligas.LigaRepository;
@@ -106,8 +109,11 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
  * <li>U3. Por usuario no eliminado, los movimientos de retos = lo que le toca según el estado de sus retos.</li>
  * <li>U4. Por usuario no eliminado, los movimientos de quiniela = suma de (premio − pagado) de sus boletos.</li>
  * <li>U5. Recargas de 200 cada una y separadas al menos 7 días; una cuenta eliminada tiene saldo 0.</li>
- * <li>A1. pagado según el estado (GANADA → ganancia potencial, ANULADA → importe, PERDIDA/ACTIVA/CANCELADA → 0), salvo
- * cuentas eliminadas; una ACTIVA siempre tiene pagado 0.</li>
+ * <li>B1. Por usuario no eliminado, los movimientos de bloqueos de liga (coste y devolución) = − coste de sus
+ * bloqueos que siguen en pie (50 a un compañero, 100 a toda la liga) y de los ya usados que se borraron con su liga;
+ * ningún bloqueo de un partido anulado.</li>
+ * <li>A1. pagado según el estado (GANADA → ganancia potencial, ANULADA → importe, PERDIDA/ACTIVA/CANCELADA → 0,
+ * COBRADA → lo cobrado, entre 0 y la ganancia potencial), salvo cuentas eliminadas; una ACTIVA siempre tiene pagado 0.</li>
  * <li>A2. El estado de cada apuesta sale de sus selecciones y el de cada selección del estado de su evento o mercado
  * (ninguna ACTIVA con todo resuelto, ninguna selección pendiente en un evento finalizado o anulado, etc.).</li>
  * <li>R1. Retos: PENDIENTE/ACEPTADO solo con el partido programado o suspendido; PENDIENTE solo entre quienes comparten
@@ -120,7 +126,8 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
  * <li>C1. Cuentas de la casa ({@link CuentasCasaService}): en juego, apostado y pagado cambian igual que las apuestas;
  * las filas por tipo suman el total y las de deporte suman las simples.</li>
  * <li>C2. Beneficio diario de la casa ({@link BeneficioDiarioService}) = resultado de la casa en apuestas (importe −
- * pagado de las no canceladas) + quinielas; no incluye dinero que solo pasa de un jugador a otro (retos).</li>
+ * pagado de las no canceladas) + quinielas + bloqueos de liga; no incluye dinero que solo pasa de un jugador a otro
+ * (retos).</li>
  * </ol>
  */
 @SpringBootTest
@@ -199,6 +206,8 @@ class InvariantesDineroTest {
     @Autowired private BajaService bajas;
     @Autowired private CuentasCasaService cuentasCasa;
     @Autowired private BeneficioDiarioService beneficioDiario;
+    @Autowired private BloqueoLigaService bloqueos;
+    @Autowired private BloqueoLigaRepository bloqueoRepository;
 
     /** Tipos de operación, con su peso al sortear. */
     enum Op {
@@ -207,7 +216,8 @@ class InvariantesDineroTest {
         ANULAR_EVENTO(2), SUSPENDER(2), REACTIVAR(2), CAMBIAR_FECHA(2), CREAR_MERCADO(2), CERRAR_MERCADO(1),
         CAMBIAR_CUOTA_MERCADO(1), RESOLVER_MERCADO(2), ANULAR_MERCADO(1), SUPERCUOTA(2), CREAR_LIGA(1), UNIRSE_LIGA(3),
         SALIR_LIGA(2), BORRAR_LIGA(1), RETAR(10), ACEPTAR_RETO(8), RECHAZAR_RETO(2), CREAR_QUINIELA(2),
-        ECHAR_BOLETO(8), REPARTIR_QUINIELA(3), ANULAR_QUINIELA(1), RECARGA(2), ELIMINAR_CUENTA(1), NUEVO_USUARIO(1);
+        ECHAR_BOLETO(8), REPARTIR_QUINIELA(3), ANULAR_QUINIELA(1), RECARGA(2), ELIMINAR_CUENTA(1), NUEVO_USUARIO(1),
+        COBRAR_ANTES(5), BLOQUEAR(3);
 
         final int peso;
 
@@ -234,6 +244,18 @@ class InvariantesDineroTest {
     private CuentasCasa.Fila casaInicial;
     private BigDecimal beneficioInicial;
     private int fase = 0;
+    /** Coste de bloqueos que ya se usaron (su partido había empezado) y se borraron con su liga: no se devuelven. */
+    private final Map<Long, BigDecimal> bloqueosUsados = new HashMap<>();
+
+    /** Los bloqueos que desaparecen sin devolverse: ya jugados cuando se borró su liga. */
+    private void apuntarBloqueosUsados(Map<Long, BloqueoLiga> antes, LocalDateTime hora) {
+        for (BloqueoLiga b : antes.values()) {
+            boolean jugado = b.getEvento().getEstado() != EstadoEvento.PROGRAMADO || !b.getEvento().getFechaHora().isAfter(hora);
+            if (jugado && b.getEvento().getEstado() != EstadoEvento.ANULADO && !bloqueoRepository.existsById(b.getId())) {
+                bloqueosUsados.merge(b.getCreador().getId(), coste(b), BigDecimal::add);
+            }
+        }
+    }
 
     @Test
     void elDineroSiempreCuadra() {
@@ -250,7 +272,11 @@ class InvariantesDineroTest {
         comprobar(antes, null, "preparación");
         for (int i = 1; i <= operaciones; i++) {
             Op op = sortear();
+            Map<Long, BloqueoLiga> bloqueosAntes = new HashMap<>();
+            bloqueoRepository.findAll().forEach(b -> bloqueosAntes.put(b.getId(), b));
+            LocalDateTime horaAntes = ahora();
             String descripcion = ejecutar(op);
+            apuntarBloqueosUsados(bloqueosAntes, horaAntes);
             ultimas.addLast("#" + i + " " + descripcion);
             if (ultimas.size() > 40) {
                 ultimas.removeFirst();
@@ -474,6 +500,8 @@ class InvariantesDineroTest {
                 quinielaService.anular(id);
                 return "anular quiniela " + id;
             });
+            case COBRAR_ANTES -> cobrarAntes();
+            case BLOQUEAR -> bloquear();
             case RECARGA -> {
                 String email = jugador();
                 usuarioService.consultarConRecarga(email);
@@ -618,6 +646,44 @@ class InvariantesDineroTest {
         Apuesta a = apuestaDe(id);
         d = "cancelar apuesta " + a.getId() + " de " + emailDe.get(id);
         apuestaService.cancelar(emailDe.get(id), a.getId());
+        return d;
+    }
+
+    /** Cobro anticipado (HU-75) de una apuesta activa con oferta, a veces con una oferta que ya no vale. */
+    private String cobrarAntes() {
+        Long id = elegir(activos());
+        Usuario u = usuarios.findById(id).orElseThrow();
+        List<Apuesta> activas = apuestaService.activas(emailDe.get(id));
+        Map<Long, BigDecimal> ofertas = apuestaService.ofertasCashOut(activas, ahora());
+        if (ofertas.isEmpty()) {
+            throw new IllegalStateException("[prueba] " + u.getEmail() + " no tiene ofertas de cobro anticipado");
+        }
+        Long apuesta = elegir(new ArrayList<>(ofertas.keySet()));
+        BigDecimal oferta = azar.nextInt(10) == 0 ? ofertas.get(apuesta).add(CENTIMO) : ofertas.get(apuesta);
+        d = "cobrar antes apuesta " + apuesta + " de " + emailDe.get(id) + " por " + oferta;
+        apuestaService.cobrarAnticipado(emailDe.get(id), apuesta, oferta);
+        return d;
+    }
+
+    /** Bloqueo de liga (HU-105, HU-106): a un compañero o a toda la liga, en un partido. */
+    private String bloquear() {
+        List<Long> ligas = misLigas.stream().filter(ligaRepository::existsById).toList();
+        Liga liga = ligaRepository.findById(elegir(ligas)).orElseThrow();
+        List<Long> miembros = liga.getIdsMiembros().stream().filter(misUsuarios::contains)
+                .filter(m -> !eliminados.contains(m)).toList();
+        Long quien = azar.nextInt(10) == 0 ? elegir(activos()) : elegir(miembros);
+        Evento e = evento(true);
+        String alcance = elegir(List.of("PARTIDO", "LOCAL", "VISITANTE", "EMPATE"));
+        if (azar.nextInt(3) == 0) {
+            d = "bloquear a toda la liga " + liga.getId() + " por " + emailDe.get(quien) + " en " + e.getId() + " " + alcance;
+            bloqueos.crearParaLiga(liga.getId(), emailDe.get(quien), e.getId(), alcance);
+        } else {
+            List<Long> otros = miembros.stream().filter(m -> !m.equals(quien)).toList();
+            Long objetivo = otros.isEmpty() ? quien : elegir(otros);
+            d = "bloquear a " + emailDe.get(objetivo) + " en la liga " + liga.getId() + " por " + emailDe.get(quien)
+                    + " en " + e.getId() + " " + alcance;
+            bloqueos.crear(liga.getId(), emailDe.get(quien), objetivo, e.getId(), alcance);
+        }
         return d;
     }
 
@@ -851,7 +917,7 @@ class InvariantesDineroTest {
 
     private static boolean cerrada(Apuesta a) {
         return a.getEstado() == EstadoApuesta.GANADA || a.getEstado() == EstadoApuesta.PERDIDA
-                || a.getEstado() == EstadoApuesta.ANULADA;
+                || a.getEstado() == EstadoApuesta.ANULADA || a.getEstado() == EstadoApuesta.COBRADA;
     }
 
     /** Lo que un jugador ha cobrado en total de un reto según su estado (sin contar lo que puso). */
@@ -924,13 +990,16 @@ class InvariantesDineroTest {
         // eliminada no se llega a abonar
         BigDecimal casaApuestasTodas = suma(lasApuestas.stream().filter(a -> a.getEstado() != EstadoApuesta.CANCELADA)
                 .map(a -> a.getImporte().subtract(a.getPagado())));
+        BigDecimal casaBloqueos = suma(movs.values().stream().flatMap(List::stream)
+                .filter(InvariantesDineroTest::esDeBloqueo).map(m -> m.getImporte().negate()));
         BigDecimal quinielasLibro = suma(movs.values().stream().flatMap(List::stream)
                 .filter(m -> m.getTipo() == TipoMovimiento.QUINIELA_BOLETO || m.getTipo() == TipoMovimiento.QUINIELA_PREMIO
                         || (m.getTipo() == TipoMovimiento.DEVOLUCION && m.getConcepto().startsWith("Devolución de la quiniela")))
                 .map(m -> m.getImporte().negate()));
         return new Foto(total, fuentes, suma(cerradas.stream().map(a -> a.getImporte().subtract(a.getPagado()))),
-                casaQuinielas, cobroRetoEliminados, premioBoletoEliminados, enJuego, apostadoCerradas, pagadoCerradas,
-                casaApuestasTodas.add(quinielasLibro), beneficioDiario.ultimosDias().total(), Set.copyOf(eliminados));
+                casaQuinielas.add(casaBloqueos), cobroRetoEliminados, premioBoletoEliminados, enJuego, apostadoCerradas,
+                pagadoCerradas, casaApuestasTodas.add(quinielasLibro).add(casaBloqueos),
+                beneficioDiario.ultimosDias().total(), Set.copyOf(eliminados));
     }
 
     /** Devuelve la primera invariante que no se cumple, o null. */
@@ -1008,6 +1077,18 @@ class InvariantesDineroTest {
             } else if (u.getSaldo().signum() != 0) {
                 fallos.add("U5 " + quien + ": una cuenta eliminada tiene saldo " + u.getSaldo());
             }
+            // B1
+            if (!u.isEliminado()) {
+                BigDecimal libroBloqueos = suma(suyos.stream().filter(InvariantesDineroTest::esDeBloqueo)
+                        .map(MovimientoSaldo::getImporte));
+                BigDecimal enPie = suma(bloqueoRepository.findAll().stream()
+                        .filter(b -> b.getCreador().getId().equals(u.getId())).map(InvariantesDineroTest::coste))
+                        .add(bloqueosUsados.getOrDefault(u.getId(), BigDecimal.ZERO));
+                if (libroBloqueos.compareTo(enPie.negate()) != 0) {
+                    fallos.add("B1 " + quien + ": movimientos de bloqueos " + libroBloqueos + " ≠ − coste de sus bloqueos "
+                            + enPie);
+                }
+            }
             // U5
             LocalDateTime anterior = null;
             for (MovimientoSaldo m : suyos) {
@@ -1022,7 +1103,8 @@ class InvariantesDineroTest {
                 } else if (m.getTipo() == TipoMovimiento.BIENVENIDA) {
                     anterior = m.getFecha();
                 }
-                if (!esDeApuesta(m) && !esDeReto(m) && !esDeQuiniela(m) && m.getTipo() != TipoMovimiento.BIENVENIDA
+                if (!esDeApuesta(m) && !esDeReto(m) && !esDeQuiniela(m) && !esDeBloqueo(m)
+                        && m.getTipo() != TipoMovimiento.BIENVENIDA
                         && m.getTipo() != TipoMovimiento.RECARGA && m.getTipo() != TipoMovimiento.BAJA) {
                     fallos.add("U1 " + quien + ": movimiento inesperado " + m.getTipo() + " «" + m.getConcepto() + "»");
                 }
@@ -1041,13 +1123,29 @@ class InvariantesDineroTest {
                 || (m.getTipo() == TipoMovimiento.CORRECCION && m.getConcepto().startsWith("Reto corregido"));
     }
 
+    private static boolean esDeBloqueo(MovimientoSaldo m) {
+        return m.getTipo() == TipoMovimiento.BLOQUEO_LIGA
+                || (m.getTipo() == TipoMovimiento.DEVOLUCION && m.getConcepto().startsWith("Devolución del bloqueo"));
+    }
+
     private static boolean esDeApuesta(MovimientoSaldo m) {
         return (m.getTipo() == TipoMovimiento.APUESTA || m.getTipo() == TipoMovimiento.PREMIO
-                || m.getTipo() == TipoMovimiento.DEVOLUCION || m.getTipo() == TipoMovimiento.CORRECCION)
-                && !esDeQuiniela(m) && !esDeReto(m);
+                || m.getTipo() == TipoMovimiento.DEVOLUCION || m.getTipo() == TipoMovimiento.CORRECCION
+                || m.getTipo() == TipoMovimiento.COBRO_ANTICIPADO)
+                && !esDeQuiniela(m) && !esDeReto(m) && !esDeBloqueo(m);
+    }
+
+    private static BigDecimal coste(BloqueoLiga b) {
+        return b.getObjetivo() == null ? BloqueoLigaService.COSTE_LIGA : BloqueoLigaService.COSTE;
     }
 
     private void comprobarApuestas(List<String> fallos) {
+        // B1: un partido anulado no conserva bloqueos (se devuelven y se borran)
+        for (BloqueoLiga b : bloqueoRepository.findAll()) {
+            if (b.getEvento().getEstado() == EstadoEvento.ANULADO) {
+                fallos.add("B1 bloqueo " + b.getId() + " en el partido anulado " + b.getEvento().getId());
+            }
+        }
         for (Apuesta a : misApuestas()) {
             String cual = "apuesta " + a.getId() + " (" + a.getEstado() + ", usuario " + a.getUsuario().getId() + ")";
             // A1
@@ -1058,14 +1156,16 @@ class InvariantesDineroTest {
                 BigDecimal debe = switch (a.getEstado()) {
                     case GANADA -> a.getGananciaPotencial();
                     case ANULADA -> a.getImporte();
+                    case COBRADA -> a.getPagado().signum() >= 0 && a.getPagado().compareTo(a.getGananciaPotencial()) <= 0
+                            ? a.getPagado() : BigDecimal.valueOf(-1);
                     default -> BigDecimal.ZERO;
                 };
                 if (debe.compareTo(a.getPagado()) != 0) {
                     fallos.add("A1 " + cual + ": pagado " + a.getPagado() + " y según su estado debería ser " + debe);
                 }
             }
-            if (a.getEstado() == EstadoApuesta.CANCELADA) {
-                continue; // sus selecciones se quedan como estaban al cancelar
+            if (a.getEstado() == EstadoApuesta.CANCELADA || a.getEstado() == EstadoApuesta.COBRADA) {
+                continue; // sus selecciones se quedan como estaban al cancelarla o cobrarla antes (HU-75)
             }
             // A2: cada selección según su evento o mercado
             boolean fallada = false;

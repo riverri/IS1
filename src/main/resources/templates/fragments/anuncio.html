@@ -7,7 +7,7 @@
     Todo el bloque es un enlace que pasa por /anuncios/{id}/ir, que apunta el clic y lleva a la sección.
 -->
 <a class="anuncio" th:fragment="anuncio(a)"
-   th:href="@{/anuncios/{id}/ir(id=${a.id}, desde=${ruta})}">
+   rel="nofollow" th:href="@{/anuncios/{id}/ir(id=${a.id}, desde=${ruta})}">
     <span class="anuncio-icono" aria-hidden="true" th:if="${a.icono != null}" th:text="${a.icono}">🏆</span>
     <span class="anuncio-texto">
         <strong th:text="${a.titulo}">Apuestas a largo plazo</strong>

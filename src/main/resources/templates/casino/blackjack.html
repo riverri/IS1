@@ -29,6 +29,7 @@
 
             <div class="acciones" th:unless="${mesa.terminada}">
                 <form th:action="@{/casino/blackjack/{id}/pedir(id=${mesa.partidaId})}" method="post">
+                    <input type="hidden" name="cartas" th:value="${#lists.size(mesa.cartasJugador)}">
                     <button class="boton" type="submit">Pedir carta</button>
                 </form>
                 <form th:action="@{/casino/blackjack/{id}/plantarse(id=${mesa.partidaId})}" method="post">
@@ -46,8 +47,9 @@
         </div>
 
         <form class="formulario" th:if="${mesa == null or mesa.terminada}" th:action="@{/casino/blackjack}" method="post">
+            <input type="hidden" name="envio" th:value="${envio}">
             <label for="importe" th:text="'Importe (de ' + ${#numbers.formatDecimal(configuracion.importeMinimo, 1, 'POINT', 2, 'COMMA')} + ' a ' + ${#numbers.formatDecimal(configuracion.importeMaximo, 1, 'POINT', 2, 'COMMA')} + ')'">Importe</label>
-            <input id="importe" name="importe" type="number" step="0.01" min="0.01" th:value="${mesa != null} ? ${mesa.apostado}" required>
+            <input id="importe" name="importe" type="number" step="0.01" min="0.01" th:value="${mesa != null} ? ${mesa.apuestaInicial}" required>
             <div class="acciones-formulario">
                 <button class="boton" type="submit" th:text="${mesa == null} ? 'Repartir' : 'Otra mano'">Repartir</button>
                 <a class="boton boton-secundario" th:href="@{/casino}">Volver</a>

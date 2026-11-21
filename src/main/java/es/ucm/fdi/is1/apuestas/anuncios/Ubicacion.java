@@ -45,6 +45,10 @@ public enum Ubicacion {
         }
         // Sin los parámetros (?…) ni el ancla (#…)
         String camino = ruta.split("[?#]", 2)[0];
+        // Nada de «..», «.» ni barras invertidas: /cuenta/../tema empieza por /cuenta pero el navegador va a /tema
+        if (camino.contains("\\") || Arrays.stream(camino.split("/")).anyMatch(t -> t.equals("..") || t.equals("."))) {
+            return Optional.empty();
+        }
         if (camino.equals("/")) {
             return Optional.of(PORTADA);
         }
