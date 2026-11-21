@@ -58,6 +58,15 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
             where s.evento.id in :eventos and s.apuesta.usuario.id = :usuario and s.apuesta.id <> :apuesta""")
     boolean hayOtrasApuestasDelUsuario(java.util.Collection<Long> eventos, Long usuario, Long apuesta);
 
+    /**
+     * Lo mismo para muchas apuestas a la vez: pares [id de la apuesta, id del evento] de todas las apuestas del
+     * usuario, en cualquier estado, en esos eventos. Con ellos se responde a la pregunta anterior en memoria.
+     */
+    @Query("""
+            select s.apuesta.id, s.evento.id from Seleccion s
+            where s.evento.id in :eventos and s.apuesta.usuario.id = :usuario""")
+    List<Object[]> apuestasDelUsuarioEnEventos(java.util.Collection<Long> eventos, Long usuario);
+
     /** Volumen 1X2 de todos los eventos visibles, para calcular las cuotas de un catálogo en lote. */
     @Query("""
             select s.evento.id, s.pronostico, s.apuesta.usuario.id, s.apuesta.importe, size(s.apuesta.selecciones)

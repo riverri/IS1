@@ -6,7 +6,12 @@
 //   cd a11y && npm install && node e2e.js   (con la aplicación en http://localhost:8080, o la que diga BASE_URL)
 //
 // Recorrido: registrarse y entrar; apostar una simple y ver el saldo; cancelarla y recuperar el importe; combinar dos
-// partidos en el boleto; el creador pone el resultado y la apuesta se cobra; cerrar sesión.
+// partidos en el boleto; el creador pone el resultado y la apuesta se cobra. Después:
+// - el creador da de alta un partido con supercuota, un jugador apuesta con ella y al anularlo se le devuelve;
+// - una liga entre dos jugadores con un bloqueo de 50 monedas que le impide apostar al otro;
+// - una quiniela: se echa un boleto y al anularla se devuelve;
+// - recuperar la contraseña con el enlace del registro (si APP_LOG dice dónde está el registro de la aplicación);
+// y cerrar sesión.
 const { chromium } = require('playwright');
 
 const BASE = process.env.BASE_URL || 'http://localhost:8080';
@@ -51,6 +56,41 @@ async function apostar(pagina, evento, opcion, importe) {
 }
 
 const cerca = (a, b) => Math.abs(a - b) < 0.005;
+
+/** Una página nueva (con su propia sesión) que acepta los «¿Seguro?» de data-confirmar. */
+async function nuevaPagina(navegador) {
+    const pagina = await (await navegador.newContext()).newPage();
+    pagina.on('dialog', d => d.accept());
+    return pagina;
+}
+
+/** Registra un jugador nuevo y entra con él. */
+async function registrar(navegador, nombre, password = 'clave-e2e-123') {
+    const pagina = await nuevaPagina(navegador);
+    const email = `e2e-${nombre.toLowerCase()}-${Date.now()}@ucm.es`;
+    await pagina.goto(BASE + '/registro');
+    await pagina.fill('#nombre', `Prueba ${nombre}`);
+    await pagina.fill('#email', email);
+    await pagina.fill('#password', password);
+    await pagina.fill('#confirmacion', password);
+    await Promise.all([pagina.waitForNavigation(), pagina.click('main button[type=submit]')]);
+    await entrar(pagina, [email, password]);
+    return { pagina, email };
+}
+
+/** El mayor id de los enlaces de la página que encajan con el patrón (lo último creado). */
+async function ultimoId(pagina, ruta, patron) {
+    await pagina.goto(BASE + ruta);
+    const ids = await pagina.$$eval('a', (as, p) => as.map(a => (a.getAttribute('href') || '').match(new RegExp(p)))
+        .filter(Boolean).map(m => Number(m[1])), patron);
+    return ids.length ? Math.max(...ids) : null;
+}
+
+async function textoMain(pagina) {
+    return (await pagina.textContent('main')) || '';
+}
+
+const coma = (n) => n.toFixed(2).replace('.', ',');
 
 (async () => {
     const navegador = await chromium.launch();
@@ -117,6 +157,126 @@ const cerca = (a, b) => Math.abs(a - b) < 0.005;
         await jugador.goto(BASE + '/apuestas');
         comprobar((await jugador.textContent('main')).includes('GANADA'), 'sale como ganada en el historial', 'no sale');
     }
+
+    const creador = await nuevaPagina(navegador);
+    await entrar(creador, CREADOR);
+
+    // 7. Partido nuevo con supercuota; al anularlo se devuelve lo apostado
+    const idsDe = async () => {
+        await creador.goto(BASE + '/gestion');
+        return new Set(await creador.$$eval('a', as => as.map(a => ((a.getAttribute('href') || '')
+            .match(/^\/gestion\/eventos\/(\d+)$/) || [])[1]).filter(Boolean)));
+    };
+    const antesAlta = await idsDe();
+    await creador.goto(BASE + '/gestion/eventos/nuevo');
+    const ligaId = await creador.$$eval('#competicionId option', os => (os.find(o => o.textContent.includes('LaLiga')) || os[1]).value);
+    await creador.selectOption('#competicionId', ligaId);
+    const pareja = await creador.$$eval('#localId option', os => ['Getafe CF', 'Sevilla FC']
+        .map(n => (os.find(o => o.textContent.trim() === n) || {}).value));
+    await creador.selectOption('#localId', pareja[0]);
+    await creador.selectOption('#visitanteId', pareja[1]);
+    // Una fecha al azar entre 20 y 50 días, para no repetir un partido de otra ejecución
+    const dia = new Date(Date.now() + (20 + Math.floor(Math.random() * 30)) * 86400000).toISOString().slice(0, 10);
+    const hora = `${String(10 + Math.floor(Math.random() * 12)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`;
+    await creador.fill('#fechaHora', `${dia}T${hora}`);
+    await Promise.all([creador.waitForNavigation(), creador.click('main form button[type=submit]')]);
+    const creado = (await textoMain(creador)).includes('Evento creado');
+    const nuevo = creado ? [...await idsDe()].find(id => !antesAlta.has(id)) : null;
+    comprobar(nuevo, 'el creador da de alta un partido', creado ? 'no aparece en el panel' : await textoMain(creador));
+    if (nuevo) {
+        await jugador.goto(`${BASE}/eventos/${nuevo}/apostar`);
+        const normal = Number(await jugador.getAttribute('input[name=opcion][value=LOCAL]', 'data-cuota'));
+        const mejorada = Math.floor(normal * 150) / 100;
+        await creador.goto(`${BASE}/gestion/eventos/${nuevo}`);
+        await creador.selectOption('form.alerta-cuota select[name=resultado]', 'LOCAL');
+        await creador.fill('form.alerta-cuota input[name=cuota]', mejorada.toFixed(2));
+        await Promise.all([creador.waitForNavigation(), creador.click('form.alerta-cuota button[type=submit]')]);
+        comprobar((await textoMain(creador)).includes('Vigente'), `supercuota publicada (${coma(normal)} → ${coma(mejorada)})`,
+            await textoMain(creador));
+        const antesSuper = await saldo(jugador);
+        await apostar(jugador, nuevo, 'LOCAL', 10);
+        comprobar((await textoMain(jugador)).includes(coma(mejorada)), 'la apuesta se acepta con la supercuota', jugador.url());
+        await creador.goto(`${BASE}/gestion/eventos/${nuevo}`);
+        await Promise.all([creador.waitForNavigation(), creador.click(`form[action$="/gestion/eventos/${nuevo}/anular"] button`)]);
+        comprobar(cerca(await saldo(jugador), antesSuper), 'al anular el partido se devuelve lo apostado', `saldo ${await saldo(jugador)}`);
+    }
+
+    // 8. Liga entre dos jugadores con un bloqueo
+    const otro = await registrar(navegador, 'Liga');
+    await jugador.goto(BASE + '/ligas');
+    await jugador.fill('#nombre', 'Liga E2E');
+    await Promise.all([jugador.waitForNavigation(), jugador.click('form[action$="/ligas"] button[type=submit]')]);
+    const codigo = ((await jugador.textContent('main')).match(/código ([A-Z0-9]{4,10})/i) || [])[1]
+        || (await jugador.textContent('.codigo-liga').catch(() => '')).trim();
+    comprobar(codigo, `liga creada con su código (${codigo})`, jugador.url());
+    await otro.pagina.goto(BASE + '/ligas');
+    await otro.pagina.fill('#codigo', codigo || '');
+    await Promise.all([otro.pagina.waitForNavigation(), otro.pagina.click('form[action$="/ligas/unirse"] button[type=submit]')]);
+    comprobar((await textoMain(otro.pagina)).includes('Te has unido'), 'el otro jugador se une con el código', await textoMain(otro.pagina));
+    const ligaPropia = await ultimoId(jugador, '/ligas', '^/ligas/(\\d+)$');
+    await jugador.goto(`${BASE}/ligas/${ligaPropia}`);
+    const partidoBloqueado = await jugador.$eval('#evento-bloqueo option[value]:not([value=""])', o => o.value);
+    const antesBloqueo = await saldo(jugador);
+    await jugador.goto(`${BASE}/ligas/${ligaPropia}`);
+    await jugador.selectOption('#evento-bloqueo', partidoBloqueado);
+    await jugador.selectOption('#alcance-amigo', 'LOCAL');
+    await Promise.all([jugador.waitForNavigation(), jugador.click('button[data-confirmar^="El bloqueo cuesta 50"]')]);
+    comprobar(cerca(await saldo(jugador), antesBloqueo - 50), 'el bloqueo cuesta 50 monedas', `saldo ${await saldo(jugador)}`);
+    await apostar(otro.pagina, partidoBloqueado, 'LOCAL', 5);
+    comprobar((await textoMain(otro.pagina)).includes('bloqueada'), 'el bloqueado no puede apostar a esa selección',
+        otro.pagina.url());
+
+    // 9. Quiniela: echar un boleto y, al anularla, recuperarlo
+    await creador.goto(BASE + '/gestion/quinielas');
+    const marcables = await creador.$$('input[name=eventos]');
+    if (marcables.length < 3) {
+        fallo('quiniela', `hacen falta 3 partidos con empate y hay ${marcables.length}`);
+    } else {
+        for (const casilla of marcables.slice(0, 3)) {
+            await casilla.check();
+        }
+        await creador.fill('#nombre', `Quiniela E2E ${Date.now()}`);
+        await creador.fill('#precio', '2');
+        await Promise.all([creador.waitForNavigation(), creador.click('form[action$="/gestion/quinielas"] button[type=submit]')]);
+        comprobar((await textoMain(creador)).includes('creada con 3 partidos'), 'el creador monta una quiniela', await textoMain(creador));
+        const quiniela = await ultimoId(jugador, '/quinielas', '^/quinielas/(\\d+)$');
+        await jugador.goto(`${BASE}/quinielas/${quiniela}`);
+        const antesQuiniela = await saldo(jugador);
+        await jugador.goto(`${BASE}/quinielas/${quiniela}`);
+        for (const casilla of await jugador.$$('input[type=radio][value=LOCAL]')) {
+            await casilla.check({ force: true });
+        }
+        await Promise.all([jugador.waitForNavigation(), jugador.click('text=Echar el boleto')]);
+        comprobar(cerca(await saldo(jugador), antesQuiniela - 2), 'el boleto cuesta 2 monedas', `saldo ${await saldo(jugador)}`);
+        await creador.goto(BASE + '/gestion/quinielas');
+        await Promise.all([creador.waitForNavigation(),
+            creador.click(`form[action$="/gestion/quinielas/${quiniela}/anular"] button`)]);
+        comprobar(cerca(await saldo(jugador), antesQuiniela), 'al anular la quiniela se devuelve el boleto', `saldo ${await saldo(jugador)}`);
+    }
+
+    // 10. Recuperar la contraseña con el enlace que se escribe en el registro (sin servidor de correo)
+    if (process.env.APP_LOG) {
+        const sinSesion = await nuevaPagina(navegador);
+        await sinSesion.goto(BASE + '/recuperar');
+        await sinSesion.fill('#email', otro.email);
+        await Promise.all([sinSesion.waitForNavigation(), sinSesion.click('main button[type=submit]')]);
+        await sinSesion.waitForTimeout(500);
+        const registro = require('fs').readFileSync(process.env.APP_LOG, 'utf8');
+        const enlace = (registro.match(new RegExp(`recuperar la contraseña de ${otro.email.replace(/[.+]/g, '\\$&')}: (\\S+)`)) || [])[1];
+        comprobar(enlace, 'el enlace de recuperar sale en el registro', 'no está en ' + process.env.APP_LOG);
+        if (enlace) {
+            const destino = new URL(enlace);
+            await sinSesion.goto(BASE + destino.pathname + destino.search);
+            await sinSesion.fill('#nueva', 'otra-clave-e2e-456');
+            await sinSesion.fill('#confirmacion', 'otra-clave-e2e-456');
+            await Promise.all([sinSesion.waitForNavigation(), sinSesion.click('main button[type=submit]')]);
+            await entrar(sinSesion, [otro.email, 'otra-clave-e2e-456']);
+            comprobar(!sinSesion.url().includes('/login'), 'entra con la contraseña nueva', sinSesion.url());
+        }
+    } else {
+        console.log('  (sin APP_LOG: no se prueba recuperar la contraseña)');
+    }
+    await creador.context().close();
 
     // 6. Cerrar sesión
     await Promise.all([jugador.waitForNavigation(), jugador.click('form[action$="/logout"] button')]);

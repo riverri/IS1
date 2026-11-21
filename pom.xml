@@ -250,6 +250,17 @@
                                 <param>es.ucm.fdi.is1.apuestas.usuarios.Usuario</param>
                                 <param>es.ucm.fdi.is1.apuestas.usuarios.NombresProhibidos*</param>
                                 <param>es.ucm.fdi.is1.apuestas.web.Formato*</param>
+                                <param>es.ucm.fdi.is1.apuestas.web.Csv</param>
+                                <param>es.ucm.fdi.is1.apuestas.web.Monedas</param>
+                                <param>es.ucm.fdi.is1.apuestas.config.LimitePeticiones</param>
+                                <param>es.ucm.fdi.is1.apuestas.config.IdPeticion</param>
+                                <param>es.ucm.fdi.is1.apuestas.prediccion.Lmsr*</param>
+                                <param>es.ucm.fdi.is1.apuestas.casino.ApuestaRuleta*</param>
+                                <param>es.ucm.fdi.is1.apuestas.casino.ManoBlackjack*</param>
+                                <param>es.ucm.fdi.is1.apuestas.casino.ManoBaccarat*</param>
+                                <param>es.ucm.fdi.is1.apuestas.anuncios.Anuncio</param>
+                                <param>es.ucm.fdi.is1.apuestas.cripto.PosicionCripto</param>
+                                <param>es.ucm.fdi.is1.apuestas.usuarios.MovimientoSaldo</param>
                             </targetClasses>
                             <targetTests>
                                 <param>es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotasTest</param>
@@ -261,6 +272,17 @@
                                 <param>es.ucm.fdi.is1.apuestas.usuarios.UsuarioTest</param>
                                 <param>es.ucm.fdi.is1.apuestas.usuarios.NombresProhibidosTest</param>
                                 <param>es.ucm.fdi.is1.apuestas.web.FormatoTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.web.CsvTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.web.MonedasTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.config.LimitePeticionesTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.config.IdPeticionTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.prediccion.LmsrTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.casino.RuletaTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.casino.ManoBlackjackTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.casino.ManoBaccaratTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.anuncios.AnuncioTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.cripto.PosicionCriptoTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.usuarios.MovimientoSaldoTest</param>
                             </targetTests>
                             <outputFormats>
                                 <outputFormat>HTML</outputFormat>

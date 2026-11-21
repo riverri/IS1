@@ -203,9 +203,10 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
   - el análisis estático (SpotBugs, que falla con los errores de prioridad alta).
   - Además, en la CI:
     - **Pruebas de mutación (PIT):** `./mvnw -Pmutacion test-compile org.pitest:pitest-maven:mutationCoverage -Djacoco.skip=true`, que exige que las pruebas detecten al menos el 80 % de los cambios (informe en `target/pit-reports/index.html`).
+    - **Número de consultas:** `ConsultasWebTest` falla si el catálogo, *Mis apuestas*, el ranking, el panel o *Mis movimientos* hacen una consulta a la base de datos por cada fila.
     - **En un navegador real**, con la aplicación arrancada, desde la carpeta `a11y` (`npm install` la primera vez):
       - `node comprobar.js` (accesibilidad);
-      - `node e2e.js` (de principio a fin: registrarse, apostar, cancelar, combinada, el creador pone el resultado y se cobra, salir).
+      - `node e2e.js` (de principio a fin: registrarse, apostar, cancelar, combinada, resolver y cobrar, supercuota, anular un partido, liga con bloqueo, quiniela y recuperar la contraseña; para lo último, `APP_LOG=../ruta/al/registro`).
   - Dependabot abre cada mes un PR si sale una versión nueva de una dependencia, y enseguida si la que usamos tiene un fallo de seguridad conocido.
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
 - **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Las tablas las crea y actualiza **Flyway** (ver más abajo), así que al actualizar el proyecto no hace falta borrarla. Para empezar de cero, para la aplicación y borra esa carpeta.

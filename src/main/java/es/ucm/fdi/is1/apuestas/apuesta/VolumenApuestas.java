@@ -72,6 +72,14 @@ class VolumenApuestas implements VolumenApostado {
 
     /** Volumen por evento, consultado en una sola operación para las cuotas de un listado de partidos. */
     Map<Long, Map<Resultado, BigDecimal>> importes(List<Evento> eventos) {
+        return importes(eventos, null);
+    }
+
+    /**
+     * Lo mismo sin lo apostado por un usuario (como {@link #importes(Evento, Long)}): las ofertas de cobro
+     * anticipado de todas sus apuestas con una sola consulta.
+     */
+    Map<Long, Map<Resultado, BigDecimal>> importes(List<Evento> eventos, Long usuarioExcluido) {
         if (eventos.isEmpty()) {
             return Map.of();
         }
@@ -79,6 +87,9 @@ class VolumenApuestas implements VolumenApostado {
         }
         Map<Clave, BigDecimal> porUsuario = new HashMap<>();
         for (Object[] fila : selecciones.seleccionesActivasPorPronosticoDeEventos(eventos)) {
+            if (usuarioExcluido != null && usuarioExcluido.equals(fila[2])) {
+                continue;
+            }
             BigDecimal parte = ((BigDecimal) fila[3])
                     .divide(BigDecimal.valueOf(((Number) fila[4]).longValue()), MathContext.DECIMAL64);
             porUsuario.merge(new Clave((Long) fila[0], (Resultado) fila[1], (Long) fila[2]), parte, BigDecimal::add);
