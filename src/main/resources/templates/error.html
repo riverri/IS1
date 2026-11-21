@@ -9,6 +9,10 @@
         <th:block th:switch="${status}">
             <h1 th:case="403">No tienes permiso para ver esta página</h1>
             <h1 th:case="404">Página no encontrada</h1>
+            <th:block th:case="429">
+                <h1>Demasiados intentos</h1>
+                <p>Se han enviado muchos formularios desde tu conexión en poco tiempo. Espera unos minutos y vuelve a intentarlo.</p>
+            </th:block>
             <h1 th:case="*">Algo ha ido mal</h1>
         </th:block>
         <a class="boton" th:href="@{/eventos}">Ir al catálogo</a>

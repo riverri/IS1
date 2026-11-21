@@ -203,6 +203,9 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
 - **Consola de la base de datos:** http://localhost:8080/h2-console, solo con la sesión del creador de apuestas iniciada (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
 - **Reglas que conviene conocer:**
   - Tras 5 contraseñas incorrectas seguidas, la cuenta queda bloqueada 15 minutos.
+  - Desde una misma conexión (IP) se pueden enviar como mucho 10 registros y 10 peticiones de recuperar la contraseña cada 15 minutos; después sale «Demasiados intentos» (se cambia con `apuestas.limite-peticiones.maximo` y `apuestas.limite-peticiones.ventana`).
+  - Las páginas llevan cabeceras de seguridad (política de contenido CSP, Referrer-Policy y Permissions-Policy): el navegador no carga scripts de otras webs ni envía formularios fuera.
+  - En las exportaciones CSV, un texto que empieza por `=`, `+`, `-` o `@` lleva delante un apóstrofo, para que Excel no lo ejecute como fórmula.
   - Al cambiar la contraseña o dar de baja la cuenta se cierran las sesiones abiertas en otros dispositivos.
   - Una combinada no puede pasar de una cuota total de 1.000.
   - El creador de apuestas no puede apostar.
