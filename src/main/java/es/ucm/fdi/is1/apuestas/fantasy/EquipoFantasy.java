@@ -135,26 +135,30 @@ public class EquipoFantasy {
         return null;
     }
 
-    /** @throws IllegalArgumentException si no se puede (ver {@link #motivoParaNoFichar}) */
-    FichajeFantasy fichar(Jugador jugador, LocalDateTime ahora) {
+    /**
+     * @param desde desde cuándo suma (ver {@link FantasyService.Jornada#efecto})
+     * @throws IllegalArgumentException si no se puede (ver {@link #motivoParaNoFichar})
+     */
+    FichajeFantasy fichar(Jugador jugador, LocalDateTime desde) {
         String motivo = motivoParaNoFichar(jugador);
         if (motivo != null) {
             throw new IllegalArgumentException(motivo);
         }
-        FichajeFantasy fichaje = new FichajeFantasy(this, jugador, precio(jugador), ahora);
+        FichajeFantasy fichaje = new FichajeFantasy(this, jugador, precio(jugador), desde);
         fichajes.add(fichaje);
         return fichaje;
     }
 
     /**
-     * Vende a un jugador: se recupera lo que costó y deja de sumar puntos.
+     * Vende a un jugador: se recupera lo que costó, deja su hueco libre y deja de sumar puntos a partir de
+     * {@code hasta} (ver {@link FantasyService.Jornada#efecto}).
      *
      * @throws IllegalArgumentException si no está en el equipo
      */
-    FichajeFantasy vender(Long jugadorId, LocalDateTime ahora) {
+    FichajeFantasy vender(Long jugadorId, LocalDateTime hasta) {
         FichajeFantasy fichaje = getPlantilla().stream().filter(f -> f.esDe(jugadorId))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Ese jugador no está en tu equipo"));
-        fichaje.vender(ahora);
+        fichaje.vender(hasta);
         return fichaje;
     }
 
@@ -163,10 +167,10 @@ public class EquipoFantasy {
      *
      * @throws IllegalArgumentException si no está en el equipo
      */
-    FichajeFantasy venderFichaje(Long fichajeId, LocalDateTime ahora) {
+    FichajeFantasy venderFichaje(Long fichajeId, LocalDateTime hasta) {
         FichajeFantasy fichaje = getPlantilla().stream().filter(f -> f.getId().equals(fichajeId))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Ese jugador no está en tu equipo"));
-        fichaje.vender(ahora);
+        fichaje.vender(hasta);
         return fichaje;
     }
 

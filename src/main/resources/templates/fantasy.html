@@ -15,6 +15,11 @@
             + ${maximoPorClub} + ' del mismo club. Suman puntos con los partidos que juega su equipo después de ficharlos. Es gratis: no se juegan moneditas.'">
         Reglas</p>
 
+    <p class="aviso" th:if="${jornada.empezada}"
+       th:text="'La jornada ya ha empezado: lo que fiches ahora suma desde el lunes ' + ${#temporals.format(jornada.fin, 'd/M')} + ' y lo que vendas sigue sumando hasta entonces.'">Jornada empezada</p>
+    <p class="aviso" th:if="${!jornada.empezada and jornada.plazo != null}"
+       th:text="'Los cambios cuentan para esta jornada hasta el primer partido, el ' + ${#temporals.format(jornada.plazo, 'd/M')} + ' a las ' + ${#temporals.format(jornada.plazo, 'HH:mm')} + '.'">Plazo</p>
+
     <!-- Sin equipo: formulario para crearlo (CA-81.1) -->
     <form class="tarjeta formulario" th:if="${equipo == null and !usuarioActual.creador}" th:action="@{/fantasy/crear}" method="post">
         <h2>Crea tu equipo</h2>
@@ -43,6 +48,8 @@
                     <th:block th:if="${h.ocupante != null}" th:with="f=${h.ocupante.fichaje}">
                         <td>
                             <strong th:text="${f.nombreJugador}">Hugo Arranz</strong>
+                            <small class="aviso" th:if="${!f.desde.isBefore(jornada.fin)}"
+                                   th:text="'Suma desde el lunes ' + ${#temporals.format(f.desde, 'd/M')}">Suma desde el lunes</small>
                             <details th:unless="${#lists.isEmpty(h.ocupante.partidos)}">
                                 <summary th:text="${#lists.size(h.ocupante.partidos)} + ' partidos'">2 partidos</summary>
                                 <small class="aviso" th:each="pp : ${h.ocupante.partidos}"
@@ -95,6 +102,7 @@
             <li>Cada gol de su equipo: delantero +2, centrocampista +1.</li>
             <li>Si su equipo encaja 3 o más: portero y defensa −1.</li>
             <li>Solo cuentan los partidos que empiezan cuando el jugador ya está en tu equipo. Si lo vendes, lo que sumó se queda.</li>
+            <li>Las jornadas van de lunes a domingo. Hasta el primer partido de la jornada, los cambios cuentan enseguida; después, cuentan desde la jornada siguiente: el que fichas suma desde el lunes y el que vendes sigue sumando lo que queda de jornada. Así nadie suma en un mismo hueco los partidos de dos jugadores en la misma jornada.</li>
         </ul>
     </details>
 </main>

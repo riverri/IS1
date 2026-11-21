@@ -2,6 +2,7 @@ package es.ucm.fdi.is1.apuestas.fantasy;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.equipos.Jugador;
 import es.ucm.fdi.is1.apuestas.equipos.Posicion;
+import es.ucm.fdi.is1.apuestas.fantasy.FantasyService.Jornada;
 import es.ucm.fdi.is1.apuestas.fantasy.FantasyService.PuntosFichaje;
 
 /** Páginas de la liga fantasy (HU-81 a HU-83). Hace falta haber iniciado sesión (ver SeguridadConfig). */
 @Controller
 public class FantasyController {
+
+    /** Día y mes, para el lunes en que empieza la jornada siguiente. */
+    private static final DateTimeFormatter DIA = DateTimeFormatter.ofPattern("d/M");
 
     private final FantasyService fantasy;
 
@@ -44,6 +49,7 @@ public class FantasyController {
         model.addAttribute("clasificacion", fantasy.clasificacion(principal.getName()));
         model.addAttribute("presupuesto", EquipoFantasy.PRESUPUESTO);
         model.addAttribute("maximoPorClub", EquipoFantasy.MAXIMO_POR_CLUB);
+        model.addAttribute("jornada", fantasy.jornada());
         if (equipo.isEmpty()) {
             model.addAttribute("equipo", null);
             return "fantasy";
@@ -74,6 +80,7 @@ public class FantasyController {
             return "redirect:/fantasy";
         }
         model.addAttribute("equipo", equipo.get());
+        model.addAttribute("jornada", fantasy.jornada());
         model.addAttribute("ofertas", fantasy.mercado(posicion, club).stream()
                 .map(j -> new Oferta(j, EquipoFantasy.precio(j), equipo.get().motivoParaNoFichar(j))).toList());
         model.addAttribute("posiciones", Posicion.values());
@@ -105,7 +112,10 @@ public class FantasyController {
                          RedirectAttributes redireccion) {
         try {
             FichajeFantasy fichaje = fantasy.fichar(principal.getName(), jugador);
-            redireccion.addFlashAttribute("mensaje", "Has fichado a " + fichaje.getNombreJugador() + ".");
+            Jornada jornada = fantasy.jornada();
+            redireccion.addFlashAttribute("mensaje", "Has fichado a " + fichaje.getNombreJugador() + "."
+                    + (jornada.empezada() ? " Como la jornada ya ha empezado, suma desde el lunes "
+                    + DIA.format(jornada.fin()) + "." : ""));
             if (fichaje.getEquipo().isCompleto()) {
                 return "redirect:/fantasy";
             }
@@ -128,8 +138,10 @@ public class FantasyController {
         try {
             FichajeFantasy vendido = fichaje != null ? fantasy.venderFichaje(principal.getName(), fichaje)
                     : fantasy.vender(principal.getName(), jugador);
+            Jornada jornada = fantasy.jornada();
             redireccion.addFlashAttribute("mensaje", "Has vendido a " + vendido.getNombreJugador()
-                    + ". Los puntos que hizo contigo se quedan.");
+                    + ". Los puntos que hizo contigo se quedan."
+                    + (jornada.empezada() ? " Como la jornada ya ha empezado, sigue sumando hasta que acabe." : ""));
         } catch (IllegalArgumentException | IllegalStateException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }
