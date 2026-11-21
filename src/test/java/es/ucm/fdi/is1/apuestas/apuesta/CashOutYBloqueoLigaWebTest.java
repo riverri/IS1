@@ -269,6 +269,23 @@ class CashOutYBloqueoLigaWebTest {
         assertThat(ofertaDe(sinSupercuota)).isNotNull();
     }
 
+    @Test
+    void siUnPartidoSeSuspendeOSeAnulaNoSeOfreceCobrar() {
+        // CA-75.2
+        Apuesta combinada = combinadaDeAna();
+        Apuesta simple = apuestas.apostar(ANA, baloncesto.getId(), Resultado.LOCAL, new BigDecimal("10"));
+        assertThat(ofertaDe(combinada)).isNotNull();
+
+        resolucion.suspender(futbol.getId());
+        assertThat(ofertaDe(combinada)).isNull();
+        assertThatThrownBy(() -> apuestas.cobrarAnticipado(ANA, combinada.getId(), new BigDecimal("20.00")))
+                .isInstanceOf(IllegalStateException.class);
+        assertThat(ofertaDe(simple)).as("la simple de otro partido sigue").isNotNull();
+
+        resolucion.anular(baloncesto.getId());
+        assertThat(ofertaDe(simple)).as("anulada: ya no está activa").isNull();
+    }
+
     // --- #136: lo pagado por los bloqueos ---
 
     private BigDecimal saldoDe(String email) {
