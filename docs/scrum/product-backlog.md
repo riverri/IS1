@@ -74,7 +74,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 50 | Logros en el perfil público (HU-88) | ¼ sprint | 5 (HU-88) | 3 | C | | Integrada (Sprint 5) |
 | 51 | Reto 1 contra 1 entre compañeros de liga, sin comisión de la casa (HU-89). *Depende de la fila 33* | ¼ sprint | 5 (HU-89) | 4 | C | | Integrada (Sprint 5) |
 | 52 | Resumen semanal por correo, desactivable en Mi cuenta (HU-92). *Depende de la fila 44* | ¼ sprint | 3 (HU-92) | 3 | C | | Integrada (Sprint 5) |
-| 53 | Exportar mis apuestas y mis movimientos en CSV (HU-93) | ¼ sprint | 2 (HU-93) | 3 | C | | Integrada (Sprint 5) |
+| 53 | Exportar mis apuestas y mis movimientos en CSV (HU-114) | ¼ sprint | 2 (HU-114) | 3 | C | | Integrada (Sprint 5) |
 | 54 | Modo oscuro, recordado en una cookie (HU-94) | ¼ sprint | 2 (HU-94) | 3 | C | | Integrada (Sprint 5) |
 | 55 | Beneficio de la casa en cada uno de los últimos 30 días (HU-95). *Depende de la fila 35* | ¼ sprint | 3 (HU-95) | 4 | C | | Integrada (Sprint 5) |
 | 56 | Mis estadísticas por competición en Mis apuestas (HU-96) | ¼ sprint | 2 (HU-96) | 3 | C | | Integrada (Sprint 5) |
