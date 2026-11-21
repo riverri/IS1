@@ -1090,7 +1090,9 @@ tbody tr:hover { background: #f8fafc; }
 main.acceso {
     max-width: 940px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, 1fr) y no 1fr: una columna 1fr no se estrecha por debajo de su contenido más ancho, y en un móvil
+       de 320 px el panel se salía 12 px por la derecha (CA-99.3) */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0;
     align-items: stretch;
     padding-top: 40px;
@@ -1174,7 +1176,7 @@ main.acceso > .tarjeta { border-radius: 0 var(--radio) var(--radio) 0; box-shado
     .portada-interior { grid-template-columns: 1fr; gap: 28px; }
     .pie-interior { grid-template-columns: 1fr 1fr; }
     .pie-marca { grid-column: 1 / -1; }
-    main.acceso { grid-template-columns: 1fr; }
+    main.acceso { grid-template-columns: minmax(0, 1fr); }
     .acceso-panel { border-radius: var(--radio) var(--radio) 0 0; padding: 28px 24px; }
     .acceso-panel h2 { font-size: 1.5rem; }
     main.acceso > .tarjeta { border-radius: 0 0 var(--radio) var(--radio); }

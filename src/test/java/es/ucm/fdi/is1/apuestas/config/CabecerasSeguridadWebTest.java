@@ -39,6 +39,25 @@ class CabecerasSeguridadWebTest {
     }
 
     @Test
+    void laPoliticaNoPermiteScriptsDentroDeLasPaginasSalvoEnLaConsolaDeH2() throws Exception {
+        org.assertj.core.api.Assertions.assertThat(SeguridadConfig.CSP).contains("script-src 'self';")
+                .doesNotContain("script-src 'self' 'unsafe-inline'");
+        mvc.perform(get("/h2-console/").with(org.springframework.security.test.web.servlet.request
+                        .SecurityMockMvcRequestPostProcessors.user("creador@apuestas.es").roles("CREADOR")))
+                .andExpect(header().string("Content-Security-Policy", SeguridadConfig.CSP_CONSOLA_H2));
+        org.assertj.core.api.Assertions.assertThat(SeguridadConfig.CSP_CONSOLA_H2).contains("script-src 'self' 'unsafe-inline';");
+    }
+
+    @Test
+    void laPaginaDeErrorEnsenaElCodigoDeLaPeticion() throws Exception {
+        mvc.perform(get("/error").requestAttr(IdPeticion.ATRIBUTO, "abc123def456")
+                        .requestAttr(jakarta.servlet.RequestDispatcher.ERROR_STATUS_CODE, 500)
+                        .accept(org.springframework.http.MediaType.TEXT_HTML))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .string(org.hamcrest.Matchers.containsString("di este código: <code>abc123def456</code>")));
+    }
+
+    @Test
     void alTercerRegistroSeguidoDesdeLaMismaIpResponde429() throws Exception {
         for (int i = 0; i < 2; i++) {
             mvc.perform(post("/registro").with(csrf()).with(peticion -> {

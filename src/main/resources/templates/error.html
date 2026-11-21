@@ -15,6 +15,7 @@
             </th:block>
             <h1 th:case="*">Algo ha ido mal</h1>
         </th:block>
+        <p class="nota" th:if="${peticion != null and status != 404}">Si avisas del error, di este código: <code th:text="${peticion}">3f9a1c2b7d10</code></p>
         <a class="boton" th:href="@{/eventos}">Ir al catálogo</a>
     </div>
 </main>

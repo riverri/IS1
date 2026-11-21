@@ -69,7 +69,7 @@
     <th:block th:if="${mercado.estado.name() != 'ANULADO'}">
         <h2 th:text="${mercado.ganador == null} ? 'Marcar ganador' : 'Corregir ganador'">Marcar ganador</h2>
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/gestion/mercados/{id}/ganador(id=${mercado.id})}" method="post"
-              th:attr="onsubmit=${abierto} ? 'return confirm(\'El mercado sigue abierto. ¿Marcar el ganador igualmente?\');' : null">
+              th:attr="data-confirmar=${abierto} ? 'El mercado sigue abierto. ¿Marcar el ganador igualmente?' : null">
             <p class="aviso" th:if="${mercado.ganador != null}">Si cambias el ganador, las apuestas se vuelven a resolver y los saldos se ajustan.</p>
             <label for="candidato">Ganador</label>
             <select id="candidato" name="candidato" required>
@@ -88,7 +88,7 @@
         </form>
         <form th:if="${mercado.estado.name() == 'ABIERTO' or mercado.estado.name() == 'CERRADO'}"
               th:action="@{/gestion/mercados/{id}/anular(id=${mercado.id})}" method="post"
-              onsubmit="return confirm('¿Anular el mercado? Se devolverá el importe de todas las apuestas.');">
+              data-confirmar="¿Anular el mercado? Se devolverá el importe de todas las apuestas.">
             <button class="boton boton-peligro" type="submit">Anular mercado</button>
         </form>
         <p class="aviso" th:if="${mercado.estado.name() == 'RESUELTO' or mercado.estado.name() == 'ANULADO'}">

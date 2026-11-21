@@ -46,7 +46,7 @@
                         <button class="enlace" type="submit">Repartir el bote</button>
                     </form>
                     <form th:if="${r.quiniela.estado.name() == 'ABIERTA'}" th:action="@{/gestion/quinielas/{id}/anular(id=${r.quiniela.id})}" method="post" class="en-linea"
-                          onsubmit="return confirm('¿Anular la quiniela y devolver el precio de todos los boletos?')">
+                          data-confirmar="¿Anular la quiniela y devolver el precio de todos los boletos?">
                         <button class="enlace" type="submit">Anular</button>
                     </form>
                 </td>

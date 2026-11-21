@@ -97,7 +97,7 @@
                 Tienes las apuestas en pausa hasta el 09/10/2026 a las 18:00.</p>
             <p class="aviso">Durante la pausa no podrás apostar. No se puede cancelar antes de tiempo.</p>
             <form class="acciones" th:action="@{/cuenta/pausa}" method="post"
-                  onsubmit="return confirm('¿Seguro? Durante la pausa no podrás apostar y no se puede cancelar.');">
+                  data-confirmar="¿Seguro? Durante la pausa no podrás apostar y no se puede cancelar.">
                 <button class="boton boton-secundario" type="submit" name="dias" value="1">1 día</button>
                 <button class="boton boton-secundario" type="submit" name="dias" value="7">7 días</button>
                 <button class="boton boton-secundario" type="submit" name="dias" value="30">30 días</button>
@@ -109,7 +109,7 @@
     <th:block th:unless="${usuario.creador}">
         <h2 id="eliminar-cuenta">Eliminar cuenta</h2>
         <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/eliminar}" method="post"
-              onsubmit="return confirm('¿Eliminar tu cuenta? No se puede deshacer.');">
+              data-confirmar="¿Eliminar tu cuenta? No se puede deshacer.">
             <p role="alert" class="alerta alerta-error" th:if="${errorBaja}" th:text="${errorBaja}">La contraseña no es correcta</p>
             <p class="aviso">Se borran tu email, tu nombre y tus avisos, y pierdes tu saldo. Las apuestas que aún no han empezado se cancelan. No se puede deshacer.</p>
             <label for="password-baja">Contraseña</label>

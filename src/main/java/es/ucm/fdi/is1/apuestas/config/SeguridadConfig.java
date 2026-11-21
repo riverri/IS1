@@ -9,7 +9,12 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.DelegatingRequestMatcherHeaderWriter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import es.ucm.fdi.is1.apuestas.usuarios.RecargaAlEntrarHandler;
@@ -30,14 +35,24 @@ public class SeguridadConfig {
 
     /**
      * Content-Security-Policy: de dónde puede cargar cosas la página. Si alguien consiguiera colar HTML en una
-     * página (por ejemplo en el nombre de un equipo), el navegador no cargaría scripts ni estilos de otra web ni
-     * enviaría formularios fuera. Los scripts y estilos van dentro de las plantillas (los avisos de confirmación,
-     * el modo oscuro…), por eso se permite 'unsafe-inline'. Las imágenes pueden venir de fuera: escudos de la API
-     * de fútbol, logotipos de criptomonedas y anuncios.
+     * página (por ejemplo en el nombre de un equipo), el navegador no ejecutaría ningún script suyo: solo los
+     * archivos de /js de la propia web (script-src 'self'), ni scripts dentro del HTML ni atributos onclick. Por eso
+     * las plantillas no llevan JavaScript dentro (lo comprueba PlantillasSinScriptsTest); las confirmaciones van en
+     * data-confirmar y las atiende js/comun.js. Los estilos sí admiten 'unsafe-inline': unas pocas barras calculan
+     * su ancho en el servidor (th:style) y un estilo no puede ejecutar código. Las imágenes pueden venir de fuera:
+     * escudos de la API de fútbol, logotipos de criptomonedas y anuncios.
      */
-    static final String CSP = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+    static final String CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
             + "img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; "
             + "object-src 'none'; base-uri 'self'; form-action 'self'";
+
+    /**
+     * La consola de H2 (solo en local; en el servidor está apagada) es de H2 y lleva scripts dentro de sus páginas:
+     * para ella se mantiene la política anterior, que los permite.
+     */
+    private static final RequestMatcher CONSOLA_H2 = PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**");
+
+    static final String CSP_CONSOLA_H2 = CSP.replace("script-src 'self';", "script-src 'self' 'unsafe-inline';");
 
     /** Permissions-Policy: la web no usa cámara, micrófono, ubicación ni pagos, así que se desactivan. */
     static final String PERMISOS = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
@@ -103,7 +118,11 @@ public class SeguridadConfig {
                 // enlace (Referrer-Policy) y desactivar permisos del navegador que no se usan
                 .headers(cabeceras -> cabeceras
                         .frameOptions(opciones -> opciones.sameOrigin())
-                        .contentSecurityPolicy(csp -> csp.policyDirectives(CSP))
+                        // Una política para la consola de H2 y otra, la estricta, para todo lo demás
+                        .addHeaderWriter(new DelegatingRequestMatcherHeaderWriter(new NegatedRequestMatcher(CONSOLA_H2),
+                                new StaticHeadersWriter("Content-Security-Policy", CSP)))
+                        .addHeaderWriter(new DelegatingRequestMatcherHeaderWriter(CONSOLA_H2,
+                                new StaticHeadersWriter("Content-Security-Policy", CSP_CONSOLA_H2)))
                         .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                         .permissionsPolicyHeader(permisos -> permisos.policy(PERMISOS)));
         // Construye la cadena de filtros con todas las reglas anteriores
