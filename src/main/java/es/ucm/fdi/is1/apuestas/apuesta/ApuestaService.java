@@ -390,7 +390,7 @@ public class ApuestaService {
         return apuestas.findByUsuarioAndEstadoOrderByFechaDesc(usuario, EstadoApuesta.ACTIVA);
     }
 
-    /** Ofertas informativas de HU-102 para combinadas futuras; el cobro requiere una historia posterior. */
+    /** Ofertas de cobro anticipado (HU-75, HU-102) de las apuestas activas, simples o combinadas, que lo admiten. */
     @Transactional(readOnly = true)
     public java.util.Map<Long, BigDecimal> ofertasCashOut(List<Apuesta> activas, LocalDateTime ahora) {
         java.util.Map<Long, BigDecimal> ofertas = new java.util.HashMap<>();
@@ -407,8 +407,8 @@ public class ApuestaService {
         Apuesta apuesta = apuestas.findById(apuestaId).filter(a -> a.getUsuario().getEmail().equalsIgnoreCase(email))
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || apuesta.getEstado() != EstadoApuesta.ACTIVA) {
-            throw new IllegalStateException("Esta combinada ya no admite un cobro anticipado");
+        if (apuesta.isLargoPlazo() || apuesta.getEstado() != EstadoApuesta.ACTIVA) {
+            throw new IllegalStateException("Esta apuesta ya no admite un cobro anticipado");
         }
         BigDecimal nueva = ofertaCashOut(apuesta, ahora, true);
         if (nueva == null) {
@@ -421,9 +421,28 @@ public class ApuestaService {
         return apuesta;
     }
 
+    /**
+     * Si es una simple hecha con supercuota (HU-87): había una supercuota de ese partido y resultado cuando se
+     * apostó, con la misma cuota que la aceptada. La apuesta no guarda si la llevaba, por eso se busca así.
+     */
+    private boolean conSupercuota(Apuesta apuesta) {
+        if (apuesta.isCombinada()) {
+            return false;
+        }
+        Seleccion unica = apuesta.getSelecciones().getFirst();
+        if (unica.getEvento() == null || unica.getPronostico() == null || unica.getEspecial() != null) {
+            return false;
+        }
+        return supercuotas.findByEventoAndResultado(unica.getEvento(), unica.getPronostico()).stream()
+                .anyMatch(s -> s.getCuota().compareTo(unica.getCuota()) == 0
+                        && !s.getCreada().isAfter(apuesta.getFecha()) && s.getHasta().isAfter(apuesta.getFecha()));
+    }
+
     /** Recalcula la oferta; en confirmación también vuelve a comprobar y bloquea cada evento. */
     private BigDecimal ofertaCashOut(Apuesta apuesta, LocalDateTime ahora, boolean bloquearEventos) {
-        if (!apuesta.isCombinada() || apuesta.isLargoPlazo() || !apuesta.cancelable(ahora)) return null;
+        // CA-75.1: simples y combinadas. Una simple con supercuota no: su cuota aceptada es más alta que la normal
+        // desde que se apuesta, y el cobro anticipado pagaría más de lo apostado nada más apostar
+        if (apuesta.isLargoPlazo() || !apuesta.cancelable(ahora) || conSupercuota(apuesta)) return null;
         java.util.Map<Long, Evento> eventosBloqueados = new java.util.HashMap<>();
         if (bloquearEventos) {
             for (Seleccion seleccion : apuesta.getSelecciones().stream()
