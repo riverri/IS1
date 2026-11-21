@@ -121,13 +121,13 @@ public class CalculadoraCuotas {
         return resultado == null ? null : calcular(evento).de(resultado);
     }
 
-    /** Cuota vigente excluyendo una apuesta activa al recalcular su oferta de cash-out. */
-    public BigDecimal cuota(Evento evento, Resultado resultado, Especial especial, Long apuestaExcluida) {
+    /** Cuota vigente sin el dinero que tiene apostado un usuario, para valorar su cash-out (HU-75). */
+    public BigDecimal cuota(Evento evento, Resultado resultado, Especial especial, Long usuarioExcluido) {
         if (especial != null) {
             return especiales(nivelLocal(evento), nivelVisitante(evento)).get(especial);
         }
         return resultado == null ? null : calcular(nivelLocal(evento), nivelVisitante(evento),
-                evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento, apuestaExcluida)).de(resultado);
+                evento.getDeporte().isAdmiteEmpate(), volumen.importes(evento, usuarioExcluido)).de(resultado);
     }
 
     /** Cuotas especiales de fútbol a partir del nivel de los dos equipos (HU-52). */

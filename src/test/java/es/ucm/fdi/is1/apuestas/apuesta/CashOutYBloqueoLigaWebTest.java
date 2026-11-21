@@ -183,4 +183,53 @@ class CashOutYBloqueoLigaWebTest {
         assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo())
                 .isEqualByComparingTo(saldoInicial.subtract(new BigDecimal("110.00")));
     }
+
+    private Apuesta combinadaDeAna() {
+        return apuestas.apostar(ANA, List.of(
+                new SeleccionPedida(futbol.getId(), Resultado.LOCAL, null),
+                new SeleccionPedida(baloncesto.getId(), Resultado.VISITANTE, null)), new BigDecimal("20"));
+    }
+
+    private BigDecimal ofertaDe(Apuesta apuesta) {
+        return apuestas.ofertasCashOut(List.of(apuesta), Hora.ahora()).get(apuesta.getId());
+    }
+
+    @Test
+    void bajarLaCuotaConOtraApuestaPropiaYCancelarlaNoDaDinero() {
+        Apuesta combinada = combinadaDeAna();
+        Apuesta empuje1 = apuestas.apostar(ANA, futbol.getId(), Resultado.LOCAL, new BigDecimal("300"));
+        Apuesta empuje2 = apuestas.apostar(ANA, baloncesto.getId(), Resultado.VISITANTE, new BigDecimal("300"));
+
+        BigDecimal oferta = ofertaDe(combinada);
+        assertThat(oferta).isEqualByComparingTo("20.00");
+        apuestas.cobrarAnticipado(ANA, combinada.getId(), oferta);
+        apuestas.cancelar(ANA, empuje1.getId());
+        apuestas.cancelar(ANA, empuje2.getId());
+
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("1000.00");
+    }
+
+    @Test
+    void inflarLaCuotaAntesDeApostarYCancelarNoDaDinero() {
+        Apuesta contraria1 = apuestas.apostar(ANA, futbol.getId(), Resultado.VISITANTE, new BigDecimal("300"));
+        Apuesta contraria2 = apuestas.apostar(ANA, baloncesto.getId(), Resultado.LOCAL, new BigDecimal("300"));
+        Apuesta combinada = combinadaDeAna();
+        apuestas.cancelar(ANA, contraria1.getId());
+        apuestas.cancelar(ANA, contraria2.getId());
+
+        BigDecimal oferta = ofertaDe(combinada);
+        assertThat(oferta).isLessThanOrEqualTo(new BigDecimal("20.00"));
+        apuestas.cobrarAnticipado(ANA, combinada.getId(), oferta);
+
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isLessThanOrEqualTo(new BigDecimal("1000.00"));
+    }
+
+    @Test
+    void siOtrosJugadoresBajanLaCuotaLaOfertaSubeDeLoApostado() {
+        Apuesta combinada = combinadaDeAna();
+        apuestas.apostar(LUIS, futbol.getId(), Resultado.LOCAL, new BigDecimal("300"));
+        apuestas.apostar(LUIS, baloncesto.getId(), Resultado.VISITANTE, new BigDecimal("300"));
+
+        assertThat(ofertaDe(combinada)).isGreaterThan(new BigDecimal("20.00"));
+    }
 }

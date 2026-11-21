@@ -15,8 +15,8 @@ public interface VolumenApostado {
     /** Importe de las apuestas activas a cada resultado; los resultados sin apuestas pueden faltar. */
     Map<Resultado, BigDecimal> importes(Evento evento);
 
-    /** Volumen sin la aportación de una apuesta; por defecto mantiene compatibilidad con implementaciones simples. */
-    default Map<Resultado, BigDecimal> importes(Evento evento, Long apuestaExcluida) {
+    /** Volumen sin lo apostado por un usuario; por defecto mantiene compatibilidad con implementaciones simples. */
+    default Map<Resultado, BigDecimal> importes(Evento evento, Long usuarioExcluido) {
         return importes(evento);
     }
 }
