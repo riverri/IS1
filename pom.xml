@@ -137,8 +137,105 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
+                    <!-- Cobertura mínima: si un cambio la baja de aquí, ./mvnw verify falla (y la CI con él).
+                         Está un poco por debajo de la actual, para que no falle por un par de líneas -->
+                    <execution>
+                        <id>cobertura-minima</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.90</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.75</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
                 </executions>
+            </plugin>
+            <!-- Análisis estático (SpotBugs): busca fallos típicos en el código compilado (nulos, comparaciones mal
+                 hechas, recursos sin cerrar…). ./mvnw spotbugs:check falla con los de prioridad alta; la CI lo ejecuta -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.10.5.0</version>
+                <configuration>
+                    <threshold>High</threshold>
+                    <effort>Max</effort>
+                    <excludeFilterFile>spotbugs-excluir.xml</excludeFilterFile>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Pruebas de mutación (PIT): ./mvnw -Pmutacion test-compile org.pitest:pitest-maven:mutationCoverage
+             PIT cambia el código a propósito (un > por un >=, un + por un -, quita una llamada…) y vuelve a pasar las
+             pruebas: si siguen pasando, ese cambio "sobrevive" y hay algo que las pruebas no comprueban. Se aplica a la
+             lógica que tiene pruebas unitarias rápidas (sin arrancar Spring). Informe en target/pit-reports/index.html -->
+        <profile>
+            <id>mutacion</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.30.2</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <!-- Para añadir la lógica de otro paquete, se pone aquí su clase y abajo su prueba unitaria -->
+                            <targetClasses>
+                                <param>es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas*</param>
+                                <param>es.ucm.fdi.is1.apuestas.cuotas.Especial*</param>
+                                <param>es.ucm.fdi.is1.apuestas.eventos.Evento</param>
+                                <param>es.ucm.fdi.is1.apuestas.equipos.Equipo</param>
+                                <param>es.ucm.fdi.is1.apuestas.equipos.Alineacion*</param>
+                                <param>es.ucm.fdi.is1.apuestas.apuesta.Estadisticas*</param>
+                                <param>es.ucm.fdi.is1.apuestas.usuarios.Usuario</param>
+                                <param>es.ucm.fdi.is1.apuestas.usuarios.NombresProhibidos*</param>
+                                <param>es.ucm.fdi.is1.apuestas.web.Formato*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotasTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.cuotas.EspecialTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.eventos.EventoTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.equipos.EquipoTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.equipos.AlineacionTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.apuesta.EstadisticasTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.usuarios.UsuarioTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.usuarios.NombresProhibidosTest</param>
+                                <param>es.ucm.fdi.is1.apuestas.web.FormatoTest</param>
+                            </targetTests>
+                            <outputFormats>
+                                <outputFormat>HTML</outputFormat>
+                                <outputFormat>CSV</outputFormat>
+                            </outputFormats>
+                            <timestampedReports>false</timestampedReports>
+                            <mutationThreshold>0</mutationThreshold>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

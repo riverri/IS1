@@ -1,0 +1,29 @@
+# Dependabot: avisa con un PR cuando sale una versión nueva de una dependencia, y enseguida si la que usamos tiene
+# una vulnerabilidad conocida. Una vez al mes y como mucho 3 PR abiertos por ecosistema, para no llenar el repositorio.
+# Cada PR pasa por la CI como cualquier otro: si las pruebas fallan, no se fusiona.
+version: 2
+updates:
+  # Spring Boot, Flyway, H2, PostgreSQL, JaCoCo… (pom.xml)
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    groups:
+      # Spring Boot y todo lo que trae juntos, en un solo PR
+      spring-boot:
+        patterns: ["org.springframework.boot*"]
+
+  # Playwright y axe, de las pruebas en el navegador (a11y/package.json)
+  - package-ecosystem: npm
+    directory: /a11y
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 2
+
+  # Las acciones de la CI (actions/checkout, setup-java…)
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 2

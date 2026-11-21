@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Avisos de SpotBugs que no son fallos en este proyecto (ver ./mvnw spotbugs:check en el pom). -->
+<FindBugsFilter>
+</FindBugsFilter>
