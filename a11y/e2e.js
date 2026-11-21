@@ -24,10 +24,10 @@ async function entrar(pagina, [email, password]) {
     await Promise.all([pagina.waitForNavigation(), pagina.click('main button[type=submit]')]);
 }
 
-/** El saldo de la cabecera, en monedas ("1.234,50 monedas" → 1234.5). */
+/** El saldo de la cabecera, en monedas ("1.234,50 monedas" → 1234.5; el primer span es el icono). */
 async function saldo(pagina) {
     await pagina.goto(BASE + '/cuenta');
-    const texto = await pagina.textContent('a.saldo span');
+    const texto = await pagina.textContent('a.saldo span:not(.moneda)');
     return Number(texto.replace(/[^\d,]/g, '').replace(',', '.'));
 }
 
@@ -104,6 +104,7 @@ const cerca = (a, b) => Math.abs(a - b) < 0.005;
         await apostar(jugador, a, 'LOCAL', 10);
         const antes = await saldo(jugador);
         const creador = await (await navegador.newContext()).newPage();
+        creador.on('dialog', d => d.accept()); // «El evento aún no ha empezado. ¿Guardar el resultado igualmente?»
         await entrar(creador, CREADOR);
         await creador.goto(`${BASE}/gestion/eventos/${a}`);
         await creador.locator('input[name=resultado][value=LOCAL]').check({ force: true });

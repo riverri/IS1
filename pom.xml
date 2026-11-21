@@ -168,7 +168,7 @@
                 </executions>
             </plugin>
             <!-- Análisis estático (SpotBugs): busca fallos típicos en el código compilado (nulos, comparaciones mal
-                 hechas, recursos sin cerrar…). ./mvnw spotbugs:check falla con los de prioridad alta; la CI lo ejecuta -->
+                 hechas, recursos sin cerrar…). falla con los de prioridad alta. Se ejecuta en ./mvnw verify (y así en la CI); suelto, ./mvnw compile spotbugs:check -->
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
@@ -178,6 +178,15 @@
                     <effort>Max</effort>
                     <excludeFilterFile>spotbugs-excluir.xml</excludeFilterFile>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>analisis-estatico</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -210,7 +219,7 @@
                                 <param>es.ucm.fdi.is1.apuestas.eventos.Evento</param>
                                 <param>es.ucm.fdi.is1.apuestas.equipos.Equipo</param>
                                 <param>es.ucm.fdi.is1.apuestas.equipos.Alineacion*</param>
-                                <param>es.ucm.fdi.is1.apuestas.apuesta.Estadisticas*</param>
+                                <param>es.ucm.fdi.is1.apuestas.apuesta.Estadisticas</param>
                                 <param>es.ucm.fdi.is1.apuestas.usuarios.Usuario</param>
                                 <param>es.ucm.fdi.is1.apuestas.usuarios.NombresProhibidos*</param>
                                 <param>es.ucm.fdi.is1.apuestas.web.Formato*</param>
@@ -231,7 +240,7 @@
                                 <outputFormat>CSV</outputFormat>
                             </outputFormats>
                             <timestampedReports>false</timestampedReports>
-                            <mutationThreshold>0</mutationThreshold>
+                            <mutationThreshold>80</mutationThreshold>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -28,7 +28,8 @@ jobs:
           done
           echo "No se pudo descargar Maven tras 3 intentos." >&2
           exit 1
-      - name: Compilar y ejecutar pruebas
+      # verify: pruebas, cobertura mínima (JaCoCo: 90 % de líneas y 75 % de ramas) y análisis estático (SpotBugs)
+      - name: Compilar, ejecutar pruebas y analizar
         run: ./mvnw -B verify
       # Cobertura de las pruebas (JaCoCo): el resumen sale en la página de la ejecución y el informe completo,
       # en el artefacto «cobertura-jacoco» (abrir index.html)
@@ -133,6 +134,52 @@ jobs:
       - name: Comprobar la accesibilidad
         working-directory: a11y
         run: node comprobar.js
+      # De extremo a extremo: registrarse, apostar, cancelar, combinada, el creador resuelve y se cobra, salir
+      - name: Recorrido de un jugador de principio a fin
+        if: success() || failure()
+        working-directory: a11y
+        run: node e2e.js
       - name: Registro de la aplicación si algo falla
         if: failure()
         run: tail -100 app.log
+
+  # Pruebas de mutación (PIT) de la lógica con pruebas unitarias: falla si menos del 80 % de los cambios que mete PIT
+  # hacen fallar alguna prueba. El informe completo, en el artefacto «mutacion-pit» (abrir index.html)
+  mutacion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Reintentar descarga de Maven
+        run: |
+          for intento in 1 2 3; do
+            if ./mvnw -v; then
+              exit 0
+            fi
+            if [ "$intento" -lt 3 ]; then
+              echo "No se pudo preparar Maven (intento $intento/3); esperando antes de reintentar."
+              sleep $((intento * 10))
+            fi
+          done
+          echo "No se pudo descargar Maven tras 3 intentos." >&2
+          exit 1
+      - name: Pruebas de mutación
+        run: ./mvnw -B -Pmutacion test-compile org.pitest:pitest-maven:mutationCoverage -Djacoco.skip=true
+      - name: Resumen de las mutaciones
+        if: always()
+        run: |
+          if [ -f target/pit-reports/mutations.csv ]; then
+            awk -F, '{ total++; if ($6 == "KILLED" || $6 == "TIMED_OUT" || $6 == "MEMORY_ERROR") muertas++ }
+              END { printf "## Pruebas de mutación (PIT)\n\n%d de %d mutaciones detectadas: %.1f %%\n", muertas, total, 100 * muertas / total }' \
+              target/pit-reports/mutations.csv >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Guardar el informe de mutación
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutacion-pit
+          path: target/pit-reports/
