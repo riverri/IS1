@@ -5,35 +5,53 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.apuesta.JuegoResponsableService;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
+import es.ucm.fdi.is1.apuestas.eventos.EventoBorrado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.eventos.EventoResuelto;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 
-/** Bloqueos de un compañero por 50 monedas (HU-105). */
+/**
+ * Bloqueos de un compañero por 50 monedas (HU-105) o de toda la liga por 100 (HU-106).
+ *
+ * <p>Lo que se paga es dinero que gana la casa (sale en el beneficio diario, HU-95) y cuenta como jugado en el juego
+ * responsable (HU-10): con la cuenta en pausa o pasado el límite no se puede bloquear. Si el partido se anula o se
+ * borra, se devuelve el coste a quien lo pagó y el bloqueo desaparece. Si solo se suspende, el bloqueo sigue: vale
+ * para cuando se juegue.
+ *
+ * <p>Un doble clic no cobra dos veces: los dos envíos cambian el saldo del mismo usuario, que tiene control de
+ * versión ({@code @Version}), así que el segundo falla al guardar y se deshace entero, también su bloqueo.
+ */
 @Service
 public class BloqueoLigaService {
     public static final BigDecimal COSTE = new BigDecimal("50.00");
+    /** Bloquear a toda la liga (HU-106). */
+    public static final BigDecimal COSTE_LIGA = new BigDecimal("100.00");
     private final BloqueoLigaRepository bloqueos;
     private final LigaRepository ligas;
     private final UsuarioRepository usuarios;
     private final EventoRepository eventos;
+    private final JuegoResponsableService juegoResponsable;
     private final Clock reloj;
 
     public BloqueoLigaService(BloqueoLigaRepository bloqueos, LigaRepository ligas, UsuarioRepository usuarios,
-                              EventoRepository eventos, Clock reloj) {
+                              EventoRepository eventos, JuegoResponsableService juegoResponsable, Clock reloj) {
         this.bloqueos = bloqueos;
         this.ligas = ligas;
         this.usuarios = usuarios;
         this.eventos = eventos;
+        this.juegoResponsable = juegoResponsable;
         this.reloj = reloj;
     }
 
@@ -55,6 +73,7 @@ public class BloqueoLigaService {
         if (bloqueos.existsByLigaAndObjetivoAndEventoAndAlcance(liga, objetivo, evento, seleccionado)) {
             throw new IllegalArgumentException("Ese bloqueo ya está activo");
         }
+        juegoResponsable.comprobar(creador, COSTE, ahora);
         creador.cargar(COSTE, TipoMovimiento.BLOQUEO_LIGA,
                 "Bloqueo para " + objetivo.getNombre() + " en " + evento.getLocal().getNombre()
                         + " – " + evento.getVisitante().getNombre(), ahora);
@@ -74,10 +93,38 @@ public class BloqueoLigaService {
         if (bloqueos.existsByLigaAndEventoAndAlcanceAndObjetivoIsNull(liga, evento, seleccionado)) {
             throw new IllegalArgumentException("Ya hay un bloqueo activo para toda la liga en ese alcance");
         }
-        creador.cargar(new BigDecimal("100.00"), TipoMovimiento.BLOQUEO_LIGA,
+        juegoResponsable.comprobar(creador, COSTE_LIGA, ahora);
+        creador.cargar(COSTE_LIGA, TipoMovimiento.BLOQUEO_LIGA,
                 "Bloqueo para toda la liga en " + evento.getLocal().getNombre() + " – "
                         + evento.getVisitante().getNombre(), ahora);
         return bloqueos.save(new BloqueoLiga(liga, creador, null, evento, seleccionado, ahora));
+    }
+
+    /** Partido anulado: se devuelve lo que costó cada bloqueo. Con un resultado normal no se toca nada. */
+    @EventListener
+    public void alResolverse(EventoResuelto resuelto) {
+        if (resuelto.evento().getEstado() == EstadoEvento.ANULADO) {
+            devolver(resuelto.evento(), "partido anulado");
+        }
+    }
+
+    /** Partido borrado por el creador de apuestas (antes de empezar): igual, y así el evento se puede borrar. */
+    @EventListener
+    public void alBorrarse(EventoBorrado borrado) {
+        devolver(borrado.evento(), "partido borrado");
+    }
+
+    private void devolver(Evento evento, String motivo) {
+        List<BloqueoLiga> delEvento = bloqueos.findByEvento(evento);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        for (BloqueoLiga bloqueo : delEvento) {
+            BigDecimal coste = bloqueo.getObjetivo() == null ? COSTE_LIGA : COSTE;
+            // abonar no hace nada si la cuenta ya está eliminada
+            bloqueo.getCreador().abonar(coste, TipoMovimiento.DEVOLUCION, "Devolución del bloqueo (" + motivo + "): "
+                    + evento.getLocal().getNombre() + " – " + evento.getVisitante().getNombre(), ahora);
+        }
+        // Se borra: no puede devolverse dos veces, y un partido anulado o borrado ya no admite apuestas que bloquear
+        bloqueos.deleteAll(delEvento);
     }
 
     /** Comprueba la regla al apostar; no se confía en que la interfaz oculte la selección. */
