@@ -1,7 +1,7 @@
 # Revisión de fallos
 
 Se partió de un informe del proyecto con 14 fallos (**F-01 a F-14**) y una revisión completa del código encontró 20 más (**N-01 a N-20**). Los 34 están corregidos en `main`, con 34 pruebas nuevas, y sus issues (#34–#67) están cerrados.
-En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo.
+En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo. La [quinta](#quinta-depuración-21112026) decidió ese punto y corrigió 14 fallos más.
 
 Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a quien no debe · **media** = comportamiento incorrecto · **baja** = molestia o caso raro.
 
@@ -97,7 +97,34 @@ Revisión de lo que entró en `main` después de la tercera depuración: el casi
 | D4-14 · Clics de anuncios caducados | Baja | Un enlace viejo a un anuncio caducado seguía sumando clics; editar un anuncio podía pisar impresiones contadas a la vez | Solo cuentan los vigentes (y el enlace lleva `nofollow`); las impresiones no se escriben al editar | `ImpresionesYDestinosWebTest.unAnuncioCaducadoNoSumaClics` |
 | D4-15 · Doble clic al crear el equipo fantasy | Baja | El segundo envío daba un error 500 | Mensaje «Ya tienes un equipo» | — |
 
-**Para decidir en equipo:** en la fantasy se puede vender a un jugador cuyo partido ya se ha jugado y fichar a otro que juega más tarde, así que un mismo hueco suma los puntos de varios partidos de la jornada. Las historias (HU-81 a HU-83) no dicen si hay cierre de jornada o un límite de cambios, así que no se ha tocado.
+**Para decidir en equipo:** en la fantasy se puede vender a un jugador cuyo partido ya se ha jugado y fichar a otro que juega más tarde, así que un mismo hueco suma los puntos de varios partidos de la jornada. Las historias (HU-81 a HU-83) no dicen si hay cierre de jornada o un límite de cambios, así que no se ha tocado. *Resuelto en la quinta depuración (D5-03).*
+
+## Quinta depuración (21/11/2026)
+
+Revisión de las apuestas (cobro anticipado, supercuotas, retos y quinielas), las cuentas y la seguridad, la importación desde la API y los arreglos de la cuarta depuración. También se ha decidido la regla de la jornada de la liga fantasy, que la cuarta depuración dejó pendiente ([ADR 0007](https://github.com/riverri/IS1/blob/main/docs/decisiones/0007-jornada-fantasy.md)). Cada arreglo tiene su prueba, y las nuevas fallan con el código anterior.
+
+| Fallo | Gravedad | Qué pasaba | Cómo se arregló | Prueba |
+|---|---|---|---|---|
+| D5-01 · Supercuota y cobro anticipado | Alta | Una simple normal se pasaba a la supercuota «cambiando» el importe al mismo valor (gratis). Después se podía cobrar antes, casi por el doble de lo apostado y sin riesgo | Una apuesta con la cuota de una supercuota no se puede cobrar antes, sea cual sea su fecha | `QuintaDepuracionApuestasTest.unaApuestaQuePasaALaSupercuotaAlCambiarElImporteNoSePuedeCobrarAntes` |
+| D5-02 · Subidas de importe y juego responsable | Alta | Lo que se subía a una apuesta antigua no contaba después en los límites diario y semanal (HU-10): la apuesta cuenta en la fecha en que se hizo | Las subidas son un movimiento propio (`SUBIDA_APUESTA`) que cuenta cuando se hace, y cada apuesta cuenta lo que se apostó al hacerla (migración V31) | `QuintaDepuracionApuestasTest.subirElImporteDeUnaApuestaAntiguaCuentaEnElLimiteDeHoy`, `.unaApuestaDeHoySubidaYBajadaCuentaLoQueQueda` |
+| D5-03 · Jornada de la liga fantasy | Media | Se podía vender a un jugador que ya había jugado y fichar a otro que jugaba más tarde: un mismo hueco sumaba varios partidos de la jornada | Jornada de lunes a domingo. Con la jornada empezada, los cambios cuentan desde la siguiente (CA-82.3, ADR 0007) | `FantasyWebTest.unHuecoNoSumaDosPartidosDeLaMismaJornada`, `.conLaJornadaEmpezadaLoQueSeFichaSumaDesdeElLunes`, `.laPaginaAvisaDeQueLaJornadaHaEmpezado` |
+| D5-04 · Partido en juego con la fecha cambiada | Media | Si el creador había cambiado la fecha de un partido de la API y la liga lo adelantaba, se seguía apostando mientras se jugaba | Si la API dice que ya se juega o ha terminado antes de nuestra fecha, se adelanta a la suya | `SincronizacionServiceTest.unPartidoEnJuegoNoAdmiteApuestasAunqueTengaFechaManual` |
+| D5-05 · Límite de envíos | Media | `POST /regis%74ro` creaba cuentas sin contar en el límite por IP | Se compara la ruta descodificada, como la ve Spring MVC | `LimitePeticionesTest.laRutaCodificadaCuentaComoLaMisma` |
+| D5-06 · Quiniela con cuentas eliminadas | Media | El boleto de una cuenta eliminada se quedaba su parte del bote (que no se pagaba a nadie), y los que habían acertado cobraban menos | Los boletos de cuentas eliminadas no ganan | `QuinielaWebTest.elBoletoDeUnaCuentaEliminadaNoSeQuedaParteDelBote` |
+| D5-07 · Plantillas de la API | Media | Si fallaba la descarga de la liga del nuevo club de un jugador, se le borraba, y al día siguiente se creaba otro: se perdía su nota y el enlace con sus fichajes de la fantasy | Si alguna liga falla, ese día no se borra a ningún jugador | `SincronizacionPlantillasTest.siFallaLaLigaDelEquipoNuevoElTraspasadoNoSeBorra` |
+| D5-08 · Bloqueo de liga al subir | Baja | Con un bloqueo de liga se podía subir la apuesta que ya había a la selección bloqueada | Subir el importe comprueba los bloqueos; bajarlo, no (CA-105.3) | `QuintaDepuracionApuestasTest.conUnBloqueoDeLigaNoSePuedeSubirLaApuestaQueYaHabia` |
+| D5-09 · Quiniela con un anulado | Baja | Si nadie acertaba ningún partido jugado, el anulado (que cuenta como acierto) hacía «ganar» a todos, y todos perdían la comisión | Se devuelve todo, como si nadie hubiera acertado (CA-80.3) | `QuinielaWebTest.conUnAnuladoYNingunAciertoEnLosDemasSeDevuelveTodo` |
+| D5-10 · Bloqueos de partidos aplazados | Baja | Al borrar una liga, los bloqueos de un partido aplazado se borraban sin devolverlos | Se devuelven también | `CashOutYBloqueoLigaWebTest.borrarUnaLigaDevuelveTambienLosBloqueosDeUnPartidoAplazado` |
+| D5-11 · Anuncios con filtros | Baja | Un anuncio con destino como `/eventos?deporte=FUTBOL` no se enseñaba nunca a los visitantes | Se comprueba solo la ruta, sin `?` ni `#` | `ImpresionesYDestinosWebTest.unDestinoConFiltrosTambienSeEnsenaAUnVisitante` |
+| D5-12 · Puesto del resumen semanal | Baja | Igual que D4-06, pero en el correo: con empates, en PostgreSQL el puesto podía no ser el del ranking | Mismo orden que el ranking, en Java | — (en H2 no se reproduce) |
+| D5-13 · Avisos a cuentas eliminadas | Baja | Si se resolvía una apuesta de una cuenta ya eliminada, se mandaba el correo de premio a su dirección inventada y se creaban avisos para nadie | No se avisa a las cuentas eliminadas, y al eliminarla se desactivan sus correos | `CorreoPremioWebTest.unaCuentaEliminadaNoRecibeNiCorreoNiAvisoAlResolverseSuApuesta` |
+| D5-14 · Manos de cuentas eliminadas | Baja | La mano de blackjack abandonada de una cuenta eliminada se plantaba y su premio contaba como pagado en las cuentas de la casa | Se cierra con premio 0 | `CasinoWebTest.laManoAbandonadaDeUnaCuentaEliminadaNoCuentaComoPagada` |
+| D5-15 · Tema en Mis movimientos | Baja | Cambiar el tema en Mis movimientos llevaba a Mi cuenta (CA-94.1) | Vuelve a Mis movimientos | `TemaWebTest.desdeMisMovimientosVuelveAMisMovimientos` |
+
+**Sin arreglar, para el equipo:**
+- **Cobro anticipado de una apuesta recién hecha:** si el usuario ya tenía otra apuesta al mismo resultado, la nueva vale un poco menos de lo apostado nada más hacerla (CA-75.1). La forma sencilla de arreglarlo (cobrar siempre lo apostado cuando hay otra apuesta propia) dejaría salir sin perder de una apuesta que va mal. Se deja así: va en contra del usuario, no de la casa.
+- **IP detrás del proxy:** en los perfiles `nube` y `compartir`, el límite de envíos usa la IP que llega en `X-Forwarded-For`. Si Render añade la IP real al final de la que manda el navegador (en vez de sustituirla), un atacante podría cambiar la suya en cada envío. Hay que comprobarlo en Render antes de cambiar nada: la misma cabecera decide si la conexión es HTTPS.
+- **Códigos del casino:** se guardan los 20 últimos de cada sesión. Si se cargan más de 20 páginas del casino en una pestaña sin jugar en otra, la otra recibe el aviso de «has pulsado dos veces». No se cobra nada de más.
 
 ## En producción
 
