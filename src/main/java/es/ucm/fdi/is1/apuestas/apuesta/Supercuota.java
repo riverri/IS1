@@ -88,6 +88,10 @@ public class Supercuota {
         return importeMaximo;
     }
 
+    public LocalDateTime getCreada() {
+        return creada;
+    }
+
     public LocalDateTime getHasta() {
         return hasta;
     }

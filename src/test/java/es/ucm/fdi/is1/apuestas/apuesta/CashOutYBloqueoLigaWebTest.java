@@ -56,6 +56,7 @@ class CashOutYBloqueoLigaWebTest {
     @Autowired private BloqueoLigaRepository bloqueos;
     @Autowired private BloqueoLigaService bloqueoService;
     @Autowired private ResolucionService resolucion;
+    @Autowired private SupercuotaService supercuotas;
 
     private Evento futbol;
     private Evento baloncesto;
@@ -231,5 +232,39 @@ class CashOutYBloqueoLigaWebTest {
         apuestas.apostar(LUIS, baloncesto.getId(), Resultado.VISITANTE, new BigDecimal("300"));
 
         assertThat(ofertaDe(combinada)).isGreaterThan(new BigDecimal("20.00"));
+    }
+
+    @Test
+    void unaSimpleTambienSePuedeCobrarAntes() throws Exception {
+        // CA-75.1: «una apuesta activa, simple o combinada»
+        Apuesta simple = apuestas.apostar(ANA, futbol.getId(), Resultado.LOCAL, new BigDecimal("20"));
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/apuestas").with(user(ANA)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Cobro anticipado disponible: 20,00 monedas.")))
+                .andExpect(content().string(containsString("¿Cobrar ahora la apuesta por el importe indicado?")));
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/apuestas/{id}/cash-out", simple.getId()).with(user(ANA)).with(csrf())
+                        .param("ofertaVista", "20.00"))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(simple.getEstado()).isEqualTo(EstadoApuesta.COBRADA);
+        assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("1000.00");
+    }
+
+    @Test
+    void unaSimpleConSupercuotaNoTieneCobroAnticipado() {
+        supercuotas.crear(futbol.getId(), Resultado.LOCAL, new BigDecimal("4.00"), new BigDecimal("50"), 24);
+        Apuesta conSupercuota = apuestas.apostar(ANA, futbol.getId(), Resultado.LOCAL, new BigDecimal("20"));
+        assertThat(conSupercuota.getSelecciones().getFirst().getCuota()).isEqualByComparingTo("4.00");
+        // Con la cuota normal (2,72) valdría 4/2,72 de lo apostado nada más apostar: no se ofrece
+        assertThat(ofertaDe(conSupercuota)).isNull();
+        assertThatThrownBy(() -> apuestas.cobrarAnticipado(ANA, conSupercuota.getId(), new BigDecimal("20.00")))
+                .isInstanceOf(IllegalStateException.class);
+        assertThat(conSupercuota.getEstado()).isEqualTo(EstadoApuesta.ACTIVA);
+
+        // Al otro resultado del mismo partido, sin supercuota, sí
+        Apuesta sinSupercuota = apuestas.apostar(ANA, futbol.getId(), Resultado.VISITANTE, new BigDecimal("20"));
+        assertThat(ofertaDe(sinSupercuota)).isNotNull();
     }
 }

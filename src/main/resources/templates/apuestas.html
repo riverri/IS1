@@ -48,10 +48,10 @@
                 <div><dt>Importe</dt><dd th:text="${#numbers.formatDecimal(a.importe, 1, 'POINT', 2, 'COMMA')}">10,00</dd></div>
                 <div><dt>Si aciertas</dt><dd class="ganancia-valor" th:text="${#numbers.formatDecimal(a.gananciaPotencial, 1, 'POINT', 2, 'COMMA')}">18,50</dd></div>
             </dl>
-            <form class="aviso" th:if="${a.combinada and ofertasCashOut.containsKey(a.id)}"
+            <form class="aviso" th:if="${ofertasCashOut.containsKey(a.id)}"
                   th:action="@{/apuestas/{id}/cash-out(id=${a.id})}" method="post"
-                  onsubmit="return confirm('¿Cobrar ahora toda la combinada por el importe indicado?');">
-                <span th:text="'Cobro anticipado disponible: ' + ${#numbers.formatDecimal(ofertasCashOut.get(a.id), 1, 'POINT', 2, 'COMMA')} + ' monedas por toda la combinada.'">
+                  th:attr="onsubmit=|return confirm('¿Cobrar ahora ${a.combinada ? 'toda la combinada' : 'la apuesta'} por el importe indicado?');|">
+                <span th:text="'Cobro anticipado disponible: ' + ${#numbers.formatDecimal(ofertasCashOut.get(a.id), 1, 'POINT', 2, 'COMMA')} + ' monedas' + (${a.combinada} ? ' por toda la combinada.' : '.')">
                     Cobro anticipado disponible: 10,00 monedas por toda la combinada.
                 </span>
                 <input type="hidden" name="ofertaVista" th:value="${ofertasCashOut.get(a.id)}">

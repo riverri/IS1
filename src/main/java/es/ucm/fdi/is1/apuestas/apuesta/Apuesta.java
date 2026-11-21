@@ -268,10 +268,10 @@ public class Apuesta {
         usuario.abonar(importe, TipoMovimiento.DEVOLUCION, "Cancelación: " + descripcion(), ahora);
     }
 
-    /** Cierra toda la combinada y abona la oferta vigente una sola vez (HU-103). */
+    /** Cierra la apuesta, simple o combinada entera, y abona la oferta vigente una sola vez (HU-75, HU-103). */
     public void cobrarAnticipado(BigDecimal importeCobro, LocalDateTime ahora) {
-        if (estado != EstadoApuesta.ACTIVA || !isCombinada() || isLargoPlazo()) {
-            throw new IllegalStateException("Esta combinada ya no admite un cobro anticipado");
+        if (estado != EstadoApuesta.ACTIVA || isLargoPlazo()) {
+            throw new IllegalStateException("Esta apuesta ya no admite un cobro anticipado");
         }
         if (importeCobro == null || importeCobro.signum() < 0 || importeCobro.scale() > 2) {
             throw new IllegalArgumentException("El importe de cobro no es válido");
