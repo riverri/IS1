@@ -43,10 +43,25 @@ Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al
 
 A 19/11: **93,8 % de las líneas, 77,5 % de las ramas** (cada `if` cuenta dos: cuando se cumple y cuando no) y 94,3 % de las instrucciones.
 
+`./mvnw verify` falla si baja del **90 % de las líneas** o del **75 % de las ramas**, o si SpotBugs encuentra un error de prioridad alta ([decisión 0004](https://github.com/riverri/IS1/blob/main/docs/decisiones/0004-umbrales-de-calidad-en-la-ci.md)).
+
+## Pruebas de mutación
+
+Que una línea esté cubierta no quiere decir que se compruebe lo que hace. [PIT](https://pitest.org/) cambia el código a propósito (un `>` por un `>=`, un `+` por un `-`, quita una llamada…) y vuelve a pasar las pruebas: si alguna falla, el cambio está «detectado». Se aplica a la lógica con pruebas unitarias rápidas: cuotas, eventos, equipos, usuarios, estadísticas y formato.
+
+```
+./mvnw -Pmutacion test-compile org.pitest:pitest-maven:mutationCoverage -Djacoco.skip=true
+```
+
+El informe queda en `target/pit-reports/index.html`. A 21/11 se detecta el **86 %** de los cambios (al empezar, el 41 %), y la CI exige al menos el 80 %.
+
 ## Integración continua
 `.github/workflows/ci.yml` se ejecuta en cada pull request y en cada cambio de `main`:
-- **build**: compila y pasa todas las pruebas con H2, y mide la cobertura.
+- **build**: compila y pasa todas las pruebas con H2, mide la cobertura y pasa SpotBugs.
 - **postgresql**: arranca PostgreSQL 17 y pasa las mismas pruebas, para comprobar las migraciones de PostgreSQL.
+- **mutacion**: pasa las pruebas de mutación (ver arriba) y deja el informe como artefacto `mutacion-pit`.
 - **accesibilidad**: arranca la aplicación con los datos de demostración y la recorre con un navegador ([`a11y/comprobar.js`](https://github.com/riverri/IS1/blob/main/a11y/comprobar.js)). Pasa las reglas de WCAG 2.1 A y AA de axe a las páginas principales, con colores claros y oscuros; hace una apuesta solo con el teclado y comprueba que el foco siempre se ve; y mira que no haya desplazamiento lateral a 320 px ni con la página ampliada al 200 % (HU-97 a HU-101).
+
+  Después, [`a11y/e2e.js`](https://github.com/riverri/IS1/blob/main/a11y/e2e.js) hace el recorrido de un jugador de principio a fin: registrarse, apostar, cancelar, una combinada, el creador pone el resultado y se cobra, y cerrar sesión.
 
 Si alguno falla, el PR sale en rojo y no se fusiona.
