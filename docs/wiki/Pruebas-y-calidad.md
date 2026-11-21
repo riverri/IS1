@@ -47,13 +47,17 @@ A 19/11: **93,8 % de las líneas, 77,5 % de las ramas** (cada `if` cuenta dos: c
 
 ## Pruebas de mutación
 
-Que una línea esté cubierta no quiere decir que se compruebe lo que hace. [PIT](https://pitest.org/) cambia el código a propósito (un `>` por un `>=`, un `+` por un `-`, quita una llamada…) y vuelve a pasar las pruebas: si alguna falla, el cambio está «detectado». Se aplica a la lógica con pruebas unitarias rápidas: cuotas, eventos, equipos, usuarios, estadísticas y formato.
+Que una línea esté cubierta no quiere decir que se compruebe lo que hace. [PIT](https://pitest.org/) cambia el código a propósito (un `>` por un `>=`, un `+` por un `-`, quita una llamada…) y vuelve a pasar las pruebas: si alguna falla, el cambio está «detectado». Se aplica a la lógica con pruebas unitarias rápidas: cuotas, eventos, equipos, usuarios, estadísticas, formato, CSV, el LMSR de las predicciones, la ruleta, el blackjack y el baccarat, anuncios, cripto, el límite de envíos y el identificador de petición.
 
 ```
 ./mvnw -Pmutacion test-compile org.pitest:pitest-maven:mutationCoverage -Djacoco.skip=true
 ```
 
-El informe queda en `target/pit-reports/index.html`. A 21/11 se detecta el **86 %** de los cambios (al empezar, el 41 %), y la CI exige al menos el 80 %.
+El informe queda en `target/pit-reports/index.html`. A 21/11 se detecta el **82,6 %** de 603 cambios (al empezar, el 41 % de 317), y la CI exige al menos el 80 %.
+
+## Número de consultas
+
+[`ConsultasWebTest`](https://github.com/riverri/IS1/blob/main/src/test/java/es/ucm/fdi/is1/apuestas/web/ConsultasWebTest.java) pide el catálogo, *Mis apuestas*, el ranking, el panel del creador y *Mis movimientos* con pocas filas y con 10 más, y cuenta las consultas a la base de datos. Tienen que ser las mismas, como mucho una más por lote de 50. Si una página hace una consulta por cada fila (el problema «N+1»), con 500 filas haría 500 consultas, y esta prueba lo detecta antes. Al escribirla, *Mis apuestas* pasaba de 26 a 76 consultas con 10 apuestas más; ahora hace 14 siempre.
 
 ## Integración continua
 `.github/workflows/ci.yml` se ejecuta en cada pull request y en cada cambio de `main`:
@@ -62,7 +66,13 @@ El informe queda en `target/pit-reports/index.html`. A 21/11 se detecta el **86 
 - **mutacion**: pasa las pruebas de mutación (ver arriba) y deja el informe como artefacto `mutacion-pit`.
 - **accesibilidad**: arranca la aplicación con los datos de demostración y la recorre con un navegador ([`a11y/comprobar.js`](https://github.com/riverri/IS1/blob/main/a11y/comprobar.js)). Pasa las reglas de WCAG 2.1 A y AA de axe a las páginas principales, con colores claros y oscuros; hace una apuesta solo con el teclado y comprueba que el foco siempre se ve; y mira que no haya desplazamiento lateral a 320 px ni con la página ampliada al 200 % (HU-97 a HU-101).
 
-  Después, [`a11y/e2e.js`](https://github.com/riverri/IS1/blob/main/a11y/e2e.js) hace el recorrido de un jugador de principio a fin: registrarse, apostar, cancelar, una combinada, el creador pone el resultado y se cobra, y cerrar sesión.
+  Después, [`a11y/e2e.js`](https://github.com/riverri/IS1/blob/main/a11y/e2e.js) hace el recorrido de principio a fin:
+  - registrarse, apostar, cancelar, una combinada, el creador pone el resultado y se cobra;
+  - el creador da de alta un partido con supercuota, se apuesta con ella y al anularlo se devuelve;
+  - una liga entre dos jugadores con un bloqueo;
+  - una quiniela anulada;
+  - recuperar la contraseña con el enlace del registro;
+  - cerrar sesión.
 
 Si alguno falla, el PR sale en rojo y no se fusiona.
 

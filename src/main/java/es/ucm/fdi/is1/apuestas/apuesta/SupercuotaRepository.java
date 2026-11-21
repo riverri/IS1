@@ -25,5 +25,8 @@ public interface SupercuotaRepository extends JpaRepository<Supercuota, Long> {
     /** Las de un partido y resultado, también las que ya han caducado (para saber si una apuesta llevaba una). */
     List<Supercuota> findByEventoAndResultado(Evento evento, Resultado resultado);
 
+    /** Las de varios partidos, también las caducadas (ofertas de cobro anticipado en lote). */
+    List<Supercuota> findByEventoIn(List<Evento> eventos);
+
     void deleteByEvento(Evento evento);
 }

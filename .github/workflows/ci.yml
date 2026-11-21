@@ -134,10 +134,14 @@ jobs:
       - name: Comprobar la accesibilidad
         working-directory: a11y
         run: node comprobar.js
-      # De extremo a extremo: registrarse, apostar, cancelar, combinada, el creador resuelve y se cobra, salir
+      # De extremo a extremo: apostar, cancelar, combinada, resolver y cobrar, supercuota, anular, liga con bloqueo,
+      # quiniela y recuperar la contraseña
       - name: Recorrido de un jugador de principio a fin
         if: success() || failure()
         working-directory: a11y
+        # El registro de la aplicación, para leer el enlace de recuperar la contraseña (no hay servidor de correo)
+        env:
+          APP_LOG: ../app.log
         run: node e2e.js
       - name: Registro de la aplicación si algo falla
         if: failure()

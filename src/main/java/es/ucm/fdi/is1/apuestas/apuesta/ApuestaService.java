@@ -54,13 +54,14 @@ public class ApuestaService {
     private final Clock reloj;
     private final BloqueoLigaService bloqueosLiga;
     private final SeleccionRepository selecciones;
+    private final VolumenApuestas volumen;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
                           CandidatoRepository candidatos, MercadoRepository mercados, CalculadoraCuotas calculadora,
                           LimitesService limites,
                           JuegoResponsableService juegoResponsable, RegistroCuotas registroCuotas,
                           SupercuotaRepository supercuotas, Clock reloj, BloqueoLigaService bloqueosLiga,
-                          SeleccionRepository selecciones) {
+                          SeleccionRepository selecciones, VolumenApuestas volumen) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
@@ -74,6 +75,7 @@ public class ApuestaService {
         this.reloj = reloj;
         this.bloqueosLiga = bloqueosLiga;
         this.selecciones = selecciones;
+        this.volumen = volumen;
     }
 
     /** Apuesta simple (HU-23): una combinada de una sola selección, con la cuota vigente. */
@@ -394,8 +396,25 @@ public class ApuestaService {
     @Transactional(readOnly = true)
     public java.util.Map<Long, BigDecimal> ofertasCashOut(List<Apuesta> activas, LocalDateTime ahora) {
         java.util.Map<Long, BigDecimal> ofertas = new java.util.HashMap<>();
+        if (activas.isEmpty()) {
+            return ofertas;
+        }
+        // En lote: una consulta para el dinero apostado a todos los partidos y otra para sus supercuotas, en vez de
+        // una por selección (ver ConsultasWebTest). Las apuestas de una lista son todas del mismo usuario
+        List<Evento> partidos = activas.stream().flatMap(a -> a.getSelecciones().stream())
+                .map(Seleccion::getEvento).filter(java.util.Objects::nonNull).distinct().toList();
+        Long usuario = activas.getFirst().getUsuario().getId();
+        java.util.Map<Long, java.util.Set<Long>> apuestasPorEvento = new java.util.HashMap<>();
+        if (!partidos.isEmpty()) {
+            for (Object[] fila : selecciones.apuestasDelUsuarioEnEventos(partidos.stream().map(Evento::getId).toList(),
+                    usuario)) {
+                apuestasPorEvento.computeIfAbsent((Long) fila[1], e -> new java.util.HashSet<>()).add((Long) fila[0]);
+            }
+        }
+        Lote lote = new Lote(volumen.importes(partidos, usuario),
+                partidos.isEmpty() ? List.of() : supercuotas.findByEventoIn(partidos), apuestasPorEvento);
         for (Apuesta apuesta : activas) {
-            BigDecimal importe = ofertaCashOut(apuesta, ahora, false);
+            BigDecimal importe = ofertaCashOut(apuesta, ahora, false, lote);
             if (importe != null) {
                 ofertas.put(apuesta.getId(), importe);
             }
@@ -412,7 +431,7 @@ public class ApuestaService {
         if (apuesta.isLargoPlazo() || apuesta.getEstado() != EstadoApuesta.ACTIVA) {
             throw new IllegalStateException("Esta apuesta ya no admite un cobro anticipado");
         }
-        BigDecimal nueva = ofertaCashOut(apuesta, ahora, true);
+        BigDecimal nueva = ofertaCashOut(apuesta, ahora, true, null);
         if (nueva == null) {
             throw new IllegalStateException("Algún partido ya ha empezado, se ha suspendido o se ha anulado");
         }
@@ -427,7 +446,7 @@ public class ApuestaService {
      * Si es una simple hecha con supercuota (HU-87): había una supercuota de ese partido y resultado cuando se
      * apostó, con la misma cuota que la aceptada. La apuesta no guarda si la llevaba, por eso se busca así.
      */
-    private boolean conSupercuota(Apuesta apuesta) {
+    private boolean conSupercuota(Apuesta apuesta, Lote lote) {
         if (apuesta.isCombinada()) {
             return false;
         }
@@ -435,16 +454,36 @@ public class ApuestaService {
         if (unica.getEvento() == null || unica.getPronostico() == null || unica.getEspecial() != null) {
             return false;
         }
-        return supercuotas.findByEventoAndResultado(unica.getEvento(), unica.getPronostico()).stream()
-                .anyMatch(s -> s.getCuota().compareTo(unica.getCuota()) == 0
+        List<Supercuota> candidatas = lote != null
+                ? lote.supercuotas().stream().filter(s -> s.getEvento().getId().equals(unica.getEvento().getId())
+                        && s.getResultado() == unica.getPronostico()).toList()
+                : supercuotas.findByEventoAndResultado(unica.getEvento(), unica.getPronostico());
+        return candidatas.stream().anyMatch(s -> s.getCuota().compareTo(unica.getCuota()) == 0
                         && !s.getCreada().isAfter(apuesta.getFecha()) && s.getHasta().isAfter(apuesta.getFecha()));
     }
 
-    /** Recalcula la oferta; en confirmación también vuelve a comprobar y bloquea cada evento. */
-    private BigDecimal ofertaCashOut(Apuesta apuesta, LocalDateTime ahora, boolean bloquearEventos) {
+    /**
+     * Datos consultados de una vez para las ofertas de una lista de apuestas: el dinero apostado a cada partido sin
+     * contar el del propio usuario, las supercuotas de esos partidos y qué apuestas suyas hay en cada partido.
+     */
+    private record Lote(java.util.Map<Long, java.util.Map<Resultado, BigDecimal>> volumen, List<Supercuota> supercuotas,
+                        java.util.Map<Long, java.util.Set<Long>> apuestasPorEvento) {
+
+        /** Si en alguno de esos partidos hay otra apuesta del usuario que no sea esta. */
+        boolean hayOtras(java.util.Set<Long> eventos, Long apuesta) {
+            return eventos.stream().map(e -> apuestasPorEvento.getOrDefault(e, java.util.Set.of()))
+                    .anyMatch(ids -> ids.stream().anyMatch(id -> !id.equals(apuesta)));
+        }
+    }
+
+    /**
+     * Recalcula la oferta; en confirmación también vuelve a comprobar y bloquea cada evento. Con {@code lote}
+     * (listado de Mis apuestas) usa lo ya consultado; sin él (al cobrar una), consulta lo de esa apuesta.
+     */
+    private BigDecimal ofertaCashOut(Apuesta apuesta, LocalDateTime ahora, boolean bloquearEventos, Lote lote) {
         // CA-75.1: simples y combinadas. Una simple con supercuota no: su cuota aceptada es más alta que la normal
         // desde que se apuesta, y el cobro anticipado pagaría más de lo apostado nada más apostar
-        if (apuesta.isLargoPlazo() || !apuesta.cancelable(ahora) || conSupercuota(apuesta)) {
+        if (apuesta.isLargoPlazo() || !apuesta.cancelable(ahora) || conSupercuota(apuesta, lote)) {
             return null;
         }
         java.util.Map<Long, Evento> eventosBloqueados = new java.util.HashMap<>();
@@ -463,8 +502,17 @@ public class ApuestaService {
         for (Seleccion seleccion : apuesta.getSelecciones()) {
             Evento evento = bloquearEventos ? eventosBloqueados.get(seleccion.getEvento().getId())
                     : seleccion.getEvento();
-            BigDecimal actual = calculadora.cuota(evento, seleccion.getPronostico(), seleccion.getEspecial(),
-                    apuesta.getUsuario().getId());
+            BigDecimal actual;
+            if (lote == null) {
+                actual = calculadora.cuota(evento, seleccion.getPronostico(), seleccion.getEspecial(),
+                        apuesta.getUsuario().getId());
+            } else if (seleccion.getEspecial() != null) {
+                // Las especiales no se ajustan por volumen (como en CalculadoraCuotas.cuota)
+                actual = calculadora.especiales(evento).get(seleccion.getEspecial());
+            } else {
+                actual = seleccion.getPronostico() == null ? null : calculadora.calcular(evento,
+                        lote.volumen().getOrDefault(evento.getId(), java.util.Map.of())).de(seleccion.getPronostico());
+            }
             if (actual == null || actual.signum() <= 0) {
                 return null;
             }
@@ -473,8 +521,8 @@ public class ApuestaService {
         // Con otra apuesta propia en estos partidos (activa o cancelada) pudo inflar la cuota aceptada: sin ganancia
         java.util.Set<Long> idsEventos = apuesta.getSelecciones().stream().map(s -> s.getEvento().getId())
                 .collect(java.util.stream.Collectors.toSet());
-        if (factor.compareTo(BigDecimal.ONE) > 0
-                && selecciones.hayOtrasApuestasDelUsuario(idsEventos, apuesta.getUsuario().getId(), apuesta.getId())) {
+        if (factor.compareTo(BigDecimal.ONE) > 0 && (lote != null ? lote.hayOtras(idsEventos, apuesta.getId())
+                : selecciones.hayOtrasApuestasDelUsuario(idsEventos, apuesta.getUsuario().getId(), apuesta.getId()))) {
             factor = BigDecimal.ONE;
         }
         return apuesta.getImporte().multiply(factor).setScale(2, RoundingMode.DOWN)
