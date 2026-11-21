@@ -234,7 +234,8 @@ class QuinielaWebTest {
     @Test
     void faltaUnPronosticoYNoSeAdmite() {
         Quiniela quiniela = crear();
-        assertThatThrownBy(() -> quinielas.echarBoleto(ANA, quiniela.getId(), java.util.Arrays.asList(Resultado.LOCAL, null, Resultado.LOCAL)))
+        assertThatThrownBy(() -> quinielas.echarBoleto(ANA, quiniela.getId(),
+                java.util.Arrays.asList(Resultado.LOCAL, null, Resultado.LOCAL)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessage("Elige 1, X o 2 en cada partido");
     }
 

@@ -113,7 +113,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 |---|---|
 | [Render](https://render.com) | Ejecuta la aplicación. El repositorio ya trae el `Dockerfile` y `render.yaml`. |
 | [Neon](https://neon.tech) | Base de datos PostgreSQL permanente (0,5 GB, de sobra para el proyecto). |
-| [UptimeRobot](https://uptimerobot.com) (opcional) | Avisa si la web se cae. Para que Render no la apague ya no hace falta: la aplicación se visita sola (keep-alive). |
+| [UptimeRobot](https://uptimerobot.com) (opcional) | Avisa si la web se cae. Ya no hace falta: lo hace el trabajo *Vigilancia* de GitHub (ver abajo), y para que Render no la apague la aplicación se visita sola (keep-alive). |
 
 **1. Base de datos (Neon)**
 1. Entra en https://neon.tech con tu cuenta de GitHub y crea un proyecto (región *Europe (Frankfurt)*).
@@ -142,6 +142,7 @@ Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los da
 La imagen guarda una caché de las clases de Java (CDS) preparada al construirla. Con 1 CPU y 512 MB, la aplicación arranca en unos 15 segundos en vez de 22, y usa unos 30 MB menos de memoria. También separa las dependencias de nuestro código en capas distintas, así un cambio pequeño solo reconstruye la capa pequeña.
 
 **Vigilar el servidor**
+- **Aviso si se cae:** el trabajo *Vigilancia* de GitHub Actions pide `/actuator/health` cada hora. Si no responde en tres intentos, abre un issue «La web no responde» (etiqueta `caida`), y lo cierra solo cuando vuelve. Para activarlo, pon una vez la dirección de la web en GitHub: *Settings → Secrets and variables → Actions → Variables → New repository variable*, con el nombre `URL_PUBLICA`. Avisa a todo el que sigue el repositorio, así que UptimeRobot ya no hace falta.
 - `GET /actuator/health` responde `{"status":"UP"}` si la aplicación y su base de datos responden, y `DOWN` si no. No da más detalles y no hace falta sesión. El resto de Actuator no está publicado.
 - Cada respuesta lleva la cabecera `X-Request-Id`, y cada línea del registro, el mismo identificador entre corchetes. Por ejemplo: `INFO [3f9a1c2b7d10] … No hay servidor de correo configurado`.
   - Si alguien avisa de un error, con el identificador (se ve en las herramientas de desarrollo del navegador, pestaña *Red*) se buscan en *Logs* de Render las líneas de esa petición.
@@ -149,7 +150,7 @@ La imagen guarda una caché de las clases de Java (CDS) preparada al construirla
 
 **3. Que no se apague (keep-alive)**
 
-Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (HU-85). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. Si además quieres un aviso cuando la web se caiga, crea en UptimeRobot un monitor *HTTP(s)* a `https://TU-WEB.onrender.com/ping`. El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
+Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (HU-85). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. El aviso cuando la web se cae lo da el trabajo *Vigilancia* de GitHub (ver *Vigilar el servidor*). El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
 
 **4. Datos de demostración (opcional)**
 

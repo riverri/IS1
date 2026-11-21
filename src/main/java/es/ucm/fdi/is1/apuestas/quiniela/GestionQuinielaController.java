@@ -71,7 +71,8 @@ public class GestionQuinielaController {
     public String anular(@PathVariable Long id, RedirectAttributes redireccion) {
         try {
             Quiniela quiniela = quinielas.anular(id);
-            redireccion.addFlashAttribute("mensaje", "Quiniela «" + quiniela.getNombre() + "» anulada: se ha devuelto el precio de los boletos.");
+            redireccion.addFlashAttribute("mensaje", "Quiniela «" + quiniela.getNombre()
+                    + "» anulada: se ha devuelto el precio de los boletos.");
         } catch (IllegalStateException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }

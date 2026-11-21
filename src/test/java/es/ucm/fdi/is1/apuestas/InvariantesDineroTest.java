@@ -1191,7 +1191,8 @@ class InvariantesDineroTest {
                 BigDecimal repartido = suma(suyos.stream().map(BoletoQuiniela::getPremio));
                 BigDecimal bote = q.bote(pagado);
                 long ganadores = suyos.stream().filter(BoletoQuiniela::isGanador).count();
-                if (repartido.compareTo(bote) > 0 || bote.subtract(repartido).compareTo(CENTIMO.multiply(BigDecimal.valueOf(ganadores))) >= 0
+                if (repartido.compareTo(bote) > 0
+                        || bote.subtract(repartido).compareTo(CENTIMO.multiply(BigDecimal.valueOf(ganadores))) >= 0
                         && ganadores > 0) {
                     fallos.add("Q1 " + cual + ": repartido " + repartido + " con un bote de " + bote + " y " + ganadores
                             + " ganadores");

@@ -1,0 +1,64 @@
+name: Vigilancia
+
+# Cada hora mira si la web publicada responde (GET /actuator/health: la aplicación y su base de datos).
+# Si no responde tras tres intentos, abre un issue «La web no responde» con la etiqueta caida; cuando vuelve a
+# responder, lo comenta y lo cierra. Sustituye a UptimeRobot y no necesita claves.
+#
+# La dirección se pone una vez en GitHub: Settings → Secrets and variables → Actions → Variables → New repository
+# variable, con el nombre URL_PUBLICA y la dirección de la web (https://….onrender.com o el dominio propio).
+# Sin esa variable no hace nada.
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: vigilancia
+  cancel-in-progress: false
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      URL_PUBLICA: ${{ vars.URL_PUBLICA }}
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Comprobar la web
+        run: |
+          if [ -z "$URL_PUBLICA" ]; then
+            echo "::notice::Falta la variable URL_PUBLICA (Settings → Secrets and variables → Actions → Variables)."
+            exit 0
+          fi
+          url="${URL_PUBLICA%/}/actuator/health"
+          estado=""
+          # Tres intentos con un minuto de margen: si Render la estaba arrancando, le da tiempo
+          for intento in 1 2 3; do
+            estado=$(curl -s -o respuesta.json -w '%{http_code}' --max-time 90 "$url" || true)
+            if [ "$estado" = "200" ] && grep -q '"UP"' respuesta.json; then
+              break
+            fi
+            estado="${estado:-sin respuesta}"
+            [ "$intento" -lt 3 ] && sleep 60
+          done
+          abierto=$(gh issue list --label caida --state open --json number --jq '.[0].number // empty')
+          if [ "$estado" = "200" ] && grep -q '"UP"' respuesta.json; then
+            echo "La web responde: $url"
+            if [ -n "$abierto" ]; then
+              gh issue close "$abierto" --comment "La web vuelve a responder ($(date -u '+%d/%m %H:%M') UTC)."
+            fi
+          else
+            echo "::error::La web no responde ($estado): $url"
+            if [ -z "$abierto" ]; then
+              gh label create caida --color B60205 --description "La web publicada no responde" 2>/dev/null || true
+              gh issue create --label caida --title "La web no responde" --body "$(printf '%s\n\n%s\n\n%s' \
+                "\`GET $url\` no ha respondido bien en tres intentos seguidos (último estado: $estado) a las $(date -u '+%d/%m %H:%M') UTC." \
+                "Mirar en Render el servicio y sus *Logs*, y en Neon que la base de datos no esté parada o llena." \
+                "Este issue lo abre y lo cierra solo el trabajo **Vigilancia** de GitHub Actions.")"
+            fi
+            exit 1
+          fi

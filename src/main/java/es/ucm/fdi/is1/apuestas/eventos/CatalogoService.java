@@ -85,7 +85,9 @@ public class CatalogoService {
     }
 
     private List<Evento> disponibles(Deporte deporte) {
-        if (deporte == null) return disponibles();
+        if (deporte == null) {
+            return disponibles();
+        }
         return eventos.disponiblesPorDeporte(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), deporte);
     }
 
@@ -114,7 +116,9 @@ public class CatalogoService {
     /** Los próximos partidos disponibles, para la portada. Como mucho {@code cuantos}. */
     @Transactional(readOnly = true)
     public List<Evento> proximos(int cuantos) {
-        if (cuantos <= 0) return List.of();
+        if (cuantos <= 0) {
+            return List.of();
+        }
         return eventos.findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(
                 EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), PageRequest.of(0, cuantos));
     }

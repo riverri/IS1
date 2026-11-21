@@ -88,7 +88,8 @@ public class RetoService {
         retador.cargar(importe, TipoMovimiento.RETO_APUESTA, "Reto a " + retado.getNombre() + ": " + titulo(evento), ahora);
         Reto reto = retos.save(new Reto(retador, retado, evento, pronostico, importe, ahora));
         notificaciones.avisar(retado, "info", retador.getNombre() + " te reta en " + titulo(evento) + ": "
-                + Monedas.texto(importe) + " monedas cada uno a que sale «" + pronostico.getDescripcion() + "». Acepta o rechaza en tus ligas.");
+                + Monedas.texto(importe) + " monedas cada uno a que sale «" + pronostico.getDescripcion()
+                + "». Acepta o rechaza en tus ligas.");
         return reto;
     }
 

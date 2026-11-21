@@ -135,7 +135,9 @@ public class BloqueoLigaService {
             boolean destinatario = bloqueo.getObjetivo() == null
                     ? !bloqueo.getCreador().getId().equals(apostador.getId())
                     : bloqueo.getObjetivo().getId().equals(apostador.getId());
-            if (!destinatario || !bloqueo.activa(ahora) || !bloqueo.getLiga().esMiembro(apostador)) continue;
+            if (!destinatario || !bloqueo.activa(ahora) || !bloqueo.getLiga().esMiembro(apostador)) {
+                continue;
+            }
             String alcance = bloqueo.getAlcance();
             if (alcance.equals("PARTIDO") || alcance.equals(resultado == null ? "" : resultado.name())
                     || alcance.equals(especial == null ? "" : especial.name())) {
@@ -155,14 +157,20 @@ public class BloqueoLigaService {
     }
 
     private static String normalizarAlcance(String alcance, Evento evento) {
-        if ("PARTIDO".equals(alcance)) return alcance;
+        if ("PARTIDO".equals(alcance)) {
+            return alcance;
+        }
         try {
             Resultado resultado = Resultado.valueOf(alcance);
-            if (resultado != Resultado.EMPATE || evento.getDeporte().isAdmiteEmpate()) return resultado.name();
+            if (resultado != Resultado.EMPATE || evento.getDeporte().isAdmiteEmpate()) {
+                return resultado.name();
+            }
         } catch (RuntimeException ignorada) { }
         try {
             Especial especial = Especial.valueOf(alcance);
-            if (evento.getDeporte() == Deporte.FUTBOL) return especial.name();
+            if (evento.getDeporte() == Deporte.FUTBOL) {
+                return especial.name();
+            }
         } catch (RuntimeException ignorada) { }
         throw new IllegalArgumentException("Elige un partido completo o una selección válida");
     }
