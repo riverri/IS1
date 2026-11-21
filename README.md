@@ -139,6 +139,14 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 
 Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los datos siguen en Neon.
 
+La imagen guarda una caché de las clases de Java (CDS) preparada al construirla. Con 1 CPU y 512 MB, la aplicación arranca en unos 15 segundos en vez de 22, y usa unos 30 MB menos de memoria. También separa las dependencias de nuestro código en capas distintas, así un cambio pequeño solo reconstruye la capa pequeña.
+
+**Vigilar el servidor**
+- `GET /actuator/health` responde `{"status":"UP"}` si la aplicación y su base de datos responden, y `DOWN` si no. No da más detalles y no hace falta sesión. El resto de Actuator no está publicado.
+- Cada respuesta lleva la cabecera `X-Request-Id`, y cada línea del registro, el mismo identificador entre corchetes. Por ejemplo: `INFO [3f9a1c2b7d10] … No hay servidor de correo configurado`.
+  - Si alguien avisa de un error, con el identificador (se ve en las herramientas de desarrollo del navegador, pestaña *Red*) se buscan en *Logs* de Render las líneas de esa petición.
+  - Si la petición ya trae un identificador válido (letras, números y guiones), se usa ese.
+
 **3. Que no se apague (keep-alive)**
 
 Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (HU-85). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. Si además quieres un aviso cuando la web se caiga, crea en UptimeRobot un monitor *HTTP(s)* a `https://TU-WEB.onrender.com/ping`. El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
@@ -250,9 +258,21 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
 En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para crear una contraseña nueva. Caduca a los 30 minutos y solo sirve una vez.
 
 - **Sin servidor de correo** (lo normal en tu ordenador), el enlace se escribe en la consola de la aplicación: busca la línea `Enlace para recuperar la contraseña de …` y ábrelo en el navegador.
-- **Con servidor de correo**, se envía de verdad. Por ejemplo, con una cuenta de Gmail con verificación en dos pasos:
+- **Con servidor de correo**, se envía de verdad. Por ejemplo, en tu ordenador, con una cuenta de Gmail con verificación en dos pasos:
   1. Crea una *contraseña de aplicación* en https://myaccount.google.com/apppasswords.
-  2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación` (en IntelliJ o en Render).
+  2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación` (en IntelliJ).
+- **En Render (plan gratuito) Gmail no sirve.** Desde el 26 de septiembre de 2025, Render bloquea en sus servicios gratuitos las conexiones a los puertos de correo 25, 465 y 587 ([aviso de Render](https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports)). La aplicación no se rompe: el envío falla tras unos segundos y el enlace queda en *Logs*. Para enviarlo de verdad hace falta un servicio que acepte otro puerto, como [Brevo](https://www.brevo.com), gratis hasta 300 correos al día, que admite el **2525**:
+  1. Crea una cuenta en Brevo y, en *Senders, Domains & Dedicated IPs → Senders*, añade y verifica el correo que saldrá como remitente.
+  2. En *SMTP & API → SMTP*, genera una *clave SMTP*. El usuario es el *Login* que sale ahí, que no es el correo con el que entras.
+  3. En *Environment* de Render define:
+     - `MAIL_HOST=smtp-relay.brevo.com`;
+     - `MAIL_PORT=2525`;
+     - `MAIL_USERNAME=` el *Login* de Brevo;
+     - `MAIL_PASSWORD=` la clave SMTP;
+     - `APUESTAS_CORREO_REMITENTE=` el remitente verificado.
+  4. Pide un enlace en */recuperar* con tu cuenta y mira que llegue. Si en *Logs* sale `No se ha podido enviar el correo de recuperación`, el motivo viene detrás.
+
+  Las claves van solo en Render, nunca en el repositorio. Esta configuración no se ha probado todavía desde Render: si Brevo tampoco conecta, la alternativa es pasar el servicio a un plan de pago de Render, que sí deja usar el 587.
 - La respuesta al pedir el enlace es la misma exista o no la cuenta, para no desvelar qué emails están registrados.
 - El enlace apunta siempre a la dirección configurada (`apuestas.url-publica`), nunca a la que llega en la petición: así nadie puede falsear las cabeceras para que el correo lleve a otra web. En local es `http://localhost:8080`; en Render, la de Render; con el túnel, define `URL_PUBLICA` con el enlace `https://…trycloudflare.com`.
 
