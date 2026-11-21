@@ -57,6 +57,7 @@ class CashOutYBloqueoLigaWebTest {
     @Autowired private BloqueoLigaService bloqueoService;
     @Autowired private ResolucionService resolucion;
     @Autowired private SupercuotaService supercuotas;
+    @Autowired private es.ucm.fdi.is1.apuestas.gestion.GestionService gestion;
 
     private Evento futbol;
     private Evento baloncesto;
@@ -266,5 +267,76 @@ class CashOutYBloqueoLigaWebTest {
         // Al otro resultado del mismo partido, sin supercuota, sí
         Apuesta sinSupercuota = apuestas.apostar(ANA, futbol.getId(), Resultado.VISITANTE, new BigDecimal("20"));
         assertThat(ofertaDe(sinSupercuota)).isNotNull();
+    }
+
+    // --- #136: lo pagado por los bloqueos ---
+
+    private BigDecimal saldoDe(String email) {
+        return usuarios.findByEmail(email).orElseThrow().getSaldo();
+    }
+
+    @Test
+    void siSeAnulaElPartidoSeDevuelvenLosBloqueos() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal antes = saldoDe(ANA);
+        bloqueoService.crear(liga.getId(), ANA, usuarios.findByEmail(LUIS).orElseThrow().getId(), futbol.getId(), "LOCAL");
+        bloqueoService.crearParaLiga(liga.getId(), ANA, futbol.getId(), "VISITANTE");
+        assertThat(saldoDe(ANA)).isEqualByComparingTo(antes.subtract(new BigDecimal("150.00")));
+
+        resolucion.anular(futbol.getId());
+
+        assertThat(saldoDe(ANA)).isEqualByComparingTo(antes);
+        assertThat(bloqueos.findByEvento(futbol)).isEmpty();
+    }
+
+    @Test
+    void conUnResultadoNormalElBloqueoNoSeDevuelve() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal antes = saldoDe(ANA);
+        bloqueoService.crear(liga.getId(), ANA, usuarios.findByEmail(LUIS).orElseThrow().getId(), futbol.getId(), "LOCAL");
+
+        resolucion.introducirResultado(futbol.getId(), Resultado.LOCAL);
+
+        assertThat(saldoDe(ANA)).isEqualByComparingTo(antes.subtract(new BigDecimal("50.00")));
+        assertThat(bloqueos.findByEvento(futbol)).hasSize(1);
+    }
+
+    @Test
+    void siSeBorraElPartidoSeDevuelveElBloqueoYSePuedeBorrar() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal antes = saldoDe(ANA);
+        bloqueoService.crearParaLiga(liga.getId(), ANA, futbol.getId(), "PARTIDO");
+
+        gestion.borrarEvento(futbol.getId());
+
+        assertThat(saldoDe(ANA)).isEqualByComparingTo(antes);
+        assertThat(eventos.findById(futbol.getId())).isEmpty();
+    }
+
+    @Test
+    void conLaCuentaEnPausaNoSePuedeBloquear() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal antes = saldoDe(ANA);
+        usuarioService.pausar(ANA, 1);
+        Long luis = usuarios.findByEmail(LUIS).orElseThrow().getId();
+
+        assertThatThrownBy(() -> bloqueoService.crear(liga.getId(), ANA, luis, futbol.getId(), "LOCAL"))
+                .isInstanceOf(JuegoResponsableException.class);
+        assertThatThrownBy(() -> bloqueoService.crearParaLiga(liga.getId(), ANA, futbol.getId(), "LOCAL"))
+                .isInstanceOf(JuegoResponsableException.class);
+        assertThat(saldoDe(ANA)).isEqualByComparingTo(antes);
+        assertThat(bloqueos.findByEvento(futbol)).isEmpty();
+    }
+
+    @Test
+    void loPagadoPorUnBloqueoCuentaComoJugadoYLoGanaLaCasa() {
+        assertThat(es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.deJuego())
+                .contains(es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.BLOQUEO_LIGA);
+        assertThat(BeneficioDiarioService.DE_LA_CASA).contains(es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.BLOQUEO_LIGA,
+                es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.DEVOLUCION);
     }
 }
