@@ -485,7 +485,7 @@ class QuinielaWebTest {
     }
 
     @Test
-    void elBoleteDeUnaCuentaEliminadaNoSeQuedaParteDelBote() {
+    void elBoletoDeUnaCuentaEliminadaNoSeQuedaParteDelBote() {
         Quiniela quiniela = crear();
         quinielas.echarBoleto(ANA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.VISITANTE));
         quinielas.echarBoleto(BEA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.LOCAL));
