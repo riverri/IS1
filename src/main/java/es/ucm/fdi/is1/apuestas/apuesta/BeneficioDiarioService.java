@@ -31,7 +31,7 @@ public class BeneficioDiarioService {
     public static final int DIAS = 30;
 
     /** Movimientos de los juegos contra la casa: apuestas, casino, predicciones, quiniela y bloqueos de liga. */
-    static final Set<TipoMovimiento> DE_LA_CASA = EnumSet.of(TipoMovimiento.APUESTA, TipoMovimiento.PREMIO,
+    static final Set<TipoMovimiento> DE_LA_CASA = EnumSet.of(TipoMovimiento.APUESTA, TipoMovimiento.SUBIDA_APUESTA, TipoMovimiento.PREMIO,
             TipoMovimiento.DEVOLUCION, TipoMovimiento.CORRECCION, TipoMovimiento.COBRO_ANTICIPADO,
             TipoMovimiento.CASINO_APUESTA,
             TipoMovimiento.CASINO_PREMIO, TipoMovimiento.PREDICCION_COMPRA, TipoMovimiento.PREDICCION_VENTA,

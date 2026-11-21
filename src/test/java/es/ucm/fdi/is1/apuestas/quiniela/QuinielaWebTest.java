@@ -464,4 +464,40 @@ class QuinielaWebTest {
         assertThat(quinielas.quiniela(quiniela.getId()).getEstado()).isEqualTo(EstadoQuiniela.ANULADA);
         assertThatThrownBy(() -> quinielas.anular(quiniela.getId())).isInstanceOf(IllegalStateException.class);
     }
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.BajaService bajas;
+
+    @Test
+    void conUnAnuladoYNingunAciertoEnLosDemasSeDevuelveTodo() {
+        // El anulado es acierto para todos (CA-80.2), pero nadie acierta ningún partido jugado: CA-80.3
+        Quiniela quiniela = crear();
+        quinielas.echarBoleto(ANA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.LOCAL, Resultado.LOCAL));
+        quinielas.echarBoleto(BEA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.LOCAL, Resultado.LOCAL));
+        BigDecimal anaAntes = saldo(ANA);
+        resolucion.anular(primero.getId());
+        resolucion.introducirResultado(segundo.getId(), Resultado.VISITANTE);
+        resolucion.introducirResultado(tercero.getId(), Resultado.VISITANTE);
+
+        quinielas.repartir(quiniela.getId());
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes.add(new BigDecimal("10")));
+        assertThat(saldo(BEA)).isEqualByComparingTo(anaAntes.add(new BigDecimal("10")));
+    }
+
+    @Test
+    void elBoleteDeUnaCuentaEliminadaNoSeQuedaParteDelBote() {
+        Quiniela quiniela = crear();
+        quinielas.echarBoleto(ANA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.VISITANTE));
+        quinielas.echarBoleto(BEA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.LOCAL));
+        quinielas.echarBoleto(CARLA, quiniela.getId(), List.of(Resultado.LOCAL, Resultado.EMPATE, Resultado.VISITANTE));
+        BigDecimal anaAntes = saldo(ANA);
+        bajas.eliminarCuenta(CARLA, "secreta123");
+        resolucion.introducirResultado(primero.getId(), Resultado.LOCAL);
+        resolucion.introducirResultado(segundo.getId(), Resultado.EMPATE);
+        resolucion.introducirResultado(tercero.getId(), Resultado.VISITANTE);
+
+        quinielas.repartir(quiniela.getId());
+        // 30 pagados menos el 10 %: los 27 para Ana, la única que acierta 3 con la cuenta activa
+        assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes.add(new BigDecimal("27")));
+    }
 }

@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
  *
  * <p>Los marcados como {@code juego} cuentan en los límites del juego responsable (HU-10) a través de este libro.
  * Las apuestas deportivas ({@link #APUESTA}) no se marcan porque ya se cuentan con las propias apuestas
- * ({@code ApuestaRepository.apostadoDesde}); si se marcaran, contarían dos veces.
+ * ({@code ApuestaRepository.apostadoDesde}); si se marcaran, contarían dos veces. Sus subidas de importe sí
+ * ({@link #SUBIDA_APUESTA}): la apuesta solo cuenta con lo que se apostó al hacerla.
  */
 public enum TipoMovimiento {
 
@@ -19,8 +20,13 @@ public enum TipoMovimiento {
     BIENVENIDA("Saldo de bienvenida"),
     /** Recarga gratuita periódica (HU-14). */
     RECARGA("Recarga gratuita"),
-    /** Importe que se cobra al apostar o al subir el importe de una apuesta (HU-23, HU-27). */
+    /** Importe que se cobra al apostar (HU-23). */
     APUESTA("Apuesta"),
+    /**
+     * Lo que se cobra al subir el importe de una apuesta (HU-27). Cuenta en el juego responsable cuando se sube: la
+     * apuesta cuenta solo con lo que se apostó al hacerla ({@code Apuesta.importeInicial}).
+     */
+    SUBIDA_APUESTA("Apuesta: subida de importe", true),
     /** Ganancia de una apuesta acertada (HU-25). */
     PREMIO("Premio"),
     /** Importe que se devuelve: apuesta cancelada, anulada o con el importe rebajado (HU-05, HU-26, HU-27). */

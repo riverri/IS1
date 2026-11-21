@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
+import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
 /**
@@ -77,6 +78,12 @@ public class BoletoQuiniela {
     int contarAciertos() {
         aciertos = (int) quiniela.getPartidos().stream().filter(p -> p.acierta(pronostico(p.getOrden()))).count();
         return aciertos;
+    }
+
+    /** Si acierta algún partido que se ha jugado (sin contar los anulados). */
+    boolean aciertaAlgunJugado() {
+        return quiniela.getPartidos().stream().anyMatch(p -> p.getEvento().getEstado() == EstadoEvento.FINALIZADO
+                && p.acierta(pronostico(p.getOrden())));
     }
 
     void premiar(BigDecimal parte) {

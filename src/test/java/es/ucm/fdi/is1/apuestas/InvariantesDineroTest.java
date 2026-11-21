@@ -1040,7 +1040,8 @@ class InvariantesDineroTest {
                     fallos.add("U1 " + quien + ": saldoResultante " + m.getSaldoResultante() + " ≠ acumulado " + acumulado
                             + " en «" + m.getConcepto() + "»");
                 }
-                if ((m.getTipo() == TipoMovimiento.APUESTA || m.getTipo() == TipoMovimiento.RETO_APUESTA
+                if ((m.getTipo() == TipoMovimiento.APUESTA || m.getTipo() == TipoMovimiento.SUBIDA_APUESTA
+                        || m.getTipo() == TipoMovimiento.RETO_APUESTA
                         || m.getTipo() == TipoMovimiento.QUINIELA_BOLETO) && m.getSaldoResultante().signum() < 0) {
                     fallos.add("U1 " + quien + ": saldo negativo tras un cobro: " + m.getConcepto());
                 }
@@ -1129,7 +1130,8 @@ class InvariantesDineroTest {
     }
 
     private static boolean esDeApuesta(MovimientoSaldo m) {
-        return (m.getTipo() == TipoMovimiento.APUESTA || m.getTipo() == TipoMovimiento.PREMIO
+        return (m.getTipo() == TipoMovimiento.APUESTA || m.getTipo() == TipoMovimiento.SUBIDA_APUESTA
+                || m.getTipo() == TipoMovimiento.PREMIO
                 || m.getTipo() == TipoMovimiento.DEVOLUCION || m.getTipo() == TipoMovimiento.CORRECCION
                 || m.getTipo() == TipoMovimiento.COBRO_ANTICIPADO)
                 && !esDeQuiniela(m) && !esDeReto(m) && !esDeBloqueo(m);
