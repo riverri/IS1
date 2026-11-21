@@ -53,12 +53,14 @@ public class ApuestaService {
     private final SupercuotaRepository supercuotas;
     private final Clock reloj;
     private final BloqueoLigaService bloqueosLiga;
+    private final SeleccionRepository selecciones;
 
     public ApuestaService(ApuestaRepository apuestas, EventoRepository eventos, UsuarioRepository usuarios,
                           CandidatoRepository candidatos, MercadoRepository mercados, CalculadoraCuotas calculadora,
                           LimitesService limites,
                           JuegoResponsableService juegoResponsable, RegistroCuotas registroCuotas,
-                          SupercuotaRepository supercuotas, Clock reloj, BloqueoLigaService bloqueosLiga) {
+                          SupercuotaRepository supercuotas, Clock reloj, BloqueoLigaService bloqueosLiga,
+                          SeleccionRepository selecciones) {
         this.apuestas = apuestas;
         this.eventos = eventos;
         this.usuarios = usuarios;
@@ -71,6 +73,7 @@ public class ApuestaService {
         this.supercuotas = supercuotas;
         this.reloj = reloj;
         this.bloqueosLiga = bloqueosLiga;
+        this.selecciones = selecciones;
     }
 
     /** Apuesta simple (HU-23): una combinada de una sola selección, con la cuota vigente. */
@@ -436,9 +439,16 @@ public class ApuestaService {
             Evento evento = bloquearEventos ? eventosBloqueados.get(seleccion.getEvento().getId())
                     : seleccion.getEvento();
             BigDecimal actual = calculadora.cuota(evento, seleccion.getPronostico(), seleccion.getEspecial(),
-                    apuesta.getId());
+                    apuesta.getUsuario().getId());
             if (actual == null || actual.signum() <= 0) return null;
             factor = factor.multiply(seleccion.getCuota().divide(actual, MathContext.DECIMAL64));
+        }
+        // Con otra apuesta propia en estos partidos (activa o cancelada) pudo inflar la cuota aceptada: sin ganancia
+        java.util.Set<Long> idsEventos = apuesta.getSelecciones().stream().map(s -> s.getEvento().getId())
+                .collect(java.util.stream.Collectors.toSet());
+        if (factor.compareTo(BigDecimal.ONE) > 0
+                && selecciones.hayOtrasApuestasDelUsuario(idsEventos, apuesta.getUsuario().getId(), apuesta.getId())) {
+            factor = BigDecimal.ONE;
         }
         return apuesta.getImporte().multiply(factor).setScale(2, RoundingMode.DOWN)
                 .min(apuesta.getGananciaPotencial());
