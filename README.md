@@ -188,7 +188,16 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
 | `/gestion/eventos/{id}` | Dinero apostado a cada resultado; introducir o corregir el resultado o, en fútbol, el marcador (resuelve y paga las apuestas); suspender, reactivar o anular; editar o borrar si aún no ha empezado; riesgo de la casa con cada resultado y supercuota | HU-04, HU-05, HU-06, HU-25, HU-46, HU-52, HU-76, HU-87 |
 | `/gestion/mercados/{id}` | Mercados a largo plazo: candidatos y cuotas, dinero apostado a cada uno, cerrar, marcar o corregir el ganador y anular | HU-45 |
 
-- **Pruebas:** `./mvnw test`
+- **Pruebas:** `./mvnw test`. Antes de un PR conviene `./mvnw verify`, lo mismo que hace la CI:
+  - las pruebas;
+  - la cobertura mínima (JaCoCo: 90 % de líneas y 75 % de ramas; informe en `target/site/jacoco/index.html`);
+  - el análisis estático (SpotBugs, que falla con los errores de prioridad alta).
+  - Además, en la CI:
+    - **Pruebas de mutación (PIT):** `./mvnw -Pmutacion test-compile org.pitest:pitest-maven:mutationCoverage -Djacoco.skip=true`, que exige que las pruebas detecten al menos el 80 % de los cambios (informe en `target/pit-reports/index.html`).
+    - **En un navegador real**, con la aplicación arrancada, desde la carpeta `a11y` (`npm install` la primera vez):
+      - `node comprobar.js` (accesibilidad);
+      - `node e2e.js` (de principio a fin: registrarse, apostar, cancelar, combinada, el creador pone el resultado y se cobra, salir).
+  - Dependabot abre cada mes un PR si sale una versión nueva de una dependencia, y enseguida si la que usamos tiene un fallo de seguridad conocido.
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
 - **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Las tablas las crea y actualiza **Flyway** (ver más abajo), así que al actualizar el proyecto no hace falta borrarla. Para empezar de cero, para la aplicación y borra esa carpeta.
 - **Consola de la base de datos:** http://localhost:8080/h2-console, solo con la sesión del creador de apuestas iniciada (JDBC URL `jdbc:h2:file:./datos/apuestas`, usuario `sa`, sin contraseña)
