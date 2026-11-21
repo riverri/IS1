@@ -26,6 +26,8 @@ El flujo completo está en [`CONTRIBUTING.md`](https://github.com/riverri/IS1/bl
 7. Espera al CI en verde y a que un compañero lo revise y apruebe.
 8. Fusiona con **Squash and merge** y borra la rama.
 
+*(Regla propuesta por la IA; el equipo puede personalizarla.)* **Si hay varios PR listos, se fusionan de uno en uno:** el siguiente, cuando el CI de `main` del anterior esté en verde. Un PR que se hizo encima de otro (apilado) no se fusiona mientras su base no sea `main`. Si el PR trae una migración, su número tiene que ser mayor que la última que hay en `main` en ese momento (ver [I-01](Revisión-de-fallos#al-integrar)).
+
 ## Mensajes de commit
 `tipo: descripción en presente`: `feat:` funcionalidad · `fix:` corrección · `docs:` documentación · `test:` pruebas · `refactor:` reestructuración · `chore:` configuración.
 
