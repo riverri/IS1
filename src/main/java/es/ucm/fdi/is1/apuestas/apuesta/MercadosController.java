@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Apuestas a largo plazo: Balón de Oro, campeón de liga… (HU-44). La página es pública; apostar exige sesión.
@@ -66,7 +67,7 @@ public class MercadosController {
             Apuesta apuesta = apuestas.apostarMercado(principal.getName(), id, candidato, cuota, importe);
             redireccion.addFlashAttribute("mensaje", "Apuesta a " + apuesta.getSelecciones().get(0).getDescripcionPronostico()
                     + " registrada. Si aciertas cobras "
-                    + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
+                    + Monedas.texto(apuesta.getGananciaPotencial()) + " monedas.");
             return "redirect:/apuestas";
         } catch (CuotasCambiadasException e) {
             redireccion.addFlashAttribute("error", "La cuota ha cambiado mientras apostabas. Revísala y vuelve a confirmar.");

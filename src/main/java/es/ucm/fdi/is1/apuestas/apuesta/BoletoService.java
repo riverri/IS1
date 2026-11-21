@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,9 +119,9 @@ public class BoletoService {
         // Primero los eventos que siguen admitiendo apuestas. Se recorre una copia porque se pueden quitar líneas
         List<Boleto.Linea> disponibles = new ArrayList<>();
         List<Long> ids = boleto.getLineas().stream().map(Boleto.Linea::eventoId).toList();
-        Map<Long, Evento> eventosPorId = new java.util.HashMap<>();
+        Map<Long, Evento> eventosPorId = new HashMap<>();
         eventos.findAllById(ids).forEach(evento -> eventosPorId.put(evento.getId(), evento));
-        Map<Long, Evento> suyosPorId = new java.util.HashMap<>();
+        Map<Long, Evento> suyosPorId = new HashMap<>();
         for (Boleto.Linea linea : List.copyOf(boleto.getLineas())) {
             Evento encontrado = eventosPorId.get(linea.eventoId());
             Evento evento = encontrado != null && encontrado.admiteApuestas(ahora) ? encontrado : null;

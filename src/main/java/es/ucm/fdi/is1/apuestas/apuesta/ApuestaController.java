@@ -27,6 +27,7 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.FichaEquipoService;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 import jakarta.validation.Valid;
 
 /**
@@ -110,7 +111,7 @@ public class ApuestaController {
                         new SeleccionPedida(id, form.getResultado(), form.getEspecial(), form.getCuotaVista())),
                         form.getImporte());
                 redireccion.addFlashAttribute("mensaje", "Apuesta registrada. Si aciertas cobras "
-                        + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
+                        + Monedas.texto(apuesta.getGananciaPotencial()) + " monedas.");
                 return "redirect:/apuestas";
             } catch (EventoNoDisponibleException e) {
                 return yaNoAdmiteApuestas(redireccion);
@@ -210,7 +211,7 @@ public class ApuestaController {
         try {
             Apuesta apuesta = apuestas.cancelar(principal.getName(), id);
             redireccion.addFlashAttribute("mensaje", "Apuesta cancelada. Se te han devuelto "
-                    + apuesta.getImporte().toPlainString().replace('.', ',') + " monedas.");
+                    + Monedas.texto(apuesta.getImporte()) + " monedas.");
         } catch (IllegalStateException e) {
             // El mensaje lo da Apuesta.motivoNoCancelable: partido empezado, mercado cerrado o apuesta no activa
             redireccion.addFlashAttribute("error", "Esa apuesta ya no se puede cancelar: " + e.getMessage() + ".");
@@ -224,11 +225,11 @@ public class ApuestaController {
                           Principal principal, RedirectAttributes redireccion) {
         try {
             Apuesta apuesta = apuestas.cobrarAnticipado(principal.getName(), id, ofertaVista);
-            redireccion.addFlashAttribute("mensaje", "Combinada cerrada. Se han abonado "
-                    + apuesta.getPagado().toPlainString().replace('.', ',') + " monedas.");
+            redireccion.addFlashAttribute("mensaje", (apuesta.isCombinada() ? "Combinada cerrada" : "Apuesta cerrada")
+                    + ". Se han abonado " + Monedas.texto(apuesta.getPagado()) + " monedas.");
         } catch (OfertaCashOutCambiadaException e) {
             redireccion.addFlashAttribute("aviso", e.getMessage() + " Nueva oferta: "
-                    + e.getOfertaNueva().toPlainString().replace('.', ',') + " monedas.");
+                    + Monedas.texto(e.getOfertaNueva()) + " monedas.");
             redireccion.addFlashAttribute("cashOutNuevaId", id);
             redireccion.addFlashAttribute("cashOutNuevaOferta", e.getOfertaNueva());
         } catch (ApuestaNoEncontradaException | IllegalStateException e) {
@@ -256,9 +257,9 @@ public class ApuestaController {
         try {
             Apuesta apuesta = apuestas.modificarImporte(principal.getName(), id, importe, cuotaVista);
             redireccion.addFlashAttribute("mensaje", "Importe cambiado a "
-                    + apuesta.getImporte().toPlainString().replace('.', ',') + " monedas con cuota "
+                    + Monedas.texto(apuesta.getImporte()) + " monedas con cuota "
                     + apuesta.getCuota().toPlainString().replace('.', ',') + ". Si aciertas cobras "
-                    + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
+                    + Monedas.texto(apuesta.getGananciaPotencial()) + " monedas.");
         } catch (CuotaApuestaCambiadaException e) {
             // Se le enseña la cuota nueva; la plantilla la pone en el formulario de esa apuesta (y lo deja abierto)
             redireccion.addFlashAttribute("aviso", "La cuota de tu apuesta ha cambiado: ahora es "
@@ -286,7 +287,7 @@ public class ApuestaController {
         registroCuotas.registrar(evento);
         model.addAttribute("evolucion", registroCuotas.evolucion(evento));
         // HU-90: mis alertas de cuota en este partido
-        model.addAttribute("misAlertas", principal == null ? java.util.List.of() : alertas.mias(principal.getName(), evento));
+        model.addAttribute("misAlertas", principal == null ? List.of() : alertas.mias(principal.getName(), evento));
         model.addAttribute("evento", evento);
         // HU-87: con supercuota, su resultado se enseña ya mejorado
         model.addAttribute("cuotas", supercuotas.cuotasConSupercuota(evento));

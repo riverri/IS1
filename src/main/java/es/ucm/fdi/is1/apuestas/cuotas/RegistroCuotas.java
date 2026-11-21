@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.cuotas;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.context.ApplicationEventPublisher;
@@ -66,9 +67,9 @@ public class RegistroCuotas {
         List<Double> visitante = puntos.stream().map(p -> p.getCuotas().visitante().doubleValue()).toList();
         List<Double> empate = puntos.get(0).getCuotas().empate() == null ? null
                 : puntos.stream().map(p -> p.getCuotas().empate().doubleValue()).toList();
-        double minimo = java.util.stream.Stream.of(local, visitante, empate == null ? List.<Double>of() : empate)
+        double minimo = Stream.of(local, visitante, empate == null ? List.<Double>of() : empate)
                 .flatMap(List::stream).mapToDouble(Double::doubleValue).min().orElse(1);
-        double maximo = java.util.stream.Stream.of(local, visitante, empate == null ? List.<Double>of() : empate)
+        double maximo = Stream.of(local, visitante, empate == null ? List.<Double>of() : empate)
                 .flatMap(List::stream).mapToDouble(Double::doubleValue).max().orElse(2);
         return new Evolucion(GraficoLinea.de(local, minimo, maximo),
                 empate == null ? null : GraficoLinea.de(empate, minimo, maximo),

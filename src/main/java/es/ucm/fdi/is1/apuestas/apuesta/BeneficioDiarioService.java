@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class BeneficioDiarioService {
         /** Los días con movimientos, del más reciente al más antiguo, para la tabla. */
         public List<Dia> getConMovimientos() {
             List<Dia> con = new ArrayList<>(dias.stream().filter(d -> d.beneficio().signum() != 0).toList());
-            java.util.Collections.reverse(con);
+            Collections.reverse(con);
             return con;
         }
     }

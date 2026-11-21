@@ -22,4 +22,11 @@ class MonedasTest {
         assertThat(Monedas.texto(new BigDecimal("2.005"))).isEqualTo("2,01");
         assertThat(Monedas.texto(new BigDecimal("2.004"))).isEqualTo("2,00");
     }
+
+    @Test
+    void truncadoCortaLosDecimalesQueSobran() {
+        assertThat(Monedas.truncado(new BigDecimal("2.009"))).isEqualTo("2,00");
+        assertThat(Monedas.truncado(new BigDecimal("1234.567"))).isEqualTo("1.234,56");
+        assertThat(Monedas.truncado(new BigDecimal("50"))).isEqualTo("50,00");
+    }
 }

@@ -1,7 +1,6 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import es.ucm.fdi.is1.apuestas.usuarios.MovimientoSaldoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Juego responsable (HU-10): con una pausa activa no se puede apostar, y lo apostado en las últimas 24 horas o
@@ -63,8 +63,8 @@ public class JuegoResponsableService {
         }
         BigDecimal apostado = apostadoDesde(usuario, desde);
         if (apostado.add(importe).compareTo(limite) > 0) {
-            throw new JuegoResponsableException("Superarías tu límite " + nombre + " de " + monedas(limite)
-                    + " monedas: llevas " + monedas(apostado) + " apostadas en los últimos " + periodo + ".");
+            throw new JuegoResponsableException("Superarías tu límite " + nombre + " de " + Monedas.truncado(limite)
+                    + " monedas: llevas " + Monedas.truncado(apostado) + " apostadas en los últimos " + periodo + ".");
         }
     }
 
@@ -78,7 +78,4 @@ public class JuegoResponsableService {
                 .add(movimientos.jugadoDesde(usuario, desde, TipoMovimiento.deJuego()));
     }
 
-    private static String monedas(BigDecimal cantidad) {
-        return cantidad.setScale(2, RoundingMode.DOWN).toPlainString().replace('.', ',');
-    }
 }

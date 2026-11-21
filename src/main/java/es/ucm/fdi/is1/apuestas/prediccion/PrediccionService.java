@@ -23,6 +23,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.web.GraficoLinea;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Mercados de predicción (HU-63 a HU-68): crear, cerrar, anular y resolver (creador), comprar y vender
@@ -290,7 +291,7 @@ public class PrediccionService {
                 posicion.getUsuario().abonar(posicion.getInvertido(), TipoMovimiento.DEVOLUCION,
                         "Mercado anulado: " + mercado.getPregunta(), ahora);
                 notificaciones.avisar(posicion.getUsuario(), "anulada", "Se ha anulado el mercado «"
-                        + mercado.getPregunta() + "». Te hemos devuelto " + monedas(posicion.getInvertido())
+                        + mercado.getPregunta() + "». Te hemos devuelto " + Monedas.truncado(posicion.getInvertido())
                         + " monedas.");
                 devueltas++;
             }
@@ -379,14 +380,11 @@ public class PrediccionService {
         String prefijo = correccion ? "Respuesta corregida. " : "";
         if (posicion.getLado() == respuesta) {
             notificaciones.avisar(posicion.getUsuario(), "ganada", prefijo + "¡Has acertado «" + respuesta.getNombre()
-                    + "» en «" + posicion.getMercado().getPregunta() + "»! Cobras " + monedas(cobrado) + " monedas.");
+                    + "» en «" + posicion.getMercado().getPregunta() + "»! Cobras " + Monedas.truncado(cobrado) + " monedas.");
         } else {
             notificaciones.avisar(posicion.getUsuario(), "perdida", prefijo + "La respuesta a «"
                     + posicion.getMercado().getPregunta() + "» ha sido «" + respuesta.getNombre() + "».");
         }
     }
 
-    private static String monedas(BigDecimal cantidad) {
-        return cantidad.setScale(2, RoundingMode.DOWN).toPlainString().replace('.', ',');
-    }
 }
