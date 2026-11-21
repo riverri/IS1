@@ -56,11 +56,26 @@ Los objetivos principales de este Sprint es terminar con las HU de las ampliacio
 ### Seguimiento de riesgos
 | Riesgo | Cambio | Por qué | Acción |
 |---|---|---|---|
-| | | | |
+| 8 · Conflictos al integrar cambios | Se materializó | El 21/11 se fusionaron cinco PR en media hora y en un orden distinto del previsto: el baccarat no llegó a `main` y su migración quedó detrás de otra ya aplicada (ver abajo, I-01 en [Revisión de fallos](../../wiki/Revisión-de-fallos.md#al-integrar)) | Un PR cada vez, sin PR apilados, y el número de migración se revisa justo antes de fusionar |
 
 ### Qué fue bien y qué mejorar
+
+> *Texto redactado por la IA (Claude) a partir de lo que pasó; el equipo puede personalizarlo.*
+
+**Mejorar: PR fusionados en desorden (21/11).** Quedaban cinco PR de código listos: el arreglo del cash-out (#138), la liga fantasy (#133, migración V27), la vuelta del casino (#125), el baccarat (#132, migración V26) y los anuncios y movimientos (#131). El orden previsto era casino → baccarat → fantasy, pero se fusionaron en media hora y en otro orden:
+
+1. **Migraciones fuera de orden.** La fantasy (V27) entró antes que el baccarat (V26). Flyway no aplica una migración con número menor que la última que ya tiene la base de datos, así que al fusionar el baccarat la base de datos de Render no habría arrancado.
+2. **PR apilado fusionado en la rama equivocada.** El baccarat se hizo encima de la rama del casino porque lo necesita, así que su PR apuntaba a `codigo/vuelve-casino` y no a `main`. Se fusionó 21 segundos después que el casino, antes de que GitHub cambiara su base a `main`. El baccarat acabó en la rama del casino, que ya estaba fusionada, y `main` se quedó sin él, aunque GitHub mostraba el PR como fusionado.
+
+Además, los PR del casino y de los anuncios añadían una tarjeta en el mismo hueco del panel de gestión: el segundo en fusionarse habría dado conflicto.
+
+**Cómo se solucionó:** la migración del baccarat se renumeró a V28. Se abrió un PR nuevo, ya contra `main` (#140). La tarjeta de anuncios se movió de sitio en #131. Antes de fusionar, se probó en local `main` con los PR que quedaban juntos: 584 pruebas en verde. Después se fusionaron de uno en uno, esperando al CI de cada uno, y se comprobó que `main` quedaba idéntico a lo probado. No se llegó a romper Render: el fallo se vio antes de que el baccarat entrara en `main`.
+
+**Qué fue bien:** el CI y las pruebas permitieron comprobar la combinación antes de fusionarla. El fallo quedó en ramas y no llegó a producción.
 
 ### Acciones de mejora para el Sprint 6
 | Acción | Responsable | Cómo se comprueba |
 |---|---|---|
-| | | |
+| Fusionar los PR de uno en uno: el siguiente solo cuando el CI de `main` del anterior esté en verde | Quien fusiona | Historial de `main` y de Actions |
+| No fusionar PR apilados: cuando entra su base, se cambia su destino a `main` (o se abre otro) y se espera a que el CI vuelva a pasar | Autor del PR | La base del PR es `main` al fusionarlo |
+| Comprobar el número de la migración justo antes de fusionar: tiene que ser mayor que la última de `main` | Autor del PR | `ls src/main/resources/db/migration/h2` frente a la rama |

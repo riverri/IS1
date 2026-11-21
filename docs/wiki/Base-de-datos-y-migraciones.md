@@ -39,4 +39,6 @@ Al principio Hibernate creaba las tablas desde las entidades. Cuando los datos e
 - Los scripts están en `db/migration/h2/` y `db/migration/postgresql/`. En PostgreSQL, `V8__esquema_postgresql.sql` crea todo lo de V1–V8 de golpe; desde V9 van los mismos scripts en las dos carpetas.
 - Si cambias una entidad, crea un script nuevo (`V16__descripcion.sql`) **en las dos carpetas**.
 - **Nunca modifiques un script que ya está en `main`**: otros ordenadores ya lo aplicaron.
+- *(Esta regla y la siguiente las propuso la IA; el equipo puede personalizarlas.)* **Revisa el número justo antes de fusionar.** Si mientras tanto ha entrado en `main` otra migración con un número mayor, renombra la tuya al siguiente libre. Flyway no aplica una versión menor que la última aplicada, y la base de datos de Render no arrancaría. Pasó con el baccarat, que tuvo que pasar de V26 a V28 ([I-01](Revisión-de-fallos#al-integrar)).
+- Si en tu ordenador vienes de una rama con otras migraciones, borra `target/` (puede guardar scripts que ya no existen: «Found more than one migration with version…») y aparta la base de datos local `datos/`.
 - Con `ddl-auto=validate`, si falta una migración la aplicación no arranca y dice qué columna falta. Las pruebas lo detectan antes.
