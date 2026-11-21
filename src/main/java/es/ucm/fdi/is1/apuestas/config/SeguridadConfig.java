@@ -56,6 +56,8 @@ public class SeguridadConfig {
                                 "/css/**", "/js/**", "/error").permitAll()
                         // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()
+                        // Estado de la aplicación y de su base de datos (Actuator): solo UP o DOWN, sin detalles
+                        .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                         // Modo oscuro (HU-94): también para los visitantes
                         .requestMatchers(HttpMethod.GET, "/tema").permitAll()
                         // Clic en un anuncio interno (HU-60): los visitantes también los ven
