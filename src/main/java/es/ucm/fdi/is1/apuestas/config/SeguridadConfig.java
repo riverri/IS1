@@ -67,7 +67,8 @@ public class SeguridadConfig {
                 .authorizeHttpRequests(peticiones -> peticiones
                         // Páginas públicas: cualquier visitante puede ver el catálogo (HU-08)
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
-                        .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*", "/registro", "/login", "/recuperar", "/recuperar/nueva",
+                        .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*",
+                                "/registro", "/login", "/recuperar", "/recuperar/nueva",
                                 "/css/**", "/js/**", "/error").permitAll()
                         // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()

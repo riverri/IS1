@@ -27,7 +27,6 @@ import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
-import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaRepository;
 import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaService;
 import es.ucm.fdi.is1.apuestas.ligas.Liga;

@@ -396,7 +396,9 @@ public class ApuestaService {
         java.util.Map<Long, BigDecimal> ofertas = new java.util.HashMap<>();
         for (Apuesta apuesta : activas) {
             BigDecimal importe = ofertaCashOut(apuesta, ahora, false);
-            if (importe != null) ofertas.put(apuesta.getId(), importe);
+            if (importe != null) {
+                ofertas.put(apuesta.getId(), importe);
+            }
         }
         return ofertas;
     }
@@ -442,14 +444,18 @@ public class ApuestaService {
     private BigDecimal ofertaCashOut(Apuesta apuesta, LocalDateTime ahora, boolean bloquearEventos) {
         // CA-75.1: simples y combinadas. Una simple con supercuota no: su cuota aceptada es más alta que la normal
         // desde que se apuesta, y el cobro anticipado pagaría más de lo apostado nada más apostar
-        if (apuesta.isLargoPlazo() || !apuesta.cancelable(ahora) || conSupercuota(apuesta)) return null;
+        if (apuesta.isLargoPlazo() || !apuesta.cancelable(ahora) || conSupercuota(apuesta)) {
+            return null;
+        }
         java.util.Map<Long, Evento> eventosBloqueados = new java.util.HashMap<>();
         if (bloquearEventos) {
             for (Seleccion seleccion : apuesta.getSelecciones().stream()
                     .sorted(java.util.Comparator.comparing(s -> s.getEvento().getId())).toList()) {
                 Evento bloqueado = eventos.paraCambiar(seleccion.getEvento().getId())
                         .filter(e -> e.admiteApuestas(ahora)).orElse(null);
-                if (bloqueado == null) return null;
+                if (bloqueado == null) {
+                    return null;
+                }
                 eventosBloqueados.put(bloqueado.getId(), bloqueado);
             }
         }
@@ -459,7 +465,9 @@ public class ApuestaService {
                     : seleccion.getEvento();
             BigDecimal actual = calculadora.cuota(evento, seleccion.getPronostico(), seleccion.getEspecial(),
                     apuesta.getUsuario().getId());
-            if (actual == null || actual.signum() <= 0) return null;
+            if (actual == null || actual.signum() <= 0) {
+                return null;
+            }
             factor = factor.multiply(seleccion.getCuota().divide(actual, MathContext.DECIMAL64));
         }
         // Con otra apuesta propia en estos partidos (activa o cancelada) pudo inflar la cuota aceptada: sin ganancia

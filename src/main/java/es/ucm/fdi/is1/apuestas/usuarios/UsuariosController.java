@@ -115,7 +115,8 @@ public class UsuariosController {
     }
 
     /**
-     * POST /cuenta/limites: límites diario y semanal que se pone el usuario (HU-10). Vuelve a Mi cuenta. Si el diario supera al semanal, lo muestra como error del campo.
+     * POST /cuenta/limites: límites diario y semanal que se pone el usuario (HU-10). Vuelve a Mi cuenta.
+     * Si el diario supera al semanal, lo muestra como error del campo.
      */
     @PostMapping("/cuenta/limites")
     public String limites(@Valid @ModelAttribute("limitesPersonales") LimitesPersonalesForm form,

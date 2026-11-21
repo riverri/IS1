@@ -139,7 +139,8 @@ class ApuestaWebTest {
     @WithMockUser(username = USUARIO)
     void sinSaldoSuficienteNoSePuedeApostar() throws Exception {
         // Se deja el saldo en 20 monedas, por debajo del importe máximo por apuesta
-        usuarios.findByEmail(USUARIO).orElseThrow().cargar(saldo().subtract(new BigDecimal("20")), TipoMovimiento.APUESTA, "Gasto de prueba", Hora.ahora());
+        usuarios.findByEmail(USUARIO).orElseThrow()
+                .cargar(saldo().subtract(new BigDecimal("20")), TipoMovimiento.APUESTA, "Gasto de prueba", Hora.ahora());
         BigDecimal antes = saldo();
 
         mvc.perform(post("/eventos/{id}/apostar", futbol.getId()).with(csrf())

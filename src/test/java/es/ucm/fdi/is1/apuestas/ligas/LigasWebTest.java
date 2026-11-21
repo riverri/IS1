@@ -60,7 +60,8 @@ class LigasWebTest {
         usuarioService.crear("ana@ucm.es", "Ana", "secreta123", Rol.USUARIO);
         usuarioService.crear("luis@ucm.es", "Luis", "secreta123", Rol.USUARIO);
         usuarioService.crear("eva@ucm.es", "Eva", "secreta123", Rol.USUARIO);
-        usuarios.findByEmail("luis@ucm.es").orElseThrow().abonar(new BigDecimal("500"), TipoMovimiento.RECARGA, "Saldo de prueba", Hora.ahora());
+        usuarios.findByEmail("luis@ucm.es").orElseThrow()
+                .abonar(new BigDecimal("500"), TipoMovimiento.RECARGA, "Saldo de prueba", Hora.ahora());
     }
 
     private Liga crear(String nombre) throws Exception {

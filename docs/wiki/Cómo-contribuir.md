@@ -28,6 +28,17 @@ El flujo completo está en [`CONTRIBUTING.md`](https://github.com/riverri/IS1/bl
 
 *(Regla propuesta por la IA; el equipo puede personalizarla.)* **Si hay varios PR listos, se fusionan de uno en uno:** el siguiente, cuando el CI de `main` del anterior esté en verde. Un PR que se hizo encima de otro (apilado) no se fusiona mientras su base no sea `main`. Si el PR trae una migración, su número tiene que ser mayor que la última que hay en `main` en ese momento (ver [I-01](Revisión-de-fallos#al-integrar)).
 
+## Estilo del código
+- El repositorio trae un [`.editorconfig`](https://github.com/riverri/IS1/blob/main/.editorconfig) que IntelliJ, VS Code y Eclipse leen solos: UTF-8, saltos de línea de Unix, 4 espacios y sin espacios al final.
+- `./mvnw verify` comprueba además unas pocas reglas de Java ([`checkstyle.xml`](https://github.com/riverri/IS1/blob/main/checkstyle.xml)) y falla si no se cumplen:
+  - líneas de 140 caracteres como mucho;
+  - sin tabuladores;
+  - sin imports que no se usan;
+  - `if`, `for` y `while` siempre con llaves.
+
+  Suelto: `./mvnw checkstyle:check`.
+- En las plantillas no se escribe JavaScript (ni `onclick` ni `<script>` dentro de la página), porque la política de seguridad no lo dejaría ejecutar. Para pedir confirmación se usa `data-confirmar="¿Seguro?"`, y el resto va en un archivo de `static/js`.
+
 ## Mensajes de commit
 `tipo: descripción en presente`: `feat:` funcionalidad · `fix:` corrección · `docs:` documentación · `test:` pruebas · `refactor:` reestructuración · `chore:` configuración.
 

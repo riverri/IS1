@@ -57,7 +57,7 @@ El informe queda en `target/pit-reports/index.html`. A 21/11 se detecta el **86 
 
 ## Integración continua
 `.github/workflows/ci.yml` se ejecuta en cada pull request y en cada cambio de `main`:
-- **build**: compila y pasa todas las pruebas con H2, mide la cobertura y pasa SpotBugs.
+- **build**: compila y pasa todas las pruebas con H2, mide la cobertura y pasa SpotBugs y la comprobación de estilo (Checkstyle).
 - **postgresql**: arranca PostgreSQL 17 y pasa las mismas pruebas, para comprobar las migraciones de PostgreSQL.
 - **mutacion**: pasa las pruebas de mutación (ver arriba) y deja el informe como artefacto `mutacion-pit`.
 - **accesibilidad**: arranca la aplicación con los datos de demostración y la recorre con un navegador ([`a11y/comprobar.js`](https://github.com/riverri/IS1/blob/main/a11y/comprobar.js)). Pasa las reglas de WCAG 2.1 A y AA de axe a las páginas principales, con colores claros y oscuros; hace una apuesta solo con el teclado y comprueba que el foco siempre se ve; y mira que no haya desplazamiento lateral a 320 px ni con la página ampliada al 200 % (HU-97 a HU-101).
@@ -65,3 +65,5 @@ El informe queda en `target/pit-reports/index.html`. A 21/11 se detecta el **86 
   Después, [`a11y/e2e.js`](https://github.com/riverri/IS1/blob/main/a11y/e2e.js) hace el recorrido de un jugador de principio a fin: registrarse, apostar, cancelar, una combinada, el creador pone el resultado y se cobra, y cerrar sesión.
 
 Si alguno falla, el PR sale en rojo y no se fusiona.
+
+Aparte, el trabajo **Vigilancia** pide cada hora `/actuator/health` a la web publicada y abre un issue si no responde.

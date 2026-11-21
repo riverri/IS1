@@ -28,7 +28,8 @@ import es.ucm.fdi.is1.apuestas.eventos.Evento;
  * <ul>
  *   <li>Doble oportunidad: suma de las probabilidades de los dos resultados (1X = local + empate).</li>
  *   <li>Goles: cada equipo marca según una distribución de Poisson con media
- *       {@value #GOLES_MEDIOS} × e^(±{@value #GOLES_POR_PUNTO} × diferencia). Más de 2,5 = 1 − P(2 goles o menos); ambos marcan = P(local marca) × P(visitante marca).</li>
+ *       {@value #GOLES_MEDIOS} × e^(±{@value #GOLES_POR_PUNTO} × diferencia). Más de 2,5 = 1 − P(2 goles o menos);
+ *       ambos marcan = P(local marca) × P(visitante marca).</li>
  *   <li>Se aplica el mismo margen y los mismos límites; aquí no hay ajuste por volumen.</li>
  * </ul>
  *

@@ -107,7 +107,8 @@ public class QuinielaService {
         }
         if (precio == null || precio.signum() <= 0 || precio.stripTrailingZeros().scale() > 2
                 || precio.compareTo(new BigDecimal("100000")) > 0) {
-            throw new IllegalArgumentException("El precio del boleto tiene que ser mayor que 0, hasta 100.000 y con 2 decimales como mucho");
+            throw new IllegalArgumentException(
+                    "El precio del boleto tiene que ser mayor que 0, hasta 100.000 y con 2 decimales como mucho");
         }
         // LinkedHashSet quita los repetidos
         List<Long> ids = eventoIds == null ? List.of() : List.copyOf(new LinkedHashSet<>(eventoIds));
