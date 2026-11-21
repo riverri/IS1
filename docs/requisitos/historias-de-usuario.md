@@ -170,7 +170,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
 | HU-74 | Baccarat | Por hacer | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
-| HU-75 | Cobrar antes de tiempo (cash-out) | Por hacer | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-75 | Cobrar antes de tiempo (cash-out) | Integrada (Sprint 5) | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 | HU-76 | Riesgo de la casa por evento | Por hacer | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 | HU-77 | Correo al ganar una apuesta | Por hacer | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-78 | Montar una quiniela | Por hacer | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
@@ -211,7 +211,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-113 | Cambiar la visibilidad de una liga | Implementada | 3 | 3 (Media) | — | — | — | — | — |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**113 historias**: 46 hechas, 34 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-86 a HU-92, HU-94 a HU-101 y HU-114, del Sprint 5), 3 implementadas (HU-111 a HU-113), 8 pendientes de subir (HU-55 a HU-62), 5 por hacer (HU-74, HU-75 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **281 criterios de aceptación** en total; 98 son de historias hechas, 88 de las integradas, 13 de las implementadas, 20 de las pendientes de subir, 14 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**113 historias**: 46 hechas, 35 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114, del Sprint 5), 3 implementadas (HU-111 a HU-113), 8 pendientes de subir (HU-55 a HU-62), 4 por hacer (HU-74 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **281 criterios de aceptación** en total; 98 son de historias hechas, 92 de las integradas, 13 de las implementadas, 20 de las pendientes de subir, 10 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -833,7 +833,7 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 42 | 3 (Media) | 4 | Por hacer | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| 42 | 3 (Media) | 4 | Integrada (Sprint 5) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -845,6 +845,10 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-75.4 | Las cuotas cambian mientras decido | Pulso «Cobrar ya» | No se cobra y se me enseña la oferta nueva. |
 
 La cuota actual no cuenta el dinero que ha apostado el propio jugador, para que apostar y cobrar al momento no dé ganancia. El cash-out cierra la apuesta completa: no se pueden retirar selecciones sueltas de una combinada. Una apuesta cobrada cuenta en el balance y en el ranking, pero no como acierto.
+
+Una simple hecha con supercuota (HU-87) no tiene cash-out: su cuota aceptada es mayor que la normal desde que se apuesta, y valdría más de lo apostado nada más apostar (#135).
+
+**Pruebas:** `CashOutYBloqueoLigaWebTest`. En `main` desde #128 (combinadas, con la oferta de HU-102 y el cobro de HU-103) y #153 (simples).
 
 ### HU-102 · Ver la oferta de cash-out de una combinada (propuesta)
 
@@ -2007,16 +2011,17 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| - | 2 (Alta) | - | Por hacer (Sprint 5-6) | 2 | - | - | - | - |
+| 58 | 2 (Alta) | - | Por hacer (Sprint 5-6) | 2 | - | - | - | - |
 
 **Criterios de aceptación**
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
 | CA-93.1 | Tengo un banner en una página web externa | Hago click en el banner | Me lleva a la página web de Better y me muestra un overview de la app para que vea como es |
-| CA-93.2 | Quiero crear una oferta temporal que aparezca en la página principal | Accedo desde el usuario admin a la web | Soy capaz de crear nuevas ofertas en forma de banner y el destino al que llevan al hacer click |
 
-**Pruebas:** Por determinar.
+Crear desde Gestión ofertas en forma de banner, con su destino, ya lo cubre **HU-61** (gestionar los anuncios, con los anuncios de HU-60 y los clics de HU-62). Por eso el antiguo CA-93.2 se ha quitado de aquí (#137): esta historia se queda solo con el banner en webs externas.
+
+**Pruebas:** por hacer cuando se implemente.
 
 ### HU-96 · Estadísticas por competición
 

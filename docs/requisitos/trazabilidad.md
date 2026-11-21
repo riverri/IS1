@@ -12,14 +12,14 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 34 integradas (HU-63 a HU-73, HU-76 a HU-80, HU-84 a HU-92, HU-94 a HU-101 y HU-114) | 88 | 88 (100 %) | 0 | 0 |
+| 35 integradas (HU-63 a HU-73, HU-75 a HU-80, HU-84 a HU-92, HU-94 a HU-101 y HU-114) | 92 | 92 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial; antes HU-93), del Sprint 5, con sus 88 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial; antes HU-93), del Sprint 5, con sus 92 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
@@ -489,6 +489,15 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-73.1 | La configuración se guarda y con la sección cerrada nadie opera | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorNoCompraYConLaSeccionCerradaNadieCompra`<br>[`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.soloElCreadorEntraEnLaGestionYVeLasCuentasEnElPanelDeLaCasa` |
 | CA-73.2 | Una cripto retirada no se compra, pero se puede vender | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.unaCriptoRetiradaNoSeCompraPeroQuienLaTieneLaPuedeVender` |
 | CA-73.3 | Los precios se descargan en el momento y se avisa si CoinGecko falla | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion` |
+
+## HU-75 · Cobrar antes de tiempo (cash-out)
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-75.1 | «Cobrar ya» en una apuesta activa, simple o combinada, con el valor actual sin pasar de la ganancia potencial; recién hecha vale lo apostado | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.muestraOfertaDeCashOutParaLaCombinadaCompleta`, `.unaSimpleTambienSePuedeCobrarAntes`, `.siOtrosJugadoresBajanLaCuotaLaOfertaSubeDeLoApostado`, `.bajarLaCuotaConOtraApuestaPropiaYCancelarlaNoDaDinero`, `.inflarLaCuotaAntesDeApostarYCancelarNoDaDinero`, `.unaSimpleConSupercuotaNoTieneCobroAnticipado` |
+| CA-75.2 | Sin oferta si algún evento ha empezado, se ha suspendido o se ha anulado | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.siUnPartidoSeSuspendeOSeAnulaNoSeOfreceCobrar` |
+| CA-75.3 | Cobrada, queda «Cobro anticipado» y los resultados ya no cambian lo recibido | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian` |
+| CA-75.4 | Si las cuotas han cambiado, no se cobra y se enseña la oferta nueva | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.siLaOfertaCambioNoCierraLaCombinadaNiAbonaNada` |
 
 ## HU-76 · Riesgo de la casa por evento
 

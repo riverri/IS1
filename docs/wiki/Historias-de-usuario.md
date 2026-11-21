@@ -20,12 +20,12 @@ La [matriz de trazabilidad](https://github.com/riverri/IS1/blob/main/docs/requis
 | Estado | Historias |
 |---|---|
 | **Hechas (46)** | HU-01 a HU-14, HU-17 a HU-37, HU-44 a HU-54 |
-| **Integradas (34)** | HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11; HU-85 (tiempo de carga) el 15/11; el 16/11, HU-76 (riesgo de la casa), HU-77 (correo al ganar), HU-78 a HU-80 (quiniela), HU-84 (ranking por tipo de juego); y del Sprint 5, HU-86 a HU-92 y HU-94 a HU-96 (favoritos, supercuota, logros, retos, alertas y evolución de la cuota, resumen semanal, modo oscuro, beneficio diario y estadísticas por competición), HU-114 (exportar el historial) y HU-97 a HU-101 (accesibilidad). Están en `main`; falta que el Product Owner las acepte en la review de su sprint |
+| **Integradas (35)** | HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11; HU-85 (tiempo de carga) el 15/11; el 16/11, HU-76 (riesgo de la casa), HU-77 (correo al ganar), HU-78 a HU-80 (quiniela), HU-84 (ranking por tipo de juego); y del Sprint 5, HU-75 (cash-out, simple o combinada), HU-86 a HU-92 y HU-94 a HU-96 (favoritos, supercuota, logros, retos, alertas y evolución de la cuota, resumen semanal, modo oscuro, beneficio diario y estadísticas por competición), HU-114 (exportar el historial) y HU-97 a HU-101 (accesibilidad). Están en `main`; falta que el Product Owner las acepte en la review de su sprint |
 | **Pendientes de subir (8)** | HU-55 (movimientos del saldo), HU-56 a HU-59 (casino) y HU-60 a HU-62 (anuncios internos). Hechas, pero su código se quitó de `main` para subirlo más adelante |
-| **Por hacer (5)** | HU-74 (baccarat), HU-75 (cash-out) y HU-81 a HU-83 (fantasy), del Sprint 4 |
+| **Por hacer (4)** | HU-74 (baccarat) y HU-81 a HU-83 (fantasy), del Sprint 4 |
 | **Descartadas (8)** | HU-15 y HU-16 (cuenta bancaria y retiradas: chocan con "sin dinero real") y HU-38 a HU-43 (seguir usuarios, feed, privacidad, copiar apuestas). En su lugar se hicieron el perfil público (HU-48) y las ligas (HU-51) |
 
-En total hay **101 historias y 232 criterios de aceptación**; 97 son de historias hechas, 88 de las integradas, 20 de las pendientes de subir, 14 de las que están por hacer y 13 de las descartadas.
+En total hay **101 historias y 232 criterios de aceptación**; 97 son de historias hechas, 92 de las integradas, 20 de las pendientes de subir, 10 de las que están por hacer y 13 de las descartadas.
 
 ## Estimación
 
