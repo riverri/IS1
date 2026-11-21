@@ -51,10 +51,17 @@ public class FichajeFantasy {
     @Column(nullable = false, precision = 5, scale = 1)
     private BigDecimal precio;
 
+    /**
+     * Desde cuándo suma: al ficharlo o, si la jornada ya había empezado, el lunes siguiente (ver
+     * {@link FantasyService.Jornada}).
+     */
     @Column(nullable = false)
     private LocalDateTime desde;
 
-    /** Cuándo se vendió; null mientras siga en el equipo. */
+    /**
+     * Hasta cuándo suma; null mientras siga en el equipo. Al venderlo con la jornada ya empezada es el lunes siguiente:
+     * sigue sumando lo que queda de jornada.
+     */
     private LocalDateTime hasta;
 
     protected FichajeFantasy() {
@@ -71,8 +78,8 @@ public class FichajeFantasy {
         this.desde = desde;
     }
 
-    void vender(LocalDateTime ahora) {
-        hasta = ahora;
+    void vender(LocalDateTime hasta) {
+        this.hasta = hasta;
     }
 
     /**

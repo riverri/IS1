@@ -1929,6 +1929,7 @@ El precio de cada jugador sale de su nota y de la calidad de su equipo (de unos 
 |---|---|---|---|
 | CA-82.1 | Ficho a un jugador | Se juegan partidos de su club | Solo le cuentan los que empiezan después de ficharlo. Si lo vendo, lo que ya sumó se queda. |
 | CA-82.2 | Un partido de su club ha terminado | Se calculan sus puntos | Victoria 3 y empate 1. Portería a cero: portero +4, defensa +3 y centrocampista +1. Cada gol de su club: delantero +2 y centrocampista +1. Si su club encaja 3 o más, portero y defensa −1. Sin marcador, solo cuentan la victoria y el empate. |
+| CA-82.3 | La jornada (de lunes a domingo) ya ha empezado: se ha jugado o está en juego su primer partido | Ficho o vendo a un jugador | El cambio cuenta desde la jornada siguiente: el fichado suma desde el lunes y el vendido sigue sumando lo que queda de jornada. Antes del primer partido, cuenta enseguida ([ADR 0007](../decisiones/0007-jornada-fantasy.md)). |
 
 No hay estadísticas de cada jugador (goles, tarjetas…): todo sale del resultado de su club y de su posición.
 

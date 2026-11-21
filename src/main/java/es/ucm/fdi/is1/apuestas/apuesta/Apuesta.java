@@ -79,6 +79,13 @@ public class Apuesta {
     private BigDecimal importe;
 
     /**
+     * Lo que se apostó al hacerla (o menos, si después se bajó). Es lo que cuenta en el juego responsable desde su
+     * fecha (HU-10); las subidas cuentan aparte, cuando se hacen ({@link TipoMovimiento#SUBIDA_APUESTA}).
+     */
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal importeInicial;
+
+    /**
      * Producto de las cuotas de todas las selecciones en el momento de apostar, redondeado hacia abajo
      * a 2 decimales. Se recalcula si el usuario cambia el importe (HU-27).
      */
@@ -108,6 +115,7 @@ public class Apuesta {
     public Apuesta(Usuario usuario, BigDecimal importe, LocalDateTime fecha) {
         this.usuario = usuario;
         this.importe = importe;
+        this.importeInicial = importe;
         this.fecha = fecha;
         this.cuota = BigDecimal.ONE;
     }
@@ -298,9 +306,11 @@ public class Apuesta {
         BigDecimal diferencia = nuevo.subtract(importe);
         // signum(): 1 si es positivo, -1 si es negativo, 0 si es cero. negate() le cambia el signo
         if (diferencia.signum() > 0) {
-            usuario.cargar(diferencia, TipoMovimiento.APUESTA, "Subida de importe: " + descripcion(), ahora);
+            usuario.cargar(diferencia, TipoMovimiento.SUBIDA_APUESTA, "Subida de importe: " + descripcion(), ahora);
         } else if (diferencia.signum() < 0) {
             usuario.abonar(diferencia.negate(), TipoMovimiento.DEVOLUCION, "Bajada de importe: " + descripcion(), ahora);
+            // Bajarla por debajo de lo que se apostó al hacerla también cuenta menos en el juego responsable
+            importeInicial = importeInicial.min(nuevo);
         }
         importe = nuevo;
         // La cuota vista al apostar ya no vale: toda la apuesta pasa a la cuota vigente ahora

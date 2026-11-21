@@ -64,12 +64,13 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
     List<Object[]> resumenResueltasDe(@org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
 
     /**
-     * Importe apostado desde una fecha, sin contar las apuestas canceladas (HU-10).
+     * Importe apostado desde una fecha, sin contar las apuestas canceladas (HU-10). Cada apuesta cuenta con lo que
+     * se apostó al hacerla; las subidas de importe se cuentan con el libro de movimientos, cuando se hacen.
      * {@code :usuario} y {@code :desde} se sustituyen por los parámetros del método con el mismo nombre;
      * {@code coalesce(sum, 0)} devuelve 0 en lugar de null si no hay ninguna apuesta.
      */
     @Query("""
-            select coalesce(sum(a.importe), 0) from Apuesta a where a.usuario = :usuario and a.fecha >= :desde
+            select coalesce(sum(a.importeInicial), 0) from Apuesta a where a.usuario = :usuario and a.fecha >= :desde
             and a.estado <> es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.CANCELADA""")
     BigDecimal apostadoDesde(Usuario usuario, LocalDateTime desde);
 }

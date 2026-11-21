@@ -347,6 +347,11 @@ public class CasinoService {
             case PIERDE -> BigDecimal.ZERO;
         };
         premio = premio.setScale(2, RoundingMode.DOWN);
+        // Una mano abandonada de una cuenta ya eliminada: no se le puede pagar (abonar no hace nada), así que no se
+        // apunta como pagado en las cuentas de la casa
+        if (partida.getUsuario().isEliminado()) {
+            premio = BigDecimal.ZERO;
+        }
         String marcador = "Tú " + ManoBlackjack.valor(mano.getJugador()) + ", banca "
                 + ManoBlackjack.valor(mano.getBanca());
         pagar(partida.getUsuario(), premio, "Blackjack: " + resultado.getDescripcion().toLowerCase(Locale.ROOT), ahora);

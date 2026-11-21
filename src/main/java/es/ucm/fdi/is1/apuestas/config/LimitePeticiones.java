@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.UrlPathHelper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,14 +53,21 @@ public class LimitePeticiones extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest peticion) {
-        return maximo <= 0 || !"POST".equals(peticion.getMethod())
-                || !RUTAS.contains(peticion.getRequestURI().substring(peticion.getContextPath().length()));
+        return maximo <= 0 || !"POST".equals(peticion.getMethod()) || !RUTAS.contains(ruta(peticion));
+    }
+
+    /**
+     * La ruta como la ve Spring MVC: descodificada y sin {@code ;...}. Con la URI tal cual llega, {@code /regis%74ro}
+     * no contaba y llegaba igual al formulario de registro.
+     */
+    private static String ruta(HttpServletRequest peticion) {
+        return UrlPathHelper.defaultInstance.getPathWithinApplication(peticion);
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest peticion, HttpServletResponse respuesta, FilterChain cadena)
             throws ServletException, IOException {
-        if (!admite(peticion.getRemoteAddr() + " " + peticion.getRequestURI())) {
+        if (!admite(peticion.getRemoteAddr() + " " + ruta(peticion))) {
             respuesta.setHeader("Retry-After", String.valueOf(ventana.toSeconds()));
             respuesta.sendError(429, "Demasiados intentos");
             return;

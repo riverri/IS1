@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,12 @@ class FantasyWebTest {
     private static final String LUIS = "luis@ucm.es";
     private static final String JEFA = "jefa@ucm.es";
     private static final RequestPostProcessor COMO_ANA = user(ANA).roles("USUARIO");
+    /**
+     * Las pruebas de puntos van en una semana sin más partidos que los suyos (los de prueba empiezan mañana): un
+     * miércoles. Así no dependen de qué día se pasen (ver FantasyService.Jornada).
+     */
+    private static final LocalDateTime LUNES = LocalDateTime.of(2031, 1, 6, 0, 0);
+    private static final LocalDateTime MIERCOLES = LUNES.plusDays(2).withHour(12);
 
     @Autowired
     private MockMvc mvc;
@@ -108,8 +115,11 @@ class FantasyWebTest {
     }
 
     private Evento partido(Equipo local, Equipo visitante, long horas) {
-        return eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(), local, visitante,
-                Hora.ahora().plusHours(horas)));
+        return partidoEl(local, visitante, Hora.ahora().plusHours(horas));
+    }
+
+    private Evento partidoEl(Equipo local, Equipo visitante, LocalDateTime cuando) {
+        return eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(), local, visitante, cuando));
     }
 
     @Test
@@ -122,7 +132,7 @@ class FantasyWebTest {
         mvc.perform(post("/fantasy/fichar").with(COMO_ANA).with(csrf())
                         .param("jugador", portero.getId().toString()).param("posicion", "PORTERO"))
                 .andExpect(redirectedUrl("/fantasy/mercado?posicion=PORTERO"))
-                .andExpect(flash().attribute("mensaje", "Has fichado a Portero Getafe."));
+                .andExpect(flash().attribute("mensaje", containsString("Has fichado a Portero Getafe.")));
 
         EquipoFantasy equipo = fantasy.equipoDe(ANA).orElseThrow();
         // Precio: nota 6 × 1,5 + calidad del Getafe × 0,5
@@ -168,14 +178,12 @@ class FantasyWebTest {
 
     @Test
     void soloCuentanLosPartidosDespuesDeFicharYLoVendidoSeQueda() {
-        // CA-82.1: el portero del Getafe, fichado ahora; un partido ya empezado no le cuenta
-        Evento yaEmpezado = partido(getafe, sevilla, -1);
-        Evento siguiente = partido(sevilla, getafe, 24);
+        // CA-82.1: el portero del Getafe, fichado el miércoles; el partido del domingo anterior no le cuenta
+        Evento yaEmpezado = partidoEl(getafe, sevilla, LUNES.minusHours(3));
+        Evento siguiente = partidoEl(sevilla, getafe, MIERCOLES.plusDays(1));
         fantasy.crear(ANA, "Los del Aula 3");
-        fantasy.fichar(ANA, portero.getId());
-        fantasy.fichar(ANA, delantero.getId());
-        // El siguiente se adelanta a "ahora" (ya con los fichajes hechos), para que ya se haya jugado al venderlo
-        siguiente.cambiarFecha(Hora.ahora());
+        fantasy.fichar(ANA, portero.getId(), MIERCOLES);
+        fantasy.fichar(ANA, delantero.getId(), MIERCOLES);
 
         resolucion.introducirMarcador(yaEmpezado.getId(), 5, 0);
         resolucion.introducirMarcador(siguiente.getId(), 0, 1);  // gana el Getafe 0-1 fuera, portería a cero
@@ -185,7 +193,7 @@ class FantasyWebTest {
         // Portero del Getafe: victoria 3 + portería a cero 4 = 7; delantero del Sevilla: derrota sin goles = 0
         assertThat(total).isEqualTo(7);
 
-        fantasy.vender(ANA, portero.getId());
+        fantasy.vender(ANA, portero.getId(), MIERCOLES.plusDays(2));
         equipo = fantasy.equipoDe(ANA).orElseThrow();
         assertThat(equipo.getPlantilla()).extracting(f -> f.getJugador().getNombre())
                 .containsExactly("Delantero Sevilla");
@@ -196,11 +204,11 @@ class FantasyWebTest {
     @Test
     void laClasificacionVaDeMasAMenosPuntos() throws Exception {
         // HU-83
-        Evento partido = partido(getafe, sevilla, 2);
+        Evento partido = partidoEl(getafe, sevilla, MIERCOLES.plusHours(2));
         fantasy.crear(ANA, "Los del Aula 3");
         fantasy.crear(LUIS, "Luis FC");
-        fantasy.fichar(ANA, delantero.getId());
-        fantasy.fichar(LUIS, portero.getId());
+        fantasy.fichar(ANA, delantero.getId(), MIERCOLES);
+        fantasy.fichar(LUIS, portero.getId(), MIERCOLES);
         resolucion.introducirMarcador(partido.getId(), 3, 1);
 
         // Luis (portero del Getafe que gana 3-1): 3; Ana (delantero del Sevilla que pierde, 1 gol): 2
@@ -241,10 +249,9 @@ class FantasyWebTest {
 
     @Test
     void unTraspasoNoCambiaLoQueYaSumoNiDesdeQueClubPuntua() {
-        Evento partido = partido(getafe, sevilla, 2);
+        Evento partido = partidoEl(getafe, sevilla, MIERCOLES.plusHours(2));
         fantasy.crear(ANA, "Los del Aula 3");
-        fantasy.fichar(ANA, portero.getId());
-        partido.cambiarFecha(Hora.ahora());
+        fantasy.fichar(ANA, portero.getId(), MIERCOLES);
         resolucion.introducirMarcador(partido.getId(), 2, 0);
         assertThat(puntosDe(ANA)).isEqualTo(7);
 
@@ -258,10 +265,9 @@ class FantasyWebTest {
 
     @Test
     void borrarUnJugadorNoBorraSusPuntosYSePuedeVenderSuFichaje() {
-        Evento partido = partido(getafe, sevilla, 2);
+        Evento partido = partidoEl(getafe, sevilla, MIERCOLES.plusHours(2));
         fantasy.crear(ANA, "Los del Aula 3");
-        FichajeFantasy fichaje = fantasy.fichar(ANA, portero.getId());
-        partido.cambiarFecha(Hora.ahora());
+        FichajeFantasy fichaje = fantasy.fichar(ANA, portero.getId(), MIERCOLES);
         resolucion.introducirMarcador(partido.getId(), 2, 0);
         em.flush();
         em.clear();
@@ -276,7 +282,7 @@ class FantasyWebTest {
             assertThat(f.getJugador()).isNull();
             assertThat(f.getNombreJugador()).isEqualTo("Portero Getafe");
         });
-        fantasy.venderFichaje(ANA, fichaje.getId());
+        fantasy.venderFichaje(ANA, fichaje.getId(), MIERCOLES.plusDays(1));
         assertThat(fantasy.equipoDe(ANA).orElseThrow().getPlantilla()).isEmpty();
         assertThat(puntosDe(ANA)).isEqualTo(7);
     }
@@ -298,5 +304,72 @@ class FantasyWebTest {
         mvc.perform(post("/fantasy/vender").with(COMO_ANA).with(csrf()).param("fichaje", fichaje.getId().toString()))
                 .andExpect(flash().attribute("mensaje", containsString("Has vendido a Portero Getafe")));
         assertThat(fantasy.equipoDe(ANA).orElseThrow().getPlantilla()).isEmpty();
+    }
+
+    @Test
+    void conLaJornadaEmpezadaLoQueSeFichaSumaDesdeElLunes() {
+        // La jornada empieza con su primer partido (el suspendido del lunes no cuenta): el miércoles a las 12
+        resolucion.suspender(partidoEl(sevilla, getafe, LUNES.plusHours(20)).getId());
+        Evento miercoles = partidoEl(getafe, sevilla, MIERCOLES);
+        Evento sabado = partidoEl(sevilla, getafe, MIERCOLES.plusDays(3));
+        Evento martesSiguiente = partidoEl(getafe, sevilla, MIERCOLES.plusDays(6));
+        FantasyService.Jornada jornada = fantasy.jornada(MIERCOLES.minusMinutes(1));
+        assertThat(jornada.plazo()).isEqualTo(MIERCOLES);
+        assertThat(jornada.empezada()).isFalse();
+        assertThat(fantasy.jornada(MIERCOLES).empezada()).isTrue();
+        assertThat(fantasy.jornada(MIERCOLES).fin()).isEqualTo(LUNES.plusWeeks(1));
+
+        fantasy.crear(ANA, "Los del Aula 3");
+        FichajeFantasy fichaje = fantasy.fichar(ANA, portero.getId(), MIERCOLES.plusDays(1));
+        assertThat(fichaje.getDesde()).isEqualTo(LUNES.plusWeeks(1));
+        assertThat(fantasy.equipoDe(ANA).orElseThrow().getPlantilla()).as("ya ocupa su hueco").hasSize(1);
+
+        resolucion.introducirMarcador(miercoles.getId(), 1, 0);
+        resolucion.introducirMarcador(sabado.getId(), 0, 2);
+        resolucion.introducirMarcador(martesSiguiente.getId(), 0, 0);
+        // Solo el martes siguiente: empate 1 + portería a cero 4
+        assertThat(puntosDe(ANA)).isEqualTo(5);
+    }
+
+    @Test
+    void unHuecoNoSumaDosPartidosDeLaMismaJornada() {
+        // Antes había truco: vender al portero del Getafe tras ganar el miércoles y fichar al del Sevilla, que
+        // gana el sábado, para sumar las dos victorias en el mismo hueco
+        Jugador porteroSevilla = jugador(sevilla, "Portero Sevilla", Posicion.PORTERO, 6);
+        Equipo betis = equipos.findByNombre("Real Betis").orElseThrow();
+        Evento miercoles = partidoEl(getafe, betis, MIERCOLES);
+        Evento sabado = partidoEl(sevilla, betis, MIERCOLES.plusDays(3));
+        Evento domingo = partidoEl(betis, getafe, MIERCOLES.plusDays(4));
+        fantasy.crear(ANA, "Los del Aula 3");
+        fantasy.fichar(ANA, portero.getId(), LUNES.plusHours(10));
+        resolucion.introducirMarcador(miercoles.getId(), 1, 0);
+
+        FichajeFantasy vendido = fantasy.vender(ANA, portero.getId(), MIERCOLES.plusDays(1));
+        fantasy.fichar(ANA, porteroSevilla.getId(), MIERCOLES.plusDays(1));
+        assertThat(vendido.isActivo()).as("deja el hueco libre").isFalse();
+        assertThat(vendido.getHasta()).isEqualTo(LUNES.plusWeeks(1));
+        assertThat(fantasy.equipoDe(ANA).orElseThrow().getPlantilla()).extracting(FichajeFantasy::getNombreJugador)
+                .containsExactly("Portero Sevilla");
+
+        resolucion.introducirMarcador(sabado.getId(), 2, 0);
+        resolucion.introducirMarcador(domingo.getId(), 3, 0);
+        // El del Getafe sigue sumando lo que queda de jornada: 7 del miércoles y −1 del domingo (encaja 3).
+        // El del Sevilla no suma el sábado: empieza el lunes
+        assertThat(puntosDe(ANA)).isEqualTo(6);
+    }
+
+    @Test
+    void laPaginaAvisaDeQueLaJornadaHaEmpezado() throws Exception {
+        partido(getafe, sevilla, 0);
+        fantasy.crear(ANA, "Los del Aula 3");
+        mvc.perform(post("/fantasy/fichar").with(COMO_ANA).with(csrf()).param("jugador", portero.getId().toString()))
+                .andExpect(flash().attribute("mensaje", containsString("suma desde el lunes")));
+        mvc.perform(get("/fantasy").with(COMO_ANA))
+                .andExpect(content().string(containsString("La jornada ya ha empezado")))
+                .andExpect(content().string(containsString("Suma desde el lunes")));
+        mvc.perform(get("/fantasy/mercado").with(COMO_ANA))
+                .andExpect(content().string(containsString("La jornada ya ha empezado")));
+        mvc.perform(post("/fantasy/vender").with(COMO_ANA).with(csrf()).param("jugador", portero.getId().toString()))
+                .andExpect(flash().attribute("mensaje", containsString("sigue sumando hasta que acabe")));
     }
 }

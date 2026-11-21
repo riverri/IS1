@@ -58,4 +58,9 @@ public class BloqueoLiga {
     boolean activa(LocalDateTime ahora) {
         return evento.getEstado() == EstadoEvento.PROGRAMADO && evento.getFechaHora().isAfter(ahora);
     }
+
+    /** Si su partido aún no se ha jugado: por empezar o aplazado (suspendido), que vale para cuando se juegue. */
+    boolean sinJugar(LocalDateTime ahora) {
+        return activa(ahora) || evento.getEstado() == EstadoEvento.SUSPENDIDO;
+    }
 }

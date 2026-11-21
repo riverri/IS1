@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,10 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
  */
 @Service
 public class SincronizacionService {
+
+    /** Estados de la API de un partido que ya ha empezado. */
+    static final Set<String> EN_JUEGO_O_TERMINADO = Set.of("IN_PLAY", "PAUSED", "EXTRA_TIME", "PENALTY_SHOOTOUT",
+            "FINISHED", "AWARDED");
 
     private static final Logger LOG = LoggerFactory.getLogger(SincronizacionService.class);
 
@@ -158,7 +163,13 @@ public class SincronizacionService {
             evento = eventos.save(new Evento(competicion, local, visitante, fecha));
             resumen.eventoNuevo();
         } else if (evento.isFechaManual()) {
-            // El creador le puso la fecha a mano (por ejemplo, un aplazado del que la API aún da la fecha antigua)
+            // El creador le puso la fecha a mano (por ejemplo, un aplazado del que la API aún da la fecha antigua).
+            // Pero si según la API ya se está jugando o ha terminado, y antes de nuestra fecha, se adelanta a la de
+            // la API: si no, se podría seguir apostando sabiendo cómo va el partido
+            if (EN_JUEGO_O_TERMINADO.contains(partido.status()) && fecha.isBefore(evento.getFechaHora())) {
+                evento.cambiarFecha(fecha);
+                resumen.eventoActualizado();
+            }
         } else if (!fecha.equals(evento.getFechaHora()) || evento.getIdExterno() == null) {
             // Ha cambiado la hora o es la primera vez que se enlaza. Evento solo cambia la fecha si aún no se ha jugado
             evento.cambiarFecha(fecha);

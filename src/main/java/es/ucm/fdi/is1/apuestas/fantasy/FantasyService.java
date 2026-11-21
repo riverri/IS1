@@ -1,7 +1,9 @@
 package es.ucm.fdi.is1.apuestas.fantasy;
 
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,6 +60,26 @@ public class FantasyService {
         }
     }
 
+    /**
+     * La jornada de la liga fantasy: una semana, de lunes a lunes. Empieza con su primer partido de fútbol
+     * ({@code plazo}). Hasta entonces, fichar y vender cuenta enseguida; después, cuenta desde la jornada siguiente:
+     * el que se ficha empieza a sumar el lunes y el que se vende sigue sumando lo que queda de semana. Así cada hueco
+     * suma como mucho a un jugador en cada jornada: no se puede vender a uno que ya ha jugado y fichar a otro que
+     * juega más tarde para sumar los dos partidos (es la regla de las ligas fantasy más jugadas).
+     *
+     * @param inicio   lunes a las 00:00
+     * @param fin      el lunes siguiente a las 00:00, cuando empieza la próxima
+     * @param plazo    hora del primer partido de la semana; null si no hay ninguno
+     * @param empezada si ya ha llegado el plazo
+     */
+    public record Jornada(LocalDateTime inicio, LocalDateTime fin, LocalDateTime plazo, boolean empezada) {
+
+        /** Desde cuándo cuenta un cambio hecho {@code ahora}: enseguida o, con la jornada empezada, el lunes. */
+        public LocalDateTime efecto(LocalDateTime ahora) {
+            return empezada ? fin : ahora;
+        }
+    }
+
     /** Una fila de la clasificación. */
     public record PuestoFantasy(int puesto, EquipoFantasy equipo, int puntos, boolean mio) {
     }
@@ -90,27 +112,59 @@ public class FantasyService {
      */
     @Transactional
     public FichajeFantasy fichar(String email, Long jugadorId) {
+        return fichar(email, jugadorId, LocalDateTime.now(reloj));
+    }
+
+    @Transactional
+    FichajeFantasy fichar(String email, Long jugadorId, LocalDateTime ahora) {
         EquipoFantasy equipo = paraCambiar(email);
         Jugador jugador = jugadores.findById(jugadorId)
                 .orElseThrow(() -> new IllegalArgumentException("Ese jugador no existe"));
-        return equipo.fichar(jugador, LocalDateTime.now(reloj));
+        return equipo.fichar(jugador, jornada(ahora).efecto(ahora));
     }
 
     /**
-     * Vende a un jugador: se recupera su precio y deja de sumar; lo que ya sumó se queda.
+     * Vende a un jugador: se recupera su precio y deja de sumar (con la jornada empezada, al acabar la jornada); lo
+     * que ya sumó se queda.
      *
      * @throws IllegalStateException    si el usuario aún no tiene equipo
      * @throws IllegalArgumentException si el jugador no está en su equipo
      */
     @Transactional
     public FichajeFantasy vender(String email, Long jugadorId) {
-        return paraCambiar(email).vender(jugadorId, LocalDateTime.now(reloj));
+        return vender(email, jugadorId, LocalDateTime.now(reloj));
+    }
+
+    @Transactional
+    FichajeFantasy vender(String email, Long jugadorId, LocalDateTime ahora) {
+        return paraCambiar(email).vender(jugadorId, jornada(ahora).efecto(ahora));
     }
 
     /** Vende un fichaje por su id (también si el jugador ya no existe). */
     @Transactional
     public FichajeFantasy venderFichaje(String email, Long fichajeId) {
-        return paraCambiar(email).venderFichaje(fichajeId, LocalDateTime.now(reloj));
+        return venderFichaje(email, fichajeId, LocalDateTime.now(reloj));
+    }
+
+    @Transactional
+    FichajeFantasy venderFichaje(String email, Long fichajeId, LocalDateTime ahora) {
+        return paraCambiar(email).venderFichaje(fichajeId, jornada(ahora).efecto(ahora));
+    }
+
+    /** La jornada fantasy de ahora. */
+    @Transactional(readOnly = true)
+    public Jornada jornada() {
+        return jornada(LocalDateTime.now(reloj));
+    }
+
+    /** La jornada fantasy en la que cae {@code ahora}. */
+    Jornada jornada(LocalDateTime ahora) {
+        LocalDateTime inicio = ahora.toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .atStartOfDay();
+        LocalDateTime fin = inicio.plusWeeks(1);
+        // Los suspendidos no cuentan: puede que no se jueguen esa semana
+        LocalDateTime plazo = eventos.primerPartidoEntre(Deporte.FUTBOL, EstadoEvento.SUSPENDIDO, inicio, fin);
+        return new Jornada(inicio, fin, plazo, plazo != null && !ahora.isBefore(plazo));
     }
 
     /** El equipo del usuario, bloqueado para cambiarlo (ver {@link EquipoFantasyRepository#paraCambiar}). */

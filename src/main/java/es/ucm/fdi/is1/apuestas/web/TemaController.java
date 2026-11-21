@@ -37,8 +37,9 @@ public class TemaController {
         respuesta.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         String destino = RutaSegura.de(referer, "/");
         // Tras un formulario de Mi cuenta con errores, la página se pinta en la dirección del POST (/cuenta/nombre,
-        // /cuenta/limites…), que no tiene GET: volver ahí daba un error 405. Se vuelve a Mi cuenta
-        if (destino.startsWith("/cuenta/")) {
+        // /cuenta/limites…), que no tiene GET: volver ahí daba un error 405. Se vuelve a Mi cuenta. Mis movimientos
+        // (y su exportación) sí tienen GET: se vuelve ahí (CA-94.1)
+        if (destino.startsWith("/cuenta/") && !destino.startsWith("/cuenta/movimientos")) {
             destino = "/cuenta";
         }
         return "redirect:" + destino;

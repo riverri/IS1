@@ -194,7 +194,11 @@ public class QuinielaService {
                     ? "Faltan partidos por jugar" : "Esta quiniela ya está " + quiniela.getEstado().name().toLowerCase(Locale.ROOT));
         }
         List<BoletoQuiniela> todos = boletos.findByQuinielaOrderByIdAsc(quiniela);
-        int maximo = todos.stream().mapToInt(BoletoQuiniela::contarAciertos).max().orElse(0);
+        todos.forEach(BoletoQuiniela::contarAciertos);
+        // Los boletos de cuentas eliminadas no ganan: su parte no se le podría pagar a nadie y se la quitaría a los
+        // que sí han acertado (el bote sí incluye lo que pagaron)
+        List<BoletoQuiniela> vivos = todos.stream().filter(b -> !b.getUsuario().isEliminado()).toList();
+        int maximo = vivos.stream().mapToInt(BoletoQuiniela::getAciertos).max().orElse(0);
         int partidos = quiniela.getPartidos().size();
         // Con todos los partidos anulados no se ha jugado nada: se devuelve el precio entero, sin comisión (si no,
         // todos "acertarían" todo y cobrarían menos de lo que pagaron)
@@ -203,17 +207,19 @@ public class QuinielaService {
         if (todosAnulados) {
             todos.forEach(b -> devolver(b, "Se han anulado todos los partidos de la quiniela «" + quiniela.getNombre()
                     + "»: te hemos devuelto " + Monedas.texto(b.getPagado()) + " monedas.", ahora));
-        } else if (maximo == 0) {
+        } else if (vivos.stream().noneMatch(BoletoQuiniela::aciertaAlgunJugado)) {
+            // Los anulados cuentan como acierto para todos (CA-80.2), pero si nadie acierta ningún partido jugado
+            // es como si nadie acertara nada (CA-80.3): si no, todos "ganarían" y perderían la comisión
             todos.forEach(b -> devolver(b, "Nadie ha acertado ningún partido de la quiniela «" + quiniela.getNombre()
                     + "»: te hemos devuelto " + Monedas.texto(b.getPagado()) + " monedas.", ahora));
         } else {
-            List<BoletoQuiniela> ganadores = todos.stream().filter(b -> b.getAciertos() == maximo).toList();
+            List<BoletoQuiniela> ganadores = vivos.stream().filter(b -> b.getAciertos() == maximo).toList();
             BigDecimal bote = quiniela.bote(todos.stream().map(BoletoQuiniela::getPagado).reduce(BigDecimal.ZERO, BigDecimal::add));
             // Hacia abajo: los céntimos que no se pueden repartir se quedan en la casa
             BigDecimal parte = bote.divide(BigDecimal.valueOf(ganadores.size()), 2, RoundingMode.DOWN);
             for (BoletoQuiniela boleto : todos) {
                 String aciertos = boleto.getAciertos() + " de " + partidos;
-                if (boleto.getAciertos() == maximo) {
+                if (ganadores.contains(boleto)) {
                     boleto.premiar(parte);
                     boleto.getUsuario().abonar(parte, TipoMovimiento.QUINIELA_PREMIO,
                             "Premio de la quiniela «" + quiniela.getNombre() + "»", ahora);

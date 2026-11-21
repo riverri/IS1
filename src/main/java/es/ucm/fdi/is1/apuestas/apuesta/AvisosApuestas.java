@@ -35,7 +35,9 @@ class AvisosApuestas {
      */
     void siCambia(Apuesta apuesta, EstadoApuesta antes, BigDecimal pagadoAntes) {
         EstadoApuesta ahora = apuesta.getEstado();
-        if (ahora == antes || ahora == EstadoApuesta.ACTIVA || ahora == EstadoApuesta.CANCELADA) {
+        // Una cuenta eliminada no lee avisos ni cobra (abonar no hace nada): no se le avisa ni se le manda correo
+        if (ahora == antes || ahora == EstadoApuesta.ACTIVA || ahora == EstadoApuesta.CANCELADA
+                || apuesta.getUsuario().isEliminado()) {
             return;
         }
         String texto;

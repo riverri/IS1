@@ -79,11 +79,16 @@ public class AnuncioService {
         WebInvocationPrivilegeEvaluator evaluador = permisos.getIfAvailable();
         if (!conSesion && evaluador != null) {
             candidatos = candidatos.stream()
-                    .filter(a -> evaluador.isAllowed("", a.getDestino(), "GET", VISITANTE)).toList();
+                    .filter(a -> evaluador.isAllowed("", soloRuta(a.getDestino()), "GET", VISITANTE)).toList();
             // Ya se ha comprobado con las reglas de verdad: la de la sección (Ubicacion.requiereSesion) sobra
             return elegir(candidatos, donde.get(), true, LocalDateTime.now(reloj), azar);
         }
         return elegir(candidatos, donde.get(), conSesion, LocalDateTime.now(reloj), azar);
+    }
+
+    /** El destino sin {@code ?...} ni {@code #...}: las reglas de seguridad se comparan solo con la ruta. */
+    static String soloRuta(String destino) {
+        return destino.split("[?#]", 2)[0];
     }
 
     /** Cuenta una impresión (HU-62). */

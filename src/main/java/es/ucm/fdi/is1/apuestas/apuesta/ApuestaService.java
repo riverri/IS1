@@ -254,6 +254,13 @@ public class ApuestaService {
         BigDecimal aumento = nuevo.subtract(apuesta.getImporte());
         if (aumento.signum() > 0) {
             comprobarJuegoResponsable(apuesta.getUsuario(), aumento, ahora);
+            // HU-105: con un bloqueo de liga no se puede apostar más a eso; la apuesta que ya había se queda como estaba
+            for (Seleccion seleccion : apuesta.getSelecciones()) {
+                if (seleccion.getEvento() != null) {
+                    bloqueosLiga.comprobar(apuesta.getUsuario(), seleccion.getEvento(), seleccion.getPronostico(),
+                            seleccion.getEspecial());
+                }
+            }
         }
         // Cuotas vigentes, en el mismo orden que las selecciones (Apuesta.cambiarImporte cuenta con ello)
         List<BigDecimal> cuotas = apuesta.getSelecciones().stream().map(this::cuotaActual).toList();
@@ -452,8 +459,9 @@ public class ApuestaService {
     }
 
     /**
-     * Si es una simple hecha con supercuota (HU-87): había una supercuota de ese partido y resultado cuando se
-     * apostó, con la misma cuota que la aceptada. La apuesta no guarda si la llevaba, por eso se busca así.
+     * Si es una simple con supercuota (HU-87): hay o hubo una supercuota de ese partido y resultado con la misma
+     * cuota que la aceptada. La apuesta no guarda si la llevaba, por eso se busca así. No se mira cuándo: al cambiar
+     * el importe, una apuesta hecha antes pasa a la supercuota vigente (y su fecha no cambia).
      */
     private boolean conSupercuota(Apuesta apuesta, Lote lote) {
         if (apuesta.isCombinada()) {
@@ -467,8 +475,7 @@ public class ApuestaService {
                 ? lote.supercuotas().stream().filter(s -> s.getEvento().getId().equals(unica.getEvento().getId())
                         && s.getResultado() == unica.getPronostico()).toList()
                 : supercuotas.findByEventoAndResultado(unica.getEvento(), unica.getPronostico());
-        return candidatas.stream().anyMatch(s -> s.getCuota().compareTo(unica.getCuota()) == 0
-                        && !s.getCreada().isAfter(apuesta.getFecha()) && s.getHasta().isAfter(apuesta.getFecha()));
+        return candidatas.stream().anyMatch(s -> s.getCuota().compareTo(unica.getCuota()) == 0);
     }
 
     /**

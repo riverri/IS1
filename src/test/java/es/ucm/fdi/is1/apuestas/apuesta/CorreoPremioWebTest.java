@@ -153,4 +153,21 @@ class CorreoPremioWebTest {
         mvc.perform(post("/cuenta/correos").param("activados", "true").with(user(ANA)).with(csrf()));
         assertThat(usuarios.findByEmail(ANA).orElseThrow().isCorreosActivados()).isTrue();
     }
+
+    @Autowired
+    private BajaService bajas;
+
+    @Test
+    void unaCuentaEliminadaNoRecibeNiCorreoNiAvisoAlResolverseSuApuesta() {
+        apuestas.apostar(ANA, partido.getId(), Resultado.LOCAL, new BigDecimal("10"));
+        // El partido ya ha empezado: la apuesta no se cancela al eliminar la cuenta y se resuelve después
+        partido.cambiarFecha(Hora.ahora().minusMinutes(5));
+        Long id = usuarios.findByEmail(ANA).orElseThrow().getId();
+        bajas.eliminarCuenta(ANA, "secreta123");
+        resolucion.introducirResultado(partido.getId(), Resultado.LOCAL);
+
+        assertThat(premios()).isEmpty();
+        assertThat(notificaciones.leer(usuarios.findById(id).orElseThrow().getEmail())).isEmpty();
+        assertThat(usuarios.findById(id).orElseThrow().isCorreosActivados()).isFalse();
+    }
 }

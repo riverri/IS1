@@ -11,6 +11,10 @@
     </div>
     <p class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Fichado</p>
     <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p class="aviso" th:if="${jornada.empezada}"
+       th:text="'La jornada ya ha empezado: lo que fiches ahora suma desde el lunes ' + ${#temporals.format(jornada.fin, 'd/M')} + ' y lo que vendas sigue sumando hasta entonces.'">Jornada empezada</p>
+    <p class="aviso" th:if="${!jornada.empezada and jornada.plazo != null}"
+       th:text="'Los cambios cuentan para esta jornada hasta el primer partido, el ' + ${#temporals.format(jornada.plazo, 'd/M')} + ' a las ' + ${#temporals.format(jornada.plazo, 'HH:mm')} + '.'">Plazo</p>
 
     <nav class="filtros" aria-label="Posición">
         <a class="chip chip-filtro" th:href="@{/fantasy/mercado(club=${club})}" th:classappend="${posicion == null} ? 'activo'">Todas</a>

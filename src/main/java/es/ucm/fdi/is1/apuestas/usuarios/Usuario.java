@@ -268,6 +268,9 @@ public class Usuario {
         limiteDiario = null;
         limiteSemanal = null;
         pausaHasta = null;
+        // Las apuestas que ya no se podían cancelar se resuelven después: no se manda correo a nadie
+        correosActivados = false;
+        resumenSemanal = false;
         eliminado = true;
     }
 

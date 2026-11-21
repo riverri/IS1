@@ -417,6 +417,38 @@ class SincronizacionServiceTest {
 
         assertThat(eventos.findByIdExterno(900007L).orElseThrow().getFechaHora()).isEqualTo(fecha.plusHours(3));
     }
+
+    @Test
+    void unPartidoEnJuegoNoAdmiteApuestasAunqueTengaFechaManual() {
+        LocalDateTime fecha = Hora.ahora().plusDays(4).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi sevilla = equipo(559, "Sevilla FC", "Sevilla");
+        PartidoApi.EquipoApi betis = equipo(90, "Real Betis Balompié", "Betis");
+        devuelve(partido(900031, fecha, "TIMED", null, sevilla, betis));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900031L).orElseThrow();
+        // El creador retoca la hora (fechaManual = true)
+        evento.modificar(evento.getLocal(), evento.getVisitante(), fecha.plusHours(1), null, Hora.ahora());
+        // La liga adelanta el partido y ya se está jugando
+        devuelve(partido(900031, Hora.ahora().minusMinutes(20), "IN_PLAY", null, sevilla, betis));
+        sincronizacion.sincronizar();
+        assertThat(evento.admiteApuestas(Hora.ahora())).as("se está jugando: no se puede apostar").isFalse();
+    }
+
+    @Test
+    void laApiCambiaElMarcadorDeUnPartidoYaPagado() {
+        LocalDateTime fecha = Hora.ahora().minusHours(3).withNano(0).withSecond(0);
+        PartidoApi.EquipoApi sevilla = equipo(559, "Sevilla FC", "Sevilla");
+        PartidoApi.EquipoApi betis = equipo(90, "Real Betis Balompié", "Betis");
+        devuelve(new PartidoApi(900032L, utc(fecha), "FINISHED", 10, sevilla, betis,
+                new PartidoApi.MarcadorApi("HOME_TEAM", "REGULAR", new PartidoApi.GolesApi(2, 1))));
+        sincronizacion.sincronizar();
+        Evento evento = eventos.findByIdExterno(900032L).orElseThrow();
+        assertThat(evento.getGolesLocal()).isEqualTo(2);
+        devuelve(new PartidoApi(900032L, utc(fecha), "FINISHED", 10, sevilla, betis,
+                new PartidoApi.MarcadorApi("DRAW", "REGULAR", new PartidoApi.GolesApi(1, 1))));
+        sincronizacion.sincronizar();
+        assertThat(evento.getResultado()).isEqualTo(Resultado.EMPATE);
+    }
 }
 
 @SpringBootTest

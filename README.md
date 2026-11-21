@@ -52,7 +52,7 @@ Más detalle en [docs/requisitos/vision.md](docs/requisitos/vision.md).
 │   ├── wiki/                          # Páginas de la wiki (se publican solas al fusionar en main)
 │   ├── presentaciones/                # Presentaciones del proyecto (PowerPoint y PDF)
 │   ├── Better_Guia_del_proyecto.pdf   # Guía completa del proyecto, para leerla de corrido
-│   ├── decisiones/                    # Decisiones (stack, saldo negativo, grafo del equipo)
+│   ├── decisiones/                    # Decisiones (ADR 0001 a 0007)
 │   └── recursos.md                    # Enlaces de teoría y de Git
 ├── src/main/java/                     # Código Java (Spring Boot), un paquete por parte del dominio
 ├── src/main/resources/                # Plantillas HTML, CSS, configuración y migraciones de la base de datos
