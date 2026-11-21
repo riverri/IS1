@@ -9,6 +9,7 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import es.ucm.fdi.is1.apuestas.usuarios.RecargaAlEntrarHandler;
@@ -26,6 +27,20 @@ import es.ucm.fdi.is1.apuestas.usuarios.RecargaAlEntrarHandler;
  */
 @Configuration
 public class SeguridadConfig {
+
+    /**
+     * Content-Security-Policy: de dónde puede cargar cosas la página. Si alguien consiguiera colar HTML en una
+     * página (por ejemplo en el nombre de un equipo), el navegador no cargaría scripts ni estilos de otra web ni
+     * enviaría formularios fuera. Los scripts y estilos van dentro de las plantillas (los avisos de confirmación,
+     * el modo oscuro…), por eso se permite 'unsafe-inline'. Las imágenes pueden venir de fuera: escudos de la API
+     * de fútbol, logotipos de criptomonedas y anuncios.
+     */
+    static final String CSP = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+            + "img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; "
+            + "object-src 'none'; base-uri 'self'; form-action 'self'";
+
+    /** Permissions-Policy: la web no usa cámara, micrófono, ubicación ni pagos, así que se desactivan. */
+    static final String PERMISOS = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
 
     /** Reglas de acceso. Se comprueban en orden y se aplica la primera que encaja con la dirección. */
     @Bean
@@ -81,8 +96,14 @@ public class SeguridadConfig {
                 // no puede enviar formularios en nombre del usuario.
                 // La consola de H2 (solo desarrollo) usa frames y no envía token CSRF
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                // Frames solo desde la propia web (los necesita la consola de H2); otras webs no pueden incrustarla
-                .headers(cabeceras -> cabeceras.frameOptions(opciones -> opciones.sameOrigin()));
+                // Frames solo desde la propia web (los necesita la consola de H2); otras webs no pueden incrustarla.
+                // Además: la política de contenido (CSP), no mandar la dirección completa a otras webs al seguir un
+                // enlace (Referrer-Policy) y desactivar permisos del navegador que no se usan
+                .headers(cabeceras -> cabeceras
+                        .frameOptions(opciones -> opciones.sameOrigin())
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(CSP))
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .permissionsPolicyHeader(permisos -> permisos.policy(PERMISOS)));
         // Construye la cadena de filtros con todas las reglas anteriores
         return http.build();
     }

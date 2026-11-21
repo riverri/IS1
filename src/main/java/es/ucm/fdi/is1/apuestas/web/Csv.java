@@ -52,6 +52,19 @@ public final class Csv {
         return texto.toString();
     }
 
+    /**
+     * Un texto que empieza por = + - @ (o tabulador o retorno) Excel lo toma como una fórmula: un jugador que se
+     * llamara «=HYPERLINK(...)» haría que al abrir la exportación se ejecutara. Se le pone delante un apóstrofo,
+     * que Excel no muestra y que hace que lo lea como texto. Los números y las fechas no pasan por aquí, así que
+     * un importe negativo sigue siendo un número.
+     */
+    static String sinFormula(String texto) {
+        if (!texto.isEmpty() && "=+-@\t\r".indexOf(texto.charAt(0)) >= 0) {
+            return "'" + texto;
+        }
+        return texto;
+    }
+
     private static String campo(Object valor) {
         if (valor == null) {
             return "";
@@ -59,7 +72,7 @@ public final class Csv {
         String s = switch (valor) {
             case BigDecimal numero -> numero.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString().replace('.', ',');
             case LocalDateTime fecha -> fecha.format(FECHA);
-            default -> valor.toString();
+            default -> sinFormula(valor.toString());
         };
         // Entre comillas si lleva separador, comillas o saltos de línea; las comillas se doblan
         if (s.contains(";") || s.contains("\"") || s.contains("\n") || s.contains("\r")) {
