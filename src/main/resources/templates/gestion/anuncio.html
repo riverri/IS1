@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Anuncio')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <div class="tarjeta tarjeta-formulario">
+        <h1 th:text="${#strings.endsWith(accion, 'nuevo')} ? 'Nuevo anuncio' : 'Editar anuncio'">Nuevo anuncio</h1>
+        <p class="subtitulo">Un anuncio lleva a otra sección de la web. Elige dónde se muestra y su prioridad (de 1 a 10).</p>
+        <form class="formulario" th:action="@{${accion}}" th:object="${datosAnuncio}" method="post">
+            <p class="alerta alerta-error" th:if="${#fields.hasGlobalErrors()}" th:text="${#fields.globalErrors()[0]}">Error</p>
+
+            <label for="titulo">Título</label>
+            <input id="titulo" type="text" th:field="*{titulo}" th:errorclass="con-error" placeholder="Apuestas a largo plazo">
+            <span class="error-campo" th:if="${#fields.hasErrors('titulo')}" th:text="${#fields.errors('titulo')[0]}"></span>
+
+            <label for="texto">Texto</label>
+            <input id="texto" type="text" th:field="*{texto}" th:errorclass="con-error"
+                   placeholder="¿Quién ganará el Balón de Oro? Apuesta a los mercados de temporada.">
+            <span class="error-campo" th:if="${#fields.hasErrors('texto')}" th:text="${#fields.errors('texto')[0]}"></span>
+
+            <label for="icono">Icono (un emoji, opcional)</label>
+            <input id="icono" type="text" th:field="*{icono}" th:errorclass="con-error" placeholder="🏆">
+            <span class="error-campo" th:if="${#fields.hasErrors('icono')}" th:text="${#fields.errors('icono')[0]}"></span>
+
+            <label for="destino">Lleva a</label>
+            <input id="destino" type="text" th:field="*{destino}" th:errorclass="con-error" placeholder="/mercados">
+            <span class="error-campo" th:if="${#fields.hasErrors('destino')}" th:text="${#fields.errors('destino')[0]}"></span>
+            <span class="aviso">Una sección de la web:
+                <th:block th:each="u, i : ${ubicaciones}"><code th:text="${u.ruta}">/mercados</code><span th:unless="${i.last}">, </span></th:block>.</span>
+
+            <fieldset>
+                <legend>Se muestra en</legend>
+                <label class="casilla" th:each="u : ${ubicaciones}">
+                    <input type="checkbox" th:field="*{ubicaciones}" th:value="${u}">
+                    <span th:text="${u.nombre}">Portada</span>
+                </label>
+            </fieldset>
+            <span class="error-campo" th:if="${#fields.hasErrors('ubicaciones')}" th:text="${#fields.errors('ubicaciones')[0]}"></span>
+
+            <label for="prioridad">Prioridad (1–10)</label>
+            <input id="prioridad" type="number" min="1" max="10" th:field="*{prioridad}" th:errorclass="con-error">
+            <span class="error-campo" th:if="${#fields.hasErrors('prioridad')}" th:text="${#fields.errors('prioridad')[0]}"></span>
+
+            <label for="desde">Desde (opcional)</label>
+            <input id="desde" type="datetime-local" th:field="*{desde}">
+            <label for="hasta">Hasta (opcional)</label>
+            <input id="hasta" type="datetime-local" th:field="*{hasta}">
+
+            <div class="acciones-formulario">
+                <button class="boton" type="submit">Guardar</button>
+                <a class="boton boton-secundario" th:href="@{/gestion/anuncios}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

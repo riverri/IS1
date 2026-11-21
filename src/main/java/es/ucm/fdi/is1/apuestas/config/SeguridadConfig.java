@@ -43,6 +43,8 @@ public class SeguridadConfig {
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         // Modo oscuro (HU-94): también para los visitantes
                         .requestMatchers(HttpMethod.GET, "/tema").permitAll()
+                        // Clic en un anuncio interno (HU-60): los visitantes también los ven
+                        .requestMatchers("/anuncios/*/ir").permitAll()
                         // Mercados de predicción (HU-67): cualquiera ve la lista y cada mercado; comprar exige sesión
                         .requestMatchers(HttpMethod.GET, "/predicciones", "/predicciones/*").permitAll()
                         // Quiniela (HU-79): cualquiera ve las quinielas; echar un boleto exige sesión
