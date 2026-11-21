@@ -82,3 +82,13 @@ Fallos del despliegue en Render, no del código de la aplicación. Cómo reconoc
 | Fallo | Gravedad | Qué pasaba | Cómo se arregló | Pull request |
 |---|---|---|---|---|
 | D-01 · Render no veía el puerto | Alta | Del 04/11 al 15/11 fallaron todos los deploys (unos 20, también los que solo cambiaban documentación), y la web se quedó en la versión del 04/11 (`a27c56c`). La aplicación arrancaba en el puerto 10000, pero Java escuchaba en IPv6 (`::`) y Render, que busca IPv4 (`0.0.0.0`), repetía `No open HTTP ports detected on 0.0.0.0` hasta cancelar el deploy a los 15 minutos. El primer deploy que falló (`bd98bd5`) tenía el mismo código que el último que funcionó, así que lo más probable es que cambiara la forma en que Render detecta el puerto. Efecto secundario: los deploys fallidos sí aplicaron las migraciones V11 a V15.1 en Neon | `server.address=0.0.0.0` (perfil `nube`), `-Djava.net.preferIPv4Stack=true` (`Dockerfile`) y *health check* en `/ping`, que no usa la base de datos. Publicado el 15/11 | [#103](https://github.com/riverri/IS1/pull/103) |
+
+## Al integrar
+
+> *Texto redactado por la IA (Claude) a partir de lo que pasó; el equipo puede personalizarlo.*
+
+Fallos al fusionar pull requests en `main`, no del código de cada uno por separado. Las acciones para que no se repitan están en la retrospectiva del [Sprint 5](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/sprint-5.md#sprint-retrospective-fecha).
+
+| Fallo | Gravedad | Qué pasaba | Cómo se arregló | Pull request |
+|---|---|---|---|---|
+| I-01 · PR fusionados en desorden | Alta (no llegó a producción) | El 21/11 se fusionaron en media hora #138, #133, #125 y #132, en un orden distinto del previsto. La liga fantasy (#133, migración V27) entró antes que el baccarat (#132, migración V26), y Flyway no aplica una migración con número menor que la última ya aplicada: la base de datos de Render no habría arrancado. Además, #132 estaba apilado sobre la rama del casino (#125) y se fusionó 21 segundos después que él, antes de que GitHub cambiara su base a `main`, así que el baccarat acabó en `codigo/vuelve-casino` y no en `main`. También se vio a tiempo que #125 y #131 ponían una tarjeta en el mismo hueco de `gestion/panel.html`, lo que habría dado conflicto | Migración del baccarat renumerada a V28 y PR nuevo contra `main` (#140); tarjeta de anuncios movida en #131. Se probó en local `main` con los PR pendientes juntos (584 pruebas), se fusionaron de uno en uno esperando al CI, y se comprobó que `main` quedaba idéntico a lo probado | [#140](https://github.com/riverri/IS1/pull/140), [#131](https://github.com/riverri/IS1/pull/131) |
