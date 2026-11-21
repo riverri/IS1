@@ -1,6 +1,7 @@
 package es.ucm.fdi.is1.apuestas.usuarios;
 
 import java.security.Principal;
+import java.util.List;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -110,7 +111,12 @@ public class UsuariosController {
     /** GET /cuenta/movimientos: cada entrada y salida del saldo, con su motivo y el saldo que dejó (HU-55). */
     @GetMapping("/cuenta/movimientos")
     public String movimientos(Principal principal, Model model) {
-        model.addAttribute("movimientos", usuarios.movimientos(principal.getName()));
+        List<MovimientoSaldo> movimientos = usuarios.movimientos(principal.getName());
+        model.addAttribute("movimientos", movimientos);
+        // Como en Mi cuenta: si acaba de aplicarse la recarga, la cabecera enseña el saldo ya recargado
+        if (!movimientos.isEmpty()) {
+            model.addAttribute("usuarioActual", movimientos.getFirst().getUsuario());
+        }
         return "movimientos";
     }
 

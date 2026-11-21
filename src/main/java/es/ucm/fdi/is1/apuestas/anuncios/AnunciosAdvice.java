@@ -22,14 +22,14 @@ public class AnunciosAdvice {
     }
 
     /**
-     * Solo en las páginas que se ven (peticiones GET): un formulario que se envía y redirige no cuenta como
-     * impresión. El creador de apuestas no juega, así que no ve anuncios.
+     * Solo en las peticiones GET. La impresión no se cuenta aquí sino en {@link ImpresionesAnuncio}, cuando la página
+     * se llega a pintar. El creador de apuestas no juega, así que no ve anuncios.
      */
     @ModelAttribute("anuncio")
     public Anuncio anuncio(HttpServletRequest peticion, Principal principal) {
         if (!"GET".equals(peticion.getMethod()) || peticion.isUserInRole("CREADOR")) {
             return null;
         }
-        return anuncios.mostrar(peticion.getRequestURI(), principal != null).orElse(null);
+        return anuncios.elegirPara(peticion.getRequestURI(), principal != null).orElse(null);
     }
 }

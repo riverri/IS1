@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.casino;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,9 @@ public interface PartidaRepository extends JpaRepository<Partida, Long> {
 
     /** La mano de blackjack que el usuario tiene a medias, si la tiene (CA-57.5). */
     Optional<Partida> findFirstByUsuarioAndJuegoAndEstado(Usuario usuario, TipoJuego juego, EstadoPartida estado);
+
+    /** Manos de un juego en un estado empezadas antes de una fecha (las de blackjack abandonadas). */
+    List<Partida> findByJuegoAndEstadoAndFechaBefore(TipoJuego juego, EstadoPartida estado, LocalDateTime antes);
 
     /** Historial (CA-58.1): las 50 últimas, de la más reciente a la más antigua. */
     List<Partida> findTop50ByUsuarioOrderByFechaDescIdDesc(Usuario usuario);

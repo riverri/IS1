@@ -206,6 +206,7 @@ public class LigaService {
             throw new IllegalArgumentException("Solo quien ha creado la liga la puede borrar");
         }
         List<Long> miembros = List.copyOf(liga.getIdsMiembros());
+        publicador.publishEvent(new LigaBorrada(liga));
         ligas.delete(liga);
         publicador.publishEvent(new MiembrosLigaCambiados(miembros));
         return liga;
@@ -224,6 +225,7 @@ public class LigaService {
         for (Liga liga : ligas.deMiembro(usuario)) {
             if (liga.esCreador(usuario)) {
                 afectados.addAll(liga.getIdsMiembros());
+                publicador.publishEvent(new LigaBorrada(liga));
                 ligas.delete(liga);
             } else {
                 liga.salir(usuario);

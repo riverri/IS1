@@ -57,6 +57,7 @@ class CashOutYBloqueoLigaWebTest {
     @Autowired private ResolucionService resolucion;
     @Autowired private SupercuotaService supercuotas;
     @Autowired private es.ucm.fdi.is1.apuestas.gestion.GestionService gestion;
+    @Autowired private BajaService bajas;
 
     private Evento futbol;
     private Evento baloncesto;
@@ -355,5 +356,34 @@ class CashOutYBloqueoLigaWebTest {
                 .contains(es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.BLOQUEO_LIGA);
         assertThat(BeneficioDiarioService.DE_LA_CASA).contains(es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.BLOQUEO_LIGA,
                 es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento.DEVOLUCION);
+    }
+
+    @Test
+    void borrarUnaLigaConBloqueosLosDevuelveYLaBorra() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal anaAntes = saldoDe(ANA);
+        BigDecimal luisAntes = saldoDe(LUIS);
+        bloqueoService.crear(liga.getId(), LUIS, usuarios.findByEmail(ANA).orElseThrow().getId(), futbol.getId(), "LOCAL");
+        bloqueoService.crearParaLiga(liga.getId(), ANA, futbol.getId(), "PARTIDO");
+
+        ligas.borrar(liga.getId(), ANA);
+
+        assertThat(bloqueos.findByEvento(futbol)).isEmpty();
+        assertThat(saldoDe(ANA)).isEqualByComparingTo(anaAntes);
+        assertThat(saldoDe(LUIS)).as("el bloqueo de Luis tampoco vale ya: se le devuelve").isEqualByComparingTo(luisAntes);
+    }
+
+    @Test
+    void eliminarLaCuentaDeQuienCreoUnaLigaConBloqueosFunciona() {
+        Liga liga = ligas.crear(ANA, "Amigos");
+        ligas.unirse(LUIS, liga.getCodigo());
+        BigDecimal luisAntes = saldoDe(LUIS);
+        bloqueoService.crear(liga.getId(), LUIS, usuarios.findByEmail(ANA).orElseThrow().getId(), futbol.getId(), "LOCAL");
+
+        bajas.eliminarCuenta(ANA, "secreta123");
+
+        assertThat(usuarios.findByEmail(LUIS).orElseThrow().getSaldo()).isEqualByComparingTo(luisAntes);
+        assertThat(bloqueos.findByEvento(futbol)).isEmpty();
     }
 }

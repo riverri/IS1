@@ -86,8 +86,9 @@ public class RankingService {
                     .thenComparing(Comparator.comparing((Fila f) -> f.estadisticas().isTieneDatos()).reversed())
                     .thenComparing(Comparator.comparing((Fila f) -> f.estadisticas().getPorcentajeAciertos()).reversed());
         };
-        // A igualdad, por nombre, para que el orden sea siempre el mismo
-        filas.sort(orden.thenComparing(f -> f.usuario().getNombre()));
+        // A igualdad, por nombre y, si se llaman igual, por id: el orden es siempre el mismo y el perfil (HU-48) puede
+        // calcular el mismo puesto sin cargar el ranking entero
+        filas.sort(orden.thenComparing(f -> f.usuario().getNombre()).thenComparing(f -> f.usuario().getId()));
 
         // La posición es el índice + 1: no hay puestos compartidos aunque haya empates
         List<PuestoRanking> puestos = new ArrayList<>();
@@ -111,7 +112,15 @@ public class RankingService {
         if (usuario.isEliminado() || usuario.getRol() != Rol.USUARIO) {
             throw new JugadorNoEncontradoException(usuarioId);
         }
-        long anteriores = usuarios.contarJugadoresAntes(Rol.USUARIO, usuario.getSaldo(), usuario.getNombre());
+        // Los de más saldo se cuentan en la base de datos; los empatados se ordenan aquí como en ranking() (nombre e
+        // id): comparar nombres en SQL depende de la ordenación de la base de datos (en PostgreSQL, «bea» va antes que
+        // «Carla»; en Java, después) y dos jugadores con el mismo nombre saldrían los dos con el mismo puesto
+        long anteriores = usuarios.contarJugadoresConMasSaldo(Rol.USUARIO, usuario.getSaldo())
+                + usuarios.jugadoresConSaldo(Rol.USUARIO, usuario.getSaldo()).stream()
+                .filter(fila -> {
+                    int nombre = ((String) fila[1]).compareTo(usuario.getNombre());
+                    return nombre < 0 || (nombre == 0 && (Long) fila[0] < usuario.getId());
+                }).count();
         int totalJugadores = Math.toIntExact(usuarios.countByRolAndEliminadoFalse(Rol.USUARIO));
         Object[] resumen = apuestas.resumenResueltasDe(usuarioId).getFirst();
         Estadisticas estadisticas = Estadisticas.de(((Number) resumen[0]).longValue(),

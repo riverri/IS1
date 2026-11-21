@@ -77,6 +77,12 @@ class FantasyWebTest {
     @Autowired
     private EquipoRepository equipos;
 
+    @Autowired
+    private jakarta.persistence.EntityManager em;
+
+    @Autowired
+    private es.ucm.fdi.is1.apuestas.apuesta.BajaService bajas;
+
     private Equipo getafe;
     private Equipo sevilla;
     private Jugador portero;
@@ -224,5 +230,73 @@ class FantasyWebTest {
         assertThatThrownBy(() -> fantasy.crear(JEFA, "La casa")).isInstanceOf(IllegalArgumentException.class);
         fantasy.crear(ANA, "Uno");
         assertThatThrownBy(() -> fantasy.crear(ANA, "Otro")).isInstanceOf(IllegalStateException.class);
+    }
+
+    // --- Cuarta depuración ---
+
+    private int puntosDe(String email) {
+        return fantasy.puntos(fantasy.equipoDe(email).orElseThrow()).stream()
+                .mapToInt(FantasyService.PuntosFichaje::getTotal).sum();
+    }
+
+    @Test
+    void unTraspasoNoCambiaLoQueYaSumoNiDesdeQueClubPuntua() {
+        Evento partido = partido(getafe, sevilla, 2);
+        fantasy.crear(ANA, "Los del Aula 3");
+        fantasy.fichar(ANA, portero.getId());
+        partido.cambiarFecha(Hora.ahora());
+        resolucion.introducirMarcador(partido.getId(), 2, 0);
+        assertThat(puntosDe(ANA)).isEqualTo(7);
+
+        // La API lo traspasa al Sevilla y le cambia la posición: lo sumado con el Getafe se queda
+        portero.actualizar(sevilla, "Portero Getafe", Posicion.DELANTERO, null, null, null);
+        assertThat(puntosDe(ANA)).isEqualTo(7);
+        EquipoFantasy equipo = fantasy.equipoDe(ANA).orElseThrow();
+        assertThat(equipo.huecos(Posicion.PORTERO)).as("sigue ocupando su hueco de portero").isZero();
+        assertThat(equipo.huecos(Posicion.DELANTERO)).isEqualTo(EquipoFantasy.FORMACION.get(Posicion.DELANTERO));
+    }
+
+    @Test
+    void borrarUnJugadorNoBorraSusPuntosYSePuedeVenderSuFichaje() {
+        Evento partido = partido(getafe, sevilla, 2);
+        fantasy.crear(ANA, "Los del Aula 3");
+        FichajeFantasy fichaje = fantasy.fichar(ANA, portero.getId());
+        partido.cambiarFecha(Hora.ahora());
+        resolucion.introducirMarcador(partido.getId(), 2, 0);
+        em.flush();
+        em.clear();
+
+        jugadores.delete(jugadores.findById(portero.getId()).orElseThrow());
+        em.flush();
+        em.clear();
+
+        assertThat(puntosDe(ANA)).isEqualTo(7);
+        EquipoFantasy equipo = fantasy.equipoDe(ANA).orElseThrow();
+        assertThat(equipo.getPlantilla()).singleElement().satisfies(f -> {
+            assertThat(f.getJugador()).isNull();
+            assertThat(f.getNombreJugador()).isEqualTo("Portero Getafe");
+        });
+        fantasy.venderFichaje(ANA, fichaje.getId());
+        assertThat(fantasy.equipoDe(ANA).orElseThrow().getPlantilla()).isEmpty();
+        assertThat(puntosDe(ANA)).isEqualTo(7);
+    }
+
+    @Test
+    void lasCuentasEliminadasNoSalenEnLaClasificacion() {
+        fantasy.crear(ANA, "Los del Aula 3");
+        fantasy.crear(LUIS, "Luis FC");
+        bajas.eliminarCuenta(LUIS, "secreta123");
+        assertThat(fantasy.clasificacion(ANA)).extracting(p -> p.equipo().getNombre()).containsExactly("Los del Aula 3");
+    }
+
+    @Test
+    void venderPorElFichajeDesdeLaPagina() throws Exception {
+        fantasy.crear(ANA, "Los del Aula 3");
+        FichajeFantasy fichaje = fantasy.fichar(ANA, portero.getId());
+        mvc.perform(get("/fantasy").with(COMO_ANA))
+                .andExpect(content().string(containsString("name=\"fichaje\" value=\"" + fichaje.getId() + "\"")));
+        mvc.perform(post("/fantasy/vender").with(COMO_ANA).with(csrf()).param("fichaje", fichaje.getId().toString()))
+                .andExpect(flash().attribute("mensaje", containsString("Has vendido a Portero Getafe")));
+        assertThat(fantasy.equipoDe(ANA).orElseThrow().getPlantilla()).isEmpty();
     }
 }

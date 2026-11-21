@@ -27,6 +27,11 @@ public class ManoBlackjack {
     private final List<Carta> banca;
     private boolean doblada;
     private boolean terminada;
+    /**
+     * Si la banca pide con 17 blando en esta mano: la regla que había al repartir. Los cambios de configuración valen
+     * para las manos nuevas (CA-59.1). Null en manos guardadas antes de que se apuntara: vale la configuración.
+     */
+    private Boolean bancaPideCon17Blando;
 
     private ManoBlackjack(List<Carta> mazo, List<Carta> jugador, List<Carta> banca, boolean doblada, boolean terminada) {
         this.mazo = mazo;
@@ -158,16 +163,29 @@ public class ManoBlackjack {
         }
     }
 
-    /** Texto para guardar la mano en la partida: "mazo|jugador|banca|doblada|terminada". */
+    /** Texto para guardar la mano en la partida: "mazo|jugador|banca|doblada|terminada|regla del 17 blando". */
     String guardar() {
-        return codigos(mazo) + "|" + codigos(jugador) + "|" + codigos(banca) + "|" + doblada + "|" + terminada;
+        return codigos(mazo) + "|" + codigos(jugador) + "|" + codigos(banca) + "|" + doblada + "|" + terminada
+                + (bancaPideCon17Blando == null ? "" : "|" + bancaPideCon17Blando);
     }
 
     static ManoBlackjack leer(String guardada) {
         // limit -1: conserva los trozos vacíos (un mazo vacío no se pierde)
         String[] partes = guardada.split("\\|", -1);
-        return new ManoBlackjack(cartas(partes[0]), cartas(partes[1]), cartas(partes[2]),
+        ManoBlackjack mano = new ManoBlackjack(cartas(partes[0]), cartas(partes[1]), cartas(partes[2]),
                 Boolean.parseBoolean(partes[3]), Boolean.parseBoolean(partes[4]));
+        mano.bancaPideCon17Blando = partes.length > 5 ? Boolean.valueOf(partes[5]) : null;
+        return mano;
+    }
+
+    /** Apunta la regla del 17 blando de esta mano (al repartir). */
+    void fijarRegla17Blando(boolean pide) {
+        bancaPideCon17Blando = pide;
+    }
+
+    /** La regla de esta mano; si no se apuntó al repartir (manos antiguas), la que se pase. */
+    boolean regla17Blando(boolean siNoSeApunto) {
+        return bancaPideCon17Blando != null ? bancaPideCon17Blando : siNoSeApunto;
     }
 
     private static String codigos(List<Carta> cartas) {

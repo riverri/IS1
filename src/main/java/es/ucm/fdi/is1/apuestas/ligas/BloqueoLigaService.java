@@ -27,8 +27,8 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
  *
  * <p>Lo que se paga es dinero que gana la casa (sale en el beneficio diario, HU-95) y cuenta como jugado en el juego
  * responsable (HU-10): con la cuenta en pausa o pasado el límite no se puede bloquear. Si el partido se anula o se
- * borra, se devuelve el coste a quien lo pagó y el bloqueo desaparece. Si solo se suspende, el bloqueo sigue: vale
- * para cuando se juegue.
+ * borra, se devuelve el coste a quien lo pagó y el bloqueo desaparece; también si se borra la liga, mientras su partido
+ * no haya empezado. Si solo se suspende, el bloqueo sigue: vale para cuando se juegue.
  *
  * <p>Un doble clic no cobra dos veces: los dos envíos cambian el saldo del mismo usuario, que tiene control de
  * versión ({@code @Version}), así que el segundo falla al guardar y se deshace entero, también su bloqueo.
@@ -114,17 +114,38 @@ public class BloqueoLigaService {
         devolver(borrado.evento(), "partido borrado");
     }
 
+    /**
+     * Liga borrada (por quien la creó, o al eliminar su cuenta): sus bloqueos dejan de valer. Se devuelven los que aún
+     * no han llegado a su partido (los ya jugados sí sirvieron) y se borran todos; si no, la liga no se podría borrar.
+     */
+    @EventListener
+    public void alBorrarseLiga(LigaBorrada borrada) {
+        List<BloqueoLiga> deLaLiga = bloqueos.findByLiga(borrada.liga());
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        for (BloqueoLiga bloqueo : deLaLiga) {
+            if (bloqueo.activa(ahora)) {
+                devolverCoste(bloqueo, "liga borrada", ahora);
+            }
+        }
+        bloqueos.deleteAll(deLaLiga);
+    }
+
     private void devolver(Evento evento, String motivo) {
         List<BloqueoLiga> delEvento = bloqueos.findByEvento(evento);
         LocalDateTime ahora = LocalDateTime.now(reloj);
         for (BloqueoLiga bloqueo : delEvento) {
-            BigDecimal coste = bloqueo.getObjetivo() == null ? COSTE_LIGA : COSTE;
-            // abonar no hace nada si la cuenta ya está eliminada
-            bloqueo.getCreador().abonar(coste, TipoMovimiento.DEVOLUCION, "Devolución del bloqueo (" + motivo + "): "
-                    + evento.getLocal().getNombre() + " – " + evento.getVisitante().getNombre(), ahora);
+            devolverCoste(bloqueo, motivo, ahora);
         }
         // Se borra: no puede devolverse dos veces, y un partido anulado o borrado ya no admite apuestas que bloquear
         bloqueos.deleteAll(delEvento);
+    }
+
+    private static void devolverCoste(BloqueoLiga bloqueo, String motivo, LocalDateTime ahora) {
+        BigDecimal coste = bloqueo.getObjetivo() == null ? COSTE_LIGA : COSTE;
+        Evento evento = bloqueo.getEvento();
+        // abonar no hace nada si la cuenta ya está eliminada
+        bloqueo.getCreador().abonar(coste, TipoMovimiento.DEVOLUCION, "Devolución del bloqueo (" + motivo + "): "
+                + evento.getLocal().getNombre() + " – " + evento.getVisitante().getNombre(), ahora);
     }
 
     /** Comprueba la regla al apostar; no se confía en que la interfaz oculte la selección. */

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,7 @@ public class FantasyController {
         List<Hueco> huecos = new ArrayList<>();
         for (Map.Entry<Posicion, Integer> plazas : EquipoFantasy.FORMACION.entrySet()) {
             List<PuntosFichaje> ocupantes = puntos.stream()
-                    .filter(p -> p.fichaje().isActivo() && p.fichaje().getJugador().getPosicion() == plazas.getKey())
+                    .filter(p -> p.fichaje().isActivo() && p.fichaje().getPosicion() == plazas.getKey())
                     .toList();
             for (int i = 0; i < plazas.getValue(); i++) {
                 huecos.add(new Hueco(plazas.getKey(), i < ocupantes.size() ? ocupantes.get(i) : null));
@@ -90,6 +91,9 @@ public class FantasyController {
             redireccion.addFlashAttribute("mensaje", "Equipo creado. Ahora ficha a tus siete jugadores.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            // Doble clic: el otro envío ya lo ha creado (la base de datos no deja dos equipos por usuario)
+            redireccion.addFlashAttribute("error", "Ya tienes un equipo");
         }
         return "redirect:/fantasy";
     }
@@ -101,7 +105,7 @@ public class FantasyController {
                          RedirectAttributes redireccion) {
         try {
             FichajeFantasy fichaje = fantasy.fichar(principal.getName(), jugador);
-            redireccion.addFlashAttribute("mensaje", "Has fichado a " + fichaje.getJugador().getNombre() + ".");
+            redireccion.addFlashAttribute("mensaje", "Has fichado a " + fichaje.getNombreJugador() + ".");
             if (fichaje.getEquipo().isCompleto()) {
                 return "redirect:/fantasy";
             }
@@ -117,11 +121,14 @@ public class FantasyController {
         return "redirect:/fantasy/mercado";
     }
 
+    /** POST /fantasy/vender: por el fichaje (sirve aunque el jugador ya no exista) o, si no viene, por el jugador. */
     @PostMapping("/fantasy/vender")
-    public String vender(@RequestParam Long jugador, Principal principal, RedirectAttributes redireccion) {
+    public String vender(@RequestParam(required = false) Long fichaje, @RequestParam(required = false) Long jugador,
+                         Principal principal, RedirectAttributes redireccion) {
         try {
-            FichajeFantasy fichaje = fantasy.vender(principal.getName(), jugador);
-            redireccion.addFlashAttribute("mensaje", "Has vendido a " + fichaje.getJugador().getNombre()
+            FichajeFantasy vendido = fichaje != null ? fantasy.venderFichaje(principal.getName(), fichaje)
+                    : fantasy.vender(principal.getName(), jugador);
+            redireccion.addFlashAttribute("mensaje", "Has vendido a " + vendido.getNombreJugador()
                     + ". Los puntos que hizo contigo se quedan.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             redireccion.addFlashAttribute("error", e.getMessage());

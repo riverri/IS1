@@ -92,7 +92,7 @@ public class EquipoFantasy {
     /** Los que están ahora en el equipo, de la portería a la delantera. */
     public List<FichajeFantasy> getPlantilla() {
         return fichajes.stream().filter(FichajeFantasy::isActivo)
-                .sorted(Comparator.comparing((FichajeFantasy f) -> f.getJugador().getPosicion())
+                .sorted(Comparator.comparing(FichajeFantasy::getPosicion)
                         .thenComparing(FichajeFantasy::getDesde))
                 .toList();
     }
@@ -109,7 +109,7 @@ public class EquipoFantasy {
 
     /** Huecos libres en esa posición. */
     public int huecos(Posicion posicion) {
-        long ocupados = getPlantilla().stream().filter(f -> f.getJugador().getPosicion() == posicion).count();
+        long ocupados = getPlantilla().stream().filter(f -> f.getPosicion() == posicion).count();
         return FORMACION.get(posicion) - (int) ocupados;
     }
 
@@ -118,14 +118,14 @@ public class EquipoFantasy {
         if (jugador.getEquipo().getDeporte() != Deporte.FUTBOL) {
             return "Solo juegan futbolistas";
         }
-        if (getPlantilla().stream().anyMatch(f -> f.getJugador().getId().equals(jugador.getId()))) {
+        if (getPlantilla().stream().anyMatch(f -> f.esDe(jugador.getId()))) {
             return "Ya está en tu equipo";
         }
         if (huecos(jugador.getPosicion()) <= 0) {
             return "No te quedan huecos de " + jugador.getPosicion().getNombre().toLowerCase();
         }
         long delClub = getPlantilla().stream()
-                .filter(f -> f.getJugador().getEquipo().getId().equals(jugador.getEquipo().getId())).count();
+                .filter(f -> f.getClub().getId().equals(jugador.getEquipo().getId())).count();
         if (delClub >= MAXIMO_POR_CLUB) {
             return "Ya tienes " + MAXIMO_POR_CLUB + " del " + jugador.getEquipo().getNombre();
         }
@@ -152,7 +152,19 @@ public class EquipoFantasy {
      * @throws IllegalArgumentException si no está en el equipo
      */
     FichajeFantasy vender(Long jugadorId, LocalDateTime ahora) {
-        FichajeFantasy fichaje = getPlantilla().stream().filter(f -> f.getJugador().getId().equals(jugadorId))
+        FichajeFantasy fichaje = getPlantilla().stream().filter(f -> f.esDe(jugadorId))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Ese jugador no está en tu equipo"));
+        fichaje.vender(ahora);
+        return fichaje;
+    }
+
+    /**
+     * Vende un fichaje por su id: sirve también si el jugador ya no existe.
+     *
+     * @throws IllegalArgumentException si no está en el equipo
+     */
+    FichajeFantasy venderFichaje(Long fichajeId, LocalDateTime ahora) {
+        FichajeFantasy fichaje = getPlantilla().stream().filter(f -> f.getId().equals(fichajeId))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Ese jugador no está en tu equipo"));
         fichaje.vender(ahora);
         return fichaje;

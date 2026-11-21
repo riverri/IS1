@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.casino;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.random.RandomGenerator;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,9 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
  */
 @Service
 public class CasinoService {
+
+    /** Tiempo tras el que una mano de blackjack a medias se da por abandonada y se planta sola. */
+    static final Duration ABANDONO = Duration.ofDays(1);
 
     private static final String CERRADO = "El casino está cerrado ahora mismo";
 
@@ -143,6 +148,7 @@ public class CasinoService {
         Usuario usuario = cobrar(email, importe, "Blackjack: nueva mano", ahora);
         Partida partida = new Partida(usuario, TipoJuego.BLACKJACK, importe, "Blackjack", ahora);
         ManoBlackjack mano = ManoBlackjack.repartir(configuracion().getBarajas(), azar);
+        mano.fijarRegla17Blando(configuracion().isBancaPideCon17Blando());
         partida.guardarMano(mano);
         if (mano.isTerminada()) {
             liquidar(partida, mano, ahora);
@@ -153,10 +159,49 @@ public class CasinoService {
     /** Pide carta en la mano en curso. */
     @Transactional
     public Partida pedir(String email, Long partidaId) {
+        return pedir(email, partidaId, null);
+    }
+
+    /**
+     * Pide carta, solo si el jugador tiene las cartas que veía al pulsar ({@code cartasVistas}; null, sin comprobar).
+     * Con un doble clic, la segunda petición llega cuando la primera ya le ha dado la carta: no se le da otra.
+     *
+     * @throws IllegalStateException si la mano ya ha cambiado o ha terminado
+     */
+    @Transactional
+    public Partida pedir(String email, Long partidaId, Integer cartasVistas) {
         Partida partida = manoDe(email, partidaId);
         ManoBlackjack mano = partida.mano();
-        mano.pedir(configuracion().isBancaPideCon17Blando());
+        if (cartasVistas != null && cartasVistas != mano.getJugador().size()) {
+            throw new IllegalStateException("Ya te habíamos dado esa carta (has pulsado dos veces): mira la mano");
+        }
+        mano.pedir(regla17(mano));
         return seguir(partida, mano);
+    }
+
+    /** La regla del 17 blando de esa mano (la de cuando se repartió, CA-59.1). */
+    private boolean regla17(ManoBlackjack mano) {
+        return mano.regla17Blando(configuracion().isBancaPideCon17Blando());
+    }
+
+    /**
+     * Manos de blackjack abandonadas a medias: pasado un día, se plantan solas (juega la banca y se paga como siempre).
+     * Así terminan y cuentan en las cuentas de la casa, que solo cuentan las partidas terminadas. Cada hora.
+     *
+     * @return cuántas se han cerrado
+     */
+    @Scheduled(cron = "${apuestas.casino.cierre-manos:0 23 * * * *}")
+    @Transactional
+    public int cerrarManosAbandonadas() {
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<Partida> abandonadas = partidas.findByJuegoAndEstadoAndFechaBefore(TipoJuego.BLACKJACK,
+                EstadoPartida.EN_CURSO, ahora.minus(ABANDONO));
+        for (Partida partida : abandonadas) {
+            ManoBlackjack mano = partida.mano();
+            mano.plantarse(regla17(mano));
+            seguir(partida, mano);
+        }
+        return abandonadas.size();
     }
 
     /** Se planta: juega la banca y se paga (CA-57.4). */
@@ -164,7 +209,7 @@ public class CasinoService {
     public Partida plantarse(String email, Long partidaId) {
         Partida partida = manoDe(email, partidaId);
         ManoBlackjack mano = partida.mano();
-        mano.plantarse(configuracion().isBancaPideCon17Blando());
+        mano.plantarse(regla17(mano));
         return seguir(partida, mano);
     }
 
@@ -191,7 +236,7 @@ public class CasinoService {
         juegoResponsable.comprobar(usuario, extra, ahora);
         usuario.cargar(extra, TipoMovimiento.CASINO_APUESTA, "Blackjack: doblar", ahora);
         partida.doblarApuesta();
-        mano.doblar(configuracion().isBancaPideCon17Blando());
+        mano.doblar(regla17(mano));
         return seguir(partida, mano);
     }
 
