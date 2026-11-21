@@ -37,14 +37,26 @@ public interface SeleccionRepository extends JpaRepository<Seleccion, Long> {
               and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA""")
     List<Object[]> seleccionesActivasPorPronostico(Evento evento);
 
-    /** Igual que arriba, excluyendo la combinada cuyo cash-out se está valorando. */
+    /**
+     * Igual que arriba, sin las apuestas de un usuario: al valorar su cash-out no cuenta nada de lo que él
+     * mismo tiene apostado (HU-75), para que no pueda mover la cuota con otra apuesta suya y cancelarla después.
+     */
     @Query("""
             select s.pronostico, s.apuesta.usuario.id, s.apuesta.importe, size(s.apuesta.selecciones)
             from Seleccion s
             where s.evento = :evento and s.pronostico is not null
               and s.apuesta.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.ACTIVA
-              and (:apuestaExcluida is null or s.apuesta.id <> :apuestaExcluida)""")
-    List<Object[]> seleccionesActivasPorPronosticoExcepto(Evento evento, Long apuestaExcluida);
+              and (:usuarioExcluido is null or s.apuesta.usuario.id <> :usuarioExcluido)""")
+    List<Object[]> seleccionesActivasPorPronosticoExcepto(Evento evento, Long usuarioExcluido);
+
+    /**
+     * Si el usuario tiene o ha tenido (aunque la cancelara) otra apuesta en alguno de estos eventos. Con ella pudo
+     * mover la cuota a la que aceptó la combinada, así que su cash-out no puede pagar más de lo apostado (HU-75).
+     */
+    @Query("""
+            select count(s) > 0 from Seleccion s
+            where s.evento.id in :eventos and s.apuesta.usuario.id = :usuario and s.apuesta.id <> :apuesta""")
+    boolean hayOtrasApuestasDelUsuario(java.util.Collection<Long> eventos, Long usuario, Long apuesta);
 
     /** Volumen 1X2 de todos los eventos visibles, para calcular las cuotas de un catálogo en lote. */
     @Query("""
