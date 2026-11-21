@@ -2,11 +2,17 @@
 
 > Acta del sprint, en curso. Ya está apuntado lo que se ha hecho; el resto lo rellena el equipo. Esta página se publica sola en la wiki desde `docs/scrum/sprints/sprint-5.md`: para cambiarla, edita ese archivo.
 
-## Sprint Planning (_fecha_)
-- **Asistentes:**
-- **Sprint Goal:**
+## Sprint Planning (19/11):
+
+- **Asistentes:** Carlos Jurado, Carlos Martín-Salas, Jaime Martín , David Ortega, Jing Li
+- **Sprint Goal:** Terminar las ampliaciones y diseñar más para dar oportunidades a todos los miembros del equipo.
 - **Capacidad del equipo (horas):**
 - **Acciones de la retrospectiva anterior que se incluyen:**
+
+
+Los objetivos principales de este Sprint es terminar con las HU de las ampliaciones anteriores (HU55 - HU62 y HU74 - HU84). Además vamos a desarrollar e implementar nuevas funcionalidades que se detallarán en el Sprint Backlog para dar la oportunidad a todos los miembros de participar equitativamente en el desarrollo del proyecto. Además se seguirá trabajando en las mejoras propuestas en anteriores Sprints, además de minimizar los riesgos detectados en la gestión de riesgos y el plan RSGR.  Por último, se realizaran "auditorías" al grupo que desarrolla la app de RENFE y al grupo del plan de estudios, al mismo tiempo que nos realizaran "auditorías" otros dos grupos. Toda la documentación relativa a estos dos procesos será añadida a una nueva carpeta de la carpeta principal docs.
+
+**NOTA**: Aunque en un primer momento se planificaron 6 Sprints por temas de tiempo y exámenes es posible que este sea el último Sprint que se desarrolle, se confirmará este detalle en el Sprint Review.
 
 ## Sprint Backlog
 | Historia o tarea | Horas reales | Horas estimadas |
