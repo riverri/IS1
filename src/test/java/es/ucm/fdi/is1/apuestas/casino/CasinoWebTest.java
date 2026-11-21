@@ -320,4 +320,38 @@ class CasinoWebTest {
                 .andExpect(content().string(containsString("Ruleta europea")))
                 .andExpect(content().string(containsString("2,70 %")));
     }
+
+    /** HU-74: una mano de baccarat se cobra, se paga según quién gane y queda en el historial y en los movimientos. */
+    @Test
+    void unaManoDeBaccaratSeCobraSePagaYQuedaGuardada() throws Exception {
+        BigDecimal antes = saldo();
+
+        mvc.perform(post("/casino/baccarat").with(COMO_ANA).with(csrf())
+                        .param("apuesta", "BANCA").param("importe", "10"))
+                .andExpect(redirectedUrl("/casino/baccarat"))
+                .andExpect(flash().attributeExists("baza"));
+
+        Partida partida = partidas.findTop50ByUsuarioOrderByFechaDescIdDesc(usuarios.findByEmail(ANA).orElseThrow())
+                .getFirst();
+        assertThat(partida.getJuego()).isEqualTo(TipoJuego.BACCARAT);
+        assertThat(partida.isEnCurso()).isFalse();
+        // Gane quien gane, el premio es 0, 10 (empate) o 19,50 (Banca con su 5 % de comisión)
+        assertThat(partida.getPremio().setScale(2).toPlainString()).isIn("0.00", "10.00", "19.50");
+        assertThat(saldo()).isEqualByComparingTo(antes.subtract(BigDecimal.TEN).add(partida.getPremio()));
+        mvc.perform(get("/casino/historial").with(COMO_ANA))
+                .andExpect(content().string(containsString("Baccarat")));
+    }
+
+    @Test
+    void elBaccaratPideElegirApuestaYNoCobraSinElla() throws Exception {
+        BigDecimal antes = saldo();
+
+        mvc.perform(post("/casino/baccarat").with(COMO_ANA).with(csrf()).param("importe", "10"))
+                .andExpect(flash().attribute("error", "Elige a qué apuestas: Jugador, Banca o Empate"));
+
+        assertThat(saldo()).isEqualByComparingTo(antes);
+        mvc.perform(get("/casino/baccarat").with(COMO_ANA))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Punto Banco")));
+    }
 }

@@ -86,7 +86,7 @@
     </th:block>
 
     <h2>Casino</h2>
-    <p class="aviso" th:text="'Margen teórico: ruleta ' + ${#numbers.formatDecimal(configuracionCasino.ventajaRuleta, 1, 'POINT', 2, 'COMMA')} + ' %, blackjack ≈ ' + ${#numbers.formatDecimal(configuracionCasino.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %. Solo cuentan las partidas terminadas.'">
+    <p class="aviso" th:text="'Margen teórico: ruleta ' + ${#numbers.formatDecimal(configuracionCasino.ventajaRuleta, 1, 'POINT', 2, 'COMMA')} + ' %, blackjack ≈ ' + ${#numbers.formatDecimal(configuracionCasino.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %, baccarat entre 1,06 % (Banca) y 14,36 % (Empate). Solo cuentan las partidas terminadas.'">
         Margen teórico: ruleta 2,70 %, blackjack ≈ 1,05 %.</p>
     <div class="tarjeta tabla">
         <table>
