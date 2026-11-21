@@ -21,4 +21,9 @@ public final class Monedas {
         formato.setRoundingMode(RoundingMode.HALF_UP);
         return formato.format(cantidad);
     }
+
+    /** Lo mismo, pero cortando los decimales que sobren en vez de redondear (lo apostado y los límites). */
+    public static String truncado(BigDecimal cantidad) {
+        return texto(cantidad.setScale(2, RoundingMode.DOWN));
+    }
 }

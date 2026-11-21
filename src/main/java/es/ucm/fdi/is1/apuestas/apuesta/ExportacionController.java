@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,7 @@ public class ExportacionController {
         Csv csv = new Csv().fila("Fecha", "Apuesta", "Selecciones", "Importe", "Cuota", "Estado", "Cobrado");
         for (Apuesta a : todas) {
             csv.fila(a.getFecha(), a.descripcion(), a.getSelecciones().size(), a.getImporte(), a.getCuota(),
-                    a.getEstado().name().toLowerCase(java.util.Locale.ROOT), a.getPagado());
+                    a.getEstado().name().toLowerCase(Locale.ROOT), a.getPagado());
         }
         return csv.descarga("mis-apuestas.csv");
     }

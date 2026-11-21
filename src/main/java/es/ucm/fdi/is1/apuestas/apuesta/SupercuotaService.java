@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -58,7 +60,7 @@ public class SupercuotaService {
     @Transactional
     public Supercuota crear(Long eventoId, Resultado resultado, BigDecimal cuota, BigDecimal importeMaximo, Integer horas) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        Evento evento = (eventoId == null ? java.util.Optional.<Evento>empty() : eventos.findById(eventoId))
+        Evento evento = (eventoId == null ? Optional.<Evento>empty() : eventos.findById(eventoId))
                 .orElseThrow(() -> new IllegalArgumentException("No existe ese evento"));
         if (!evento.admiteApuestas(ahora)) {
             throw new IllegalStateException("Este evento ya no admite apuestas");
@@ -154,8 +156,8 @@ public class SupercuotaService {
     @Transactional(readOnly = true)
     public Map<Long, Cuotas> cuotasConSupercuota(List<Evento> eventosVisibles, boolean aplicarSupercuotas) {
         List<Evento> unicos = eventosVisibles.stream().filter(e -> e.getId() != null)
-                .collect(java.util.stream.Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
-                        java.util.LinkedHashMap::new)).values().stream().toList();
+                .collect(Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
+                        LinkedHashMap::new)).values().stream().toList();
         if (unicos.isEmpty()) {
             return Map.of();
         }
@@ -201,8 +203,8 @@ public class SupercuotaService {
     }
 
     private static List<Evento> eventosUnicos(List<Evento> eventos) {
-        return eventos.stream().collect(java.util.stream.Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
-                java.util.LinkedHashMap::new)).values().stream().toList();
+        return eventos.stream().collect(Collectors.toMap(Evento::getId, e -> e, (a, b) -> a,
+                LinkedHashMap::new)).values().stream().toList();
     }
 
     private static String texto(BigDecimal valor) {

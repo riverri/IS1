@@ -18,6 +18,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 import es.ucm.fdi.is1.apuestas.web.RutaSegura;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -127,7 +128,7 @@ public class BoletoController {
             boletos.vaciar(boleto);
             redireccion.addFlashAttribute("mensaje", (apuesta.isCombinada() ? "Combinada" : "Apuesta")
                     + " registrada. Si aciertas cobras "
-                    + apuesta.getGananciaPotencial().toPlainString().replace('.', ',') + " monedas.");
+                    + Monedas.texto(apuesta.getGananciaPotencial()) + " monedas.");
             return "redirect:/apuestas";
         } catch (CuotasCambiadasException e) {
             redireccion.addFlashAttribute("aviso",

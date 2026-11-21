@@ -5,8 +5,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -70,7 +74,7 @@ public class AlertasService {
             throw new IllegalArgumentException("El creador de apuestas no pone alertas");
         }
         // Sin mensaje, un partido que no existe acabaría en un error 500 en vez de en el aviso de la página
-        Evento evento = (eventoId == null ? java.util.Optional.<Evento>empty() : eventos.findById(eventoId))
+        Evento evento = (eventoId == null ? Optional.<Evento>empty() : eventos.findById(eventoId))
                 .orElseThrow(() -> new IllegalArgumentException("No existe ese partido"));
         if (!evento.admiteApuestas(ahora)) {
             throw new IllegalStateException("Este partido ya no admite apuestas");
@@ -139,8 +143,8 @@ public class AlertasService {
     @Transactional
     public void repasar() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        java.util.Map<Evento, List<AlertaCuota>> porEvento = new java.util.HashMap<>();
-        alertas.findByAvisadaIsNull().forEach(a -> porEvento.computeIfAbsent(a.getEvento(), e -> new java.util.ArrayList<>()).add(a));
+        Map<Evento, List<AlertaCuota>> porEvento = new HashMap<>();
+        alertas.findByAvisadaIsNull().forEach(a -> porEvento.computeIfAbsent(a.getEvento(), e -> new ArrayList<>()).add(a));
         porEvento.forEach((evento, lista) -> {
             if (evento.admiteApuestas(ahora)) {
                 comprobar(lista, supercuotas.cuotasConSupercuota(evento), ahora);

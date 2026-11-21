@@ -246,7 +246,8 @@ class CashOutYBloqueoLigaWebTest {
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
                         .post("/apuestas/{id}/cash-out", simple.getId()).with(user(ANA)).with(csrf())
                         .param("ofertaVista", "20.00"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("mensaje", "Apuesta cerrada. Se han abonado 20,00 monedas."));
 
         assertThat(simple.getEstado()).isEqualTo(EstadoApuesta.COBRADA);
         assertThat(usuarios.findByEmail(ANA).orElseThrow().getSaldo()).isEqualByComparingTo("1000.00");

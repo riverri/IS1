@@ -1,8 +1,6 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -10,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Avisa al usuario cuando una de sus apuestas se gana, se pierde o se anula (HU-37). La usan
@@ -43,10 +42,10 @@ class AvisosApuestas {
         if (antes == EstadoApuesta.ACTIVA) {
             texto = switch (ahora) {
                 case GANADA -> "¡Has acertado " + descripcion(apuesta) + "! Cobras "
-                        + monedas(apuesta.getGananciaPotencial()) + " monedas.";
+                        + Monedas.texto(apuesta.getGananciaPotencial()) + " monedas.";
                 case PERDIDA -> "Has perdido " + descripcion(apuesta) + ".";
                 default -> "Se ha anulado " + descripcion(apuesta) + ". Te hemos devuelto "
-                        + monedas(apuesta.getImporte()) + " monedas.";
+                        + Monedas.texto(apuesta.getImporte()) + " monedas.";
             };
         } else {
             // Ya estaba resuelta: es una corrección del resultado (HU-04) y solo se mueve la diferencia
@@ -56,8 +55,8 @@ class AvisosApuestas {
                 default -> "Se ha anulado " + descripcion(apuesta) + ".";
             };
             BigDecimal diferencia = apuesta.getPagado().subtract(pagadoAntes);
-            String dinero = diferencia.signum() > 0 ? " Te hemos abonado " + monedas(diferencia) + " monedas."
-                    : diferencia.signum() < 0 ? " Te hemos retirado " + monedas(diferencia.negate()) + " monedas."
+            String dinero = diferencia.signum() > 0 ? " Te hemos abonado " + Monedas.texto(diferencia) + " monedas."
+                    : diferencia.signum() < 0 ? " Te hemos retirado " + Monedas.texto(diferencia.negate()) + " monedas."
                     : "";
             texto = "Resultado corregido. " + estado + dinero;
         }
@@ -81,12 +80,4 @@ class AvisosApuestas {
     }
 
     /** Importe en formato español: "1.234,50". */
-    private static String monedas(BigDecimal cantidad) {
-        // Patrón "#,##0.00": separador de miles y siempre 2 decimales. Con los símbolos españoles, la coma de
-        // miles se pinta como punto y el punto decimal como coma
-        DecimalFormat formato = new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(Locale.forLanguageTag("es-ES")));
-        formato.setGroupingSize(3);
-        formato.setGroupingUsed(true);
-        return formato.format(cantidad);
-    }
 }

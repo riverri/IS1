@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -88,7 +89,7 @@ public class LigaService {
                         .thenComparing(t -> t.liga().getId()))
                 .toList();
 
-        return java.util.stream.IntStream.range(0, totales.size())
+        return IntStream.range(0, totales.size())
                 .mapToObj(i -> {
                     TotalLiga total = totales.get(i);
                     return new PuestoClasificacionLiga(i + 1, total.liga().getId(), total.liga().getNombre(),
