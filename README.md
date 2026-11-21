@@ -163,14 +163,14 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
 | `/equipos/{id}` | Ficha del equipo: alineación probable, plantilla con la nota de cada jugador, últimos resultados, racha, balance, gráfico de evolución, clasificación y próximos partidos; añadirlo o quitarlo de favoritos | HU-31, HU-32, HU-49, HU-86 |
 | `/boleto` | Boleto: las cuotas pulsadas en el catálogo se juntan en una combinada con su multiplicador total | HU-28, HU-29 |
 | `/mercados` | Apuestas a largo plazo: Balón de Oro, campeón de liga… Se elige un candidato y se cobra al conocerse el ganador | HU-44 |
-| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad; estadísticas por competición y descargar las apuestas en CSV | HU-24, HU-26, HU-27, HU-34, HU-35, HU-93, HU-96 |
+| `/apuestas` | Mis apuestas activas (con opción de cambiar el importe o cancelar), historial y estadísticas: % de aciertos y rentabilidad; estadísticas por competición y descargar las apuestas en CSV | HU-24, HU-26, HU-27, HU-34, HU-35, HU-96, HU-114 |
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada; también por tipo de juego (deportes, predicciones, cripto, memecoins y quiniela) | HU-36, HU-84 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas; y sus logros | HU-48, HU-88 |
 | `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros; retos 1 contra 1 entre sus miembros | HU-51, HU-89 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
-| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta; correo al ganar y resumen semanal (activar o desactivar) y descargar los movimientos en CSV | HU-10, HU-13, HU-14, HU-18, HU-47, HU-77, HU-92, HU-93 |
+| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta; correo al ganar y resumen semanal (activar o desactivar) y descargar los movimientos en CSV | HU-10, HU-13, HU-14, HU-18, HU-47, HU-77, HU-92, HU-114 |
 | `/cuenta/movimientos` | *(Pendiente de subir)* Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte; beneficio de cada uno de los últimos 30 días | HU-53, HU-95 |

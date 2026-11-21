@@ -12,14 +12,14 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 34 integradas (HU-63 a HU-73, HU-76 a HU-80 y HU-84 a HU-101) | 88 | 88 (100 %) | 0 | 0 |
+| 34 integradas (HU-63 a HU-73, HU-76 a HU-80, HU-84 a HU-92, HU-94 a HU-101 y HU-114) | 88 | 88 (100 %) | 0 | 0 |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-86 a HU-101, del Sprint 5, con sus 88 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial; antes HU-93), del Sprint 5, con sus 88 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
 
 **Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
 
@@ -597,13 +597,6 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-92.1 | Llega a quien ha jugado, con lo jugado, lo cobrado y su puesto | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` y [`CorreoResumenTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CorreoResumenTest.java)`.conServidorDeCorreoLlegaUnCorreoConElResumen`, `.sinServidorDeCorreoNoSeIntentaEnviar`, `.siElEnvioFallaNoSePropagaElError` |
 | CA-92.2 | Desactivado en Mi cuenta, no llega | Automática | [`ResumenSemanalTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ResumenSemanalTest.java)`.llegaAQuienHaJugadoConLoJugadoLoCobradoYSuPuesto` |
 
-## HU-93 · Exportar mi historial
-
-| ID | Criterio de aceptación | Estado | Pruebas |
-|---|---|---|---|
-| CA-93.1 | CSV de mis apuestas para Excel | Automática | [`ExportacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ExportacionWebTest.java)`.descargoMisApuestasConPuntoYComaYComaDecimal` |
-| CA-93.2 | CSV de mis movimientos; sin sesión, nada | Automática | [`ExportacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ExportacionWebTest.java)`.descargoMisMovimientosConElSaldoQueDejaCadaUno`, `.sinSesionNoSeDescargaNada` |
-
 ## HU-94 · Modo oscuro
 
 | ID | Criterio de aceptación | Estado | Pruebas |
@@ -664,3 +657,10 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-101.1 | Con «reducir movimiento», sin animaciones | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.conReducirMovimientoNoHayAnimaciones` |
 | CA-101.2 | Nada parpadea ni se mueve solo | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.ningunaAnimacionSeRepiteSinFin` |
+
+## HU-114 · Exportar mi historial
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-114.1 | CSV de mis apuestas para Excel | Automática | [`ExportacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ExportacionWebTest.java)`.descargoMisApuestasConPuntoYComaYComaDecimal` |
+| CA-114.2 | CSV de mis movimientos; sin sesión, nada | Automática | [`ExportacionWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/ExportacionWebTest.java)`.descargoMisMovimientosConElSaldoQueDejaCadaUno`, `.sinSesionNoSeDescargaNada` |

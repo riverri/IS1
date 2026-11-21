@@ -26,7 +26,7 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 
-/** HU-93: descargar mis apuestas y mis movimientos en CSV. */
+/** HU-114: descargar mis apuestas y mis movimientos en CSV. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional

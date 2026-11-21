@@ -16,7 +16,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.web.Csv;
 
 /**
- * Descarga del historial en CSV (HU-93): mis apuestas y los movimientos de mi saldo. Solo los datos del usuario con
+ * Descarga del historial en CSV (HU-114): mis apuestas y los movimientos de mi saldo. Solo los datos del usuario con
  * sesión; sin sesión, {@code SeguridadConfig} lleva al login.
  */
 @Controller
@@ -33,7 +33,7 @@ public class ExportacionController {
         this.usuarios = usuarios;
     }
 
-    /** GET /apuestas/exportar: todas mis apuestas, de la más reciente a la más antigua (CA-93.1). */
+    /** GET /apuestas/exportar: todas mis apuestas, de la más reciente a la más antigua (CA-114.1). */
     @GetMapping("/apuestas/exportar")
     @Transactional(readOnly = true)
     public ResponseEntity<byte[]> apuestas(Principal principal) {
@@ -48,7 +48,7 @@ public class ExportacionController {
         return csv.descarga("mis-apuestas.csv");
     }
 
-    /** GET /cuenta/movimientos/exportar: cada cambio de mi saldo con su motivo y el saldo que dejó (CA-93.2). */
+    /** GET /cuenta/movimientos/exportar: cada cambio de mi saldo con su motivo y el saldo que dejó (CA-114.2). */
     @GetMapping("/cuenta/movimientos/exportar")
     @Transactional(readOnly = true)
     public ResponseEntity<byte[]> movimientos(Principal principal) {
