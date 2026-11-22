@@ -95,8 +95,8 @@
         <text x="20" y="25" text-anchor="middle" font-size="13" font-weight="800"
               th:attr="fill=${col[2]}" th:text="${ini}">CA</text>
     </svg>
-    <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" alt="" loading="lazy" decoding="async"
-         referrerpolicy="no-referrer">
+    <img th:if="${eq.escudoUrl != null}" th:src="${eq.escudoUrl}" width="64" height="64" alt=""
+         loading="lazy" decoding="async" referrerpolicy="no-referrer">
 </span>
 
 <section class="acceso-panel" th:fragment="panelAcceso">

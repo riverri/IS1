@@ -32,6 +32,12 @@ class EquiposWebTest {
     }
 
     @Test
+    void losEscudosDeclaranDimensionesParaEvitarSaltosDeMaquetacion() throws Exception {
+        mvc.perform(get("/equipos"))
+                .andExpect(content().string(containsString("width=\"64\" height=\"64\"")));
+    }
+
+    @Test
     void filtraPorDeporte() throws Exception {
         mvc.perform(get("/equipos").param("deporte", "TENIS"))
                 .andExpect(content().string(containsString("Carlos Alcaraz")))
