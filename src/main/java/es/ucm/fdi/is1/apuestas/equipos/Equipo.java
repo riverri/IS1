@@ -45,12 +45,12 @@ public class Equipo {
     private Double calidad;
 
     /**
-     * Se cargan siempre junto con el equipo (EAGER).
      * Relación "muchos a muchos": un equipo juega varias competiciones y una competición tiene varios equipos.
+     * Las consultas de ficha y gestión que necesitan esta colección la cargan de forma explícita.
      * JPA la guarda en una tabla intermedia con parejas (equipo, competición). Es un {@code Set} (conjunto):
      * no admite repetidos, así un equipo no puede estar dos veces en la misma competición.
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Competicion> competiciones = new HashSet<>();
 
     /** Identificador del equipo en la API de datos deportivos (football-data.org). */

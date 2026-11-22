@@ -253,7 +253,7 @@ public class GestionService {
 
     @Transactional(readOnly = true)
     public List<Equipo> equipos() {
-        return equipos.findAllByOrderByDeporteAscNombreAsc();
+        return equipos.findAllConCompeticionesByOrderByDeporteAscNombreAsc();
     }
 
     @Transactional(readOnly = true)

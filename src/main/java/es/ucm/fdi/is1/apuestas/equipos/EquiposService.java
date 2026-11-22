@@ -60,7 +60,12 @@ public class EquiposService {
         int pagina = Math.min(Math.max(0, numero), 10000);
         Slice<Equipo> resultado = equipos.paginaListado(deporte, competicionId, Nombres.normalizar(texto),
                 PageRequest.of(pagina, TAMANO_PAGINA));
-        Map<Deporte, List<Equipo>> agrupados = resultado.getContent().stream()
+        List<Equipo> visibles = resultado.getContent();
+        if (!visibles.isEmpty()) {
+            // La tabla muestra las competiciones: carga la colección solo de estos 50 equipos, sin paginar un join.
+            equipos.competicionesDe(visibles.stream().map(Equipo::getId).toList());
+        }
+        Map<Deporte, List<Equipo>> agrupados = visibles.stream()
                 .collect(Collectors.groupingBy(Equipo::getDeporte, () -> new EnumMap<>(Deporte.class),
                         Collectors.toList()));
         return new PaginaEquipos(agrupados, pagina, pagina > 0, resultado.hasNext());

@@ -58,7 +58,8 @@ public class FichaEquipoService {
      */
     @Transactional(readOnly = true)
     public FichaEquipo ficha(Long equipoId) {
-        Equipo equipo = equipos.findById(equipoId).orElseThrow(() -> new EquipoNoEncontradoException(equipoId));
+        Equipo equipo = equipos.buscarConCompeticiones(equipoId)
+                .orElseThrow(() -> new EquipoNoEncontradoException(equipoId));
         // El gráfico y la racha usan solo un tramo reciente; el balance de toda la carrera es agregado en SQL.
         List<Evento> jugados = eventos.partidosDe(equipo, EstadoEvento.FINALIZADO, PageRequest.of(0, GRAFICO));
         // limit(n): se queda con los n primeros del stream

@@ -500,7 +500,7 @@ public class DatosIniciales implements ApplicationRunner {
      */
     private void plantillasDeEjemplo(Competicion laLiga) {
         int n = 0;
-        for (Equipo equipo : equipos.findAllByOrderByDeporteAscNombreAsc()) {
+        for (Equipo equipo : equipos.findAllConCompeticionesByOrderByDeporteAscNombreAsc()) {
             if (equipo.getDeporte() != Deporte.FUTBOL || !equipo.getCompeticiones().contains(laLiga)
                     || jugadores.countByEquipo(equipo) > 0) {
                 n++;

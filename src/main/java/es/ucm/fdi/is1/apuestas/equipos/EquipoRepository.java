@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +29,19 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
 
     /** Todos, agrupados por deporte (en el orden del enum) y por nombre dentro de cada deporte. */
     List<Equipo> findAllByOrderByDeporteAscNombreAsc();
+
+    /** Listado de gestión, que filtra por competición después de esta consulta y necesita la colección cargada. */
+    @EntityGraph(attributePaths = "competiciones")
+    List<Equipo> findAllConCompeticionesByOrderByDeporteAscNombreAsc();
+
+    /** Ficha estadística, que muestra sus competiciones tras cerrar la transacción del servicio. */
+    @EntityGraph(attributePaths = "competiciones")
+    @Query("select e from Equipo e where e.id = :id")
+    Optional<Equipo> buscarConCompeticiones(@Param("id") Long id);
+
+    /** Carga las competiciones de los equipos de una página, en una sola consulta y solo para sus ids visibles. */
+    @Query("select distinct e from Equipo e left join fetch e.competiciones where e.id in :ids")
+    List<Equipo> competicionesDe(@Param("ids") List<Long> ids);
 
     /**
      * Por nombre. Si hubiera dos con el mismo nombre (bases de datos de antes de impedirlo), devuelve el más
