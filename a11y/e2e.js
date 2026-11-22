@@ -3,9 +3,9 @@
 // cada pieza por separado; estas, que todas juntas funcionan como las ve el usuario.
 //
 // La ejecuta la CI con la aplicación arrancada con los datos de demostración; en local:
-//   cd a11y && npm install && node e2e.js   (con la aplicación en http://localhost:8080, o la que diga BASE_URL)
+//   cd a11y && npm install && APP_LOG=../app.log node e2e.js   (the application must already be running)
 //
-// Recorrido: registrarse y entrar; apostar una simple y ver el saldo; cancelarla y recuperar el importe; combinar dos
+// Recorrido: registrarse, verificar el correo y entrar; apostar una simple y ver el saldo; cancelarla y recuperar el importe; combinar dos
 // partidos en el boleto; el creador pone el resultado y la apuesta se cobra. Después:
 // - el creador da de alta un partido con supercuota, un jugador apuesta con ella y al anularlo se le devuelve;
 // - una liga entre dos jugadores con un bloqueo de 50 monedas que le impide apostar al otro;
@@ -27,6 +27,32 @@ async function entrar(pagina, [email, password]) {
     await pagina.fill('input[name=email]', email);
     await pagina.fill('input[name=password]', password);
     await Promise.all([pagina.waitForNavigation(), pagina.click('main button[type=submit]')]);
+}
+
+async function enlaceCorreoLocal(tipo, email) {
+    if (!process.env.APP_LOG) {
+        throw new Error('Set APP_LOG to the application log file to read local email links in the E2E flow');
+    }
+    const fs = require('fs');
+    const emailEscapado = email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const patron = new RegExp(`Local email link for ${tipo} to ${emailEscapado}: (https?://\\S+)`);
+    let enlace;
+    for (let intento = 0; intento < 20 && !enlace; intento++) {
+        const registro = fs.readFileSync(process.env.APP_LOG, 'utf8');
+        enlace = (registro.match(patron) || [])[1];
+        if (!enlace) await new Promise(resolve => setTimeout(resolve, 250));
+    }
+    if (!enlace) {
+        throw new Error(`No ${tipo} email link for ${email} was found in ${process.env.APP_LOG}`);
+    }
+    return enlace;
+}
+
+async function verificarCorreo(pagina, email) {
+    const enlace = await enlaceCorreoLocal('verificar correo', email);
+    await pagina.goto(enlace);
+    await pagina.click('main form button[type=submit]');
+    await pagina.waitForURL(url => url.pathname === '/login' && url.searchParams.has('verificado'));
 }
 
 /** El saldo de la cabecera, en monedas ("1.234,50 monedas" → 1234.5; el primer span es el icono). */
@@ -74,6 +100,7 @@ async function registrar(navegador, nombre, password = 'clave-e2e-123') {
     await pagina.fill('#password', password);
     await pagina.fill('#confirmacion', password);
     await Promise.all([pagina.waitForNavigation(), pagina.click('main button[type=submit]')]);
+    await verificarCorreo(pagina, email);
     await entrar(pagina, [email, password]);
     return { pagina, email };
 }
@@ -106,6 +133,8 @@ const coma = (n) => n.toFixed(2).replace('.', ',');
     await jugador.fill('#confirmacion', 'clave-e2e-123');
     await Promise.all([jugador.waitForNavigation(), jugador.click('main button[type=submit]')]);
     comprobar(jugador.url().includes('/login'), 'registrarse lleva a entrar', jugador.url());
+    await verificarCorreo(jugador, email);
+    comprobar(jugador.url().includes('/login?verificado'), 'verificar el correo activa la cuenta', jugador.url());
     await entrar(jugador, [email, 'clave-e2e-123']);
     const inicial = await saldo(jugador);
     comprobar(inicial > 0, `entra con el saldo de bienvenida (${inicial})`, 'saldo 0');
@@ -260,19 +289,14 @@ const coma = (n) => n.toFixed(2).replace('.', ',');
         await sinSesion.goto(BASE + '/recuperar');
         await sinSesion.fill('#email', otro.email);
         await Promise.all([sinSesion.waitForNavigation(), sinSesion.click('main button[type=submit]')]);
-        await sinSesion.waitForTimeout(500);
-        const registro = require('fs').readFileSync(process.env.APP_LOG, 'utf8');
-        const enlace = (registro.match(new RegExp(`recuperar la contraseña de ${otro.email.replace(/[.+]/g, '\\$&')}: (\\S+)`)) || [])[1];
-        comprobar(enlace, 'el enlace de recuperar sale en el registro', 'no está en ' + process.env.APP_LOG);
-        if (enlace) {
-            const destino = new URL(enlace);
-            await sinSesion.goto(BASE + destino.pathname + destino.search);
-            await sinSesion.fill('#nueva', 'otra-clave-e2e-456');
-            await sinSesion.fill('#confirmacion', 'otra-clave-e2e-456');
-            await Promise.all([sinSesion.waitForNavigation(), sinSesion.click('main button[type=submit]')]);
-            await entrar(sinSesion, [otro.email, 'otra-clave-e2e-456']);
-            comprobar(!sinSesion.url().includes('/login'), 'entra con la contraseña nueva', sinSesion.url());
-        }
+        const enlace = await enlaceCorreoLocal('recuperar contraseña', otro.email);
+        const destino = new URL(enlace);
+        await sinSesion.goto(BASE + destino.pathname + destino.search);
+        await sinSesion.fill('#nueva', 'otra-clave-e2e-456');
+        await sinSesion.fill('#confirmacion', 'otra-clave-e2e-456');
+        await Promise.all([sinSesion.waitForNavigation(), sinSesion.click('main button[type=submit]')]);
+        await entrar(sinSesion, [otro.email, 'otra-clave-e2e-456']);
+        comprobar(!sinSesion.url().includes('/login'), 'entra con la contraseña nueva', sinSesion.url());
     } else {
         console.log('  (sin APP_LOG: no se prueba recuperar la contraseña)');
     }

@@ -58,6 +58,9 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "email_verificado", nullable = false)
+    private boolean emailVerificado = true;
+
     @Column(nullable = false)
     private String nombre;
 
@@ -126,7 +129,13 @@ public class Usuario {
      */
     public Usuario(String email, String nombre, String passwordHash, Rol rol,
                    BigDecimal saldoBienvenida, LocalDateTime fechaAlta) {
+        this(email, nombre, passwordHash, rol, saldoBienvenida, fechaAlta, true);
+    }
+
+    public Usuario(String email, String nombre, String passwordHash, Rol rol,
+                   BigDecimal saldoBienvenida, LocalDateTime fechaAlta, boolean emailVerificado) {
         this.email = email;
+        this.emailVerificado = emailVerificado;
         this.nombre = nombre;
         this.passwordHash = passwordHash;
         this.rol = rol;
@@ -201,6 +210,15 @@ public class Usuario {
     /** Cambia el nombre visible (HU-47). */
     public void cambiarNombre(String nuevo) {
         nombre = nuevo;
+    }
+
+    public void verificarEmail() {
+        emailVerificado = true;
+    }
+
+    public void cambiarEmailVerificado(String nuevoEmail) {
+        email = nuevoEmail;
+        emailVerificado = true;
     }
 
     /** HU-47: recibe la contraseña ya cifrada. */
@@ -299,6 +317,10 @@ public class Usuario {
 
     public boolean isEliminado() {
         return eliminado;
+    }
+
+    public boolean isEmailVerificado() {
+        return emailVerificado;
     }
 
     public boolean isCreador() {

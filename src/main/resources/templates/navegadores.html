@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Navegadores recordados')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Navegadores recordados</h1>
+    <p class="aviso">Puedes cerrar el acceso de un navegador en cualquier momento. Al cerrar sesión en un navegador, se revoca solo ese navegador.</p>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Navegador revocado</p>
+    <div class="vacio" th:if="${#lists.isEmpty(navegadores)}">
+        <p>No hay navegadores recordados.</p>
+    </div>
+    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(navegadores)}">
+        <table>
+            <thead><tr><th>Navegador</th><th>Recordado</th><th>Último uso</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="navegador : ${navegadores}">
+                <td th:text="${navegador.descripcion}">Firefox</td>
+                <td th:text="${#temporals.format(navegador.creado, 'dd/MM/yyyy HH:mm')}">22/11/2026 18:00</td>
+                <td th:text="${#temporals.format(navegador.ultimoUso, 'dd/MM/yyyy HH:mm')}">22/11/2026 18:00</td>
+                <td>
+                    <form th:action="@{/cuenta/navegadores/{serie}/revocar(serie=${navegador.serie})}" method="post">
+                        <button class="enlace peligro" type="submit">Revocar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="enlace-volver" th:href="@{/cuenta}">← Mi cuenta</a>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

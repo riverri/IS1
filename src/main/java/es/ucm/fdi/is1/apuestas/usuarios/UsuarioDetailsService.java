@@ -37,7 +37,7 @@ public class UsuarioDetailsService implements UserDetailsService {
                         .password(u.getPasswordHash())
                         .roles(u.getRol().name())
                         // Cuenta eliminada (HU-18) o con demasiados fallos seguidos: no entra aunque acierte
-                        .disabled(u.isEliminado())
+                        .disabled(u.isEliminado() || !u.isEmailVerificado())
                         .accountLocked(intentos.bloqueado(email))
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));

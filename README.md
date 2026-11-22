@@ -126,18 +126,21 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | Variable | Valor |
 |---|---|
 | `CREADOR_PASSWORD` | **Obligatoria.** La contraseña de `creador@apuestas.es` (la del README es pública). |
+| `REMEMBER_ME_KEY` | **Obligatoria.** Secreto aleatorio de al menos 32 bytes para firmar los accesos persistentes por navegador. |
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://HOST/neondb?sslmode=require` (el `HOST` de Neon) |
 | `SPRING_DATASOURCE_USERNAME` | el `USUARIO` de Neon |
 | `SPRING_DATASOURCE_PASSWORD` | la `CONTRASEÑA` de Neon |
 | `USUARIO_PASSWORD` | Opcional: crea también `usuario@apuestas.es` con esta contraseña. |
 | `FOOTBALL_DATA_TOKEN` | Opcional: la clave de la API para los partidos reales. |
 | `DEMO_DATOS` | Opcional: con `true` carga una vez datos de demostración (ver abajo), para enseñar la web con contenido. |
-| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: servidor de correo para enviar el enlace de recuperar la contraseña (ver abajo). |
-| `URL_PUBLICA` | Opcional: dirección de la web para el enlace de recuperar la contraseña. En Render no hace falta (se usa la que da Render). |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Necesarias en producción para verificar registros y enviar enlaces de cuenta; opcionales en local, donde los enlaces se escriben en la consola. |
+| `URL_PUBLICA` | Opcional: dirección de la web para los enlaces de correo. En Render no hace falta (se usa la que da Render). |
 
 3. Despliega. La primera vez tarda unos minutos. Las tablas las crea Flyway solo, y queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
 
 Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los datos siguen en Neon.
+
+`REMEMBER_ME_KEY` debe ser un secreto aleatorio, distinto de las contraseñas. Si cambia, se invalidan las cookies persistentes de los navegadores.
 
 La imagen guarda una caché de las clases de Java (CDS) preparada al construirla. Con 1 CPU y 512 MB, la aplicación arranca en unos 15 segundos en vez de 22, y usa unos 30 MB menos de memoria. También separa las dependencias de nuestro código en capas distintas, así un cambio pequeño solo reconstruye la capa pequeña.
 
@@ -179,9 +182,9 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada; también por tipo de juego (deportes, predicciones, cripto, memecoins y quiniela) | HU-36, HU-84 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas; y sus logros | HU-48, HU-88 |
 | `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros; retos 1 contra 1 y bloqueos entre sus miembros; ranking de ligas, las mías y las públicas (`/ligas/clasificacion`) | HU-51, HU-89, HU-105 a HU-107, HU-111 a HU-113 |
-| `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
+| `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt y verificación del correo en cuentas nuevas) | HU-11, HU-12 |
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
-| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta; correo al ganar y resumen semanal (activar o desactivar) y descargar los movimientos en CSV | HU-10, HU-13, HU-14, HU-18, HU-47, HU-77, HU-92, HU-114 |
+| `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de correo con reautenticación y confirmación, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta; correo al ganar y resumen semanal (activar o desactivar) y descargar los movimientos en CSV | HU-10, HU-13, HU-14, HU-18, HU-47, HU-77, HU-92, HU-114 |
 | `/cuenta/movimientos` | Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte; beneficio de cada uno de los últimos 30 días | HU-53, HU-95 |
@@ -209,7 +212,7 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
     - **Número de consultas:** `ConsultasWebTest` falla si el catálogo, *Mis apuestas*, el ranking, el panel o *Mis movimientos* hacen una consulta a la base de datos por cada fila.
     - **En un navegador real**, con la aplicación arrancada, desde la carpeta `a11y` (`npm install` la primera vez):
       - `node comprobar.js` (accesibilidad);
-      - `node e2e.js` (de principio a fin: registrarse, apostar, cancelar, combinada, resolver y cobrar, supercuota, anular un partido, liga con bloqueo, quiniela y recuperar la contraseña; para lo último, `APP_LOG=../ruta/al/registro`).
+      - `APP_LOG=../app.log node e2e.js` (de principio a fin: registra y verifica el correo, apuesta, cancela, combina, resuelve y cobra, supercuota, anula, crea una liga con bloqueo, quiniela y recupera la contraseña; la aplicación debe estar ejecutándose sin servidor de correo).
   - Dependabot abre cada mes un PR si sale una versión nueva de una dependencia, y enseguida si la que usamos tiene un fallo de seguridad conocido.
 - **Partidos:** con la API configurada (ver abajo) se descargan solos. Sin ella, vienen cargados los partidos reales de LaLiga (jornadas 8 y 9) y de la Champions (jornada 2) de la temporada 2026/27, y eventos de ejemplo de baloncesto, tenis, Fórmula 1 y MotoGP, en `DatosIniciales.java`. El resto se da de alta como creador de apuestas en *Gestión → Nuevo evento*.
 - **Base de datos:** se guarda en la carpeta `datos/` (no se sube a GitHub), así que los datos se conservan entre arranques. Las tablas las crea y actualiza **Flyway** (ver más abajo), así que al actualizar el proyecto no hace falta borrarla. Para empezar de cero, para la aplicación y borra esa carpeta.
@@ -258,11 +261,13 @@ La aplicación puede descargar sola los partidos y resultados reales de **LaLiga
 - Las competiciones se configuran en `application.properties` (`apuestas.api.competiciones`): `PD` es LaLiga, `CL` la Champions, `PL` la Premier, `SA` la Serie A, `BL1` la Bundesliga y `FL1` la Ligue 1.
 - Los equipos nuevos que llegan por la API reciben una calificación de 6,0. El creador de apuestas la ajusta en *Gestión → Editar*.
 
-## Correo para recuperar la contraseña
+## Correo de cuenta
+
+Los registros nuevos deben confirmar el correo antes de iniciar sesión. Los enlaces de verificación caducan a las 24 horas y solo sirven una vez. Se pueden pedir como máximo tres enlaces por cuenta cada 30 minutos. En *Mi cuenta* también se puede cambiar el correo: la contraseña actual es necesaria, la dirección anterior recibe un aviso y el cambio solo se aplica al confirmar el enlace enviado a la dirección nueva. Al completarlo se cierran las sesiones abiertas.
 
 En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para crear una contraseña nueva. Caduca a los 30 minutos y solo sirve una vez.
 
-- **Sin servidor de correo** (lo normal en tu ordenador), el enlace se escribe en la consola de la aplicación: busca la línea `Enlace para recuperar la contraseña de …` y ábrelo en el navegador.
+- **Sin servidor de correo** (lo normal en tu ordenador), los enlaces se escriben en la consola de la aplicación. No se escriben en los registros del perfil público.
 - **Con servidor de correo**, se envía de verdad. Por ejemplo, en tu ordenador, con una cuenta de Gmail con verificación en dos pasos:
   1. Crea una *contraseña de aplicación* en https://myaccount.google.com/apppasswords.
   2. Define `MAIL_HOST=smtp.gmail.com`, `MAIL_PORT=587`, `MAIL_USERNAME=tu_cuenta@gmail.com` y `MAIL_PASSWORD=la_contraseña_de_aplicación` (en IntelliJ).
@@ -275,7 +280,7 @@ En *Iniciar sesión → ¿Has olvidado tu contraseña?* se pide un enlace para c
      - `MAIL_USERNAME=` el *Login* de Brevo;
      - `MAIL_PASSWORD=` la clave SMTP;
      - `APUESTAS_CORREO_REMITENTE=` el remitente verificado.
-  4. Pide un enlace en */recuperar* con tu cuenta y mira que llegue. Si en *Logs* sale `No se ha podido enviar el correo de recuperación`, el motivo viene detrás.
+  4. Pide una verificación de correo o recuperación de contraseña y confirma que el mensaje llegue. Si en *Logs* aparece un error de envío, el motivo viene detrás.
 
   Las claves van solo en Render, nunca en el repositorio. Esta configuración no se ha probado todavía desde Render: si Brevo tampoco conecta, la alternativa es pasar el servicio a un plan de pago de Render, que sí deja usar el 587.
 - La respuesta al pedir el enlace es la misma exista o no la cuenta, para no desvelar qué emails están registrados.

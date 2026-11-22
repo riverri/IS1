@@ -393,7 +393,7 @@ class FantasyWebTest {
                 .andExpect(flash().attribute("mensaje", containsString("suma desde el lunes")));
         mvc.perform(get("/fantasy").with(COMO_ANA))
                 .andExpect(content().string(containsString("La jornada ya ha empezado")))
-                .andExpect(content().string(containsString("Suma desde el lunes")));
+                .andExpect(content().string(containsString("suma desde el lunes")));
         mvc.perform(get("/fantasy/mercado").with(COMO_ANA))
                 .andExpect(content().string(containsString("La jornada ya ha empezado")));
         mvc.perform(post("/fantasy/vender").with(COMO_ANA).with(csrf()).param("jugador", portero.getId().toString()))

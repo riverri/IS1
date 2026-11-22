@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Verificar correo')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Verifica tu correo</h1>
+    <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}"></p>
+    <p>Escribe el correo con el que te registraste y, si la cuenta está pendiente, enviaremos un enlace nuevo.</p>
+    <form class="tarjeta tarjeta-formulario formulario" th:action="@{/verificar-correo}" method="post">
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" name="email" required maxlength="254" autocomplete="email">
+        <button class="boton boton-bloque" type="submit">Enviar enlace</button>
+    </form>
+    <p><a th:href="@{/login}">Volver a iniciar sesión</a></p>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

@@ -40,12 +40,13 @@ class UsuariosWebTest {
                         .param("password", "secreta123")
                         .param("confirmacion", "secreta123"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login?registrado"));
+                .andExpect(redirectedUrl("/login?verificacionPendiente"));
 
         Usuario ana = usuarios.findByEmail("ana@ucm.es").orElseThrow();
         assertThat(ana.getSaldo()).isEqualByComparingTo("1000");
         assertThat(ana.getPasswordHash()).isNotEqualTo("secreta123");
         assertThat(ana.getRol()).isEqualTo(Rol.USUARIO);
+        assertThat(ana.isEmailVerificado()).isFalse();
     }
 
     /** Al cerrar sesión se vuelve a la portada y se dice que se ha cerrado (antes el aviso no salía nunca). */

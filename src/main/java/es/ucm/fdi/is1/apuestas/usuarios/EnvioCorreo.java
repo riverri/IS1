@@ -12,4 +12,16 @@ public interface EnvioCorreo {
 
     /** @param enlace dirección completa, con el código, para crear la contraseña nueva */
     void enviarRecuperacion(String email, String nombre, String enlace);
+
+    default void enviarVerificacion(String email, String nombre, String enlace) {
+        throw new UnsupportedOperationException("Email verification is not configured");
+    }
+
+    default void notificarCambioSolicitado(String email, String nombre, String nuevoEmail) {
+        throw new UnsupportedOperationException("Email change notifications are not configured");
+    }
+
+    default void enviarConfirmacionCambio(String email, String nombre, String enlace) {
+        throw new UnsupportedOperationException("Email change confirmation is not configured");
+    }
 }

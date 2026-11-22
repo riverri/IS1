@@ -2,12 +2,14 @@ package es.ucm.fdi.is1.apuestas.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.DelegatingRequestMatcherHeaderWriter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
@@ -18,6 +20,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import es.ucm.fdi.is1.apuestas.usuarios.RecargaAlEntrarHandler;
+import es.ucm.fdi.is1.apuestas.usuarios.JdbcNavegadorTokenRepository;
+import es.ucm.fdi.is1.apuestas.usuarios.NavegadorRememberMeServices;
 
 /**
  * Configuración de Spring Security: quién puede entrar en cada página, inicio y cierre de sesión,
@@ -52,6 +56,25 @@ public class SeguridadConfig {
      */
     private static final RequestMatcher CONSOLA_H2 = PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**");
 
+    @Bean
+    public NavegadorRememberMeServices navegadorRememberMeServices(
+            UserDetailsService users, JdbcNavegadorTokenRepository tokens,
+            @Value("${apuestas.seguridad.remember-me-key}") String key,
+            @Value("${apuestas.seguridad.remember-me-secure:false}") boolean secureCookie) {
+        if (key == null || key.isBlank()) {
+            throw new IllegalStateException("REMEMBER_ME_KEY must be configured for persistent browser login");
+        }
+        NavegadorRememberMeServices services = new NavegadorRememberMeServices(key, users, tokens);
+        services.setParameter("recordar");
+        services.setTokenValiditySeconds((int) java.time.Duration.ofDays(30).toSeconds());
+        services.setUseSecureCookie(secureCookie);
+        services.setCookieCustomizer(cookie -> {
+            cookie.setHttpOnly(true);
+            cookie.setAttribute("SameSite", "Lax");
+        });
+        return services;
+    }
+
     static final String CSP_CONSOLA_H2 = CSP.replace("script-src 'self';", "script-src 'self' 'unsafe-inline';");
 
     /** Permissions-Policy: la web no usa cámara, micrófono, ubicación ni pagos, así que se desactivan. */
@@ -60,6 +83,7 @@ public class SeguridadConfig {
     /** Reglas de acceso. Se comprueban en orden y se aplica la primera que encaja con la dirección. */
     @Bean
     public SecurityFilterChain filtroSeguridad(HttpSecurity http, RecargaAlEntrarHandler alEntrar,
+                                               NavegadorRememberMeServices rememberMeServices,
                                                SessionRegistry registroSesiones) throws Exception {
         // Estilo "fluido": cada método configura una parte y devuelve el mismo objeto, por eso se encadenan con puntos.
         // Cada parte recibe una lambda (x -> x.algo()) con la que se rellenan sus opciones
@@ -69,6 +93,7 @@ public class SeguridadConfig {
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
                         .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*",
                                 "/registro", "/login", "/recuperar", "/recuperar/nueva",
+                                "/verificar-correo", "/verificar-correo/**", "/cuenta/correo/confirmar",
                                 "/css/**", "/js/**", "/error").permitAll()
                         // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()
@@ -104,6 +129,10 @@ public class SeguridadConfig {
                         .usernameParameter("email")
                         .successHandler(alEntrar)
                         .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                        .key(rememberMeServices.getKey())
+                        .rememberMeParameter("recordar")
+                        .rememberMeServices(rememberMeServices))
                 // Al cerrar sesión se vuelve a la portada, con el aviso «Has cerrado sesión»
                 .logout(logout -> logout.logoutSuccessUrl("/?logout"))
                 // Registro de sesiones: al eliminar la cuenta o cambiar la contraseña se cierran las de otros navegadores

@@ -12,6 +12,20 @@ services:
       # Contraseña del creador de apuestas (obligatoria): Render la pide al crear el servicio
       - key: CREADOR_PASSWORD
         sync: false
+      # Independent secret used to sign persistent browser login cookies
+      - key: REMEMBER_ME_KEY
+        sync: false
+      # Mail delivery is required for new account verification in the public deployment
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        value: "2525"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: APUESTAS_CORREO_REMITENTE
+        sync: false
       # Base de datos PostgreSQL permanente (Neon, ver README). Sin ellas usa H2 y los datos se borran al reiniciar
       - key: SPRING_DATASOURCE_URL
         sync: false

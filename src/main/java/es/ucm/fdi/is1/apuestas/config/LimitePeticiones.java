@@ -34,7 +34,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LimitePeticiones extends OncePerRequestFilter {
 
     /** Formularios limitados (solo los POST: ver la página no cuenta). */
-    static final Set<String> RUTAS = Set.of("/registro", "/recuperar");
+    static final Set<String> RUTAS = Set.of("/registro", "/recuperar", "/verificar-correo");
 
     /** Con más IP distintas guardadas se vacía el registro, para que no crezca sin fin. */
     private static final int MAXIMO_IPS = 10_000;
