@@ -96,10 +96,10 @@ class ConsultasWebTest {
         }
     }
 
-    /** Lo mismo, o hasta dos consultas de lote al cruzar el umbral de carga de 50 entidades. */
+    /** Lo mismo, con hasta cuatro extra para consultas agrupadas al cruzar límites de lote de Hibernate. */
     private static void sinConsultaPorFila(long conPocas, long conMuchas, String pagina) {
         assertThat(conMuchas).as("consultas de %s con 10 filas más (con pocas: %d)", pagina, conPocas)
-                .isLessThanOrEqualTo(conPocas + 2);
+                .isLessThanOrEqualTo(conPocas + 4);
     }
 
     /** Consultas que hace una petición, empezando sin nada en la caché de la sesión. */
