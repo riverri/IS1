@@ -17,6 +17,7 @@ import jakarta.persistence.LockModeType;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
+import es.ucm.fdi.is1.apuestas.equipos.Nombres;
 
 /**
  * Repositorio Spring Data de {@link Evento}. Spring genera la implementación: las consultas salen del
@@ -63,17 +64,24 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
             where e.estado = :estado and e.fechaHora > :fecha
               and (:deporte is null or e.competicion.deporte = :deporte)
               and (:texto = '' or
-                   cast(function('translate', lower(e.local.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                   cast(function('translate', lower(e.local.nombre), :conMarcas, :sinMarcas) as string)
                        like concat('%', :texto, '%') or
-                   cast(function('translate', lower(e.visitante.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                   cast(function('translate', lower(e.visitante.nombre), :conMarcas, :sinMarcas) as string)
                        like concat('%', :texto, '%') or
-                   cast(function('translate', lower(e.competicion.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                   cast(function('translate', lower(e.competicion.nombre), :conMarcas, :sinMarcas) as string)
                        like concat('%', :texto, '%'))
             order by e.fechaHora asc, e.id asc
             """)
     Slice<Evento> paginaCatalogo(@Param("estado") EstadoEvento estado, @Param("fecha") LocalDateTime fecha,
                                 @Param("deporte") Deporte deporte, @Param("texto") String texto,
+                                @Param("conMarcas") String conMarcas, @Param("sinMarcas") String sinMarcas,
                                 Pageable pageable);
+
+    /** Igual que {@link Nombres#normalizar}, en SQL: quita todas las tildes, no solo las españolas. */
+    default Slice<Evento> paginaCatalogo(EstadoEvento estado, LocalDateTime fecha, Deporte deporte, String texto,
+                                         Pageable pageable) {
+        return paginaCatalogo(estado, fecha, deporte, texto, Nombres.CON_MARCAS, Nombres.SIN_MARCAS, pageable);
+    }
 
     /** Próximos eventos paginados para no hidratar el catálogo entero en la portada. */
     @EntityGraph(attributePaths = {"competicion", "local", "visitante"})

@@ -42,39 +42,35 @@ public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Lo
                    ef.creado as creado,
                    cast(coalesce(sum(case when ev.id is null then 0 else
                        case when ev.resultado = 'EMPATE' then 1
-                            when (ev.local_id = f.club_id and ev.resultado = 'LOCAL')
-                              or (ev.visitante_id = f.club_id and ev.resultado = 'VISITANTE') then 3
+                            when ev.resultado = ev.gana then 3
                             else 0 end
-                       + case when ev.goles_local is null or ev.goles_visitante is null then 0 else
-                           case when (ev.local_id = f.club_id and ev.goles_visitante = 0)
-                                      or (ev.visitante_id = f.club_id and ev.goles_local = 0)
+                       + case when ev.a_favor is null or ev.en_contra is null then 0 else
+                           case when ev.en_contra = 0
                                 then case f.posicion when 'PORTERO' then 4 when 'DEFENSA' then 3
                                                     when 'CENTROCAMPISTA' then 1 else 0 end
                                 else 0 end
-                           + (case when ev.local_id = f.club_id then ev.goles_local else ev.goles_visitante end)
-                               * case f.posicion when 'DELANTERO' then 2 when 'CENTROCAMPISTA' then 1 else 0 end
-                           + case when ((ev.local_id = f.club_id and ev.goles_visitante >= 3)
-                                      or (ev.visitante_id = f.club_id and ev.goles_local >= 3))
-                                      and f.posicion in ('PORTERO', 'DEFENSA') then -1 else 0 end
+                           + ev.a_favor * case f.posicion when 'DELANTERO' then 2 when 'CENTROCAMPISTA' then 1 else 0 end
+                           + case when ev.en_contra >= 3 and f.posicion in ('PORTERO', 'DEFENSA') then -1 else 0 end
                          end
                    end), 0) as integer) as puntos
             from equipo_fantasy ef
             join usuario u on u.id = ef.usuario_id
             left join fichaje_fantasy f on f.equipo_id = ef.id
-            left join evento ev on (ev.local_id = f.club_id or ev.visitante_id = f.club_id)
-                and ev.estado = 'FINALIZADO' and ev.fecha_hora >= f.desde
-                and (f.hasta is null or ev.fecha_hora < f.hasta)
+            left join (
+                select id, local_id as club_id, fecha_hora, resultado, 'LOCAL' as gana, goles_local as a_favor, goles_visitante as en_contra
+                from evento where estado = 'FINALIZADO'
+                union all
+                select id, visitante_id, fecha_hora, resultado, 'VISITANTE', goles_visitante, goles_local
+                from evento where estado = 'FINALIZADO'
+            ) ev on ev.club_id = f.club_id and ev.fecha_hora >= f.desde and (f.hasta is null or ev.fecha_hora < f.hasta)
             where u.eliminado = false
             group by ef.id, ef.nombre, u.nombre, u.email, ef.creado
             ), posiciones as (
-                select p.*, cast(row_number() over (order by p.puntos desc, p.creado asc, p.id asc) as integer)
-                    as puesto
+                select p.*, cast(row_number() over (order by p.puntos desc, p.creado asc, p.id asc) as integer) as puesto
                 from puntuados p
             )
             select p.id, p.nombreEquipo, p.nombreUsuario, p.email, p.creado, p.puntos, p.puesto
-            from posiciones p
-            where p.puesto <= 20 or p.email = :emailActual
-            order by p.puesto
+            from posiciones p where p.puesto <= 20 or p.email = :emailActual order by p.puesto
             """, nativeQuery = true)
     List<FilaClasificacion> clasificacionAgregada(@Param("emailActual") String emailActual);
 

@@ -49,6 +49,7 @@ class EditarEventoConBloqueosTest {
         form.setVisitanteId(e.getVisitante().getId());
         form.setFechaHora(manana);
         // Ana pagó 50 por impedir a Luis apostar al Getafe; ahora le impediría apostar al Real Madrid
-        assertThatThrownBy(() -> gestion.editarEvento(e.getId(), form)).isInstanceOf(DatosInvalidosException.class).hasMessageContaining("bloqueos de liga");
+        assertThatThrownBy(() -> gestion.editarEvento(e.getId(), form))
+                .isInstanceOf(DatosInvalidosException.class).hasMessageContaining("bloqueos de liga");
     }
 }
