@@ -1,5 +1,9 @@
 package es.ucm.fdi.is1.apuestas.config;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,8 +65,15 @@ public class SeguridadConfig {
             UserDetailsService users, JdbcNavegadorTokenRepository tokens,
             @Value("${apuestas.seguridad.remember-me-key}") String key,
             @Value("${apuestas.seguridad.remember-me-secure:false}") boolean secureCookie) {
+        // Con los tokens guardados en la base de datos, la clave no firma la cookie (que es aleatoria): solo firma la
+        // autenticación interna de Spring. Sin REMEMBER_ME_KEY se usa una aleatoria en cada arranque, que vale igual;
+        // antes la aplicación no arrancaba y el despliegue en Render fallaba si faltaba la variable
         if (key == null || key.isBlank()) {
-            throw new IllegalStateException("REMEMBER_ME_KEY must be configured for persistent browser login");
+            byte[] aleatoria = new byte[32];
+            new SecureRandom().nextBytes(aleatoria);
+            key = Base64.getEncoder().encodeToString(aleatoria);
+            LoggerFactory.getLogger(SeguridadConfig.class)
+                    .warn("Falta REMEMBER_ME_KEY: se usa una clave aleatoria para recordar navegadores");
         }
         NavegadorRememberMeServices services = new NavegadorRememberMeServices(key, users, tokens);
         services.setParameter("recordar");

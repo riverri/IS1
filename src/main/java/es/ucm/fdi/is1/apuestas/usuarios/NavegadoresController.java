@@ -5,8 +5,8 @@ import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /** Account page for reviewing and revoking remembered browsers. */
@@ -25,8 +25,9 @@ public class NavegadoresController {
         return "navegadores";
     }
 
-    @PostMapping("/cuenta/navegadores/{serie}/revocar")
-    public String revocar(@PathVariable String serie, Principal principal, RedirectAttributes redirect) {
+    /** La serie va como parámetro y no en la ruta: puede llevar "/" (Base64), y entonces la ruta daba 404. */
+    @PostMapping("/cuenta/navegadores/revocar")
+    public String revocar(@RequestParam String serie, Principal principal, RedirectAttributes redirect) {
         tokens.removeToken(principal.getName(), serie);
         redirect.addFlashAttribute("mensaje", "Se ha revocado el navegador seleccionado");
         return "redirect:/cuenta/navegadores";

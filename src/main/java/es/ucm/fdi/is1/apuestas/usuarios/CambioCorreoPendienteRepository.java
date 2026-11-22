@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.LockModeType;
 
@@ -22,4 +23,10 @@ public interface CambioCorreoPendienteRepository extends JpaRepository<CambioCor
     @Modifying
     @Query("delete from CambioCorreoPendiente c where c.usuario = :usuario")
     void borrarDe(@Param("usuario") Usuario usuario);
+
+    /** Anula los cambios pendientes de la cuenta con ese email (al cambiar la contraseña, recuperarla o darse de baja). */
+    @Transactional
+    @Modifying
+    @Query("delete from CambioCorreoPendiente c where c.usuario in (select u from Usuario u where u.email = :email)")
+    void borrarDeEmail(@Param("email") String email);
 }
