@@ -207,6 +207,11 @@ class LargoPlazoWebTest {
         assertThat(deLuis.getEstado()).isEqualTo(EstadoApuesta.GANADA);
         assertThat(saldo(ANA)).isEqualByComparingTo(anaAntes);
         assertThat(saldo(LUIS)).isEqualByComparingTo(luisAntes.add(new BigDecimal("80.00")));
+
+        mvc.perform(get("/mercados"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Cerrados y resueltos")))
+                .andExpect(content().string(containsString("Ferran Torres")));
     }
 
     @Test
