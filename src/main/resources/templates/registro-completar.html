@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Completar registro')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="acceso">
+    <section th:replace="~{fragments/comun :: panelAcceso}"></section>
+    <div class="tarjeta tarjeta-formulario">
+        <h1>Completar registro</h1>
+        <p class="subtitulo">Correo confirmado: <strong th:text="${emailConfirmado}">correo</strong></p>
+        <p class="subtitulo">Elige tu nombre y contraseña para crear la cuenta.</p>
+        <form class="formulario" th:action="@{/registro/completar}" th:object="${registro}" method="post" novalidate>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" th:field="*{nombre}" th:errorclass="con-error" autocomplete="name">
+            <span class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:text="${#fields.errors('nombre')[0]}"></span>
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" th:field="*{password}" th:errorclass="con-error" autocomplete="new-password">
+            <span class="error-campo" th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')[0]}"></span>
+            <label for="confirmacion">Repite la contraseña</label>
+            <input id="confirmacion" type="password" th:field="*{confirmacion}" th:errorclass="con-error" autocomplete="new-password">
+            <span class="error-campo" th:if="${#fields.hasErrors('confirmacion')}" th:text="${#fields.errors('confirmacion')[0]}"></span>
+            <button class="boton boton-bloque" type="submit">Crear cuenta</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

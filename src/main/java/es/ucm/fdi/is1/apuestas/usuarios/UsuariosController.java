@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.usuarios;
 import java.security.Principal;
 import java.util.List;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 /**
@@ -48,19 +50,19 @@ public class UsuariosController {
     private final SaldoProperties saldo;
     private final Clock reloj;
     private final Sesiones sesiones;
-    private final VerificacionCorreoService verificacionCorreo;
+    private final RegistroCorreoService registroCorreo;
     private final CambioCorreoService cambioCorreo;
     private final String basePublica;
 
     public UsuariosController(UsuarioService usuarios, SaldoProperties saldo, Clock reloj, Sesiones sesiones,
-                              VerificacionCorreoService verificacionCorreo,
+                              RegistroCorreoService registroCorreo,
                               CambioCorreoService cambioCorreo,
                               @Value("${apuestas.url-publica}") String basePublica) {
         this.usuarios = usuarios;
         this.saldo = saldo;
         this.reloj = reloj;
         this.sesiones = sesiones;
-        this.verificacionCorreo = verificacionCorreo;
+        this.registroCorreo = registroCorreo;
         this.cambioCorreo = cambioCorreo;
         this.basePublica = sinBarraFinal(basePublica);
     }
@@ -74,43 +76,92 @@ public class UsuariosController {
         return "login";
     }
 
-    /** GET /registro: formulario de registro, con el saldo de bienvenida que se recibirá (HU-11, HU-14). */
+    private static final String REGISTRO_EMAIL = UsuariosController.class.getName() + ".email";
+    private static final String REGISTRO_CADUCA = UsuariosController.class.getName() + ".caduca";
+    private static final Duration VALIDEZ_SESION_REGISTRO = Duration.ofMinutes(15);
+
+    /** GET /registro: requests an email confirmation before collecting credentials. */
     @GetMapping("/registro")
     public String registro(Model model) {
-        // Un formulario vacío para que la plantilla tenga dónde enlazar los campos (th:object="${registro}")
-        model.addAttribute("registro", new RegistroForm());
+        model.addAttribute("solicitud", new SolicitudRegistroForm());
         model.addAttribute("bienvenida", saldo.bienvenida());
         return "registro";
     }
 
-    /**
-     * POST /registro: crea la cuenta y lleva a /login?registrado (CA-11.1). Además de las reglas de
-     * {@link RegistroForm}, comprueba que las contraseñas coinciden y caben en BCrypt.
-     * Si el email ya está registrado, lo marca como error del campo (CA-11.2).
-     */
+    /** Sends a generic response so account existence cannot be inferred from this endpoint. */
     @PostMapping("/registro")
-    public String registrar(@Valid @ModelAttribute("registro") RegistroForm form, BindingResult errores, Model model) {
-        // rejectValue(campo, código, mensaje) añade un error a ese campo; la plantilla lo pinta bajo el campo
+    public String registrar(@Valid @ModelAttribute("solicitud") SolicitudRegistroForm form,
+                            BindingResult errores, Model model) {
+        if (errores.hasErrors()) {
+            model.addAttribute("bienvenida", saldo.bienvenida());
+            return "registro";
+        }
+        registroCorreo.solicitar(form.getEmail(), basePublica);
+        return "redirect:/login?verificacionPendiente";
+    }
+
+    @GetMapping("/registro/completar")
+    public String completarRegistro(HttpServletRequest peticion, Model model) {
+        HttpSession sesion = peticion.getSession(false);
+        if (!registroConfirmado(sesion)) {
+            return "redirect:/registro";
+        }
+        model.addAttribute("registro", new CompletarRegistroForm());
+        model.addAttribute("emailConfirmado", sesion.getAttribute(REGISTRO_EMAIL));
+        model.addAttribute("bienvenida", saldo.bienvenida());
+        return "registro-completar";
+    }
+
+    @PostMapping("/registro/completar")
+    public String guardarRegistro(@Valid @ModelAttribute("registro") CompletarRegistroForm form,
+                                  BindingResult errores, HttpServletRequest peticion, Model model) {
+        HttpSession sesion = peticion.getSession(false);
+        if (!registroConfirmado(sesion)) {
+            return "redirect:/registro";
+        }
         if (form.getPassword() != null && !form.getPassword().equals(form.getConfirmacion())) {
             errores.rejectValue("confirmacion", "noCoincide", "Las contraseñas no coinciden");
         }
         if (!Contrasenas.cabe(form.getPassword())) {
             errores.rejectValue("password", "larga", Contrasenas.DEMASIADO_LARGA);
         }
-        if (!errores.hasErrors()) {
-            // try/catch: si registrar lanza EmailYaRegistradoException, se salta al catch en vez de romper la página
-            try {
-                Usuario usuario = usuarios.registrar(form);
-                verificacionCorreo.solicitar(usuario.getEmail(), basePublica);
-                // Redirigir tras un POST evita que al recargar la página se envíe el formulario otra vez
-                return "redirect:/login?verificacionPendiente";
-            } catch (EmailYaRegistradoException e) {
-                errores.rejectValue("email", "duplicado", "Ya existe una cuenta con ese email");
-            }
+        if (errores.hasErrors()) {
+            model.addAttribute("emailConfirmado", sesion.getAttribute(REGISTRO_EMAIL));
+            model.addAttribute("bienvenida", saldo.bienvenida());
+            return "registro-completar";
         }
-        // Hay errores: se vuelve a pintar el registro con lo que escribió el usuario y los mensajes de error
-        model.addAttribute("bienvenida", saldo.bienvenida());
-        return "registro";
+        try {
+            usuarios.registrarVerificado((String) sesion.getAttribute(REGISTRO_EMAIL),
+                    form.getNombre(), form.getPassword());
+            sesion.removeAttribute(REGISTRO_EMAIL);
+            sesion.removeAttribute(REGISTRO_CADUCA);
+            return "redirect:/login?registrado";
+        } catch (EmailYaRegistradoException e) {
+            sesion.removeAttribute(REGISTRO_EMAIL);
+            sesion.removeAttribute(REGISTRO_CADUCA);
+            return "redirect:/login?verificacionPendiente";
+        }
+    }
+
+    private boolean registroConfirmado(HttpSession sesion) {
+        if (sesion == null || sesion.getAttribute(REGISTRO_EMAIL) == null
+                || !(sesion.getAttribute(REGISTRO_CADUCA) instanceof Long caduca)
+                || reloj.millis() >= caduca) {
+            if (sesion != null) {
+                sesion.removeAttribute(REGISTRO_EMAIL);
+                sesion.removeAttribute(REGISTRO_CADUCA);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    void habilitarCompletarRegistro(HttpServletRequest peticion, String email) {
+        peticion.getSession(true);
+        peticion.changeSessionId();
+        HttpSession sesion = peticion.getSession(true);
+        sesion.setAttribute(REGISTRO_EMAIL, email);
+        sesion.setAttribute(REGISTRO_CADUCA, reloj.millis() + VALIDEZ_SESION_REGISTRO.toMillis());
     }
 
     /** GET /cuenta: Mi cuenta. Antes aplica la recarga gratuita si toca, así el saldo está al día (HU-13, HU-14). */

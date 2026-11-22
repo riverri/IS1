@@ -25,9 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
+import org.mockito.ArgumentCaptor;
 
 import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.CalculadoraCuotas;
@@ -45,6 +48,7 @@ import es.ucm.fdi.is1.apuestas.ligas.LigaService;
 import es.ucm.fdi.is1.apuestas.mercados.MercadoRepository;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
+import es.ucm.fdi.is1.apuestas.usuarios.EnvioCorreo;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -62,6 +66,9 @@ class RevisionFallosWebTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @MockitoBean
+    private EnvioCorreo correo;
 
     @Autowired
     private UsuarioService usuarioService;
@@ -339,16 +346,24 @@ class RevisionFallosWebTest {
 
     @Test
     void elDominioDeLasCuentasEliminadasEstaReservado() throws Exception {
-        mvc.perform(post("/registro").with(csrf()).param("nombre", "Pillo").param("email", "eliminado-5@apuestas.invalid")
-                        .param("password", "secreta123").param("confirmacion", "secreta123"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Ya existe una cuenta con ese email")));
+        mvc.perform(post("/registro").with(csrf()).param("email", "eliminado-5@apuestas.invalid"))
+                .andExpect(redirectedUrl("/login?verificacionPendiente"));
+        assertThat(usuarios.findByEmail("eliminado-5@apuestas.invalid")).isEmpty();
     }
 
     @Test
     void unaContrasenaConMuchasEnesNoDaError500() throws Exception {
         String larga = "ñ".repeat(40);
-        mvc.perform(post("/registro").with(csrf()).param("nombre", "Ñoño").param("email", "nono@ucm.es")
+        mvc.perform(post("/registro").with(csrf()).param("email", "nono@ucm.es"))
+                .andExpect(redirectedUrl("/login?verificacionPendiente"));
+        ArgumentCaptor<String> enlace = ArgumentCaptor.forClass(String.class);
+        org.mockito.Mockito.verify(correo).enviarVerificacion(org.mockito.ArgumentMatchers.eq("nono@ucm.es"),
+                org.mockito.ArgumentMatchers.eq(""), enlace.capture());
+        String token = enlace.getValue().substring(enlace.getValue().indexOf("token=") + 6);
+        MvcResult confirmacion = mvc.perform(post("/registro/confirmar").with(csrf()).param("token", token))
+                .andReturn();
+        MockHttpSession sesion = (MockHttpSession) confirmacion.getRequest().getSession(false);
+        mvc.perform(post("/registro/completar").session(sesion).with(csrf()).param("nombre", "Ñoño")
                         .param("password", larga).param("confirmacion", larga))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("demasiado larga")));
@@ -358,8 +373,7 @@ class RevisionFallosWebTest {
     void unEmailDemasiadoLargoSeRechaza() throws Exception {
         // Email válido (etiquetas de 60 caracteres) pero más largo que la columna de la base de datos
         String email = "a".repeat(60) + "@" + ("b".repeat(60) + ".").repeat(4) + "es";
-        mvc.perform(post("/registro").with(csrf()).param("nombre", "Largo").param("email", email)
-                        .param("password", "secreta123").param("confirmacion", "secreta123"))
+        mvc.perform(post("/registro").with(csrf()).param("email", email))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Máximo 255 caracteres")));
         assertThat(usuarios.findByEmail(email)).isEmpty();

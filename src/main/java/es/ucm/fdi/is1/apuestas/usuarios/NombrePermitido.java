@@ -13,7 +13,7 @@ import jakarta.validation.Payload;
 
 /**
  * Restricción de Bean Validation para el nombre visible: no puede contener palabras ofensivas
- * (issue #75). Se usa en {@link RegistroForm} (CA-11.3) y {@link NombreForm} (CA-47.3); la lista y la forma
+ * (issue #75). Se usa en {@link CompletarRegistroForm} (CA-11.3) y {@link NombreForm} (CA-47.3); la lista y la forma
  * de comparar están en {@link NombresProhibidos}.
  *
  * <p>Esto es una anotación propia ({@code @interface}), como {@code @NotBlank} pero hecha por nosotros: basta con

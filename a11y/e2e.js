@@ -52,7 +52,7 @@ async function verificarCorreo(pagina, email) {
     const enlace = await enlaceCorreoLocal('verificar correo', email);
     await pagina.goto(enlace);
     await pagina.click('main form button[type=submit]');
-    await pagina.waitForURL(url => url.pathname === '/login' && url.searchParams.has('verificado'));
+    await pagina.waitForURL(url => url.pathname === '/registro/completar');
 }
 
 /** El saldo de la cabecera, en monedas ("1.234,50 monedas" → 1234.5; el primer span es el icono). */
@@ -95,12 +95,14 @@ async function registrar(navegador, nombre, password = 'clave-e2e-123') {
     const pagina = await nuevaPagina(navegador);
     const email = `e2e-${nombre.toLowerCase()}-${Date.now()}@ucm.es`;
     await pagina.goto(BASE + '/registro');
-    await pagina.fill('#nombre', `Prueba ${nombre}`);
     await pagina.fill('#email', email);
+    await Promise.all([pagina.waitForNavigation(), pagina.click('main button[type=submit]')]);
+    await verificarCorreo(pagina, email);
+    await pagina.fill('#nombre', `Prueba ${nombre}`);
     await pagina.fill('#password', password);
     await pagina.fill('#confirmacion', password);
     await Promise.all([pagina.waitForNavigation(), pagina.click('main button[type=submit]')]);
-    await verificarCorreo(pagina, email);
+    await pagina.waitForURL(url => url.pathname === '/login' && url.searchParams.has('registrado'));
     await entrar(pagina, [email, password]);
     return { pagina, email };
 }
@@ -127,14 +129,15 @@ const coma = (n) => n.toFixed(2).replace('.', ',');
     // 1. Registrarse y entrar
     const email = `e2e-${Date.now()}@ucm.es`;
     await jugador.goto(BASE + '/registro');
-    await jugador.fill('#nombre', 'Prueba E2E');
     await jugador.fill('#email', email);
-    await jugador.fill('#password', 'clave-e2e-123');
-    await jugador.fill('#confirmacion', 'clave-e2e-123');
     await Promise.all([jugador.waitForNavigation(), jugador.click('main button[type=submit]')]);
     comprobar(jugador.url().includes('/login'), 'registrarse lleva a entrar', jugador.url());
     await verificarCorreo(jugador, email);
-    comprobar(jugador.url().includes('/login?verificado'), 'verificar el correo activa la cuenta', jugador.url());
+    await jugador.fill('#nombre', 'Prueba E2E');
+    await jugador.fill('#password', 'clave-e2e-123');
+    await jugador.fill('#confirmacion', 'clave-e2e-123');
+    await Promise.all([jugador.waitForNavigation(), jugador.click('main button[type=submit]')]);
+    comprobar(jugador.url().includes('/login?registrado'), 'crear la cuenta tras confirmar el correo', jugador.url());
     await entrar(jugador, [email, 'clave-e2e-123']);
     const inicial = await saldo(jugador);
     comprobar(inicial > 0, `entra con el saldo de bienvenida (${inicial})`, 'saldo 0');

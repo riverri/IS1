@@ -73,8 +73,9 @@ public class CorreoRecuperacion implements EnvioCorreo {
         mensaje.setFrom(remitente);
         mensaje.setTo(email);
         mensaje.setSubject("Verifica tu correo electrónico");
-        mensaje.setText("Hola, " + nombre + ":\n\n"
-                + "Para activar tu cuenta, confirma que puedes recibir mensajes en esta dirección abriendo este enlace.\n"
+        String saludo = nombre == null || nombre.isBlank() ? "Hola" : "Hola, " + nombre;
+        mensaje.setText(saludo + ":\n\n"
+                + "Para continuar creando tu cuenta, confirma que puedes recibir mensajes en esta dirección abriendo este enlace.\n"
                 + "El enlace caduca en 24 horas y solo sirve una vez:\n\n"
                 + enlace + "\n\nSi no has creado esta cuenta, ignora este correo.\n");
         enviar(servidor, mensaje, email, "verificación");
