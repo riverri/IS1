@@ -25,6 +25,10 @@ public interface LigaRepository extends JpaRepository<Liga, Long> {
 
     Optional<Liga> findByCodigo(String codigo);
 
+    /** Lists a member's leagues for domain queries and membership assertions. */
+    @Query("select l from Liga l join l.miembros m where m = :usuario order by l.nombre")
+    List<Liga> deMiembro(Usuario usuario);
+
     /** Para no repetir código al generar uno nuevo. */
     boolean existsByCodigo(String codigo);
 

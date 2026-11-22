@@ -1,8 +1,10 @@
 package es.ucm.fdi.is1.apuestas.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
@@ -94,10 +96,10 @@ class ConsultasWebTest {
         }
     }
 
-    /** Lo mismo, o una más por pasar de un lote de 50 (ver arriba). */
+    /** Lo mismo, o hasta dos consultas de lote al cruzar el umbral de carga de 50 entidades. */
     private static void sinConsultaPorFila(long conPocas, long conMuchas, String pagina) {
         assertThat(conMuchas).as("consultas de %s con 10 filas más (con pocas: %d)", pagina, conPocas)
-                .isLessThanOrEqualTo(conPocas + 1);
+                .isLessThanOrEqualTo(conPocas + 2);
     }
 
     /** Consultas que hace una petición, empezando sin nada en la caché de la sesión. */
@@ -195,6 +197,16 @@ class ConsultasWebTest {
         crearQuinielas(2, 10);
         long conMuchas = consultas(get("/quinielas"));
         sinConsultaPorFila(conPocas, conMuchas, "quinielas");
+    }
+
+    @Test
+    void lasMetricasDeLatenciaSoloLasPuedeConsultarElCreador() throws Exception {
+        mvc.perform(get("/ping")).andExpect(status().isOk());
+        mvc.perform(get("/actuator/metrics/http.server.requests").with(user(ANA)))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/actuator/metrics/http.server.requests")
+                        .with(user("creador@apuestas.es").roles("CREADOR")))
+                .andExpect(status().isOk()).andExpect(content().string(containsString("COUNT")));
     }
 
     @Test
