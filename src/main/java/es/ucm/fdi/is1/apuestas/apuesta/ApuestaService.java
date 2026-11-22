@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -357,10 +359,50 @@ public class ApuestaService {
                 EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA, EstadoApuesta.CANCELADA, EstadoApuesta.COBRADA));
     }
 
+    /** Una pantalla acotada del historial; la descarga CSV conserva el método {@link #historial(String)} completo. */
+    @Transactional(readOnly = true)
+    public PaginaApuestas paginaHistorial(String email, int numero) {
+        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        int pagina = Math.min(Math.max(0, numero), 10000);
+        Slice<Apuesta> resultado = apuestas.findByUsuarioAndEstadoInOrderByFechaDescIdDesc(usuario,
+                EnumSet.of(EstadoApuesta.GANADA, EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA,
+                        EstadoApuesta.CANCELADA, EstadoApuesta.COBRADA), PageRequest.of(pagina, 20));
+        return new PaginaApuestas(resultado.getContent(), pagina, pagina > 0, resultado.hasNext());
+    }
+
+    /** Una pantalla acotada de activas; las ofertas de cash out solo se calculan para las que se muestran. */
+    @Transactional(readOnly = true)
+    public PaginaApuestas paginaActivas(String email, int numero) {
+        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        int pagina = Math.min(Math.max(0, numero), 10000);
+        Slice<Apuesta> resultado = apuestas.findByUsuarioAndEstadoOrderByFechaDescIdDesc(usuario,
+                EstadoApuesta.ACTIVA, PageRequest.of(pagina, 20));
+        return new PaginaApuestas(resultado.getContent(), pagina, pagina > 0, resultado.hasNext());
+    }
+
+    public record PaginaApuestas(List<Apuesta> apuestas, int numero, boolean anterior, boolean siguiente) {
+    }
+
+    /** Total comprometido sin cargar la lista de apuestas activas. */
+    @Transactional(readOnly = true)
+    public BigDecimal importeActivo(String email) {
+        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        return apuestas.importePorEstado(usuario, EstadoApuesta.ACTIVA);
+    }
+
+    @Transactional(readOnly = true)
+    public long cuentaActivas(String email) {
+        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        return apuestas.countByUsuarioAndEstado(usuario, EstadoApuesta.ACTIVA);
+    }
+
     /** Porcentaje de aciertos y rentabilidad del usuario (HU-35). */
     @Transactional(readOnly = true)
     public Estadisticas estadisticas(String email) {
-        return estadisticas(historial(email));
+        Long usuarioId = usuarios.findByEmail(email).orElseThrow().getId();
+        Object[] resumen = apuestas.resumenResueltasDe(usuarioId).getFirst();
+        return Estadisticas.de(((Number) resumen[0]).longValue(), ((Number) resumen[1]).longValue(),
+                (BigDecimal) resumen[2], (BigDecimal) resumen[3]);
     }
 
     /** Calcula las estadísticas sobre el historial ya cargado por la página "Mis apuestas". */
@@ -379,7 +421,12 @@ public class ApuestaService {
      */
     @Transactional(readOnly = true)
     public List<EstadisticasGrupo> estadisticasPorCompeticion(String email) {
-        return estadisticasPorCompeticion(historial(email));
+        Long usuarioId = usuarios.findByEmail(email).orElseThrow().getId();
+        return apuestas.resumenPorGrupo(usuarioId).stream()
+                .map(grupo -> new EstadisticasGrupo(grupo.getNombre(),
+                        Estadisticas.de(grupo.getResueltas(), grupo.getGanadas(), grupo.getApostado(),
+                                grupo.getPagado())))
+                .toList();
     }
 
     /** Agrupa el historial ya cargado para evitar repetir la consulta al pintarlo junto a las estadísticas. */

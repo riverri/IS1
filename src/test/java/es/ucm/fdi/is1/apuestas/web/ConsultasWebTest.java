@@ -166,6 +166,24 @@ class ConsultasWebTest {
         sinConsultaPorFila(conPocas, conMuchas, "Mis apuestas");
     }
 
+    @Test
+    void misApuestasLimitaActivasYHistorialAPaginasDeVeinte() {
+        crearPartidos(2);
+        for (int i = 0; i < 21; i++) {
+            apuestas.apostar(ANA, creados.getFirst().getId(), Resultado.LOCAL, BigDecimal.ONE);
+        }
+
+        var primera = apuestas.paginaActivas(ANA, 0);
+        var segunda = apuestas.paginaActivas(ANA, 1);
+
+        assertThat(primera.apuestas()).hasSize(20);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.apuestas()).hasSize(1);
+        assertThat(segunda.siguiente()).isFalse();
+        assertThat(apuestas.importeActivo(ANA)).isEqualByComparingTo("21.00");
+        assertThat(apuestas.cuentaActivas(ANA)).isEqualTo(21);
+    }
+
     private void crearUsuarios(int desde, int cuantos) {
         for (int i = desde; i < desde + cuantos; i++) {
             usuarios.crear("jugador-consultas-" + i + "@ucm.es", "Jugador " + i, "secreta123", Rol.USUARIO);

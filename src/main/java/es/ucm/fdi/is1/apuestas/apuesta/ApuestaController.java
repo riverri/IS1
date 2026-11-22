@@ -148,19 +148,25 @@ public class ApuestaController {
      * y las estadísticas (HU-35).
      */
     @GetMapping("/apuestas")
-    public String misApuestas(Principal principal, Model model) {
-        List<Apuesta> activas = apuestas.activas(principal.getName());
-        // Total comprometido: suma de los importes de las apuestas activas
-        BigDecimal comprometido = activas.stream().map(Apuesta::getImporte).reduce(BigDecimal.ZERO, BigDecimal::add);
+    public String misApuestas(@RequestParam(defaultValue = "0") int paginaActivas,
+                              @RequestParam(defaultValue = "0") int paginaHistorial,
+                              Principal principal, Model model) {
+        var activasPaginadas = apuestas.paginaActivas(principal.getName(), paginaActivas);
+        List<Apuesta> activas = activasPaginadas.apuestas();
+        BigDecimal comprometido = apuestas.importeActivo(principal.getName());
         model.addAttribute("activas", activas);
         model.addAttribute("comprometido", comprometido);
+        model.addAttribute("activasTotales", apuestas.cuentaActivas(principal.getName()));
+        model.addAttribute("paginaActivas", activasPaginadas);
         // La vista llama a cancelable(ahora) para mostrar o no los botones de cancelar y cambiar importe
         model.addAttribute("ahora", LocalDateTime.now(reloj));
         model.addAttribute("ofertasCashOut", apuestas.ofertasCashOut(activas, LocalDateTime.now(reloj)));
-        List<Apuesta> historial = apuestas.historial(principal.getName());
+        var historialPaginado = apuestas.paginaHistorial(principal.getName(), paginaHistorial);
+        List<Apuesta> historial = historialPaginado.apuestas();
         model.addAttribute("historial", historial);
-        model.addAttribute("estadisticas", apuestas.estadisticas(historial));
-        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(historial));
+        model.addAttribute("paginaHistorial", historialPaginado);
+        model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
+        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(principal.getName()));
         return "apuestas";
     }
 
