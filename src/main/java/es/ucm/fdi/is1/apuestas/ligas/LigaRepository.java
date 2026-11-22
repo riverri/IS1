@@ -11,6 +11,16 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 /** Repositorio Spring Data de las ligas privadas (HU-51). */
 public interface LigaRepository extends JpaRepository<Liga, Long> {
 
+    interface ClasificacionGlobalFila {
+        Long getLigaId();
+
+        String getNombre();
+
+        Long getMiembros();
+
+        java.math.BigDecimal getSaldo();
+    }
+
     Optional<Liga> findByCodigo(String codigo);
 
     /** Para no repetir código al generar uno nuevo. */
@@ -23,7 +33,13 @@ public interface LigaRepository extends JpaRepository<Liga, Long> {
     @Query("select l from Liga l join l.miembros m where m = :usuario order by l.nombre")
     List<Liga> deMiembro(Usuario usuario);
 
-    /** Ligas públicas con sus miembros cargados para calcular y exponer solo el resumen global. */
-    @Query("select distinct l from Liga l left join fetch l.miembros where l.publica = true")
-    List<Liga> publicasConMiembros();
+    /** Datos agregados para la clasificación global, sin hidratar las entidades de cada miembro. */
+    @Query("""
+            select l.id as ligaId, l.nombre as nombre, count(m.id) as miembros,
+                   coalesce(sum(m.saldo), 0) as saldo
+            from Liga l left join l.miembros m on m.eliminado = false
+            where l.publica = true
+            group by l.id, l.nombre
+            """)
+    List<ClasificacionGlobalFila> resumenPublicas();
 }

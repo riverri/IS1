@@ -73,7 +73,18 @@ public class LigaService {
     /** Clasificación global de ligas públicas; solo salen sus datos agregados. */
     @Transactional(readOnly = true)
     public List<PuestoClasificacionLiga> clasificacionGlobal() {
-        return clasificar(ligas.publicasConMiembros());
+        List<PuestoClasificacionLiga> totales = ligas.resumenPublicas().stream()
+                .map(fila -> new PuestoClasificacionLiga(0, fila.getLigaId(), fila.getNombre(),
+                        Math.toIntExact(fila.getMiembros()), fila.getSaldo(), true))
+                .sorted(Comparator.comparing(PuestoClasificacionLiga::saldoTotal).reversed()
+                        .thenComparing(PuestoClasificacionLiga::nombre, String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(PuestoClasificacionLiga::ligaId))
+                .toList();
+        return IntStream.range(0, totales.size()).mapToObj(i -> {
+            PuestoClasificacionLiga fila = totales.get(i);
+            return new PuestoClasificacionLiga(i + 1, fila.ligaId(), fila.nombre(), fila.miembros(),
+                    fila.saldoTotal(), true);
+        }).toList();
     }
 
     private List<PuestoClasificacionLiga> clasificar(List<Liga> ligasVisibles) {
