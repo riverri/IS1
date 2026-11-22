@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,8 @@ public class FichaEquipoService {
     static final int RACHA = 5;
     /** Próximos partidos que se muestran en la ficha. */
     static final int PROXIMOS = 5;
+    /** Máximo de puntos históricos enviados al gráfico SVG de la ficha. */
+    static final int GRAFICO = 50;
 
     private final EquipoRepository equipos;
     private final EventoRepository eventos;
@@ -55,8 +59,8 @@ public class FichaEquipoService {
     @Transactional(readOnly = true)
     public FichaEquipo ficha(Long equipoId) {
         Equipo equipo = equipos.findById(equipoId).orElseThrow(() -> new EquipoNoEncontradoException(equipoId));
-        // Del más reciente al más antiguo
-        List<Evento> jugados = eventos.partidosDe(equipo, EstadoEvento.FINALIZADO);
+        // El gráfico y la racha usan solo un tramo reciente; el balance de toda la carrera es agregado en SQL.
+        List<Evento> jugados = eventos.partidosDe(equipo, EstadoEvento.FINALIZADO, PageRequest.of(0, GRAFICO));
         // limit(n): se queda con los n primeros del stream
         List<FichaEquipo.PartidoJugado> ultimos = jugados.stream().limit(ULTIMOS)
                 .map(e -> {
@@ -67,18 +71,19 @@ public class FichaEquipoService {
                 })
                 .toList();
         // El balance cuenta todos los partidos jugados, no solo los últimos
-        Balance balance = Balance.de(jugados.stream().map(e -> ResultadoEquipo.de(e, equipo)).toList());
+        Balance balance = balance(eventos.balanceEquipo(equipo).getFirst());
         LocalDateTime ahora = LocalDateTime.now(reloj);
         // Próximos: programados y sin empezar, del más cercano al más lejano
-        List<Evento> proximos = eventos.partidosDe(equipo, EstadoEvento.PROGRAMADO).stream()
-                .filter(e -> e.admiteApuestas(ahora))
-                .sorted(Comparator.comparing(Evento::getFechaHora))
-                .limit(PROXIMOS)
-                .toList();
+        List<Evento> proximos = eventos.proximosDe(equipo, EstadoEvento.PROGRAMADO, ahora,
+                PageRequest.of(0, PROXIMOS));
         // Un puesto por competición; se omiten aquellas en las que aún no ha jugado
-        List<FichaEquipo.Puesto> clasificaciones = equipo.getCompeticiones().stream()
-                .sorted(Comparator.comparing(Competicion::getNombre))
-                .map(c -> puesto(c, equipo))
+        List<Competicion> competiciones = equipo.getCompeticiones().stream()
+                .sorted(Comparator.comparing(Competicion::getNombre)).toList();
+        Map<Long, List<Evento>> partidosPorCompeticion = competiciones.isEmpty() ? Map.of()
+                : eventos.findByCompeticionInAndEstadoOrderByFechaHoraAsc(competiciones, EstadoEvento.FINALIZADO)
+                        .stream().collect(Collectors.groupingBy(e -> e.getCompeticion().getId()));
+        List<FichaEquipo.Puesto> clasificaciones = competiciones.stream()
+                .map(c -> puesto(c, equipo, partidosPorCompeticion.getOrDefault(c.getId(), List.of())))
                 .filter(p -> p != null)
                 .toList();
         // El gráfico necesita los partidos en orden cronológico: se invierte la lista
@@ -96,11 +101,16 @@ public class FichaEquipoService {
     public CaraACara caraACara(Evento evento) {
         Equipo local = evento.getLocal();
         Equipo visitante = evento.getVisitante();
-        List<Evento> anteriores = eventos.enfrentamientos(local, visitante);
-        return new CaraACara(evento, anteriores.stream().limit(ULTIMOS).toList(),
-                Balance.de(anteriores.stream().map(e -> ResultadoEquipo.de(e, local)).toList()),
-                racha(eventos.partidosDe(local, EstadoEvento.FINALIZADO), local),
-                racha(eventos.partidosDe(visitante, EstadoEvento.FINALIZADO), visitante));
+        List<Evento> anteriores = eventos.enfrentamientos(local, visitante, PageRequest.of(0, ULTIMOS));
+        return new CaraACara(evento, anteriores,
+                balance(eventos.balanceEnfrentamientos(local, visitante).getFirst()),
+                racha(eventos.partidosDe(local, EstadoEvento.FINALIZADO, PageRequest.of(0, RACHA)), local),
+                racha(eventos.partidosDe(visitante, EstadoEvento.FINALIZADO, PageRequest.of(0, RACHA)), visitante));
+    }
+
+    private static Balance balance(Object[] fila) {
+        return new Balance(((Number) fila[0]).intValue(), ((Number) fila[1]).intValue(),
+                ((Number) fila[2]).intValue());
     }
 
     /** Últimos resultados, del más antiguo al más reciente (el último de la lista es el más reciente). */
@@ -114,11 +124,11 @@ public class FichaEquipoService {
      * Clasificación de la competición con los partidos finalizados: 3 puntos por victoria y 1 por empate;
      * a igualdad de puntos, más victorias. Null si el equipo aún no ha jugado en ella.
      */
-    private FichaEquipo.Puesto puesto(Competicion competicion, Equipo equipo) {
+    private FichaEquipo.Puesto puesto(Competicion competicion, Equipo equipo, List<Evento> partidos) {
         // Resultados de cada participante, por id de equipo
         Map<Long, List<ResultadoEquipo>> porEquipo = new HashMap<>();
         Map<Long, String> nombres = new HashMap<>();
-        for (Evento evento : eventos.findByCompeticionAndEstado(competicion, EstadoEvento.FINALIZADO)) {
+        for (Evento evento : partidos) {
             for (Equipo participante : List.of(evento.getLocal(), evento.getVisitante())) {
                 porEquipo.computeIfAbsent(participante.getId(), id -> new ArrayList<>())
                         .add(ResultadoEquipo.de(evento, participante));
