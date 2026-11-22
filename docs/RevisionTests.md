@@ -4,6 +4,8 @@
 
 Hay 359 pruebas automáticas en 58 clases. Todas pasan.
 
+*Cifra de cuando se hizo esta revisión. La actual está en la wiki, en [Pruebas y calidad](https://github.com/riverri/IS1/wiki/Pruebas-y-calidad).*
+
 
 
 ### Herramientas: 

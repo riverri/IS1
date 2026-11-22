@@ -68,9 +68,8 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (34) | 114 | 9.348 | 676 | 109 | 0,9 millones | 109 $ |
-| Historias pendientes de subir (8) | 31 | 2.542 | 183 | 30 | 0,2 millones | 30 $ |
-| Historias por hacer (5) | 25 | 2.050 | 146 | 24 | 0,2 millones | 24 $ |
+| Historias integradas (56; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 170 | 13.940 | 1.005 | 164 | 1,3 millones | 164 $ |
+| Historias por hacer (1: HU-93, sin estimar) | — | — | — | — | — | — |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
@@ -121,7 +120,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-23 | Apuesta simple | Hecha | 2 | 1 (Muy alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-24 | Apuestas activas | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-25 | Resolución automática | Hecha | 3 | 2 (Alta) | 8 | 656 | 47 | 7,5 | 7,8 $ |
-| HU-26 | Cancelar una apuesta | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-26 | Cancelar una apuesta | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-27 | Cambiar el importe | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-28 | Boleto de combinadas | Hecha | 3 | 2 (Alta) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-29 | Multiplicador total y ganancia potencial | Hecha | 3 | 2 (Alta) | 5 | 410 | 29 | 4,9 | 4,8 $ |
@@ -150,14 +149,14 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-53 | Cuentas de la casa | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-54 | Nombres inapropiados | Hecha| 1 | 4 (Baja) | 2 | 153 | 12 | 1,8 | 1,7 $ |
-| HU-55 | Movimientos del saldo | Pendiente de subir | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
-| HU-56 | Ruleta europea | Pendiente de subir | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
-| HU-57 | Blackjack | Pendiente de subir | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
-| HU-58 | Historial de partidas del casino | Pendiente de subir | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-59 | Configurar el casino | Pendiente de subir | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-60 | Anuncios de otras secciones | Pendiente de subir | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-61 | Gestionar los anuncios | Pendiente de subir | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-62 | Medir los clics de cada anuncio | Pendiente de subir | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-55 | Movimientos del saldo | Integrada (Sprint 5) | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-56 | Ruleta europea | Integrada (Sprint 5) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| HU-57 | Blackjack | Integrada (Sprint 5) | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| HU-58 | Historial de partidas del casino | Integrada (Sprint 5) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-59 | Configurar el casino | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-60 | Anuncios de otras secciones | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| HU-61 | Gestionar los anuncios | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| HU-62 | Medir los clics de cada anuncio | Integrada (Sprint 5) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-63 | Crear, cerrar y anular mercados de predicción | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-64 | Comprar participaciones | Integrada (06/11) | 3 | 4 (Baja) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-65 | Vender participaciones | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
@@ -169,18 +168,18 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-71 | Vender criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-72 | Mi cartera de criptomonedas | Integrada (06/11) | 2 | 4 (Baja) | 2 | 164 | 12 | 2,0 | 1,9 $ |
 | HU-73 | Configurar las criptomonedas | Integrada (06/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,7 | 2,9 $ |
-| HU-74 | Baccarat | Por hacer | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
+| HU-74 | Baccarat | Integrada (Sprint 5) | 4 | 4 (Baja) | 5 | 410 | 29 | 5,0 | 4,8 $ |
 | HU-75 | Cobrar antes de tiempo (cash-out) | Integrada (Sprint 5) | 4 | 3 (Media) | 8 | 656 | 47 | 7,6 | 7,8 $ |
-| HU-76 | Riesgo de la casa por evento | Por hacer | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-77 | Correo al ganar una apuesta | Por hacer | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-78 | Montar una quiniela | Por hacer | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-79 | Echar un boleto | Por hacer | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-| HU-80 | Repartir el bote de la quiniela | Por hacer | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-81 | Crear un equipo fantasy y fichar | Por hacer | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
-| HU-82 | Puntos de los jugadores fantasy | Por hacer | 2 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
-| HU-83 | Clasificación fantasy | Por hacer | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-84 | Ranking por tipo de juego | Por hacer | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-85 | Tiempo de carga mínimo | Por hacer | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-76 | Riesgo de la casa por evento | Integrada (16/11) | 3 | 3 (Media) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-77 | Correo al ganar una apuesta | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-78 | Montar una quiniela | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-79 | Echar un boleto | Integrada (16/11) | 3 | 4 (Baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-80 | Repartir el bote de la quiniela | Integrada (16/11) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-81 | Crear un equipo fantasy y fichar | Integrada (Sprint 5) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| HU-82 | Puntos de los jugadores fantasy | Integrada (Sprint 5) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-83 | Clasificación fantasy | Integrada (Sprint 5) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-84 | Ranking por tipo de juego | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-85 | Tiempo de carga mínimo | Integrada (15/11) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 | HU-86 | Equipos favoritos | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-87 | Supercuota | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-88 | Logros | Integrada (Sprint 5) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
@@ -197,21 +196,21 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-99 | Leer bien con poca visión | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-100 | No depender solo del color | Integrada (Sprint 5) | 3 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-101 | Menos movimiento | Integrada (Sprint 5) | 2 | 3 (Media) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-102 | Ver la oferta de cash-out de una combinada | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
-| HU-103 | Confirmar el cash-out de toda la combinada | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
-| HU-104 | Consultar el cobro anticipado en el historial | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
-| HU-105 | Bloquear a un amigo en un partido o selección | Propuesta | 5 | 3 (Media) | — | — | — | — | — |
-| HU-106 | Bloquear a toda la liga en un partido o selección | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
-| HU-107 | Aplicar y caducar los bloqueos de la liga | Propuesta | 5 | 3 (Media) | — | — | — | — | — |
+| HU-102 | Ver la oferta de cash-out de una combinada | Integrada (Sprint 5) | 4 | 3 (Media) | — | — | — | — | — |
+| HU-103 | Confirmar el cash-out de toda la combinada | Integrada (Sprint 5) | 4 | 3 (Media) | — | — | — | — | — |
+| HU-104 | Consultar el cobro anticipado en el historial | Integrada (Sprint 5) | 3 | 3 (Media) | — | — | — | — | — |
+| HU-105 | Bloquear a un amigo en un partido o selección | Integrada (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
+| HU-106 | Bloquear a toda la liga en un partido o selección | Integrada (Sprint 5) | 4 | 3 (Media) | — | — | — | — | — |
+| HU-107 | Aplicar y caducar los bloqueos de la liga | Integrada en parte (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
 | HU-108 | Consultar la clasificación de una liga | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
 | HU-109 | Ordenar la clasificación y consultar mi puesto | Propuesta | 4 | 3 (Media) | — | — | — | — | — |
 | HU-110 | Mantener la clasificación limitada a los miembros | Propuesta | 3 | 3 (Media) | — | — | — | — | — |
-| HU-111 | Alternar entre mis ligas y la clasificación global | Implementada | 3 | 3 (Media) | — | — | — | — | — |
-| HU-112 | Consultar la clasificación global de ligas públicas | Implementada | 4 | 3 (Media) | — | — | — | — | — |
-| HU-113 | Cambiar la visibilidad de una liga | Implementada | 3 | 3 (Media) | — | — | — | — | — |
+| HU-111 | Alternar entre mis ligas y la clasificación global | Integrada (Sprint 5) | 4 | 3 (Media) | — | — | — | — | — |
+| HU-112 | Consultar la clasificación global de ligas públicas | Integrada (Sprint 5) | 4 | 3 (Media) | — | — | — | — | — |
+| HU-113 | Cambiar la visibilidad de una liga | Integrada (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**113 historias**: 46 hechas, 35 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114, del Sprint 5), 3 implementadas (HU-111 a HU-113), 8 pendientes de subir (HU-55 a HU-62), 4 por hacer (HU-74 y HU-81 a HU-83), 8 descartadas y 9 propuestas (HU-102 a HU-110, ampliaciones de HU-75 y HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). Las pendientes de subir están hechas, pero su código se quitó de `main` el 06/11 y el 13/11 para subirlo más adelante; de HU-55 se queda en `main` el libro de movimientos interno, que usan las apuestas, las predicciones, la cripto, la quiniela, los retos y el juego responsable, pero no la página que lo enseña. **281 criterios de aceptación** en total; 98 son de historias hechas, 92 de las integradas, 13 de las implementadas, 20 de las pendientes de subir, 10 de las que están por hacer, 13 de las descartadas y 35 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**114 historias**: 46 hechas; 56 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 1 por hacer (HU-93); 8 descartadas, y 3 propuestas (HU-108 a HU-110). HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **283 criterios de aceptación** en total: 97 de historias hechas, 161 de las integradas, 2 de la que está por hacer, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -578,7 +577,7 @@ Es un enlace y no un formulario para no crear una sesión a cada visitante.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 36 | 3 (Media) | 3 | Pendiente de subir | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 36 | 3 (Media) | 3 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -850,13 +849,13 @@ Una simple hecha con supercuota (HU-87) no tiene cash-out: su cuota aceptada es 
 
 **Pruebas:** `CashOutYBloqueoLigaWebTest`. En `main` desde #128 (combinadas, con la oferta de HU-102 y el cobro de HU-103) y #153 (simples).
 
-### HU-102 · Ver la oferta de cash-out de una combinada (propuesta)
+### HU-102 · Ver la oferta de cash-out de una combinada
 
 **Como** usuario, **quiero** ver cuánto recibiría por cerrar una apuesta combinada completa antes de que empiece cualquiera de sus eventos, **para** decidir si aseguro el importe ofrecido.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 42 (ampliación de HU-75) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 42 (ampliación de HU-75) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -867,13 +866,13 @@ Una simple hecha con supercuota (HU-87) no tiene cash-out: su cuota aceptada es 
 | CA-102.3 | La combinada acaba de hacerse y ninguna cuota ha cambiado | Consulto su oferta | La oferta inicial coincide con el importe apostado; la propia apuesta no se cuenta al calcular las cuotas actuales. |
 | CA-102.4 | Ha empezado, se ha suspendido o se ha anulado cualquiera de los eventos de la combinada | Abro *Mis apuestas* | No veo la acción de cash-out para esa combinada, aunque los demás eventos aún no hayan empezado. |
 
-### HU-103 · Confirmar el cash-out de toda la combinada (propuesta)
+### HU-103 · Confirmar el cash-out de toda la combinada
 
 **Como** usuario con una combinada activa, **quiero** confirmar una oferta de cash-out vigente, **para** recibirla una sola vez y cerrar todas las selecciones juntas.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 42 (ampliación de HU-75) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 42 (ampliación de HU-75) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -884,13 +883,13 @@ Una simple hecha con supercuota (HU-87) no tiene cash-out: su cuota aceptada es 
 | CA-103.3 | Un evento empieza, se suspende o se anula mientras confirmo | Se procesa la solicitud | El sistema vuelve a comprobar todos los eventos; si alguno ya no cumple las condiciones, rechaza el cash-out sin abono parcial. |
 | CA-103.4 | Envío dos veces la misma confirmación, por ejemplo al pulsar dos veces o reintentar la petición | El servidor procesa las solicitudes | La combinada se cierra y el importe se abona como máximo una vez. |
 
-### HU-104 · Consultar el cobro anticipado en el historial (propuesta)
+### HU-104 · Consultar el cobro anticipado en el historial
 
 **Como** usuario que ha cerrado una combinada con cash-out, **quiero** reconocerla en mi saldo, mis apuestas y mis estadísticas, **para** entender cómo terminó y cuánto gané o perdí.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 42 (ampliación de HU-75) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 42 (ampliación de HU-75) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1119,7 +1118,7 @@ Se calculan con lo que ya hay guardado, así que no hay que apuntarlos aparte.
 | CA-84.1 | Elijo un tipo de juego en el ranking | Se carga | Solo salen los que han jugado a ese tipo, con sus estadísticas de ese tipo. |
 | CA-84.2 | He elegido un tipo de juego | Ordeno el ranking | No se puede ordenar por saldo, que es común a todos los juegos, y en cripto no hay porcentaje de aciertos. |
 
-Depende del casino, los mercados de predicción y la cartera (HU-56 a HU-73) y de la quiniela (HU-78 a HU-80). El casino no está ahora en `main` (HU-56 a HU-59, pendientes de subir), así que de momento no sale como tipo de juego.
+Depende del casino, los mercados de predicción y la cartera (HU-56 a HU-73) y de la quiniela (HU-78 a HU-80). El casino (HU-56 a HU-59 y HU-74) llegó a `main` después, el 21/11, y todavía no sale como tipo de juego en el ranking.
 
 En cripto y memecoins el beneficio es lo vendido más lo que vale hoy lo que se tiene, menos lo comprado. En predicciones cuentan los mercados resueltos, y en la quiniela las repartidas, sin los boletos devueltos.
 
@@ -1315,13 +1314,13 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-51.2 | Tengo el código de una liga | Lo introduzco | Entro en ella y veo su ranking con los mismos criterios que el ranking general. |
 | CA-51.3 | Soy miembro | Salgo de la liga | Dejo de aparecer en su ranking; si soy quien la creó, puedo borrarla. |
 
-### HU-105 · Bloquear a un amigo en un partido o selección (propuesta)
+### HU-105 · Bloquear a un amigo en un partido o selección
 
 **Como** miembro de una liga, **quiero** pagar 50 monedas para impedir que un compañero apueste en un partido o en una selección concreta, **para** poner una regla temporal entre amigos.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 33 (ampliación de HU-51) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1333,13 +1332,13 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-105.4 | Ya existe un bloqueo activo para el mismo amigo y alcance | Vuelvo a solicitarlo | No se crea otro bloqueo ni se vuelven a cobrar 50 monedas. |
 | CA-105.5 | Mi saldo es inferior a 50 monedas | Confirmo el bloqueo | No se aplica y mi saldo no cambia. |
 
-### HU-106 · Bloquear a toda la liga en un partido o selección (propuesta)
+### HU-106 · Bloquear a toda la liga en un partido o selección
 
 **Como** miembro de una liga, **quiero** pagar 100 monedas para impedir que los demás miembros apuesten en un partido o en una selección concreta, **para** que la regla afecte al grupo entero y no solo a una persona.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 33 (ampliación de HU-51) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1350,13 +1349,13 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-106.3 | No pertenezco a la liga, el evento ya empezó, está suspendido o anulado | Solicito el bloqueo | Se rechaza sin descontar monedas. |
 | CA-106.4 | Ya hay un bloqueo activo para el mismo alcance en esa liga, o mi saldo es inferior a 100 monedas | Intento crearlo | No se crea un bloqueo duplicado ni se descuenta saldo. |
 
-### HU-107 · Aplicar y caducar los bloqueos de la liga (propuesta)
+### HU-107 · Aplicar y caducar los bloqueos de la liga
 
 **Como** miembro de una liga, **quiero** que los bloqueos se apliquen de forma visible y temporal, **para** saber qué apuestas están restringidas y cuándo vuelven a estar disponibles.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 33 (ampliación de HU-51) | 3 (Media) | 5 | Integrada en parte (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1417,13 +1416,13 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-110.2 | Un usuario deja de pertenecer a una liga | Se consulta su clasificación | Ya no aparece como miembro clasificado de esa liga. |
 | CA-110.3 | Soy miembro de una liga y veo su clasificación | Consulto la fila de otra persona | Veo las estadísticas permitidas por el ranking, pero no sus apuestas individuales. |
 
-### HU-111 · Alternar entre mis ligas y la clasificación global (propuesta)
+### HU-111 · Alternar entre mis ligas y la clasificación global
 
 **Como** usuario, **quiero** cambiar entre la clasificación de las ligas a las que pertenezco y la clasificación global desde la misma página, **para** comparar mis grupos con las ligas que se han hecho públicas.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 33 (ampliación de HU-51) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1434,13 +1433,13 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-111.3 | Elijo «Global» | Se muestra la clasificación | Solo aparecen las ligas públicas, incluidas las mías si son públicas; las privadas quedan excluidas. |
 | CA-111.4 | Cambio de una vista a otra o recargo la página | Se vuelve a mostrar la clasificación | La vista activa queda identificada claramente y no se mezclan filas de ambas clasificaciones. |
 
-### HU-112 · Consultar la clasificación global de ligas públicas (propuesta)
+### HU-112 · Consultar la clasificación global de ligas públicas
 
 **Como** usuario, **quiero** consultar el ranking global de las ligas públicas, **para** descubrir qué grupos reúnen más monedas sin pertenecer a ellos.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 33 (ampliación de HU-51) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1451,13 +1450,13 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 | CA-112.3 | Una liga no tiene miembros activos o no hay ligas públicas | Abro la vista global | Se muestra un estado vacío comprensible y no se incluyen ligas privadas. |
 | CA-112.4 | No pertenezco a una liga pública que aparece en el ranking | Consulto su fila global | Solo veo los datos públicos de la liga —nombre, número de miembros activos y saldo total—, nunca los saldos individuales ni las apuestas de sus miembros. |
 
-### HU-113 · Cambiar la visibilidad de una liga (propuesta)
+### HU-113 · Cambiar la visibilidad de una liga
 
 **Como** creador de una liga, **quiero** cambiarla entre pública y privada, **para** decidir si aparece en la clasificación global sin perder la clasificación interna de sus miembros.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 33 (ampliación de HU-51) | 3 (Media) | — | Propuesta; por estimar | — | — | — | — | — |
+| 33 (ampliación de HU-51) | 3 (Media) | 5 | Integrada (Sprint 5) | — | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1517,7 +1516,7 @@ Juegos de azar con moneditas virtuales. El azar lo decide siempre el servidor; c
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Pendiente de subir | 5 | 410 | 29 | 4,9 | 4,8 $ |
+| 37 | 4 (Baja) | 3 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1533,7 +1532,7 @@ Juegos de azar con moneditas virtuales. El azar lo decide siempre el servidor; c
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Pendiente de subir | 8 | 656 | 47 | 7,6 | 7,8 $ |
+| 37 | 4 (Baja) | 3 | Integrada (Sprint 5) | 8 | 656 | 47 | 7,6 | 7,8 $ |
 
 **Criterios de aceptación**
 
@@ -1553,7 +1552,7 @@ Sin dividir parejas ni seguro (fuera del alcance).
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Pendiente de subir | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 37 | 4 (Baja) | 3 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -1567,7 +1566,7 @@ Sin dividir parejas ni seguro (fuera del alcance).
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 3 | Pendiente de subir | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 37 | 4 (Baja) | 3 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1584,7 +1583,7 @@ La ventaja de la casa se controla con reglas reales: la ruleta europea siempre t
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 37 | 4 (Baja) | 4 | Por hacer | 5 | 410 | 29 | 5,0 | 4,8 $ |
+| 37 | 4 (Baja) | 4 | Integrada (Sprint 5) | 5 | 410 | 29 | 5,0 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1607,7 +1606,7 @@ Se juega con 8 barajas y va junto al blackjack (HU-57), en la misma página del 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 38 | 4 (Baja) | 3 | Pendiente de subir | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 38 | 4 (Baja) | 3 | Integrada (Sprint 5) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1623,7 +1622,7 @@ Se juega con 8 barajas y va junto al blackjack (HU-57), en la misma página del 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 38 | 4 (Baja) | 3 | Pendiente de subir | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 38 | 4 (Baja) | 3 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 
 **Criterios de aceptación**
 
@@ -1638,7 +1637,7 @@ Se juega con 8 barajas y va junto al blackjack (HU-57), en la misma página del 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 38 | 4 (Baja) | 3 | Pendiente de subir | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 38 | 4 (Baja) | 3 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
@@ -1903,7 +1902,7 @@ Cada usuario se hace un equipo con jugadores reales de las plantillas (HU-49 y H
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 46 | 4 (Baja) | 4 | Por hacer | 5 | 410 | 29 | 4,8 | 4,8 $ |
+| 46 | 4 (Baja) | 4 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,8 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1921,7 +1920,7 @@ El precio de cada jugador sale de su nota y de la calidad de su equipo (de unos 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 46 | 4 (Baja) | 4 | Por hacer | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 46 | 4 (Baja) | 4 | Integrada (Sprint 5) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 
 **Criterios de aceptación**
 
@@ -1939,7 +1938,7 @@ No hay estadísticas de cada jugador (goles, tarjetas…): todo sale del resulta
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 46 | 4 (Baja) | 4 | Por hacer | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 46 | 4 (Baja) | 4 | Integrada (Sprint 5) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
 **Criterios de aceptación**
 
