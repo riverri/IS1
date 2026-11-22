@@ -62,7 +62,11 @@ public class PrediccionController {
             model.addAttribute("deMisLigas", predicciones.deMisLigas(principal.getName(), id));
         }
         if (lado != null && importe != null && importe.signum() > 0) {
-            model.addAttribute("cotizacion", predicciones.cotizarCompra(id, lado, importe));
+            try {
+                model.addAttribute("cotizacion", predicciones.cotizarCompra(id, lado, importe));
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("error", e.getMessage());
+            }
         }
         return "prediccion";
     }

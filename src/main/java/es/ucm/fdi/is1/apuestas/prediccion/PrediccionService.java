@@ -79,6 +79,8 @@ public class PrediccionService {
     @Transactional(readOnly = true)
     public Cotizacion cotizarCompra(Long id, Lado lado, BigDecimal importe) {
         MercadoPrediccion mercado = mercado(id);
+        comprobarImporte(lado, importe);
+        limites.actuales().comprobarImporte(importe);
         BigDecimal comision = comision(mercado, importe);
         BigDecimal participaciones = mercado.cotizarCompra(lado, importe.subtract(comision));
         double qSi = mercado.getQSi().doubleValue() + (lado == Lado.SI ? participaciones.doubleValue() : 0);
@@ -263,6 +265,10 @@ public class PrediccionService {
                         correccion ? TipoMovimiento.CORRECCION : TipoMovimiento.PREDICCION_PAGO,
                         "Respuesta «" + respuesta.getNombre() + "»: " + mercado.getPregunta(), ahora);
             }
+            // A una cuenta eliminada no se le paga (ajustar no hace nada): no se apunta como pagado ni se le avisa
+            if (posicion.getUsuario().isEliminado()) {
+                continue;
+            }
             posicion.marcarPagado(debe);
             if (posicion.isConParticipaciones()) {
                 avisar(posicion, respuesta, correccion, debe);
@@ -283,7 +289,7 @@ public class PrediccionService {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         int devueltas = 0;
         for (PosicionPrediccion posicion : posiciones.findByMercado(mercado)) {
-            if (posicion.getInvertido().signum() > 0) {
+            if (posicion.getInvertido().signum() > 0 && !posicion.getUsuario().isEliminado()) {
                 posicion.getUsuario().abonar(posicion.getInvertido(), TipoMovimiento.DEVOLUCION,
                         "Mercado anulado: " + mercado.getPregunta(), ahora);
                 notificaciones.avisar(posicion.getUsuario(), "anulada", "Se ha anulado el mercado «"
