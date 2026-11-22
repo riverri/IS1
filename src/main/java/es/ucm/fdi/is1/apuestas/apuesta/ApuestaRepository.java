@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,9 +25,11 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
 
     /** Apuestas del usuario en un estado, de la más reciente a la más antigua (activas, HU-24). */
+    @EntityGraph(attributePaths = "selecciones")
     List<Apuesta> findByUsuarioAndEstadoOrderByFechaDesc(Usuario usuario, EstadoApuesta estado);
 
     /** Igual, pero con varios estados a la vez (historial, HU-34). */
+    @EntityGraph(attributePaths = "selecciones")
     List<Apuesta> findByUsuarioAndEstadoInOrderByFechaDesc(Usuario usuario, Collection<EstadoApuesta> estados);
 
     /** Activas de una página, con desempate por id para que la navegación sea estable. */
@@ -43,7 +46,13 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
     BigDecimal importePorEstado(Usuario usuario, EstadoApuesta estado);
 
     /** Apuestas de todos los usuarios en esos estados (panel de la casa, HU-53). */
+    @EntityGraph(attributePaths = "selecciones")
     List<Apuesta> findByEstadoIn(Collection<EstadoApuesta> estados);
+
+    /** Apuesta individual para reglas que recorren sus selecciones (cancelación, cambio de importe y cash out). */
+    @EntityGraph(attributePaths = "selecciones")
+    @Query("select a from Apuesta a where a.id = :id")
+    java.util.Optional<Apuesta> conSelecciones(@org.springframework.data.repository.query.Param("id") Long id);
 
     /** Cuántas apuestas tiene el usuario en ese estado (apuestas en juego del perfil público, HU-48). */
     long countByUsuarioAndEstado(Usuario usuario, EstadoApuesta estado);

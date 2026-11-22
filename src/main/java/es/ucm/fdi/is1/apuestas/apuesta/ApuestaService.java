@@ -213,7 +213,7 @@ public class ApuestaService {
      */
     @Transactional
     public Apuesta cancelar(String email, Long apuestaId) {
-        Apuesta apuesta = apuestas.findById(apuestaId)
+        Apuesta apuesta = apuestas.conSelecciones(apuestaId)
                 .filter(a -> a.getUsuario().getEmail().equals(email))
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         // No hace falta save: la apuesta está gestionada por JPA y los cambios se guardan al terminar la transacción
@@ -243,7 +243,7 @@ public class ApuestaService {
      */
     @Transactional
     public Apuesta modificarImporte(String email, Long apuestaId, BigDecimal nuevo, BigDecimal cuotaVista) {
-        Apuesta apuesta = apuestas.findById(apuestaId)
+        Apuesta apuesta = apuestas.conSelecciones(apuestaId)
                 .filter(a -> a.getUsuario().getEmail().equals(email))
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         LocalDateTime ahora = LocalDateTime.now(reloj);
@@ -367,6 +367,7 @@ public class ApuestaService {
         Slice<Apuesta> resultado = apuestas.findByUsuarioAndEstadoInOrderByFechaDescIdDesc(usuario,
                 EnumSet.of(EstadoApuesta.GANADA, EstadoApuesta.PERDIDA, EstadoApuesta.ANULADA,
                         EstadoApuesta.CANCELADA, EstadoApuesta.COBRADA), PageRequest.of(pagina, 20));
+        precalentarSelecciones(resultado.getContent());
         return new PaginaApuestas(resultado.getContent(), pagina, pagina > 0, resultado.hasNext());
     }
 
@@ -377,10 +378,16 @@ public class ApuestaService {
         int pagina = Math.min(Math.max(0, numero), 10000);
         Slice<Apuesta> resultado = apuestas.findByUsuarioAndEstadoOrderByFechaDescIdDesc(usuario,
                 EstadoApuesta.ACTIVA, PageRequest.of(pagina, 20));
+        precalentarSelecciones(resultado.getContent());
         return new PaginaApuestas(resultado.getContent(), pagina, pagina > 0, resultado.hasNext());
     }
 
     public record PaginaApuestas(List<Apuesta> apuestas, int numero, boolean anterior, boolean siguiente) {
+    }
+
+    /** Inicializa las colecciones de una página en lotes dentro de la transacción que las devuelve a la vista. */
+    private static void precalentarSelecciones(List<Apuesta> pagina) {
+        pagina.forEach(apuesta -> apuesta.getSelecciones().size());
     }
 
     /** Total comprometido sin cargar la lista de apuestas activas. */
@@ -488,7 +495,8 @@ public class ApuestaService {
     /** Confirma una oferta vigente. Los eventos se bloquean para que no empiecen mientras se abona. */
     @Transactional
     public Apuesta cobrarAnticipado(String email, Long apuestaId, BigDecimal ofertaVista) {
-        Apuesta apuesta = apuestas.findById(apuestaId).filter(a -> a.getUsuario().getEmail().equalsIgnoreCase(email))
+        Apuesta apuesta = apuestas.conSelecciones(apuestaId)
+                .filter(a -> a.getUsuario().getEmail().equalsIgnoreCase(email))
                 .orElseThrow(() -> new ApuestaNoEncontradaException(apuestaId));
         LocalDateTime ahora = LocalDateTime.now(reloj);
         if (apuesta.isLargoPlazo() || apuesta.getEstado() != EstadoApuesta.ACTIVA) {
