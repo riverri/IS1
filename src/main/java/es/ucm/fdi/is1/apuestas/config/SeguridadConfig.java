@@ -60,6 +60,9 @@ public class SeguridadConfig {
      */
     private static final RequestMatcher CONSOLA_H2 = PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**");
 
+    /** Para la clave de los navegadores recordados cuando no se configura. */
+    private static final SecureRandom AZAR = new SecureRandom();
+
     @Bean
     public NavegadorRememberMeServices navegadorRememberMeServices(
             UserDetailsService users, JdbcNavegadorTokenRepository tokens,
@@ -70,7 +73,7 @@ public class SeguridadConfig {
         // antes la aplicación no arrancaba y el despliegue en Render fallaba si faltaba la variable
         if (key == null || key.isBlank()) {
             byte[] aleatoria = new byte[32];
-            new SecureRandom().nextBytes(aleatoria);
+            AZAR.nextBytes(aleatoria);
             key = Base64.getEncoder().encodeToString(aleatoria);
             LoggerFactory.getLogger(SeguridadConfig.class)
                     .warn("Falta REMEMBER_ME_KEY: se usa una clave aleatoria para recordar navegadores");
