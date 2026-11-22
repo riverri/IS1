@@ -8,13 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.random.RandomGenerator;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -36,19 +43,29 @@ public class AnuncioService {
     private final RandomGenerator azar;
     private final Clock reloj;
     private final ObjectProvider<WebInvocationPrivilegeEvaluator> permisos;
+    private final Map<Long, AtomicLong> impresionesPendientes = new ConcurrentHashMap<>();
+    private final TransactionTemplate transaccion;
+    private volatile CacheAnuncios anunciosActivosCache;
+
+    private record CacheAnuncios(List<Anuncio> anuncios, long guardadoEn) {
+    }
+
+    private static final long DURACION_CACHE_NS = java.time.Duration.ofSeconds(5).toNanos();
 
     /** Un visitante sin sesión, para preguntar a Spring Security si podría abrir una página. */
     private static final AnonymousAuthenticationToken VISITANTE = new AnonymousAuthenticationToken("anuncios",
             "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 
     public AnuncioService(AnuncioRepository anuncios, ClicAnuncioRepository clics, UsuarioRepository usuarios,
-                          RandomGenerator azar, Clock reloj, ObjectProvider<WebInvocationPrivilegeEvaluator> permisos) {
+                          RandomGenerator azar, Clock reloj, ObjectProvider<WebInvocationPrivilegeEvaluator> permisos,
+                          PlatformTransactionManager gestorTransacciones) {
         this.anuncios = anuncios;
         this.clics = clics;
         this.usuarios = usuarios;
         this.azar = azar;
         this.reloj = reloj;
         this.permisos = permisos;
+        this.transaccion = new TransactionTemplate(gestorTransacciones);
     }
 
     /**
@@ -58,7 +75,7 @@ public class AnuncioService {
     @Transactional
     public Optional<Anuncio> mostrar(String ruta, boolean conSesion) {
         Optional<Anuncio> elegido = elegirPara(ruta, conSesion);
-        elegido.ifPresent(a -> anuncios.sumarImpresion(a.getId()));
+        elegido.ifPresent(a -> registrarImpresion(a.getId()));
         return elegido;
     }
 
@@ -75,7 +92,7 @@ public class AnuncioService {
         if (donde.isEmpty()) {
             return Optional.empty();
         }
-        List<Anuncio> candidatos = anuncios.findByActivoTrue();
+        List<Anuncio> candidatos = anunciosActivos();
         WebInvocationPrivilegeEvaluator evaluador = permisos.getIfAvailable();
         if (!conSesion && evaluador != null) {
             candidatos = candidatos.stream()
@@ -86,15 +103,69 @@ public class AnuncioService {
         return elegir(candidatos, donde.get(), conSesion, LocalDateTime.now(reloj), azar);
     }
 
+    /** La lista activa es pequeña y se comparte entre peticiones; vence pronto para limitar obsolescencia entre nodos. */
+    private List<Anuncio> anunciosActivos() {
+        long ahora = System.nanoTime();
+        CacheAnuncios cache = anunciosActivosCache;
+        if (cache != null && ahora - cache.guardadoEn() < DURACION_CACHE_NS) {
+            return cache.anuncios();
+        }
+        synchronized (this) {
+            ahora = System.nanoTime();
+            cache = anunciosActivosCache;
+            if (cache == null || ahora - cache.guardadoEn() >= DURACION_CACHE_NS) {
+                cache = new CacheAnuncios(List.copyOf(anuncios.findByActivoTrue()), ahora);
+                anunciosActivosCache = cache;
+            }
+            return cache.anuncios();
+        }
+    }
+
+    /** Evita publicar valores sin confirmar; el vencimiento de cinco segundos cubre cambios desde otra instancia. */
+    private void invalidarAnunciosActivosAlConfirmar() {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            anunciosActivosCache = null;
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                invalidarCacheAnuncios();
+            }
+        });
+    }
+
+    /** Invalida la copia tras cambios externos; el vencimiento sigue limitando su obsolescencia entre instancias. */
+    public void invalidarCacheAnuncios() {
+        anunciosActivosCache = null;
+    }
+
     /** El destino sin {@code ?...} ni {@code #...}: las reglas de seguridad se comparan solo con la ruta. */
     static String soloRuta(String destino) {
         return destino.split("[?#]", 2)[0];
     }
 
-    /** Cuenta una impresión (HU-62). */
-    @Transactional
-    public void contarImpresion(Long id) {
-        anuncios.sumarImpresion(id);
+    /** Registra la impresión sin escribir en la base de datos durante la petición que renderiza la página. */
+    public void registrarImpresion(Long id) {
+        impresionesPendientes.computeIfAbsent(id, clave -> new AtomicLong()).incrementAndGet();
+    }
+
+    /** Persiste juntas las impresiones acumuladas; los contadores se restauran si falla el lote. */
+    @Scheduled(initialDelayString = "PT5S", fixedDelayString = "PT5S")
+    public void vaciarImpresiones() {
+        Map<Long, Long> lote = new HashMap<>();
+        impresionesPendientes.forEach((id, contador) -> {
+            long cantidad = contador.getAndSet(0);
+            if (cantidad > 0) {
+                lote.put(id, cantidad);
+            }
+        });
+        try {
+            transaccion.executeWithoutResult(estado -> lote.forEach(anuncios::sumarImpresiones));
+        } catch (RuntimeException e) {
+            lote.forEach((id, cantidad) -> impresionesPendientes.get(id).addAndGet(cantidad));
+            throw e;
+        }
     }
 
     /** CA-60.1: los de prioridad más alta que se pueden mostrar, y uno al azar entre ellos. */
@@ -157,7 +228,9 @@ public class AnuncioService {
     @Transactional
     public Anuncio crear(String titulo, String texto, String icono, String destino, Set<Ubicacion> ubicaciones,
                          int prioridad, LocalDateTime desde, LocalDateTime hasta) {
-        return anuncios.save(new Anuncio(titulo, texto, icono, destino, ubicaciones, prioridad, desde, hasta));
+        Anuncio creado = anuncios.save(new Anuncio(titulo, texto, icono, destino, ubicaciones, prioridad, desde, hasta));
+        invalidarAnunciosActivosAlConfirmar();
+        return creado;
     }
 
     /**
@@ -170,6 +243,7 @@ public class AnuncioService {
                           Set<Ubicacion> ubicaciones, int prioridad, LocalDateTime desde, LocalDateTime hasta) {
         Anuncio anuncio = anuncio(id);
         anuncio.cambiar(titulo, texto, icono, destino, ubicaciones, prioridad, desde, hasta);
+        invalidarAnunciosActivosAlConfirmar();
         return anuncio;
     }
 
@@ -178,6 +252,7 @@ public class AnuncioService {
     public Anuncio activar(Long id, boolean activo) {
         Anuncio anuncio = anuncio(id);
         anuncio.activar(activo);
+        invalidarAnunciosActivosAlConfirmar();
         return anuncio;
     }
 }

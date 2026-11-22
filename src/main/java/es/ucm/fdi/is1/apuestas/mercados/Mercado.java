@@ -48,11 +48,11 @@ public class Mercado {
     private EstadoMercado estado = EstadoMercado.ABIERTO;
 
     /**
-     * Los candidatos se guardan y se borran junto con el mercado (cascada). Se cargan siempre con él (EAGER),
-     * ordenados de la cuota más baja (el favorito) a la más alta.
+     * Los candidatos se guardan y se borran junto con el mercado (cascada), ordenados de la cuota más baja (el
+     * favorito) a la más alta. Las consultas de las vistas que los muestran los piden explícitamente.
      */
     // Misma idea que las selecciones de Apuesta: "uno a muchos" (un mercado, muchos candidatos)
-    @OneToMany(mappedBy = "mercado", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mercado", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("cuota, nombre")
     private List<Candidato> candidatos = new ArrayList<>();
 

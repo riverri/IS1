@@ -79,6 +79,12 @@ class EstadisticasCompeticionWebTest {
         resolucion.introducirResultado(basket.getId(), Resultado.VISITANTE);
 
         List<ApuestaService.EstadisticasGrupo> grupos = apuestas.estadisticasPorCompeticion(ANA);
+        Estadisticas agregadas = apuestas.estadisticas(ANA);
+        Estadisticas historicoCompleto = Estadisticas.de(apuestas.historial(ANA));
+        assertThat(agregadas.resueltas()).isEqualTo(historicoCompleto.resueltas());
+        assertThat(agregadas.ganadas()).isEqualTo(historicoCompleto.ganadas());
+        assertThat(agregadas.apostado()).isEqualByComparingTo(historicoCompleto.apostado());
+        assertThat(agregadas.beneficio()).isEqualByComparingTo(historicoCompleto.beneficio());
         assertThat(grupos).extracting(ApuestaService.EstadisticasGrupo::nombre)
                 .containsExactly("LaLiga", "Combinadas", "Liga ACB");
         Estadisticas laLiga = grupos.get(0).estadisticas();

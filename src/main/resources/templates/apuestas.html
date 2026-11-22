@@ -12,7 +12,7 @@
     <p role="status" class="alerta alerta-aviso" th:if="${aviso}" th:text="${aviso}">La cuota ha cambiado</p>
 
     <div class="estadisticas">
-        <div class="tarjeta estadistica"><span th:text="${activas.size()}">2</span>apuestas activas</div>
+        <div class="tarjeta estadistica"><span th:text="${activasTotales}">2</span>apuestas activas</div>
         <div class="tarjeta estadistica">
             <span th:text="${#numbers.formatDecimal(comprometido, 1, 'POINT', 2, 'COMMA')}">50,00</span>monedas en juego
         </div>
@@ -80,6 +80,13 @@
             </form>
         </article>
     </div>
+    <nav class="paginacion" th:if="${paginaActivas.anterior or paginaActivas.siguiente}" aria-label="Páginas de apuestas activas">
+        <a class="boton boton-secundario" th:if="${paginaActivas.anterior}"
+           th:href="@{/apuestas(paginaActivas=${paginaActivas.numero - 1},paginaHistorial=${paginaHistorial.numero})}">← Anteriores</a>
+        <span th:text="'Página ' + ${paginaActivas.numero + 1}">Página 1</span>
+        <a class="boton boton-secundario" th:if="${paginaActivas.siguiente}"
+           th:href="@{/apuestas(paginaActivas=${paginaActivas.numero + 1},paginaHistorial=${paginaHistorial.numero})}">Siguientes →</a>
+    </nav>
 
     <h2>Historial</h2>
     <p class="aviso"><a th:href="@{/apuestas/exportar}">Descargar todas mis apuestas en CSV</a> (se abre con Excel o LibreOffice).</p>
@@ -137,6 +144,13 @@
             </tbody>
         </table>
     </div>
+    <nav class="paginacion" th:if="${paginaHistorial.anterior or paginaHistorial.siguiente}" aria-label="Páginas del historial">
+        <a class="boton boton-secundario" th:if="${paginaHistorial.anterior}"
+           th:href="@{/apuestas(paginaActivas=${paginaActivas.numero},paginaHistorial=${paginaHistorial.numero - 1})}">← Anteriores</a>
+        <span th:text="'Página ' + ${paginaHistorial.numero + 1}">Página 1</span>
+        <a class="boton boton-secundario" th:if="${paginaHistorial.siguiente}"
+           th:href="@{/apuestas(paginaActivas=${paginaActivas.numero},paginaHistorial=${paginaHistorial.numero + 1})}">Siguientes →</a>
+    </nav>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

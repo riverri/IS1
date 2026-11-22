@@ -43,6 +43,9 @@ class AnunciosWebTest {
     private AnuncioRepository anuncios;
 
     @Autowired
+    private AnuncioService servicioAnuncios;
+
+    @Autowired
     private ClicAnuncioRepository clics;
 
     @Autowired
@@ -56,6 +59,7 @@ class AnunciosWebTest {
 
     @BeforeEach
     void preparar() {
+        servicioAnuncios.invalidarCacheAnuncios();
         usuarios.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         mercados = deDestino("/mercados");
         ligas = deDestino("/ligas");
@@ -81,6 +85,8 @@ class AnunciosWebTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(enlace(mercados))))
                 .andExpect(content().string(not(containsString(enlace(ligas)))));
+
+        servicioAnuncios.vaciarImpresiones();
 
         // La impresión se suma en la base de datos: refresh vuelve a leer el anuncio en lugar de usar la copia en memoria
         entityManager.refresh(mercados);
@@ -170,6 +176,7 @@ class AnunciosWebTest {
     @Test
     void enGestionSeVenLasImpresionesYLosClicsYSePuedeDesactivar() throws Exception {
         mvc.perform(get(enlace(mercados)).param("desde", "/eventos"));
+        servicioAnuncios.vaciarImpresiones();
 
         // CA-62.1
         mvc.perform(get("/gestion/anuncios").with(COMO_CREADOR))

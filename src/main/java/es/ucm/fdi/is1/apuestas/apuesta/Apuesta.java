@@ -69,8 +69,9 @@ public class Apuesta {
     // Una apuesta tiene muchas selecciones. mappedBy = "apuesta": la relación la guarda el atributo "apuesta" de
     // Seleccion. cascade = ALL: al guardar o borrar la apuesta se guardan o borran sus selecciones.
     // orphanRemoval: si se quita una selección de la lista, se borra de la base de datos.
-    // EAGER: las selecciones se cargan a la vez que la apuesta (casi siempre se necesitan). @OrderBy: por id
-    @OneToMany(mappedBy = "apuesta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    // LAZY: cada consulta carga selecciones solo cuando las necesita; para listas se inicializan por lotes.
+    // @OrderBy conserva el orden estable por id.
+    @OneToMany(mappedBy = "apuesta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("id")
     private List<Seleccion> selecciones = new ArrayList<>();
 

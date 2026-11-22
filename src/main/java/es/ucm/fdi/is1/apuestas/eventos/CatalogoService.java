@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Nombres;
@@ -28,6 +29,8 @@ public class CatalogoService {
 
     private final EventoRepository eventos;
     private final Clock reloj;
+
+    private static final int TAMANO_PAGINA_CATALOGO = 50;
 
     public CatalogoService(EventoRepository eventos, Clock reloj) {
         this.eventos = eventos;
@@ -66,6 +69,24 @@ public class CatalogoService {
                         Collectors.groupingBy((Evento e) -> e.getCompeticion().getNombre(),
                                 LinkedHashMap::new,
                                 Collectors.toList())));
+    }
+
+    /** Página estable de eventos; los filtros se aplican en SQL antes de traer equipos y competiciones. */
+    @Transactional(readOnly = true)
+    public PaginaCatalogo buscar(Deporte deporte, String texto, int numero) {
+        int pagina = Math.min(Math.max(0, numero), 10000);
+        String buscado = Nombres.normalizar(texto);
+        Slice<Evento> resultado = eventos.paginaCatalogo(EstadoEvento.PROGRAMADO, LocalDateTime.now(reloj), deporte,
+                buscado, PageRequest.of(pagina, TAMANO_PAGINA_CATALOGO));
+        Map<Deporte, Map<String, List<Evento>>> agrupados = resultado.getContent().stream()
+                .collect(Collectors.groupingBy(Evento::getDeporte, () -> new EnumMap<>(Deporte.class),
+                        Collectors.groupingBy((Evento e) -> e.getCompeticion().getNombre(), LinkedHashMap::new,
+                                Collectors.toList())));
+        return new PaginaCatalogo(agrupados, pagina, pagina > 0, resultado.hasNext());
+    }
+
+    public record PaginaCatalogo(Map<Deporte, Map<String, List<Evento>>> eventos, int numero,
+                                 boolean anterior, boolean siguiente) {
     }
 
     /** Número de eventos disponibles de cada deporte, para las pestañas del catálogo. */

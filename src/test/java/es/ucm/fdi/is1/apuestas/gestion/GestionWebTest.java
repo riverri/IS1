@@ -21,6 +21,7 @@ import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
+import es.ucm.fdi.is1.apuestas.Hora;
 
 /** HU-01 y HU-21: alta de competiciones, equipos y eventos por el creador de apuestas. */
 @SpringBootTest
@@ -130,7 +131,8 @@ class GestionWebTest {
                         .param("competicionId", competicion("LaLiga").getId().toString())
                         .param("localId", equipo("Getafe CF").getId().toString())
                         .param("visitanteId", equipo("Atlético de Madrid").getId().toString())
-                        .param("fechaHora", "2099-05-10T18:30"))
+                        .param("fechaHora", Hora.ahora().plusDays(1).withHour(18).withMinute(30)
+                                .withSecond(0).withNano(0).toString()))
                 .andExpect(status().is3xxRedirection());
 
         mvc.perform(get("/eventos"))

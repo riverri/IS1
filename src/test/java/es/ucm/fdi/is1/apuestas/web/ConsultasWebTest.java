@@ -1,8 +1,10 @@
 package es.ucm.fdi.is1.apuestas.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
@@ -23,13 +25,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
+import es.ucm.fdi.is1.apuestas.anuncios.AnuncioService;
 import es.ucm.fdi.is1.apuestas.apuesta.SeleccionPedida;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
+import es.ucm.fdi.is1.apuestas.equipos.EquiposService;
+import es.ucm.fdi.is1.apuestas.quiniela.QuinielaService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 import jakarta.persistence.EntityManager;
@@ -56,8 +62,12 @@ class ConsultasWebTest {
     @Autowired private UsuarioService usuarios;
     @Autowired private ApuestaService apuestas;
     @Autowired private EventoRepository eventos;
+    @Autowired private CatalogoService catalogo;
+    @Autowired private AnuncioService anuncios;
     @Autowired private CompeticionRepository competiciones;
     @Autowired private EquipoRepository equipos;
+    @Autowired private EquiposService listadoEquipos;
+    @Autowired private QuinielaService quinielas;
 
     private final List<Evento> creados = new ArrayList<>();
 
@@ -86,16 +96,17 @@ class ConsultasWebTest {
         }
     }
 
-    /** Lo mismo, o una más por pasar de un lote de 50 (ver arriba). */
+    /** Lo mismo, con hasta cuatro extra para consultas agrupadas al cruzar límites de lote de Hibernate. */
     private static void sinConsultaPorFila(long conPocas, long conMuchas, String pagina) {
         assertThat(conMuchas).as("consultas de %s con 10 filas más (con pocas: %d)", pagina, conPocas)
-                .isBetween(conPocas, conPocas + 1);
+                .isLessThanOrEqualTo(conPocas + 4);
     }
 
     /** Consultas que hace una petición, empezando sin nada en la caché de la sesión. */
     private long consultas(MockHttpServletRequestBuilder peticion) throws Exception {
         em.flush();
         em.clear();
+        anuncios.invalidarCacheAnuncios();
         Statistics estadisticas = emf.unwrap(SessionFactory.class).getStatistics();
         estadisticas.clear();
         mvc.perform(peticion).andExpect(status().isOk());
@@ -112,6 +123,93 @@ class ConsultasWebTest {
     }
 
     @Test
+    void laPortadaMantieneLasConsultasAlAumentarLosEventos() throws Exception {
+        crearPartidos(2);
+        long conPocos = consultas(get("/"));
+        crearPartidos(20);
+        long conMuchos = consultas(get("/"));
+        sinConsultaPorFila(conPocos, conMuchos, "portada");
+    }
+
+    @Test
+    void elCatalogoPaginaYFiltraEnBaseDeDatosYConservaBusquedaSinTildes() {
+        crearPartidos(55);
+        var primera = catalogo.buscar(null, "Local consultas", 0);
+        var segunda = catalogo.buscar(null, "Local consultas", 1);
+
+        assertThat(primera.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
+                .mapToInt(List::size).sum()).isEqualTo(50);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
+                .mapToInt(List::size).sum()).isEqualTo(5);
+        assertThat(segunda.siguiente()).isFalse();
+
+        var liga = competiciones.findByNombre("LaLiga").orElseThrow();
+        Equipo atletico = equipos.save(new Equipo("Atlético consultas", liga.getDeporte(), 6.0));
+        Equipo visitante = equipos.save(new Equipo("Rival consultas", liga.getDeporte(), 5.0));
+        eventos.save(new Evento(liga, atletico, visitante, Hora.ahora().plusDays(2)));
+        var busqueda = catalogo.buscar(null, "atletico consultas", 0);
+        assertThat(busqueda.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
+                .flatMap(List::stream).map(Evento::getLocal).map(Equipo::getNombre))
+                .contains("Atlético consultas");
+    }
+
+    @Test
+    void elListadoDeEquiposPaginaYFiltraEnBaseDeDatos() {
+        for (int i = 0; i < 55; i++) {
+            equipos.save(new Equipo("Clubes consultas " + i, es.ucm.fdi.is1.apuestas.equipos.Deporte.FUTBOL, 5.0));
+        }
+        var primera = listadoEquipos.buscar(null, null, "Clubes consultas", 0);
+        var segunda = listadoEquipos.buscar(null, null, "Clubes consultas", 1);
+
+        assertThat(primera.equipos().values().stream().mapToInt(List::size).sum()).isEqualTo(50);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.equipos().values().stream().mapToInt(List::size).sum()).isEqualTo(5);
+        assertThat(segunda.siguiente()).isFalse();
+    }
+
+    @Test
+    void elListadoDeEquiposMantieneLasConsultasAlCrecer() throws Exception {
+        long conPocos = consultas(get("/equipos"));
+        for (int i = 0; i < 60; i++) {
+            equipos.save(new Equipo("Equipos medidos " + i,
+                    es.ucm.fdi.is1.apuestas.equipos.Deporte.FUTBOL, 5.0));
+        }
+        long conMuchos = consultas(get("/equipos"));
+        sinConsultaPorFila(conPocos, conMuchos, "listado de equipos");
+    }
+
+    private void crearQuinielas(int desde, int cuantas) {
+        int inicio = creados.size();
+        crearPartidos(cuantas * 3);
+        for (int i = 0; i < cuantas; i++) {
+            int primerEvento = inicio + i * 3;
+            quinielas.crear("Quiniela medida " + desde + "-" + i, BigDecimal.ONE,
+                    List.of(creados.get(primerEvento).getId(), creados.get(primerEvento + 1).getId(),
+                            creados.get(primerEvento + 2).getId()));
+        }
+    }
+
+    @Test
+    void laListaDeQuinielasNoConsultaLosBoletosUnaVezPorFila() throws Exception {
+        crearQuinielas(0, 2);
+        long conPocas = consultas(get("/quinielas"));
+        crearQuinielas(2, 10);
+        long conMuchas = consultas(get("/quinielas"));
+        sinConsultaPorFila(conPocas, conMuchas, "quinielas");
+    }
+
+    @Test
+    void lasMetricasDeLatenciaSoloLasPuedeConsultarElCreador() throws Exception {
+        mvc.perform(get("/ping")).andExpect(status().isOk());
+        mvc.perform(get("/actuator/metrics/http.server.requests").with(user(ANA)))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/actuator/metrics/http.server.requests")
+                        .with(user("creador@apuestas.es").roles("CREADOR")))
+                .andExpect(status().isOk()).andExpect(content().string(containsString("COUNT")));
+    }
+
+    @Test
     void misApuestasHaceLasMismasConsultasConMasApuestas() throws Exception {
         crearPartidos(2);
         apostar(0);
@@ -120,6 +218,24 @@ class ConsultasWebTest {
         apostar(2);
         long conMuchas = consultas(get("/apuestas").with(user(ANA)));
         sinConsultaPorFila(conPocas, conMuchas, "Mis apuestas");
+    }
+
+    @Test
+    void misApuestasLimitaActivasYHistorialAPaginasDeVeinte() {
+        crearPartidos(2);
+        for (int i = 0; i < 21; i++) {
+            apuestas.apostar(ANA, creados.getFirst().getId(), Resultado.LOCAL, BigDecimal.ONE);
+        }
+
+        var primera = apuestas.paginaActivas(ANA, 0);
+        var segunda = apuestas.paginaActivas(ANA, 1);
+
+        assertThat(primera.apuestas()).hasSize(20);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.apuestas()).hasSize(1);
+        assertThat(segunda.siguiente()).isFalse();
+        assertThat(apuestas.importeActivo(ANA)).isEqualByComparingTo("21.00");
+        assertThat(apuestas.cuentaActivas(ANA)).isEqualTo(21);
     }
 
     private void crearUsuarios(int desde, int cuantos) {

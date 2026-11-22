@@ -61,19 +61,30 @@ public class LigaService {
     /** Ligas en las que está el usuario, por nombre. */
     @Transactional(readOnly = true)
     public List<Liga> mias(String email) {
-        return ligas.deMiembro(usuario(email));
+        return ligas.deMiembroConMiembros(usuario(email));
     }
 
     /** Clasificación de las ligas del usuario por la suma del saldo de sus miembros activos. */
     @Transactional(readOnly = true)
     public List<PuestoClasificacionLiga> clasificacion(String email) {
-        return clasificar(ligas.deMiembro(usuario(email)));
+        return clasificar(ligas.deMiembroConMiembros(usuario(email)));
     }
 
     /** Clasificación global de ligas públicas; solo salen sus datos agregados. */
     @Transactional(readOnly = true)
     public List<PuestoClasificacionLiga> clasificacionGlobal() {
-        return clasificar(ligas.publicasConMiembros());
+        List<PuestoClasificacionLiga> totales = ligas.resumenPublicas().stream()
+                .map(fila -> new PuestoClasificacionLiga(0, fila.getLigaId(), fila.getNombre(),
+                        Math.toIntExact(fila.getMiembros()), fila.getSaldo(), true))
+                .sorted(Comparator.comparing(PuestoClasificacionLiga::saldoTotal).reversed()
+                        .thenComparing(PuestoClasificacionLiga::nombre, String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(PuestoClasificacionLiga::ligaId))
+                .toList();
+        return IntStream.range(0, totales.size()).mapToObj(i -> {
+            PuestoClasificacionLiga fila = totales.get(i);
+            return new PuestoClasificacionLiga(i + 1, fila.ligaId(), fila.nombre(), fila.miembros(),
+                    fila.saldoTotal(), true);
+        }).toList();
     }
 
     private List<PuestoClasificacionLiga> clasificar(List<Liga> ligasVisibles) {
@@ -122,7 +133,7 @@ public class LigaService {
         if (limpio.isEmpty() || limpio.length() > 40) {
             throw new IllegalArgumentException("El nombre de la liga tiene que tener entre 1 y 40 caracteres");
         }
-        if (ligas.deMiembro(usuario).size() >= MAX_LIGAS) {
+        if (ligas.contarDeMiembro(usuario) >= MAX_LIGAS) {
             throw new IllegalArgumentException("Puedes estar como mucho en " + MAX_LIGAS + " ligas");
         }
         return ligas.save(new Liga(limpio, codigoNuevo(), usuario, LocalDateTime.now(reloj)));
@@ -145,7 +156,7 @@ public class LigaService {
         if (liga.esMiembro(usuario)) {
             throw new IllegalArgumentException("Ya estás en la liga " + liga.getNombre());
         }
-        if (ligas.deMiembro(usuario).size() >= MAX_LIGAS) {
+        if (ligas.contarDeMiembro(usuario) >= MAX_LIGAS) {
             throw new IllegalArgumentException("Puedes estar como mucho en " + MAX_LIGAS + " ligas");
         }
         // No hace falta save: la liga está gestionada por JPA y el cambio se guarda al acabar la transacción
@@ -222,7 +233,7 @@ public class LigaService {
         Usuario usuario = usuarios.findById(cuenta.usuarioId()).orElseThrow();
         // Quien se queda sin compartir liga con alguien: el propio usuario y los miembros de las ligas que se borran
         Set<Long> afectados = new LinkedHashSet<>(List.of(usuario.getId()));
-        for (Liga liga : ligas.deMiembro(usuario)) {
+        for (Liga liga : ligas.deMiembroConMiembros(usuario)) {
             if (liga.esCreador(usuario)) {
                 afectados.addAll(liga.getIdsMiembros());
                 publicador.publishEvent(new LigaBorrada(liga));

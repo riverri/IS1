@@ -50,6 +50,7 @@
                         <input type="hidden" name="jugador" th:value="${o.jugador.id}">
                         <input type="hidden" name="posicion" th:if="${posicion != null}" th:value="${posicion}">
                         <input type="hidden" name="club" th:if="${club != null}" th:value="${club}">
+                        <input type="hidden" name="pagina" th:if="${pagina.numero > 0}" th:value="${pagina.numero}">
                         <button class="boton boton-pequeno" type="submit">Fichar</button>
                     </form>
                     <small class="aviso" th:unless="${o.motivo == null}" th:text="${o.motivo}">No te llega el presupuesto</small>
@@ -58,6 +59,13 @@
             </tbody>
         </table>
     </div>
+    <nav class="paginacion" th:if="${pagina.anterior or pagina.siguiente}" aria-label="Páginas del mercado">
+        <a class="boton boton-secundario" th:if="${pagina.anterior}"
+           th:href="@{/fantasy/mercado(posicion=${posicion},club=${club},pagina=${pagina.numero - 1})}">← Más caros</a>
+        <span th:text="'Página ' + ${pagina.numero + 1}">Página 1</span>
+        <a class="boton boton-secundario" th:if="${pagina.siguiente}"
+           th:href="@{/fantasy/mercado(posicion=${posicion},club=${club},pagina=${pagina.numero + 1})}">Más baratos →</a>
+    </nav>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

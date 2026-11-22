@@ -148,19 +148,25 @@ public class ApuestaController {
      * y las estadísticas (HU-35).
      */
     @GetMapping("/apuestas")
-    public String misApuestas(Principal principal, Model model) {
-        List<Apuesta> activas = apuestas.activas(principal.getName());
-        // Total comprometido: suma de los importes de las apuestas activas
-        BigDecimal comprometido = activas.stream().map(Apuesta::getImporte).reduce(BigDecimal.ZERO, BigDecimal::add);
+    public String misApuestas(@RequestParam(defaultValue = "0") int paginaActivas,
+                              @RequestParam(defaultValue = "0") int paginaHistorial,
+                              Principal principal, Model model) {
+        var activasPaginadas = apuestas.paginaActivas(principal.getName(), paginaActivas);
+        List<Apuesta> activas = activasPaginadas.apuestas();
+        BigDecimal comprometido = apuestas.importeActivo(principal.getName());
         model.addAttribute("activas", activas);
         model.addAttribute("comprometido", comprometido);
+        model.addAttribute("activasTotales", apuestas.cuentaActivas(principal.getName()));
+        model.addAttribute("paginaActivas", activasPaginadas);
         // La vista llama a cancelable(ahora) para mostrar o no los botones de cancelar y cambiar importe
         model.addAttribute("ahora", LocalDateTime.now(reloj));
         model.addAttribute("ofertasCashOut", apuestas.ofertasCashOut(activas, LocalDateTime.now(reloj)));
-        List<Apuesta> historial = apuestas.historial(principal.getName());
+        var historialPaginado = apuestas.paginaHistorial(principal.getName(), paginaHistorial);
+        List<Apuesta> historial = historialPaginado.apuestas();
         model.addAttribute("historial", historial);
-        model.addAttribute("estadisticas", apuestas.estadisticas(historial));
-        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(historial));
+        model.addAttribute("paginaHistorial", historialPaginado);
+        model.addAttribute("estadisticas", apuestas.estadisticas(principal.getName()));
+        model.addAttribute("porCompeticion", apuestas.estadisticasPorCompeticion(principal.getName()));
         return "apuestas";
     }
 
@@ -176,12 +182,11 @@ public class ApuestaController {
         if (juego != null && !juego.admite(orden)) {
             orden = CriterioRanking.GANANCIAS;
         }
-        List<PuestoRanking> todos = rankings.ranking(principal == null ? null : principal.getName(), orden, null, juego);
-        model.addAttribute("primeros", todos.stream().limit(20).toList());
-        // Tu fila aparte solo si no sale ya en el top 20
-        model.addAttribute("mio", todos.stream().filter(PuestoRanking::soyYo)
-                .filter(p -> p.posicion() > 20).findFirst().orElse(null));
-        model.addAttribute("total", todos.size());
+        RankingService.ListaRanking lista = rankings.lista(principal == null ? null : principal.getName(), orden,
+                juego);
+        model.addAttribute("primeros", lista.primeros());
+        model.addAttribute("mio", lista.mio());
+        model.addAttribute("total", lista.total());
         model.addAttribute("orden", orden);
         model.addAttribute("juego", juego);
         model.addAttribute("juegos", TipoJuego.values());

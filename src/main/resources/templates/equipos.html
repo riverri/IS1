@@ -65,6 +65,13 @@
             </table>
         </div>
     </section>
+    <nav class="paginacion" th:if="${pagina.anterior or pagina.siguiente}" aria-label="Páginas de equipos">
+        <a class="boton boton-secundario" th:if="${pagina.anterior}"
+           th:href="@{/equipos(deporte=${deporteElegido},competicion=${competicionElegida},q=${q},pagina=${pagina.numero - 1})}">← Anteriores</a>
+        <span th:text="'Página ' + ${pagina.numero + 1}">Página 1</span>
+        <a class="boton boton-secundario" th:if="${pagina.siguiente}"
+           th:href="@{/equipos(deporte=${deporteElegido},competicion=${competicionElegida},q=${q},pagina=${pagina.numero + 1})}">Siguientes →</a>
+    </nav>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

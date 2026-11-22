@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -100,6 +101,26 @@ class SupercuotaWebTest {
         mvc.perform(get("/eventos/{id}/apostar", partido.getId()).with(user(ANA)))
                 .andExpect(content().string(containsString("Supercuota:")))
                 .andExpect(content().string(containsString(mejorada().toPlainString().replace('.', ','))));
+    }
+
+    @Test
+    void laPortadaSoloProcesaYEnseniaLasSeisSupercuotasQueCaben() throws Exception {
+        List<Evento> partidos = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            Evento evento = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                    equipos.findByNombre("Getafe CF").orElseThrow(), equipos.findByNombre("Sevilla FC").orElseThrow(),
+                    Hora.ahora().plusHours(i + 3)));
+            partidos.add(evento);
+            BigDecimal cuotaNormal = calculadora.calcular(evento).local();
+            supercuotas.crear(evento.getId(), Resultado.LOCAL, cuotaNormal.add(new BigDecimal("0.50")),
+                    new BigDecimal("50"), 24);
+        }
+
+        assertThat(supercuotas.vigentes()).hasSize(6).extracting(s -> s.getEvento().getId())
+                .containsExactlyElementsOf(partidos.subList(0, 6).stream().map(Evento::getId).toList());
+        mvc.perform(get("/")).andExpect(content().string(containsString("Supercuotas")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(containsString(
+                        "/eventos/" + partidos.get(7).getId() + "/apostar"))));
     }
 
     /** El catálogo enseña la misma cuota que la página del partido y que se cobra: la supercuota. */

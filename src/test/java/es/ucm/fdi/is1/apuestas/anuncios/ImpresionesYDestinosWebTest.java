@@ -37,10 +37,12 @@ class ImpresionesYDestinosWebTest {
     @Autowired private AnuncioRepository anuncios;
     @Autowired private ClicAnuncioRepository clics;
     @Autowired private UsuarioService usuarios;
+    @Autowired private AnuncioService servicioAnuncios;
     @Autowired private EntityManager em;
 
     @BeforeEach
     void preparar() {
+        servicioAnuncios.invalidarCacheAnuncios();
         usuarios.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         // Solo los de esta prueba
         anuncios.findAll().forEach(a -> a.activar(false));
@@ -66,6 +68,7 @@ class ImpresionesYDestinosWebTest {
 
         mvc.perform(get("/cuenta/movimientos").with(COMO_ANA))
                 .andExpect(content().string(containsString("/anuncios/" + enCuenta.getId() + "/ir")));
+        servicioAnuncios.vaciarImpresiones();
         assertThat(impresiones(enCuenta)).isEqualTo(antes + 1);
     }
 

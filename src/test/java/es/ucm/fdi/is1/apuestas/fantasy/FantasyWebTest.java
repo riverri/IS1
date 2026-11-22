@@ -114,6 +114,22 @@ class FantasyWebTest {
         return jugadores.save(jugador);
     }
 
+    @Test
+    void elMercadoFantasySePaginaAntesDeCargarLosJugadores() {
+        for (int i = 0; i < 51; i++) {
+            jugador(getafe, "Mercado paginado " + i, Posicion.CENTROCAMPISTA, 6);
+        }
+
+        FantasyService.PaginaMercado primera = fantasy.paginaMercado(null, getafe.getId(), 0);
+        FantasyService.PaginaMercado segunda = fantasy.paginaMercado(null, getafe.getId(), 1);
+
+        assertThat(primera.jugadores()).hasSize(50);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.jugadores()).isNotEmpty();
+        assertThat(EquipoFantasy.precio(primera.jugadores().getLast()))
+                .isGreaterThanOrEqualTo(EquipoFantasy.precio(segunda.jugadores().getFirst()));
+    }
+
     private Evento partido(Equipo local, Equipo visitante, long horas) {
         return partidoEl(local, visitante, Hora.ahora().plusHours(horas));
     }
@@ -213,7 +229,8 @@ class FantasyWebTest {
 
         // Luis (portero del Getafe que gana 3-1): 3; Ana (delantero del Sevilla que pierde, 1 gol): 2
         List<PuestoFantasy> clasificacion = fantasy.clasificacion(ANA);
-        assertThat(clasificacion).extracting(p -> p.equipo().getNombre()).containsExactly("Luis FC", "Los del Aula 3");
+        assertThat(clasificacion).extracting(FantasyService.PuestoFantasy::nombreEquipo)
+                .containsExactly("Luis FC", "Los del Aula 3");
         assertThat(clasificacion).extracting(PuestoFantasy::puntos).containsExactly(3, 2);
         assertThat(clasificacion.get(1).mio()).isTrue();
         mvc.perform(get("/fantasy").with(COMO_ANA)).andExpect(content().string(containsString("Luis FC")));
@@ -292,7 +309,8 @@ class FantasyWebTest {
         fantasy.crear(ANA, "Los del Aula 3");
         fantasy.crear(LUIS, "Luis FC");
         bajas.eliminarCuenta(LUIS, "secreta123");
-        assertThat(fantasy.clasificacion(ANA)).extracting(p -> p.equipo().getNombre()).containsExactly("Los del Aula 3");
+        assertThat(fantasy.clasificacion(ANA)).extracting(FantasyService.PuestoFantasy::nombreEquipo)
+                .containsExactly("Los del Aula 3");
     }
 
     @Test

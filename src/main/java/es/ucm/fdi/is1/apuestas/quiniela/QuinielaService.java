@@ -5,15 +5,18 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.PageRequest;
 
 import es.ucm.fdi.is1.apuestas.apuesta.JuegoResponsableService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
@@ -57,10 +60,44 @@ public class QuinielaService {
     public record Resumen(Quiniela quiniela, long boletos, BigDecimal bote, boolean admiteBoletos) {
     }
 
+    /** Página acotada de la lista pública, con indicadores de navegación sin COUNT(*) global. */
+    public record Pagina(List<Resumen> resumenes, int numero, boolean anterior, boolean siguiente) {
+    }
+
+    private static final int TAMANO_PAGINA = 20;
+
+    @Transactional(readOnly = true)
+    public Pagina pagina(int numero) {
+        int seguro = Math.min(Math.max(0, numero), 500);
+        List<Quiniela> consultadas = quinielas.findAllByOrderByCreadaDescIdDesc(
+                PageRequest.of(seguro, TAMANO_PAGINA + 1));
+        boolean siguiente = consultadas.size() > TAMANO_PAGINA;
+        List<Quiniela> visibles = siguiente ? consultadas.subList(0, TAMANO_PAGINA) : consultadas;
+        if (visibles.isEmpty()) {
+            return new Pagina(List.of(), seguro, seguro > 0, false);
+        }
+        Map<Long, Long> boletosPorQuiniela = new HashMap<>();
+        for (Object[] fila : boletos.contarPorQuiniela(visibles.stream().map(Quiniela::getId).toList())) {
+            boletosPorQuiniela.put((Long) fila[0], ((Number) fila[1]).longValue());
+        }
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<Resumen> resumenes = visibles.stream()
+                .map(q -> resumen(q, ahora, boletosPorQuiniela.getOrDefault(q.getId(), 0L))).toList();
+        return new Pagina(resumenes, seguro, seguro > 0, siguiente);
+    }
+
     @Transactional(readOnly = true)
     public List<Resumen> todas() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        return quinielas.findAllByOrderByCreadaDesc().stream().map(q -> resumen(q, ahora)).toList();
+        List<Quiniela> lista = quinielas.findAllByOrderByCreadaDesc();
+        if (lista.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Long> boletosPorQuiniela = new HashMap<>();
+        for (Object[] fila : boletos.contarPorQuiniela(lista.stream().map(Quiniela::getId).toList())) {
+            boletosPorQuiniela.put((Long) fila[0], ((Number) fila[1]).longValue());
+        }
+        return lista.stream().map(q -> resumen(q, ahora, boletosPorQuiniela.getOrDefault(q.getId(), 0L))).toList();
     }
 
     @Transactional(readOnly = true)
@@ -69,10 +106,13 @@ public class QuinielaService {
     }
 
     private Resumen resumen(Quiniela quiniela, LocalDateTime ahora) {
+        return resumen(quiniela, ahora, boletos.countByQuiniela(quiniela));
+    }
+
+    private Resumen resumen(Quiniela quiniela, LocalDateTime ahora, long n) {
         // Los partidos se cargan aquí: la página se pinta fuera de la transacción y los cuenta. Antes solo se
         // cargaban de paso al mirar si admite boletos, que en una repartida o anulada no los recorre (error 500)
         quiniela.getPartidos().forEach(p -> p.getEvento().getLocal().getNombre());
-        long n = boletos.countByQuiniela(quiniela);
         return new Resumen(quiniela, n, quiniela.bote(quiniela.getPrecio().multiply(BigDecimal.valueOf(n))),
                 quiniela.admiteBoletos(ahora));
     }

@@ -203,7 +203,7 @@ class ConcurrenciaSaldoTest {
                 Hora.ahora().plusDays(2)));
         Apuesta combinada = apuestas.apostar(EMAIL, List.of(new SeleccionPedida(evento.getId(), Resultado.LOCAL, null),
                 new SeleccionPedida(otro.getId(), Resultado.LOCAL, null)), BigDecimal.TEN);
-        Apuesta leidaAntes = apuestaRepository.findById(combinada.getId()).orElseThrow();
+        Apuesta leidaAntes = apuestaRepository.conSelecciones(combinada.getId()).orElseThrow();
 
         resolucion.anular(otro.getId());
         leidaAntes.getSelecciones().forEach(sel -> sel.actualizarCuota(new BigDecimal("1.50")));

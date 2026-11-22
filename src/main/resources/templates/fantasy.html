@@ -86,8 +86,8 @@
             <tbody>
             <tr th:each="p : ${clasificacion}" th:classappend="${p.mio} ? 'yo'">
                 <td th:text="${p.puesto}">1</td>
-                <td><strong th:text="${p.equipo.nombre}">Los Galácticos</strong></td>
-                <td th:text="${p.equipo.usuario.nombre}">Ana</td>
+                <td><strong th:text="${p.nombreEquipo}">Los Galácticos</strong></td>
+                <td th:text="${p.nombreUsuario}">Ana</td>
                 <td th:text="${p.puntos}">31</td>
             </tr>
             </tbody>

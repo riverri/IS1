@@ -5,12 +5,13 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +82,7 @@ public class FantasyService {
     }
 
     /** Una fila de la clasificación. */
-    public record PuestoFantasy(int puesto, EquipoFantasy equipo, int puntos, boolean mio) {
+    public record PuestoFantasy(int puesto, String nombreEquipo, String nombreUsuario, int puntos, boolean mio) {
     }
 
     @Transactional(readOnly = true)
@@ -171,28 +172,31 @@ public class FantasyService {
     /** El equipo del usuario, bloqueado para cambiarlo (ver {@link EquipoFantasyRepository#paraCambiar}). */
     private EquipoFantasy paraCambiar(String email) {
         return usuarios.findByEmail(email).flatMap(equipos::paraCambiar)
+                .flatMap(equipo -> equipos.conFichajes(equipo.getId()))
                 .orElseThrow(() -> new IllegalStateException("Primero crea tu equipo"));
     }
 
     /** Futbolistas que se pueden fichar, del más caro al más barato; posición y club son filtros opcionales. */
     @Transactional(readOnly = true)
     public List<Jugador> mercado(Posicion posicion, Long clubId) {
-        return futbolistas().stream()
-                .filter(j -> posicion == null || j.getPosicion() == posicion)
-                .filter(j -> clubId == null || j.getEquipo().getId().equals(clubId))
-                .sorted(Comparator.comparing(EquipoFantasy::precio).reversed().thenComparing(Jugador::getNombre))
-                .toList();
+        return paginaMercado(posicion, clubId, 0).jugadores();
+    }
+
+    /** Página acotada del mercado, con orden de precio equivalente al cálculo de {@link EquipoFantasy#precio}. */
+    @Transactional(readOnly = true)
+    public PaginaMercado paginaMercado(Posicion posicion, Long clubId, int numero) {
+        int pagina = Math.min(Math.max(0, numero), 10000);
+        Slice<Jugador> resultado = jugadores.paginaMercado(posicion, clubId, PageRequest.of(pagina, 50));
+        return new PaginaMercado(resultado.getContent(), pagina, pagina > 0, resultado.hasNext());
+    }
+
+    public record PaginaMercado(List<Jugador> jugadores, int numero, boolean anterior, boolean siguiente) {
     }
 
     /** Clubes de fútbol que tienen jugadores, para el filtro del mercado. */
     @Transactional(readOnly = true)
     public List<Equipo> clubes() {
-        return futbolistas().stream().map(Jugador::getEquipo).distinct()
-                .sorted(Comparator.comparing(Equipo::getNombre)).toList();
-    }
-
-    private List<Jugador> futbolistas() {
-        return jugadores.findAll().stream().filter(j -> j.getEquipo().getDeporte() == Deporte.FUTBOL).toList();
+        return jugadores.clubesConJugadores();
     }
 
     /** Puntos de cada fichaje del equipo, también de los ya vendidos (CA-82.1). */
@@ -207,22 +211,11 @@ public class FantasyService {
      */
     @Transactional(readOnly = true)
     public List<PuestoFantasy> clasificacion(String emailActual) {
-        Map<Long, List<Evento>> partidosPorClub = new HashMap<>();
-        record Fila(EquipoFantasy equipo, int puntos) {
-        }
-        List<Fila> filas = new ArrayList<>();
-        // Las cuentas eliminadas no salen, como en el resto de clasificaciones (HU-18)
-        for (EquipoFantasy equipo : equipos.findAll().stream().filter(e -> !e.getUsuario().isEliminado()).toList()) {
-            int total = puntos(equipo, partidosPorClub).stream().mapToInt(PuntosFichaje::getTotal).sum();
-            filas.add(new Fila(equipo, total));
-        }
-        filas.sort(Comparator.comparingInt(Fila::puntos).reversed()
-                .thenComparing(f -> f.equipo().getCreado()).thenComparing(f -> f.equipo().getId()));
+        List<EquipoFantasyRepository.FilaClasificacion> filas = equipos.clasificacionAgregada(emailActual);
         List<PuestoFantasy> puestos = new ArrayList<>();
-        for (int i = 0; i < filas.size(); i++) {
-            EquipoFantasy equipo = filas.get(i).equipo();
-            puestos.add(new PuestoFantasy(i + 1, equipo, filas.get(i).puntos(),
-                    equipo.getUsuario().getEmail().equals(emailActual)));
+        for (EquipoFantasyRepository.FilaClasificacion fila : filas) {
+            puestos.add(new PuestoFantasy(fila.getPuesto(), fila.getNombreEquipo(), fila.getNombreUsuario(),
+                    fila.getPuntos(), fila.getEmail().equals(emailActual)));
         }
         return puestos;
     }

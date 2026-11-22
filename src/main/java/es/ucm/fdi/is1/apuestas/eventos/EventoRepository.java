@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -55,6 +56,25 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
                                        @Param("fecha") LocalDateTime fecha,
                                        @Param("deporte") Deporte deporte);
 
+    /** Página del catálogo con deporte y búsqueda acentuada filtrados en SQL antes de hidratar las entidades. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha
+              and (:deporte is null or e.competicion.deporte = :deporte)
+              and (:texto = '' or
+                   cast(function('translate', lower(e.local.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                       like concat('%', :texto, '%') or
+                   cast(function('translate', lower(e.visitante.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                       like concat('%', :texto, '%') or
+                   cast(function('translate', lower(e.competicion.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                       like concat('%', :texto, '%'))
+            order by e.fechaHora asc, e.id asc
+            """)
+    Slice<Evento> paginaCatalogo(@Param("estado") EstadoEvento estado, @Param("fecha") LocalDateTime fecha,
+                                @Param("deporte") Deporte deporte, @Param("texto") String texto,
+                                Pageable pageable);
+
     /** Próximos eventos paginados para no hidratar el catálogo entero en la portada. */
     @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
     List<Evento> findByEstadoAndFechaHoraAfterOrderByFechaHoraAsc(EstadoEvento estado, LocalDateTime fecha,
@@ -97,8 +117,96 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     /** Partidos de un equipo en un estado, del más reciente al más antiguo (HU-31). */
     @Query("""
             select e from Evento e where e.estado = :estado and (e.local = :equipo or e.visitante = :equipo)
-            order by e.fechaHora desc""")
+            order by e.fechaHora desc, e.id desc""")
     List<Evento> partidosDe(Equipo equipo, EstadoEvento estado);
+
+    /** Partidos recientes acotados para rachas, cara a cara y gráfico de ficha. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e where e.estado = :estado and (e.local = :equipo or e.visitante = :equipo)
+            order by e.fechaHora desc, e.id desc
+            """)
+    List<Evento> partidosDe(Equipo equipo, EstadoEvento estado, Pageable pageable);
+
+    /** Próximos partidos del equipo, limitados en base de datos. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e where e.estado = :estado and e.fechaHora > :fecha
+              and (e.local = :equipo or e.visitante = :equipo)
+            order by e.fechaHora asc, e.id asc
+            """)
+    List<Evento> proximosDe(Equipo equipo, EstadoEvento estado, LocalDateTime fecha, Pageable pageable);
+
+    /** Aggregate standings for all requested competitions without loading each finished event. */
+    interface FilaClasificacion {
+        Long getCompeticionId();
+
+        Long getEquipoId();
+
+        String getNombre();
+
+        Long getVictorias();
+
+        Long getEmpates();
+
+        Long getDerrotas();
+    }
+
+    @Query(value = """
+            select partidos.competicion_id as competicionId, partidos.equipo_id as equipoId,
+                   equipo.nombre as nombre,
+                   cast(sum(partidos.victoria) as bigint) as victorias,
+                   cast(sum(partidos.empate) as bigint) as empates,
+                   cast(sum(partidos.derrota) as bigint) as derrotas
+            from (
+                select competicion_id, local_id as equipo_id,
+                       case when resultado = 'LOCAL' then 1 else 0 end as victoria,
+                       case when resultado = 'EMPATE' then 1 else 0 end as empate,
+                       case when resultado = 'VISITANTE' then 1 else 0 end as derrota
+                from evento
+                where estado = 'FINALIZADO' and competicion_id in (:competicionIds)
+                union all
+                select competicion_id, visitante_id as equipo_id,
+                       case when resultado = 'VISITANTE' then 1 else 0 end as victoria,
+                       case when resultado = 'EMPATE' then 1 else 0 end as empate,
+                       case when resultado = 'LOCAL' then 1 else 0 end as derrota
+                from evento
+                where estado = 'FINALIZADO' and competicion_id in (:competicionIds)
+            ) partidos
+            join equipo on equipo.id = partidos.equipo_id
+            group by partidos.competicion_id, partidos.equipo_id, equipo.nombre
+            """, nativeQuery = true)
+    List<FilaClasificacion> clasificacionesAgregadas(@Param("competicionIds") List<Long> competicionIds);
+
+    /** Balance histórico agregado para una ficha, sin hidratar todos los eventos finalizados. */
+    @Query("""
+            select coalesce(sum(case when (e.local = :equipo and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.LOCAL) or (e.visitante = :equipo and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.VISITANTE) then 1 else 0 end), 0),
+                   coalesce(sum(case when e.resultado = es.ucm.fdi.is1.apuestas.cuotas.Resultado.EMPATE
+                       then 1 else 0 end), 0),
+                   coalesce(sum(case when (e.local = :equipo and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.VISITANTE) or (e.visitante = :equipo and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.LOCAL) then 1 else 0 end), 0)
+            from Evento e where e.estado = es.ucm.fdi.is1.apuestas.eventos.EstadoEvento.FINALIZADO
+              and (e.local = :equipo or e.visitante = :equipo)
+            """)
+    List<Object[]> balanceEquipo(@Param("equipo") Equipo equipo);
+
+    /** Balance histórico de los enfrentamientos visto desde uno de los dos equipos. */
+    @Query("""
+            select coalesce(sum(case when (e.local = :uno and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.LOCAL) or (e.visitante = :uno and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.VISITANTE) then 1 else 0 end), 0),
+                   coalesce(sum(case when e.resultado = es.ucm.fdi.is1.apuestas.cuotas.Resultado.EMPATE
+                       then 1 else 0 end), 0),
+                   coalesce(sum(case when (e.local = :uno and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.VISITANTE) or (e.visitante = :uno and e.resultado =
+                       es.ucm.fdi.is1.apuestas.cuotas.Resultado.LOCAL) then 1 else 0 end), 0)
+            from Evento e where e.estado = es.ucm.fdi.is1.apuestas.eventos.EstadoEvento.FINALIZADO
+              and ((e.local = :uno and e.visitante = :otro) or (e.local = :otro and e.visitante = :uno))
+            """)
+    List<Object[]> balanceEnfrentamientos(@Param("uno") Equipo uno, @Param("otro") Equipo otro);
 
     /**
      * Hora del primer partido de un deporte entre dos fechas, sin contar los de un estado (los suspendidos); null si
@@ -117,6 +225,15 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
             and ((e.local = :uno and e.visitante = :otro) or (e.local = :otro and e.visitante = :uno))
             order by e.fechaHora desc""")
     List<Evento> enfrentamientos(Equipo uno, Equipo otro);
+
+    /** Últimos cara a cara; el balance completo se obtiene por separado con {@link #balanceEnfrentamientos}. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e where e.estado = es.ucm.fdi.is1.apuestas.eventos.EstadoEvento.FINALIZADO
+              and ((e.local = :uno and e.visitante = :otro) or (e.local = :otro and e.visitante = :uno))
+            order by e.fechaHora desc, e.id desc
+            """)
+    List<Evento> enfrentamientos(Equipo uno, Equipo otro, Pageable pageable);
 
     /** Eventos de una competición en un estado; con FINALIZADO sirve para calcular la clasificación (HU-31). */
     List<Evento> findByCompeticionAndEstado(Competicion competicion, EstadoEvento estado);

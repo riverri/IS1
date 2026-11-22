@@ -56,6 +56,13 @@
             </div>
         </section>
     </section>
+    <nav class="paginacion" th:if="${pagina.anterior or pagina.siguiente}" aria-label="Páginas de eventos">
+        <a class="boton boton-secundario" th:if="${pagina.anterior}"
+           th:href="@{/eventos(deporte=${deporteElegido},q=${q},pagina=${pagina.numero - 1})}">← Próximos</a>
+        <span th:text="'Página ' + ${pagina.numero + 1}">Página 1</span>
+        <a class="boton boton-secundario" th:if="${pagina.siguiente}"
+           th:href="@{/eventos(deporte=${deporteElegido},q=${q},pagina=${pagina.numero + 1})}">Más eventos →</a>
+    </nav>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>

@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import es.ucm.fdi.is1.apuestas.apuesta.JuegoResponsableService;
 import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
-import es.ucm.fdi.is1.apuestas.ligas.Liga;
 import es.ucm.fdi.is1.apuestas.ligas.LigaRepository;
 import es.ucm.fdi.is1.apuestas.notificaciones.NotificacionService;
 import es.ucm.fdi.is1.apuestas.usuarios.TipoMovimiento;
@@ -136,10 +135,7 @@ public class PrediccionService {
     @Transactional(readOnly = true)
     public List<PosicionPrediccion> deMisLigas(String email, Long id) {
         Usuario yo = usuario(email);
-        Set<Long> companeros = new HashSet<>();
-        for (Liga liga : ligas.deMiembro(yo)) {
-            companeros.addAll(liga.getIdsMiembros());
-        }
+        Set<Long> companeros = new HashSet<>(ligas.idsCompaneros(yo));
         companeros.remove(yo.getId());
         if (companeros.isEmpty()) {
             return List.of();

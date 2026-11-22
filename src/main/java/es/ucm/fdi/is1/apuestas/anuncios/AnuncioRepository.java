@@ -15,11 +15,8 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
     /** Todos, para Gestión: primero los activos y, dentro, los de más prioridad. */
     List<Anuncio> findAllByOrderByActivoDescPrioridadDescTituloAsc();
 
-    /**
-     * Suma una impresión (HU-62). Se hace en la base de datos ({@code a.impresiones + 1}) y no leyendo y guardando
-     * el anuncio, así dos páginas que se pintan a la vez no se pisan la cuenta.
-     */
+    /** Suma en bloque impresiones acumuladas en memoria, sin leer y guardar la entidad. */
     @Modifying
-    @Query("update Anuncio a set a.impresiones = a.impresiones + 1 where a.id = :id")
-    void sumarImpresion(Long id);
+    @Query("update Anuncio a set a.impresiones = a.impresiones + :cantidad where a.id = :id")
+    int sumarImpresiones(Long id, long cantidad);
 }

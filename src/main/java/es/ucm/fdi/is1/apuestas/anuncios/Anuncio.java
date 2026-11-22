@@ -70,7 +70,7 @@ public class Anuncio {
 
     /** Veces que se ha mostrado (HU-62). Lo incrementa una consulta de {@link AnuncioRepository}. */
     /**
-     * Veces que se ha mostrado. Solo la suma la consulta de {@link AnuncioRepository#sumarImpresion} (updatable = false):
+     * Veces que se ha mostrado. Solo la suma la consulta de {@link AnuncioRepository#sumarImpresiones} (updatable = false):
      * si no, al guardar una edición del anuncio se escribiría el valor leído al cargarlo y se perderían las impresiones
      * contadas mientras tanto.
      */
