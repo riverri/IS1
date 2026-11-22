@@ -162,8 +162,9 @@ public class FantasyService {
         LocalDateTime inicio = ahora.toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .atStartOfDay();
         LocalDateTime fin = inicio.plusWeeks(1);
-        // Los suspendidos no cuentan: puede que no se jueguen esa semana
-        LocalDateTime plazo = eventos.primerPartidoEntre(Deporte.FUTBOL, EstadoEvento.SUSPENDIDO, inicio, fin);
+        // Solo cuentan los partidos que pueden jugarse o ya se jugaron; los suspendidos y anulados no cierran cambios.
+        LocalDateTime plazo = eventos.primerPartidoEntre(Deporte.FUTBOL,
+                List.of(EstadoEvento.PROGRAMADO, EstadoEvento.FINALIZADO), inicio, fin);
         return new Jornada(inicio, fin, plazo, plazo != null && !ahora.isBefore(plazo));
     }
 
