@@ -269,16 +269,15 @@ public class LigaService {
 
     /** El creador de apuestas no juega, así que no entra en ligas. */
     private Usuario jugador(String email) {
-        Usuario usuario = usuario(email);
-        if (usuario.getRol() != Rol.USUARIO) {
-            throw new IllegalArgumentException("El creador de apuestas no juega, así que no puede entrar en ligas");
-        }
-        return usuario;
+        return soloJugador(usuario(email));
     }
 
-    /** Serializa la comprobación del máximo de ligas con otros cambios del mismo usuario. */
+    /** Como {@link #jugador}, con la cuenta bloqueada: serializa la comprobación del máximo de ligas. */
     private Usuario jugadorBloqueado(String email) {
-        Usuario usuario = usuarios.paraActualizarRelaciones(email).orElseThrow();
+        return soloJugador(usuarios.paraActualizarRelaciones(email).orElseThrow());
+    }
+
+    private static Usuario soloJugador(Usuario usuario) {
         if (usuario.getRol() != Rol.USUARIO) {
             throw new IllegalArgumentException("El creador de apuestas no juega, así que no puede entrar en ligas");
         }

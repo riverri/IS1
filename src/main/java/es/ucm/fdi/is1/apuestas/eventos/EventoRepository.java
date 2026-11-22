@@ -209,8 +209,9 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Object[]> balanceEnfrentamientos(@Param("uno") Equipo uno, @Param("otro") Equipo otro);
 
     /**
-     * Hora del primer partido de un deporte entre dos fechas, sin contar los de un estado (los suspendidos); null si
-     * no hay ninguno. Es cuando empieza la jornada de la liga fantasy.
+     * Hora del primer partido de un deporte entre dos fechas, solo de los estados dados (programados y finalizados:
+     * los suspendidos y los anulados no cuentan); null si no hay ninguno. Es cuando empieza la jornada de la liga
+     * fantasy.
      */
     @Query("""
             select min(e.fechaHora) from Evento e where e.local.deporte = :deporte and e.estado in :estados
