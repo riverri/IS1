@@ -33,11 +33,13 @@ public class QuinielaController {
 
     /** GET /quinielas: las que admiten boletos y las demás. */
     @GetMapping
-    public String lista(Model model) {
-        List<QuinielaService.Resumen> todas = quinielas.todas();
+    public String lista(@RequestParam(defaultValue = "0") int pagina, Model model) {
+        QuinielaService.Pagina resultado = quinielas.pagina(pagina);
+        List<QuinielaService.Resumen> todas = resultado.resumenes();
         model.addAttribute("abiertas", todas.stream().filter(QuinielaService.Resumen::admiteBoletos).toList());
         model.addAttribute("otras", todas.stream().filter(r -> !r.admiteBoletos()
                 && r.quiniela().getEstado() != EstadoQuiniela.ANULADA).toList());
+        model.addAttribute("pagina", resultado);
         return "quinielas";
     }
 

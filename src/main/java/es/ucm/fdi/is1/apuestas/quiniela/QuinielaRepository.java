@@ -3,6 +3,7 @@ package es.ucm.fdi.is1.apuestas.quiniela;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,9 @@ import jakarta.persistence.LockModeType;
 public interface QuinielaRepository extends JpaRepository<Quiniela, Long> {
 
     List<Quiniela> findAllByOrderByCreadaDesc();
+
+    /** Página estable para la lista pública, que puede acumular quinielas históricas indefinidamente. */
+    List<Quiniela> findAllByOrderByCreadaDescIdDesc(Pageable pageable);
 
     /**
      * La quiniela para echar un boleto, bloqueando su fila y subiendo ya su versión (PESSIMISTIC_FORCE_INCREMENT).

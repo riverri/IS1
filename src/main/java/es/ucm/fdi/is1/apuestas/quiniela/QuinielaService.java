@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.PageRequest;
 
 import es.ucm.fdi.is1.apuestas.apuesta.JuegoResponsableService;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
@@ -57,6 +58,32 @@ public class QuinielaService {
 
     /** Lo que se muestra de una quiniela en las listas: cuántos boletos hay y el bote que se lleva acumulado. */
     public record Resumen(Quiniela quiniela, long boletos, BigDecimal bote, boolean admiteBoletos) {
+    }
+
+    /** Página acotada de la lista pública, con indicadores de navegación sin COUNT(*) global. */
+    public record Pagina(List<Resumen> resumenes, int numero, boolean anterior, boolean siguiente) {
+    }
+
+    private static final int TAMANO_PAGINA = 20;
+
+    @Transactional(readOnly = true)
+    public Pagina pagina(int numero) {
+        int seguro = Math.min(Math.max(0, numero), 500);
+        List<Quiniela> consultadas = quinielas.findAllByOrderByCreadaDescIdDesc(
+                PageRequest.of(seguro, TAMANO_PAGINA + 1));
+        boolean siguiente = consultadas.size() > TAMANO_PAGINA;
+        List<Quiniela> visibles = siguiente ? consultadas.subList(0, TAMANO_PAGINA) : consultadas;
+        if (visibles.isEmpty()) {
+            return new Pagina(List.of(), seguro, seguro > 0, false);
+        }
+        Map<Long, Long> boletosPorQuiniela = new HashMap<>();
+        for (Object[] fila : boletos.contarPorQuiniela(visibles.stream().map(Quiniela::getId).toList())) {
+            boletosPorQuiniela.put((Long) fila[0], ((Number) fila[1]).longValue());
+        }
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<Resumen> resumenes = visibles.stream()
+                .map(q -> resumen(q, ahora, boletosPorQuiniela.getOrDefault(q.getId(), 0L))).toList();
+        return new Pagina(resumenes, seguro, seguro > 0, siguiente);
     }
 
     @Transactional(readOnly = true)

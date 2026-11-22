@@ -109,6 +109,24 @@ class QuinielaWebTest {
         return quinielas.crear("Jornada 14", new BigDecimal("10"), List.of(tercero.getId(), primero.getId(), segundo.getId()));
     }
 
+    @Test
+    void laListaPublicaDeQuinielasSeCargaPorPaginasAcotadas() {
+        for (int i = 0; i < 22; i++) {
+            quinielas.crear("Jornada paginada " + i, new BigDecimal("10"),
+                    List.of(primero.getId(), segundo.getId(), tercero.getId()));
+        }
+
+        QuinielaService.Pagina primera = quinielas.pagina(0);
+        QuinielaService.Pagina segunda = quinielas.pagina(1);
+
+        assertThat(primera.resumenes()).hasSize(20);
+        assertThat(primera.anterior()).isFalse();
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.resumenes()).hasSizeBetween(1, 20);
+        assertThat(segunda.anterior()).isTrue();
+        assertThat(segunda.siguiente()).isFalse();
+    }
+
     @Autowired
     private jakarta.persistence.EntityManager em;
 

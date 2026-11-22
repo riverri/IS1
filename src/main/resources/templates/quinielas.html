@@ -24,6 +24,13 @@
             <span class="chip" th:text="${r.quiniela.estado.name() == 'REPARTIDA'} ? 'Repartida' : 'Cerrada, pendiente de reparto'">Repartida</span>
         </a>
     </th:block>
+    <nav class="paginacion" th:if="${pagina.anterior or pagina.siguiente}" aria-label="Páginas de quinielas">
+        <a class="boton boton-secundario" th:if="${pagina.anterior}"
+           th:href="@{/quinielas(pagina=${pagina.numero - 1})}">← Más recientes</a>
+        <span th:text="'Página ' + ${pagina.numero + 1}">Página 1</span>
+        <a class="boton boton-secundario" th:if="${pagina.siguiente}"
+           th:href="@{/quinielas(pagina=${pagina.numero + 1})}">Anteriores →</a>
+    </nav>
 </main>
 <footer th:replace="~{fragments/comun :: pie}"></footer>
 </body>
