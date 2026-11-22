@@ -332,6 +332,15 @@ class FantasyWebTest {
     }
 
     @Test
+    void unPartidoAnuladoNoCierraLaJornadaFantasy() {
+        resolucion.anular(partidoEl(sevilla, getafe, LUNES.plusHours(10)).getId());
+        partidoEl(getafe, sevilla, MIERCOLES);
+
+        assertThat(fantasy.jornada(MIERCOLES.minusHours(1)).plazo()).isEqualTo(MIERCOLES);
+        assertThat(fantasy.jornada(MIERCOLES.minusHours(1)).empezada()).isFalse();
+    }
+
+    @Test
     void unHuecoNoSumaDosPartidosDeLaMismaJornada() {
         // Antes había truco: vender al portero del Getafe tras ganar el miércoles y fichar al del Sevilla, que
         // gana el sábado, para sumar las dos victorias en el mismo hueco

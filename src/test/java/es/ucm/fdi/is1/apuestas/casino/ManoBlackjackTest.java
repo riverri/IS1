@@ -123,4 +123,16 @@ class ManoBlackjackTest {
         assertThat(mano.guardar().split("\\|")[0].split(",")).hasSize(6 * 52 - 4);
         assertThat(ManoBlackjack.repartir(8, new SplittableRandom(1)).guardar().length()).isLessThan(2000);
     }
+
+    @Test
+    void laReglaDePagoDeBlackjackSeConservaAunqueCambieLaConfiguracion() {
+        ManoBlackjack mano = ManoBlackjack.repartir(6, new SplittableRandom(7));
+        mano.fijarRegla17Blando(false);
+        mano.fijarPagoBlackjack(PagoBlackjack.TRES_A_DOS);
+
+        ManoBlackjack recuperada = ManoBlackjack.leer(mano.guardar());
+
+        assertThat(recuperada.regla17Blando(true)).isFalse();
+        assertThat(recuperada.pagoBlackjack(PagoBlackjack.SEIS_A_CINCO)).isEqualTo(PagoBlackjack.TRES_A_DOS);
+    }
 }

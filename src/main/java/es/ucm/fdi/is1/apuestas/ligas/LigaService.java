@@ -117,7 +117,7 @@ public class LigaService {
      */
     @Transactional
     public Liga crear(String email, String nombre) {
-        Usuario usuario = jugador(email);
+        Usuario usuario = jugadorBloqueado(email);
         String limpio = nombre == null ? "" : nombre.trim();
         if (limpio.isEmpty() || limpio.length() > 40) {
             throw new IllegalArgumentException("El nombre de la liga tiene que tener entre 1 y 40 caracteres");
@@ -136,7 +136,7 @@ public class LigaService {
      */
     @Transactional
     public Liga unirse(String email, String codigo) {
-        Usuario usuario = jugador(email);
+        Usuario usuario = jugadorBloqueado(email);
         // "abc 123" y "ABC123" son el mismo código: se quitan los espacios y se pasa a mayúsculas
         // ("\\s" en una expresión regular = cualquier espacio en blanco)
         String limpio = codigo == null ? "" : codigo.replaceAll("\\s", "").toUpperCase(Locale.ROOT);
@@ -259,6 +259,15 @@ public class LigaService {
     /** El creador de apuestas no juega, así que no entra en ligas. */
     private Usuario jugador(String email) {
         Usuario usuario = usuario(email);
+        if (usuario.getRol() != Rol.USUARIO) {
+            throw new IllegalArgumentException("El creador de apuestas no juega, así que no puede entrar en ligas");
+        }
+        return usuario;
+    }
+
+    /** Serializa la comprobación del máximo de ligas con otros cambios del mismo usuario. */
+    private Usuario jugadorBloqueado(String email) {
+        Usuario usuario = usuarios.paraActualizarRelaciones(email).orElseThrow();
         if (usuario.getRol() != Rol.USUARIO) {
             throw new IllegalArgumentException("El creador de apuestas no juega, así que no puede entrar en ligas");
         }

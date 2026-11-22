@@ -105,9 +105,10 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
      * no hay ninguno. Es cuando empieza la jornada de la liga fantasy.
      */
     @Query("""
-            select min(e.fechaHora) from Evento e where e.local.deporte = :deporte and e.estado <> :salvo
+            select min(e.fechaHora) from Evento e where e.local.deporte = :deporte and e.estado in :estados
             and e.fechaHora >= :desde and e.fechaHora < :hasta""")
-    LocalDateTime primerPartidoEntre(@Param("deporte") Deporte deporte, @Param("salvo") EstadoEvento salvo,
+    LocalDateTime primerPartidoEntre(@Param("deporte") Deporte deporte,
+                                     @Param("estados") List<EstadoEvento> estados,
                                      @Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta);
 
     /** Partidos ya jugados entre dos equipos, en cualquier campo (HU-33). */

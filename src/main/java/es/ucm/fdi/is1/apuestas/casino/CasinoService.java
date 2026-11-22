@@ -147,8 +147,10 @@ public class CasinoService {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         Usuario usuario = cobrar(email, importe, "Blackjack: nueva mano", ahora);
         Partida partida = new Partida(usuario, TipoJuego.BLACKJACK, importe, "Blackjack", ahora);
-        ManoBlackjack mano = ManoBlackjack.repartir(configuracion().getBarajas(), azar);
-        mano.fijarRegla17Blando(configuracion().isBancaPideCon17Blando());
+        ConfiguracionCasino reglas = configuracion();
+        ManoBlackjack mano = ManoBlackjack.repartir(reglas.getBarajas(), azar);
+        mano.fijarRegla17Blando(reglas.isBancaPideCon17Blando());
+        mano.fijarPagoBlackjack(reglas.getPagoBlackjack());
         partida.guardarMano(mano);
         if (mano.isTerminada()) {
             liquidar(partida, mano, ahora);
@@ -341,7 +343,8 @@ public class CasinoService {
         ResultadoMano resultado = mano.resultado();
         BigDecimal apostado = partida.getApostado();
         BigDecimal premio = switch (resultado) {
-            case BLACKJACK -> apostado.add(apostado.multiply(configuracion().getPagoBlackjack().getGanancia()));
+            case BLACKJACK -> apostado.add(apostado.multiply(
+                    mano.pagoBlackjack(configuracion().getPagoBlackjack()).getGanancia()));
             case GANA -> apostado.multiply(BigDecimal.valueOf(2));
             case EMPATE -> apostado;
             case PIERDE -> BigDecimal.ZERO;
