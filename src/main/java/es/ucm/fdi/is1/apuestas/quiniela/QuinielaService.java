@@ -5,9 +5,11 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -60,7 +62,15 @@ public class QuinielaService {
     @Transactional(readOnly = true)
     public List<Resumen> todas() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        return quinielas.findAllByOrderByCreadaDesc().stream().map(q -> resumen(q, ahora)).toList();
+        List<Quiniela> lista = quinielas.findAllByOrderByCreadaDesc();
+        if (lista.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Long> boletosPorQuiniela = new HashMap<>();
+        for (Object[] fila : boletos.contarPorQuiniela(lista.stream().map(Quiniela::getId).toList())) {
+            boletosPorQuiniela.put((Long) fila[0], ((Number) fila[1]).longValue());
+        }
+        return lista.stream().map(q -> resumen(q, ahora, boletosPorQuiniela.getOrDefault(q.getId(), 0L))).toList();
     }
 
     @Transactional(readOnly = true)
@@ -69,10 +79,13 @@ public class QuinielaService {
     }
 
     private Resumen resumen(Quiniela quiniela, LocalDateTime ahora) {
+        return resumen(quiniela, ahora, boletos.countByQuiniela(quiniela));
+    }
+
+    private Resumen resumen(Quiniela quiniela, LocalDateTime ahora, long n) {
         // Los partidos se cargan aquí: la página se pinta fuera de la transacción y los cuenta. Antes solo se
         // cargaban de paso al mirar si admite boletos, que en una repartida o anulada no los recorre (error 500)
         quiniela.getPartidos().forEach(p -> p.getEvento().getLocal().getNombre());
-        long n = boletos.countByQuiniela(quiniela);
         return new Resumen(quiniela, n, quiniela.bote(quiniela.getPrecio().multiply(BigDecimal.valueOf(n))),
                 quiniela.admiteBoletos(ahora));
     }

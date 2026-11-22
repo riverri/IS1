@@ -17,6 +17,12 @@ public interface BoletoQuinielaRepository extends JpaRepository<BoletoQuiniela, 
 
     long countByQuiniela(Quiniela quiniela);
 
+    /** Recuento de boletos de varias quinielas en una sola consulta para las listas. */
+    @Query("select b.quiniela.id, count(b) from BoletoQuiniela b "
+            + "where b.quiniela.id in :quinielaIds group by b.quiniela.id")
+    List<Object[]> contarPorQuiniela(@org.springframework.data.repository.query.Param("quinielaIds")
+                                     List<Long> quinielaIds);
+
     /** Todos los boletos de un usuario: logros (HU-88). */
     List<BoletoQuiniela> findByUsuario(Usuario usuario);
 
