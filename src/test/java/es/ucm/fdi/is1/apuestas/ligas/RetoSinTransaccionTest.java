@@ -4,13 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import es.ucm.fdi.is1.apuestas.Hora;
+import es.ucm.fdi.is1.apuestas.apuesta.ResolucionService;
 import es.ucm.fdi.is1.apuestas.cuotas.CuotaHistoricaRepository;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -71,6 +79,12 @@ class RetoSinTransaccionTest {
     @Autowired
     private EquipoRepository equipos;
 
+    @Autowired
+    private ResolucionService resolucion;
+
+    @Autowired
+    private PlatformTransactionManager transacciones;
+
     private Evento partido;
 
     @AfterEach
@@ -121,5 +135,46 @@ class RetoSinTransaccionTest {
         assertThat(retoRepository.findById(reto.getId()).orElseThrow().getEstado()).isEqualTo(EstadoReto.DEVUELTO);
         assertThat(saldo(ANA)).isEqualByComparingTo(antes);
         assertThat(saldo(LUIS)).isEqualByComparingTo(luisAntes);
+    }
+
+    @Test
+    void resolverUnPartidoEsperaAQueSeConfirmeLaCreacionDelReto() throws Exception {
+        usuarioService.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
+        Usuario luis = usuarioService.crear(LUIS, "Luis", "secreta123", Rol.USUARIO);
+        ligas.unirse(LUIS, ligas.crear(ANA, "Reto concurrente").getCodigo());
+        partido = eventos.save(new Evento(competiciones.findByNombre("LaLiga").orElseThrow(),
+                equipos.findByNombre("Getafe CF").orElseThrow(),
+                equipos.findByNombre("Sevilla FC").orElseThrow(), Hora.ahora().plusDays(1)));
+        BigDecimal saldoAntes = saldo(ANA);
+
+        ExecutorService hilos = Executors.newFixedThreadPool(2);
+        CountDownLatch retoGuardado = new CountDownLatch(1);
+        CountDownLatch confirmarReto = new CountDownLatch(1);
+        Future<Reto> alta = hilos.submit(() -> new TransactionTemplate(transacciones).execute(estado -> {
+            Reto nuevo = retos.retar(ANA, luis.getId(), partido.getId(), Resultado.LOCAL, BigDecimal.TEN);
+            retoGuardado.countDown();
+            try {
+                if (!confirmarReto.await(5, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException("La prueba no liberó la transacción del reto");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(e);
+            }
+            return nuevo;
+        }));
+        assertThat(retoGuardado.await(5, TimeUnit.SECONDS)).isTrue();
+        Future<Integer> resolucionConcurrente = hilos.submit(
+                () -> resolucion.introducirResultado(partido.getId(), Resultado.LOCAL));
+
+        // La resolución debe esperar al bloqueo de lectura del evento tomado al crear el reto.
+        assertThat(resolucionConcurrente.isDone()).isFalse();
+        confirmarReto.countDown();
+        Reto reto = alta.get(5, TimeUnit.SECONDS);
+        resolucionConcurrente.get(5, TimeUnit.SECONDS);
+        hilos.shutdownNow();
+
+        assertThat(retoRepository.findById(reto.getId()).orElseThrow().getEstado()).isEqualTo(EstadoReto.DEVUELTO);
+        assertThat(saldo(ANA)).isEqualByComparingTo(saldoAntes);
     }
 }

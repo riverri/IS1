@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import jakarta.persistence.LockModeType;
 
 /**
  * Repositorio Spring Data de {@link Usuario}. Las consultas las genera Spring a partir del nombre
@@ -20,6 +23,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     /** Busca por email. Optional: puede no haber ninguno, y así el compilador obliga a tenerlo en cuenta. */
     Optional<Usuario> findByEmail(String email);
+
+    /** Bloquea la cuenta para serializar límites que dependen del conjunto de relaciones del usuario. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select u from Usuario u where u.email = :email")
+    Optional<Usuario> paraActualizarRelaciones(@Param("email") String email);
 
     /** true si ya hay una cuenta con ese email. */
     boolean existsByEmail(String email);

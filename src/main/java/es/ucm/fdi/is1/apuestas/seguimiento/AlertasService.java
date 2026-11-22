@@ -69,7 +69,7 @@ public class AlertasService {
     @Transactional
     public AlertaCuota crear(String email, Long eventoId, Resultado resultado, BigDecimal cuota) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        Usuario usuario = usuarios.findByEmail(email).orElseThrow();
+        Usuario usuario = usuarios.paraActualizarRelaciones(email).orElseThrow();
         if (usuario.isCreador()) {
             throw new IllegalArgumentException("El creador de apuestas no pone alertas");
         }

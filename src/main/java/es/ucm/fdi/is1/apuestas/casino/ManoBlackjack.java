@@ -32,6 +32,8 @@ public class ManoBlackjack {
      * para las manos nuevas (CA-59.1). Null en manos guardadas antes de que se apuntara: vale la configuración.
      */
     private Boolean bancaPideCon17Blando;
+    /** Pago de blackjack de la mesa cuando se repartió esta mano; los cambios solo afectan a manos nuevas. */
+    private PagoBlackjack pagoBlackjack;
 
     private ManoBlackjack(List<Carta> mazo, List<Carta> jugador, List<Carta> banca, boolean doblada, boolean terminada) {
         this.mazo = mazo;
@@ -163,10 +165,11 @@ public class ManoBlackjack {
         }
     }
 
-    /** Texto para guardar la mano en la partida: "mazo|jugador|banca|doblada|terminada|regla del 17 blando". */
+    /** Texto para guardar la mano en la partida, incluidas las reglas vigentes al repartirla. */
     String guardar() {
         return codigos(mazo) + "|" + codigos(jugador) + "|" + codigos(banca) + "|" + doblada + "|" + terminada
-                + (bancaPideCon17Blando == null ? "" : "|" + bancaPideCon17Blando);
+                + (bancaPideCon17Blando == null ? "" : "|" + bancaPideCon17Blando)
+                + (pagoBlackjack == null ? "" : "|" + pagoBlackjack.name());
     }
 
     static ManoBlackjack leer(String guardada) {
@@ -175,12 +178,23 @@ public class ManoBlackjack {
         ManoBlackjack mano = new ManoBlackjack(cartas(partes[0]), cartas(partes[1]), cartas(partes[2]),
                 Boolean.parseBoolean(partes[3]), Boolean.parseBoolean(partes[4]));
         mano.bancaPideCon17Blando = partes.length > 5 ? Boolean.valueOf(partes[5]) : null;
+        mano.pagoBlackjack = partes.length > 6 ? PagoBlackjack.valueOf(partes[6]) : null;
         return mano;
     }
 
     /** Apunta la regla del 17 blando de esta mano (al repartir). */
     void fijarRegla17Blando(boolean pide) {
         bancaPideCon17Blando = pide;
+    }
+
+    /** Guarda el pago del blackjack de esta mano para que no cambie si Gestión modifica la mesa. */
+    void fijarPagoBlackjack(PagoBlackjack pago) {
+        pagoBlackjack = pago;
+    }
+
+    /** Regla de pago de esta mano; usa la configuración vigente solo en manos antiguas sin el dato guardado. */
+    PagoBlackjack pagoBlackjack(PagoBlackjack siNoSeApunto) {
+        return pagoBlackjack == null ? siNoSeApunto : pagoBlackjack;
     }
 
     /** La regla de esta mano; si no se apuntó al repartir (manos antiguas), la que se pase. */

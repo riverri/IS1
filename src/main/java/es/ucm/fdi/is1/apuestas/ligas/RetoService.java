@@ -72,7 +72,7 @@ public class RetoService {
         if (ligas.deMiembro(retador).stream().noneMatch(l -> l.esMiembro(retado))) {
             throw new IllegalArgumentException("Solo puedes retar a alguien de tus ligas");
         }
-        Evento evento = eventoId == null ? null : eventos.findById(eventoId).orElse(null);
+        Evento evento = eventoId == null ? null : eventos.paraApostar(eventoId).orElse(null);
         if (evento == null || !evento.admiteApuestas(ahora)) {
             throw new IllegalStateException("Ese partido ya no admite apuestas");
         }
@@ -109,7 +109,8 @@ public class RetoService {
         if (!reto.getRetado().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Este reto no es para ti");
         }
-        if (!reto.getEvento().admiteApuestas(ahora)) {
+        Evento evento = eventos.paraApostar(reto.getEvento().getId()).orElseThrow();
+        if (!evento.admiteApuestas(ahora)) {
             devolver(reto, ahora);
             throw new RetoCaducadoException();
         }
