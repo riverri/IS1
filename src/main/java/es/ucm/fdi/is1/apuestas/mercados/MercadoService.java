@@ -61,7 +61,7 @@ public class MercadoService {
     /** @throws MercadoNoDisponibleException si no existe un mercado con ese id */
     @Transactional(readOnly = true)
     public Mercado mercado(Long id) {
-        return mercados.findById(id).orElseThrow(() -> new MercadoNoDisponibleException(id));
+        return mercados.paraMostrar(id).orElseThrow(() -> new MercadoNoDisponibleException(id));
     }
 
     /** Como {@link #mercado}, con la fila bloqueada para resolverlo o anularlo (ver {@link MercadoRepository#paraCambiar}). */
