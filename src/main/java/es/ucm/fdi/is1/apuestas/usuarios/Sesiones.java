@@ -16,13 +16,16 @@ import jakarta.servlet.http.HttpSession;
 public class Sesiones {
 
     private final SessionRegistry registro;
+    private final JdbcNavegadorTokenRepository navegadores;
 
-    public Sesiones(SessionRegistry registro) {
+    public Sesiones(SessionRegistry registro, JdbcNavegadorTokenRepository navegadores) {
         this.registro = registro;
+        this.navegadores = navegadores;
     }
 
     /** Todas las del usuario menos {@code actual} (null = todas). */
     public void cerrarOtras(String email, HttpSession actual) {
+        navegadores.removeUserTokens(email);
         String id = actual == null ? null : actual.getId();
         // Cada principal es un usuario con sesión; false = sin contar las que ya han caducado
         registro.getAllPrincipals().stream()

@@ -126,6 +126,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | Variable | Valor |
 |---|---|
 | `CREADOR_PASSWORD` | **Obligatoria.** La contraseña de `creador@apuestas.es` (la del README es pública). |
+| `REMEMBER_ME_KEY` | **Obligatoria.** Secreto aleatorio de al menos 32 bytes para firmar los accesos persistentes por navegador. |
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://HOST/neondb?sslmode=require` (el `HOST` de Neon) |
 | `SPRING_DATASOURCE_USERNAME` | el `USUARIO` de Neon |
 | `SPRING_DATASOURCE_PASSWORD` | la `CONTRASEÑA` de Neon |
@@ -138,6 +139,8 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 3. Despliega. La primera vez tarda unos minutos. Las tablas las crea Flyway solo, y queda en un enlace fijo del tipo `https://apuestas-is1.onrender.com`.
 
 Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los datos siguen en Neon.
+
+`REMEMBER_ME_KEY` debe ser un secreto aleatorio, distinto de las contraseñas. Si cambia, se invalidan las cookies persistentes de los navegadores.
 
 La imagen guarda una caché de las clases de Java (CDS) preparada al construirla. Con 1 CPU y 512 MB, la aplicación arranca en unos 15 segundos en vez de 22, y usa unos 30 MB menos de memoria. También separa las dependencias de nuestro código en capas distintas, así un cambio pequeño solo reconstruye la capa pequeña.
 

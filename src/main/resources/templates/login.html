@@ -22,6 +22,11 @@
             <label for="password">Contraseña</label>
             <input id="password" name="password" type="password" autocomplete="current-password" required>
 
+            <label class="en-linea">
+                <input type="checkbox" name="recordar" value="true">
+                Mantener la sesión iniciada en este navegador durante 30 días
+            </label>
+
             <button class="boton boton-bloque" type="submit">Entrar</button>
         </form>
         <p class="pie-formulario"><a th:href="@{/recuperar}">¿Has olvidado tu contraseña?</a></p>
