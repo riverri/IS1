@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.apuesta.ApuestaService;
+import es.ucm.fdi.is1.apuestas.anuncios.AnuncioService;
 import es.ucm.fdi.is1.apuestas.apuesta.SeleccionPedida;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
@@ -30,6 +31,7 @@ import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioService;
 import jakarta.persistence.EntityManager;
@@ -56,6 +58,8 @@ class ConsultasWebTest {
     @Autowired private UsuarioService usuarios;
     @Autowired private ApuestaService apuestas;
     @Autowired private EventoRepository eventos;
+    @Autowired private CatalogoService catalogo;
+    @Autowired private AnuncioService anuncios;
     @Autowired private CompeticionRepository competiciones;
     @Autowired private EquipoRepository equipos;
 
@@ -96,6 +100,7 @@ class ConsultasWebTest {
     private long consultas(MockHttpServletRequestBuilder peticion) throws Exception {
         em.flush();
         em.clear();
+        anuncios.invalidarCacheAnuncios();
         Statistics estadisticas = emf.unwrap(SessionFactory.class).getStatistics();
         estadisticas.clear();
         mvc.perform(peticion).andExpect(status().isOk());
@@ -109,6 +114,29 @@ class ConsultasWebTest {
         crearPartidos(10);
         long conMuchos = consultas(get("/eventos"));
         sinConsultaPorFila(conPocos, conMuchos, "catálogo");
+    }
+
+    @Test
+    void elCatalogoPaginaYFiltraEnBaseDeDatosYConservaBusquedaSinTildes() {
+        crearPartidos(55);
+        var primera = catalogo.buscar(null, "Local consultas", 0);
+        var segunda = catalogo.buscar(null, "Local consultas", 1);
+
+        assertThat(primera.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
+                .mapToInt(List::size).sum()).isEqualTo(50);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
+                .mapToInt(List::size).sum()).isEqualTo(5);
+        assertThat(segunda.siguiente()).isFalse();
+
+        var liga = competiciones.findByNombre("LaLiga").orElseThrow();
+        Equipo atletico = equipos.save(new Equipo("Atlético consultas", liga.getDeporte(), 6.0));
+        Equipo visitante = equipos.save(new Equipo("Rival consultas", liga.getDeporte(), 5.0));
+        eventos.save(new Evento(liga, atletico, visitante, Hora.ahora().plusDays(2)));
+        var busqueda = catalogo.buscar(null, "atletico consultas", 0);
+        assertThat(busqueda.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
+                .flatMap(List::stream).map(Evento::getLocal).map(Equipo::getNombre))
+                .contains("Atlético consultas");
     }
 
     @Test

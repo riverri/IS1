@@ -136,7 +136,7 @@ public class AnuncioService {
     }
 
     /** Invalida la copia tras cambios externos; el vencimiento sigue limitando su obsolescencia entre instancias. */
-    void invalidarCacheAnuncios() {
+    public void invalidarCacheAnuncios() {
         anunciosActivosCache = null;
     }
 

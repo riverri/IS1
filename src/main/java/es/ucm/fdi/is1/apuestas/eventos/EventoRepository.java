@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -54,6 +55,25 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Evento> disponiblesPorDeporte(@Param("estado") EstadoEvento estado,
                                        @Param("fecha") LocalDateTime fecha,
                                        @Param("deporte") Deporte deporte);
+
+    /** Página del catálogo con deporte y búsqueda acentuada filtrados en SQL antes de hidratar las entidades. */
+    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
+    @Query("""
+            select e from Evento e
+            where e.estado = :estado and e.fechaHora > :fecha
+              and (:deporte is null or e.competicion.deporte = :deporte)
+              and (:texto = '' or
+                   cast(function('translate', lower(e.local.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                       like concat('%', :texto, '%') or
+                   cast(function('translate', lower(e.visitante.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                       like concat('%', :texto, '%') or
+                   cast(function('translate', lower(e.competicion.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                       like concat('%', :texto, '%'))
+            order by e.fechaHora asc, e.id asc
+            """)
+    Slice<Evento> paginaCatalogo(@Param("estado") EstadoEvento estado, @Param("fecha") LocalDateTime fecha,
+                                @Param("deporte") Deporte deporte, @Param("texto") String texto,
+                                Pageable pageable);
 
     /** Próximos eventos paginados para no hidratar el catálogo entero en la portada. */
     @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
