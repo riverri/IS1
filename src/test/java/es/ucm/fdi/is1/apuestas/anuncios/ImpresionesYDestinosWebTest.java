@@ -42,6 +42,7 @@ class ImpresionesYDestinosWebTest {
 
     @BeforeEach
     void preparar() {
+        servicioAnuncios.invalidarCacheAnuncios();
         usuarios.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         // Solo los de esta prueba
         anuncios.findAll().forEach(a -> a.activar(false));

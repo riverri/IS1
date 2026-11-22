@@ -20,6 +20,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -43,6 +45,12 @@ public class AnuncioService {
     private final ObjectProvider<WebInvocationPrivilegeEvaluator> permisos;
     private final Map<Long, AtomicLong> impresionesPendientes = new ConcurrentHashMap<>();
     private final TransactionTemplate transaccion;
+    private volatile CacheAnuncios anunciosActivosCache;
+
+    private record CacheAnuncios(List<Anuncio> anuncios, long guardadoEn) {
+    }
+
+    private static final long DURACION_CACHE_NS = java.time.Duration.ofSeconds(5).toNanos();
 
     /** Un visitante sin sesión, para preguntar a Spring Security si podría abrir una página. */
     private static final AnonymousAuthenticationToken VISITANTE = new AnonymousAuthenticationToken("anuncios",
@@ -84,7 +92,7 @@ public class AnuncioService {
         if (donde.isEmpty()) {
             return Optional.empty();
         }
-        List<Anuncio> candidatos = anuncios.findByActivoTrue();
+        List<Anuncio> candidatos = anunciosActivos();
         WebInvocationPrivilegeEvaluator evaluador = permisos.getIfAvailable();
         if (!conSesion && evaluador != null) {
             candidatos = candidatos.stream()
@@ -93,6 +101,43 @@ public class AnuncioService {
             return elegir(candidatos, donde.get(), true, LocalDateTime.now(reloj), azar);
         }
         return elegir(candidatos, donde.get(), conSesion, LocalDateTime.now(reloj), azar);
+    }
+
+    /** La lista activa es pequeña y se comparte entre peticiones; vence pronto para limitar obsolescencia entre nodos. */
+    private List<Anuncio> anunciosActivos() {
+        long ahora = System.nanoTime();
+        CacheAnuncios cache = anunciosActivosCache;
+        if (cache != null && ahora - cache.guardadoEn() < DURACION_CACHE_NS) {
+            return cache.anuncios();
+        }
+        synchronized (this) {
+            ahora = System.nanoTime();
+            cache = anunciosActivosCache;
+            if (cache == null || ahora - cache.guardadoEn() >= DURACION_CACHE_NS) {
+                cache = new CacheAnuncios(List.copyOf(anuncios.findByActivoTrue()), ahora);
+                anunciosActivosCache = cache;
+            }
+            return cache.anuncios();
+        }
+    }
+
+    /** Evita publicar valores sin confirmar; el vencimiento de cinco segundos cubre cambios desde otra instancia. */
+    private void invalidarAnunciosActivosAlConfirmar() {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            anunciosActivosCache = null;
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                invalidarCacheAnuncios();
+            }
+        });
+    }
+
+    /** Invalida la copia tras cambios externos; el vencimiento sigue limitando su obsolescencia entre instancias. */
+    void invalidarCacheAnuncios() {
+        anunciosActivosCache = null;
     }
 
     /** El destino sin {@code ?...} ni {@code #...}: las reglas de seguridad se comparan solo con la ruta. */
@@ -183,7 +228,9 @@ public class AnuncioService {
     @Transactional
     public Anuncio crear(String titulo, String texto, String icono, String destino, Set<Ubicacion> ubicaciones,
                          int prioridad, LocalDateTime desde, LocalDateTime hasta) {
-        return anuncios.save(new Anuncio(titulo, texto, icono, destino, ubicaciones, prioridad, desde, hasta));
+        Anuncio creado = anuncios.save(new Anuncio(titulo, texto, icono, destino, ubicaciones, prioridad, desde, hasta));
+        invalidarAnunciosActivosAlConfirmar();
+        return creado;
     }
 
     /**
@@ -196,6 +243,7 @@ public class AnuncioService {
                           Set<Ubicacion> ubicaciones, int prioridad, LocalDateTime desde, LocalDateTime hasta) {
         Anuncio anuncio = anuncio(id);
         anuncio.cambiar(titulo, texto, icono, destino, ubicaciones, prioridad, desde, hasta);
+        invalidarAnunciosActivosAlConfirmar();
         return anuncio;
     }
 
@@ -204,6 +252,7 @@ public class AnuncioService {
     public Anuncio activar(Long id, boolean activo) {
         Anuncio anuncio = anuncio(id);
         anuncio.activar(activo);
+        invalidarAnunciosActivosAlConfirmar();
         return anuncio;
     }
 }

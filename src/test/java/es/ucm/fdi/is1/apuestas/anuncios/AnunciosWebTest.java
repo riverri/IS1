@@ -59,6 +59,7 @@ class AnunciosWebTest {
 
     @BeforeEach
     void preparar() {
+        servicioAnuncios.invalidarCacheAnuncios();
         usuarios.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
         mercados = deDestino("/mercados");
         ligas = deDestino("/ligas");
