@@ -58,7 +58,7 @@ Los objetivos principales de este Sprint es terminar con las HU de las ampliacio
 ### Seguimiento de riesgos
 | Riesgo | Cambio | Por qué | Acción |
 |---|---|---|---|
-| 8 · Conflictos al integrar cambios | Se materializó | El 21/11 se fusionaron cinco PR en media hora y en un orden distinto del previsto: el baccarat no llegó a `main` y su migración quedó detrás de otra ya aplicada (ver abajo, I-01 en [Revisión de fallos](../../wiki/Revisión-de-fallos.md#al-integrar)) | Un PR cada vez, sin PR apilados, y el número de migración se revisa justo antes de fusionar |
+| 8 · Conflictos al integrar cambios | Se materializó | El 21/11 se fusionaron cinco PR en un orden distinto del previsto: el baccarat no llegó a `main` y su migración quedó detrás de otra ya aplicada (ver abajo, I-01 en [Revisión de fallos](../../wiki/Revisión-de-fallos.md#al-integrar)) | Un PR cada vez, sin PR apilados, y el número de migración se revisa justo antes de fusionar |
 
 ### Qué fue bien y qué mejorar
 
