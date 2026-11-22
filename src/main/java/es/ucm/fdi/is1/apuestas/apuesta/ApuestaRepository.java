@@ -67,6 +67,61 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
             group by a.usuario.id""")
     List<Object[]> resumenResueltasPorUsuario();
 
+    interface PuestoGeneral {
+        Long getUsuarioId();
+
+        Long getPosicion();
+
+        String getNombre();
+
+        BigDecimal getSaldo();
+
+        Long getResueltas();
+
+        Long getGanadas();
+
+        BigDecimal getApostado();
+
+        BigDecimal getPagado();
+    }
+
+    /** Ranking general calculado y ordenado en SQL; solo devuelve el top 20 y la fila solicitada. */
+    @Query(value = """
+            with estadisticas as (
+                select u.id as usuario_id, u.nombre as nombre, u.saldo as saldo,
+                       coalesce(sum(case when a.estado in ('GANADA', 'PERDIDA') then 1 else 0 end), 0) as resueltas,
+                       coalesce(sum(case when a.estado = 'GANADA' then 1 else 0 end), 0) as ganadas,
+                       coalesce(sum(case when a.estado in ('GANADA', 'PERDIDA', 'COBRADA')
+                                         then a.importe else 0 end), 0) as apostado,
+                       coalesce(sum(case when a.estado in ('GANADA', 'PERDIDA', 'COBRADA')
+                                         then a.pagado else 0 end), 0) as pagado
+                from usuario u
+                left join apuesta a on a.usuario_id = u.id
+                    and a.estado in ('GANADA', 'PERDIDA', 'COBRADA')
+                where u.rol = 'USUARIO' and u.eliminado = false
+                group by u.id, u.nombre, u.saldo
+            ), posiciones as (
+                select e.*,
+                       row_number() over (order by
+                           case when :criterio = 'SALDO' then e.saldo end desc,
+                           case when :criterio = 'GANANCIAS' then e.pagado - e.apostado end desc,
+                           case when :criterio = 'ACIERTOS' and e.resueltas >= :minimo then 1 else 0 end desc,
+                           case when :criterio = 'ACIERTOS' and e.apostado <> 0 then 1 else 0 end desc,
+                           case when :criterio = 'ACIERTOS' then
+                               case when e.resueltas = 0 then 0 else 1.0 * e.ganadas / e.resueltas end end desc,
+                           e.nombre asc, e.usuario_id asc) as posicion
+                from estadisticas e
+            )
+            select usuario_id as "usuarioId", posicion as "posicion", nombre as "nombre", saldo as "saldo",
+                   resueltas as "resueltas", ganadas as "ganadas", apostado as "apostado", pagado as "pagado"
+            from posiciones
+            where posicion <= 20 or usuario_id = :usuarioId
+            order by posicion
+            """, nativeQuery = true)
+    List<PuestoGeneral> puestosGenerales(@org.springframework.data.repository.query.Param("criterio") String criterio,
+                                         @org.springframework.data.repository.query.Param("minimo") int minimo,
+                                         @org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
+
     /** Estadísticas de un único jugador para su perfil público. */
     @Query("select coalesce(sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"
             + " es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA) then 1 else 0 end), 0),"

@@ -182,12 +182,11 @@ public class ApuestaController {
         if (juego != null && !juego.admite(orden)) {
             orden = CriterioRanking.GANANCIAS;
         }
-        List<PuestoRanking> todos = rankings.ranking(principal == null ? null : principal.getName(), orden, null, juego);
-        model.addAttribute("primeros", todos.stream().limit(20).toList());
-        // Tu fila aparte solo si no sale ya en el top 20
-        model.addAttribute("mio", todos.stream().filter(PuestoRanking::soyYo)
-                .filter(p -> p.posicion() > 20).findFirst().orElse(null));
-        model.addAttribute("total", todos.size());
+        RankingService.ListaRanking lista = rankings.lista(principal == null ? null : principal.getName(), orden,
+                juego);
+        model.addAttribute("primeros", lista.primeros());
+        model.addAttribute("mio", lista.mio());
+        model.addAttribute("total", lista.total());
         model.addAttribute("orden", orden);
         model.addAttribute("juego", juego);
         model.addAttribute("juegos", TipoJuego.values());

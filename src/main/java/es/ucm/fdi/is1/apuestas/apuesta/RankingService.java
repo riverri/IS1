@@ -22,6 +22,10 @@ import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 @Service
 public class RankingService {
 
+    /** Datos de la portada del ranking: veinte puestos y, si hace falta, la fila del usuario conectado. */
+    public record ListaRanking(List<PuestoRanking> primeros, PuestoRanking mio, long total) {
+    }
+
     /** Apuestas resueltas necesarias para competir por el porcentaje de aciertos. */
     public static final int MINIMO_PARA_ACIERTOS = 5;
 
@@ -98,6 +102,35 @@ public class RankingService {
                     f.estadisticas(), f.usuario().getEmail().equals(yo)));
         }
         return puestos;
+    }
+
+    /** El ranking general se calcula en SQL y solo transporta los veinte primeros y la fila propia. */
+    @Transactional(readOnly = true)
+    public ListaRanking lista(String emailActual, CriterioRanking criterio, TipoJuego juego) {
+        if (juego != null) {
+            List<PuestoRanking> todos = ranking(emailActual, criterio, null, juego);
+            return new ListaRanking(todos.stream().limit(20).toList(), todos.stream()
+                    .filter(PuestoRanking::soyYo).filter(p -> p.posicion() > 20).findFirst().orElse(null),
+                    todos.size());
+        }
+        String email = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
+        Long usuarioId = email == null ? null : usuarios.findByEmail(email).map(Usuario::getId).orElse(null);
+        List<ApuestaRepository.PuestoGeneral> filas = apuestas.puestosGenerales(criterio.name(),
+                MINIMO_PARA_ACIERTOS, usuarioId);
+        List<PuestoRanking> primeros = new ArrayList<>();
+        PuestoRanking mio = null;
+        for (ApuestaRepository.PuestoGeneral fila : filas) {
+            PuestoRanking puesto = new PuestoRanking(Math.toIntExact(fila.getPosicion()), fila.getUsuarioId(),
+                    fila.getNombre(), fila.getSaldo(), Estadisticas.de(fila.getResueltas(), fila.getGanadas(),
+                            fila.getApostado(), fila.getPagado()), fila.getUsuarioId().equals(usuarioId));
+            if (puesto.posicion() <= 20) {
+                primeros.add(puesto);
+            } else if (puesto.soyYo()) {
+                mio = puesto;
+            }
+        }
+        long total = usuarios.countByRolAndEliminadoFalse(Rol.USUARIO);
+        return new ListaRanking(primeros, mio, total);
     }
 
     /**
