@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @Configuration
 public class ImpresionesAnuncio implements WebMvcConfigurer, HandlerInterceptor {
 
+    private static final String IMPRESION_PENDIENTE = ImpresionesAnuncio.class.getName() + ".impresion";
+
     private final AnuncioService anuncios;
 
     public ImpresionesAnuncio(AnuncioService anuncios) {
@@ -37,7 +39,16 @@ public class ImpresionesAnuncio implements WebMvcConfigurer, HandlerInterceptor 
             return;
         }
         if (vista.getModel().get("anuncio") instanceof Anuncio anuncio) {
-            anuncios.contarImpresion(anuncio.getId());
+            peticion.setAttribute(IMPRESION_PENDIENTE, anuncio.getId());
+        }
+    }
+
+    /** Encola la impresión después de que la plantilla haya terminado de renderizarse. */
+    @Override
+    public void afterCompletion(HttpServletRequest peticion, HttpServletResponse respuesta, Object controlador,
+                                Exception error) {
+        if (error == null && peticion.getAttribute(IMPRESION_PENDIENTE) instanceof Long id) {
+            anuncios.registrarImpresion(id);
         }
     }
 }

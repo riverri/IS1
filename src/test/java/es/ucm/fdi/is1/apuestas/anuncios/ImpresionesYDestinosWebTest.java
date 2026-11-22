@@ -37,6 +37,7 @@ class ImpresionesYDestinosWebTest {
     @Autowired private AnuncioRepository anuncios;
     @Autowired private ClicAnuncioRepository clics;
     @Autowired private UsuarioService usuarios;
+    @Autowired private AnuncioService servicioAnuncios;
     @Autowired private EntityManager em;
 
     @BeforeEach
@@ -66,6 +67,7 @@ class ImpresionesYDestinosWebTest {
 
         mvc.perform(get("/cuenta/movimientos").with(COMO_ANA))
                 .andExpect(content().string(containsString("/anuncios/" + enCuenta.getId() + "/ir")));
+        servicioAnuncios.vaciarImpresiones();
         assertThat(impresiones(enCuenta)).isEqualTo(antes + 1);
     }
 

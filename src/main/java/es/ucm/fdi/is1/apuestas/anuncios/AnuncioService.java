@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.random.RandomGenerator;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -36,19 +41,23 @@ public class AnuncioService {
     private final RandomGenerator azar;
     private final Clock reloj;
     private final ObjectProvider<WebInvocationPrivilegeEvaluator> permisos;
+    private final Map<Long, AtomicLong> impresionesPendientes = new ConcurrentHashMap<>();
+    private final TransactionTemplate transaccion;
 
     /** Un visitante sin sesión, para preguntar a Spring Security si podría abrir una página. */
     private static final AnonymousAuthenticationToken VISITANTE = new AnonymousAuthenticationToken("anuncios",
             "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 
     public AnuncioService(AnuncioRepository anuncios, ClicAnuncioRepository clics, UsuarioRepository usuarios,
-                          RandomGenerator azar, Clock reloj, ObjectProvider<WebInvocationPrivilegeEvaluator> permisos) {
+                          RandomGenerator azar, Clock reloj, ObjectProvider<WebInvocationPrivilegeEvaluator> permisos,
+                          PlatformTransactionManager gestorTransacciones) {
         this.anuncios = anuncios;
         this.clics = clics;
         this.usuarios = usuarios;
         this.azar = azar;
         this.reloj = reloj;
         this.permisos = permisos;
+        this.transaccion = new TransactionTemplate(gestorTransacciones);
     }
 
     /**
@@ -58,7 +67,7 @@ public class AnuncioService {
     @Transactional
     public Optional<Anuncio> mostrar(String ruta, boolean conSesion) {
         Optional<Anuncio> elegido = elegirPara(ruta, conSesion);
-        elegido.ifPresent(a -> anuncios.sumarImpresion(a.getId()));
+        elegido.ifPresent(a -> registrarImpresion(a.getId()));
         return elegido;
     }
 
@@ -91,10 +100,27 @@ public class AnuncioService {
         return destino.split("[?#]", 2)[0];
     }
 
-    /** Cuenta una impresión (HU-62). */
-    @Transactional
-    public void contarImpresion(Long id) {
-        anuncios.sumarImpresion(id);
+    /** Registra la impresión sin escribir en la base de datos durante la petición que renderiza la página. */
+    public void registrarImpresion(Long id) {
+        impresionesPendientes.computeIfAbsent(id, clave -> new AtomicLong()).incrementAndGet();
+    }
+
+    /** Persiste juntas las impresiones acumuladas; los contadores se restauran si falla el lote. */
+    @Scheduled(initialDelayString = "PT5S", fixedDelayString = "PT5S")
+    public void vaciarImpresiones() {
+        Map<Long, Long> lote = new HashMap<>();
+        impresionesPendientes.forEach((id, contador) -> {
+            long cantidad = contador.getAndSet(0);
+            if (cantidad > 0) {
+                lote.put(id, cantidad);
+            }
+        });
+        try {
+            transaccion.executeWithoutResult(estado -> lote.forEach(anuncios::sumarImpresiones));
+        } catch (RuntimeException e) {
+            lote.forEach((id, cantidad) -> impresionesPendientes.get(id).addAndGet(cantidad));
+            throw e;
+        }
     }
 
     /** CA-60.1: los de prioridad más alta que se pueden mostrar, y uno al azar entre ellos. */
