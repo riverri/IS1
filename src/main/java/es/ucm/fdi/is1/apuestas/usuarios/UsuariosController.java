@@ -5,6 +5,7 @@ import java.util.List;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,12 +48,21 @@ public class UsuariosController {
     private final SaldoProperties saldo;
     private final Clock reloj;
     private final Sesiones sesiones;
+    private final VerificacionCorreoService verificacionCorreo;
+    private final CambioCorreoService cambioCorreo;
+    private final String basePublica;
 
-    public UsuariosController(UsuarioService usuarios, SaldoProperties saldo, Clock reloj, Sesiones sesiones) {
+    public UsuariosController(UsuarioService usuarios, SaldoProperties saldo, Clock reloj, Sesiones sesiones,
+                              VerificacionCorreoService verificacionCorreo,
+                              CambioCorreoService cambioCorreo,
+                              @Value("${apuestas.url-publica}") String basePublica) {
         this.usuarios = usuarios;
         this.saldo = saldo;
         this.reloj = reloj;
         this.sesiones = sesiones;
+        this.verificacionCorreo = verificacionCorreo;
+        this.cambioCorreo = cambioCorreo;
+        this.basePublica = sinBarraFinal(basePublica);
     }
 
     /**
@@ -90,9 +100,10 @@ public class UsuariosController {
         if (!errores.hasErrors()) {
             // try/catch: si registrar lanza EmailYaRegistradoException, se salta al catch en vez de romper la página
             try {
-                usuarios.registrar(form);
+                Usuario usuario = usuarios.registrar(form);
+                verificacionCorreo.solicitar(usuario.getEmail(), basePublica);
                 // Redirigir tras un POST evita que al recargar la página se envíe el formulario otra vez
-                return "redirect:/login?registrado";
+                return "redirect:/login?verificacionPendiente";
             } catch (EmailYaRegistradoException e) {
                 errores.rejectValue("email", "duplicado", "Ya existe una cuenta con ese email");
             }
@@ -216,6 +227,26 @@ public class UsuariosController {
         return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
     }
 
+    /** Requests an email change after checking the current password and sends confirmation to the new address. */
+    @PostMapping("/cuenta/correo")
+    public String cambiarCorreo(@Valid @ModelAttribute("cambioCorreo") CambioCorreoForm form, BindingResult errores,
+                                Principal principal, Model model, RedirectAttributes redireccion) {
+        if (errores.hasErrors()) {
+            return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
+        }
+        try {
+            cambioCorreo.solicitar(principal.getName(), form.getPassword(), form.getNuevoEmail(), basePublica);
+            redireccion.addFlashAttribute("mensaje", "Confirma el cambio desde el enlace enviado al nuevo correo.");
+        } catch (PasswordIncorrectaException e) {
+            errores.rejectValue("password", "incorrecta", e.getMessage());
+            return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
+        } catch (EmailYaRegistradoException e) {
+            errores.rejectValue("nuevoEmail", "duplicado", "Ese correo ya está asociado a una cuenta");
+            return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
+        }
+        return "redirect:/cuenta";
+    }
+
     /** Página Mi cuenta; los formularios que ya están en el modelo (con sus errores) se respetan. */
     private String cuenta(Usuario usuario, Model model) {
         // La cabecera (usuarioActual) se cargó antes de aplicar la recarga: se pone el usuario al día para que su saldo
@@ -231,6 +262,9 @@ public class UsuariosController {
         if (!model.containsAttribute("datosPassword")) {
             model.addAttribute("datosPassword", new PasswordForm());
         }
+        if (!model.containsAttribute("cambioCorreo")) {
+            model.addAttribute("cambioCorreo", new CambioCorreoForm());
+        }
         if (!model.containsAttribute("limitesPersonales")) {
             LimitesPersonalesForm limites = new LimitesPersonalesForm();
             limites.setDiario(usuario.getLimiteDiario());
@@ -243,5 +277,9 @@ public class UsuariosController {
         model.addAttribute("proximaRecarga", usuario.proximaRecarga(saldo.recargaPeriodo()));
         model.addAttribute("importeRecarga", saldo.recargaImporte());
         return "cuenta";
+    }
+
+    private static String sinBarraFinal(String url) {
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 }

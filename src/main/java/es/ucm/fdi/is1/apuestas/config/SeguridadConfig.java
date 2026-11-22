@@ -93,6 +93,7 @@ public class SeguridadConfig {
                         // ("/equipos/*" y "/jugadores/*" abarcan un solo nivel: la ficha, no sus subpáginas)
                         .requestMatchers("/", "/eventos", "/equipos", "/equipos/*", "/mercados", "/ranking", "/jugadores/*",
                                 "/registro", "/login", "/recuperar", "/recuperar/nueva",
+                                "/verificar-correo", "/verificar-correo/**", "/cuenta/correo/confirmar",
                                 "/css/**", "/js/**", "/error").permitAll()
                         // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()

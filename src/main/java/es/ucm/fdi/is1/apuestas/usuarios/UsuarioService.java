@@ -55,7 +55,7 @@ public class UsuarioService {
     /** Crea la cuenta con el saldo de bienvenida (HU-11, HU-14). */
     @Transactional
     public Usuario registrar(RegistroForm form) {
-        return crear(form.getEmail(), form.getNombre(), form.getPassword(), Rol.USUARIO);
+        return crear(form.getEmail(), form.getNombre(), form.getPassword(), Rol.USUARIO, false);
     }
 
     /**
@@ -66,6 +66,10 @@ public class UsuarioService {
      */
     @Transactional
     public Usuario crear(String email, String nombre, String password, Rol rol) {
+        return crear(email, nombre, password, rol, true);
+    }
+
+    private Usuario crear(String email, String nombre, String password, Rol rol, boolean emailVerificado) {
         String emailNormalizado = normalizar(email);
         // El dominio de las cuentas eliminadas está reservado: si alguien lo ocupara, impediría eliminar esa cuenta
         if (usuarios.existsByEmail(emailNormalizado) || emailNormalizado.endsWith(Usuario.DOMINIO_ELIMINADOS)) {
@@ -73,7 +77,7 @@ public class UsuarioService {
         }
         // encode aplica BCrypt con una sal aleatoria: se guarda el resumen, nunca la contraseña
         Usuario usuario = new Usuario(emailNormalizado, nombre.trim(), passwordEncoder.encode(password), rol,
-                saldo.bienvenida(), LocalDateTime.now(reloj));
+                saldo.bienvenida(), LocalDateTime.now(reloj), emailVerificado);
         try {
             // saveAndFlush: el INSERT se hace aquí y no al terminar la transacción, para poder recoger el error
             return usuarios.saveAndFlush(usuario);

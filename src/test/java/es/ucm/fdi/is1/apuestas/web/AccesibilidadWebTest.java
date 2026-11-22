@@ -118,7 +118,7 @@ class AccesibilidadWebTest {
     void losMensajesSeAnuncianAlLectorDePantalla() throws Exception {
         mvc.perform(get("/login").param("error", ""))
                 .andExpect(content().string(containsString("<p role=\"alert\" class=\"alerta alerta-error\"")));
-        mvc.perform(get("/login").param("registrado", ""))
+        mvc.perform(get("/login").param("verificacionPendiente", ""))
                 .andExpect(content().string(containsString("<p role=\"status\" class=\"alerta alerta-exito\"")));
     }
 

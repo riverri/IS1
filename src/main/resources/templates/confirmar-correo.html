@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/comun :: cabeza('Confirmar correo')}"></head>
+<body>
+<header th:replace="~{fragments/comun :: cabecera}"></header>
+<main class="estrecho">
+    <h1>Confirmar correo electrónico</h1>
+    <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}"></p>
+    <th:block th:if="${valido}">
+        <p>Confirma que puedes recibir correo en esta dirección para activar tu cuenta.</p>
+        <form th:action="@{/verificar-correo/confirmar}" method="post">
+            <input type="hidden" name="token" th:value="${token}">
+            <button class="boton boton-bloque" type="submit">Confirmar correo</button>
+        </form>
+    </th:block>
+    <th:block th:unless="${valido}">
+        <p>El enlace no es válido o ha caducado. Puedes solicitar otro.</p>
+        <a class="boton boton-bloque" th:href="@{/verificar-correo}">Solicitar otro enlace</a>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/comun :: pie}"></footer>
+</body>
+</html>

@@ -51,6 +51,18 @@
         <button class="boton boton-secundario" type="submit">Cambiar contraseña</button>
     </form>
 
+    <h2>Cambiar correo de acceso</h2>
+    <p class="aviso">Te pediremos la contraseña actual y enviaremos una confirmación al correo nuevo. El cambio solo se aplica al confirmar el enlace.</p>
+    <form class="tarjeta tarjeta-formulario formulario" th:action="@{/cuenta/correo}" th:object="${cambioCorreo}" method="post">
+        <label for="nuevo-email">Correo nuevo</label>
+        <input id="nuevo-email" type="email" th:field="*{nuevoEmail}" th:errorclass="con-error" maxlength="254" autocomplete="email">
+        <span class="error-campo" th:if="${#fields.hasErrors('nuevoEmail')}" th:text="${#fields.errors('nuevoEmail')[0]}"></span>
+        <label for="password-correo">Contraseña actual</label>
+        <input id="password-correo" type="password" th:field="*{password}" th:errorclass="con-error" autocomplete="current-password">
+        <span class="error-campo" th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')[0]}"></span>
+        <button class="boton boton-secundario" type="submit">Enviar confirmación</button>
+    </form>
+
     <th:block th:unless="${usuario.creador}">
         <h2 id="mis-datos-csv">Descargar mis datos</h2>
         <p class="aviso">Cada cambio de tu saldo con su motivo, en un fichero CSV:
