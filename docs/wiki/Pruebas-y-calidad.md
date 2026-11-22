@@ -10,23 +10,26 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 
 | Paquete | Clases de prueba (número de pruebas) |
 |---|---|
-| `api` | FootballDataClienteTest (2), SincronizacionPlantillasTest (6), SincronizacionServiceTest (17), SincronizacionSinClaveTest (1) |
-| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CombinadaWebTest (11), ConcurrenciaSaldoTest (4), CorreoPremioWebTest (5), CorreoResumenTest (3), CorreoTrasGuardarTest (2), EliminarCuentaWebTest (6), EstadisticasCompeticionWebTest (1), EstadisticasTest (2), ExportacionWebTest (3), JuegoResponsableWebTest (10), LargoPlazoWebTest (15), LimitesWebTest (7), LogrosWebTest (2), ModificarImporteWebTest (8), MovimientosSaldoWebTest (4), NotificacionesWebTest (6), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), RankingPorJuegoWebTest (4), ResolucionWebTest (11), ResumenSemanalTest (1), RevisionFallosWebTest (23), RiesgoWebTest (5), SupercuotaWebTest (15) |
+| `anuncios` | AnuncioTest (7), AnunciosWebTest (10), ImpresionesYDestinosWebTest (6) |
+| `api` | FootballDataClienteTest (2), SincronizacionPlantillasTest (7), SincronizacionServiceTest (19), SincronizacionSinClaveTest (1) |
+| `apuesta` | ApuestaWebTest (10), CancelacionWebTest (3), CashOutYBloqueoLigaWebTest (19), CombinadaWebTest (11), ConcurrenciaSaldoTest (4), CorreoPremioWebTest (6), CorreoResumenTest (3), CorreoTrasGuardarTest (2), EliminarCuentaWebTest (6), EstadisticasCompeticionWebTest (1), EstadisticasTest (2), ExportacionWebTest (3), JuegoResponsableWebTest (10), LargoPlazoWebTest (15), LimitesWebTest (7), LogrosWebTest (2), ModificarImporteWebTest (8), MovimientosSaldoWebTest (6), NotificacionesWebTest (6), OtrasApuestasWebTest (9), PerfilJugadorWebTest (4), QuintaDepuracionApuestasTest (4), RankingPorJuegoWebTest (4), ResolucionWebTest (11), ResumenSemanalTest (3), RevisionFallosWebTest (23), RiesgoWebTest (5), SupercuotaWebTest (15) |
 | `apuestas` | ApuestasApplicationTests (2), InvariantesDineroTest (2) |
-| `config` | ContrasenasPruebaTest (1), DatosDemoTest (4), DatosInicialesTest (8), PasswordCreadorFijaTest (1), PasswordUsuarioFijaTest (1) |
+| `casino` | CasinoWebTest (26), ManoBaccaratTest (6), ManoBlackjackTest (10), RuletaTest (5) |
+| `config` | ActuatorWebTest (4), CabecerasSeguridadWebTest (4), ContrasenasPruebaTest (1), DatosDemoTest (4), DatosInicialesTest (8), IdPeticionTest (3), LimitePeticionesTest (6), PasswordCreadorFijaTest (1), PasswordUsuarioFijaTest (1) |
 | `cripto` | CoinGeckoClienteTest (2), CriptoWebTest (20), PosicionCriptoTest (4) |
-| `cuotas` | CalculadoraCuotasTest (12), EspecialTest (5), FormaYVolumenWebTest (4) |
+| `cuotas` | CalculadoraCuotasTest (19), EspecialTest (5), FormaYVolumenWebTest (4) |
 | `equipos` | AlineacionTest (5), EquipoTest (3), EquiposWebTest (4), PlantillaWebTest (8) |
-| `eventos` | BusquedaWebTest (5), CatalogoWebTest (5), EventoTest (2), FichaEquipoWebTest (10) |
+| `eventos` | BusquedaWebTest (5), CatalogoWebTest (5), EventoTest (15), FichaEquipoWebTest (10) |
+| `fantasy` | FantasyConcurrenteTest (1), FantasyWebTest (13) |
 | `gestion` | BeneficioDiarioWebTest (1), CasaWebTest (2), EditarEventoWebTest (11), GestionWebTest (15) |
-| `ligas` | LigasSinTransaccionTest (1), LigasWebTest (7), RetoSinTransaccionTest (1), RetoWebTest (15) |
+| `ligas` | BloqueoConcurrenteTest (1), LigasSinTransaccionTest (1), LigasWebTest (10), RetoSinTransaccionTest (1), RetoWebTest (15) |
 | `prediccion` | LmsrTest (6), PrediccionWebTest (16) |
-| `quiniela` | QuinielaWebTest (23) |
+| `quiniela` | QuinielaWebTest (25) |
 | `seguimiento` | EvolucionCuotaWebTest (2), SeguimientoWebTest (15) |
-| `usuarios` | CuentaWebTest (9), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), RankingWebTest (3), RecargaAlEntrarHandlerTest (1), RecuperacionWebTest (9), RegistroConcurrenteTest (1), SesionesWebTest (1), UsuarioTest (4), UsuariosWebTest (9) |
-| `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (7), CompresionTest (2), ConcurrenciaAdviceTest (2), FormatoTest (6), KeepAliveTest (3), PingSinBaseDeDatosTest (1), RendimientoWebTest (2), TemaWebTest (6) |
+| `usuarios` | CuentaWebTest (9), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), PerfilYMovimientosWebTest (2), RankingWebTest (3), RecargaAlEntrarHandlerTest (1), RecuperacionWebTest (9), RegistroConcurrenteTest (1), SesionesWebTest (1), UsuarioTest (14), UsuariosWebTest (9) |
+| `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (8), CompresionTest (2), ConcurrenciaAdviceTest (2), ConsultasWebTest (6), CsvTest (4), FormatoTest (13), KeepAliveTest (3), MonedasTest (3), PingSinBaseDeDatosTest (1), PlantillasSinScriptsTest (1), RendimientoWebTest (2), TemaWebTest (7) |
 
-**Total: 507 pruebas en 84 clases**, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra.
+**Total, a 22/11: 700 pruebas en 105 clases**, todas en verde con H2 y con PostgreSQL, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra. Esta es la cifra de referencia: el resto de la documentación enlaza aquí.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
@@ -41,7 +44,7 @@ Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al
 
 `./mvnw verify` mide qué parte del código recorren las pruebas con [JaCoCo](https://www.jacoco.org/) y deja el informe en `target/site/jacoco/index.html`, con el detalle de cada paquete, clase y línea. En la CI, el resumen sale en la página de cada ejecución del trabajo **build** y el informe completo se descarga como artefacto `cobertura-jacoco`.
 
-A 19/11: **93,8 % de las líneas, 77,5 % de las ramas** (cada `if` cuenta dos: cuando se cumple y cuando no) y 94,3 % de las instrucciones.
+A 22/11: **93,9 % de las líneas, 82,0 % de las ramas** (cada `if` cuenta dos: cuando se cumple y cuando no) y 94,5 % de las instrucciones.
 
 `./mvnw verify` falla si baja del **90 % de las líneas** o del **75 % de las ramas**, o si SpotBugs encuentra un error de prioridad alta ([decisión 0004](https://github.com/riverri/IS1/blob/main/docs/decisiones/0004-umbrales-de-calidad-en-la-ci.md)).
 
