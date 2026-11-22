@@ -58,8 +58,8 @@ public class EquipoFantasy {
     @Column(nullable = false)
     private LocalDateTime creado;
 
-    /** Todos los fichajes, también los ya vendidos (sus puntos siguen contando). */
-    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    /** Todos los fichajes, también los ya vendidos (sus puntos siguen contando); se cargan al abrir este equipo. */
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("desde asc, id asc")
     private List<FichajeFantasy> fichajes = new ArrayList<>();
 

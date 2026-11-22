@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -77,6 +78,8 @@ public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Lo
             """, nativeQuery = true)
     List<FilaClasificacion> clasificacionAgregada(@Param("emailActual") String emailActual);
 
+    /** Equipo Fantasy para su página, que muestra plantilla, fichajes y puntos; el ranking usa una agregación aparte. */
+    @EntityGraph(attributePaths = {"fichajes", "fichajes.jugador", "fichajes.club"})
     Optional<EquipoFantasy> findByUsuario(Usuario usuario);
 
     /**
@@ -87,4 +90,9 @@ public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Lo
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select e from EquipoFantasy e where e.usuario = :usuario")
     Optional<EquipoFantasy> paraCambiar(@Param("usuario") Usuario usuario);
+
+    /** Inicializa el historial solo después de bloquear la fila del equipo, sin ampliar el alcance del bloqueo. */
+    @EntityGraph(attributePaths = {"fichajes", "fichajes.jugador", "fichajes.club"})
+    @Query("select e from EquipoFantasy e where e.id = :id")
+    Optional<EquipoFantasy> conFichajes(@Param("id") Long id);
 }

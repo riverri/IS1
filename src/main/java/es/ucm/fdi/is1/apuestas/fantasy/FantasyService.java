@@ -172,6 +172,7 @@ public class FantasyService {
     /** El equipo del usuario, bloqueado para cambiarlo (ver {@link EquipoFantasyRepository#paraCambiar}). */
     private EquipoFantasy paraCambiar(String email) {
         return usuarios.findByEmail(email).flatMap(equipos::paraCambiar)
+                .flatMap(equipo -> equipos.conFichajes(equipo.getId()))
                 .orElseThrow(() -> new IllegalStateException("Primero crea tu equipo"));
     }
 
