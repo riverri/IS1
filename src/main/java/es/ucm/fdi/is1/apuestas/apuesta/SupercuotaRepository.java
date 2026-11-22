@@ -3,6 +3,8 @@ package es.ucm.fdi.is1.apuestas.apuesta;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph;
 
@@ -15,8 +17,9 @@ public interface SupercuotaRepository extends JpaRepository<Supercuota, Long> {
     @EntityGraph(attributePaths = {"evento.local", "evento.visitante", "evento.competicion"})
     List<Supercuota> findByEventoAndHastaAfter(Evento evento, LocalDateTime ahora);
 
+    /** Lote ordenado para portada; permite parar al reunir las seis ofertas visibles. */
     @EntityGraph(attributePaths = {"evento.local", "evento.visitante", "evento.competicion"})
-    List<Supercuota> findByHastaAfterOrderByHastaAsc(LocalDateTime ahora);
+    Slice<Supercuota> findByHastaAfterOrderByHastaAscIdAsc(LocalDateTime ahora, Pageable pageable);
 
     /** Supercuotas candidatas de varios eventos, para no consultar una por cada tarjeta del catálogo. */
     @EntityGraph(attributePaths = {"evento.local", "evento.visitante", "evento.competicion"})

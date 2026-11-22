@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,8 @@ public class SupercuotaService {
     /** Como mucho, el doble de la cuota normal: la casa no debe regalar el partido. */
     static final BigDecimal MEJORA_MAXIMA = new BigDecimal("2");
     static final int HORAS_MAXIMAS = 72;
+    private static final int SUPERCUOTAS_PORTADA = 6;
+    private static final int LOTE_SUPERCUOTAS_PORTADA = 20;
 
     private final SupercuotaRepository supercuotas;
     private final EventoRepository eventos;
@@ -130,11 +134,27 @@ public class SupercuotaService {
     @Transactional(readOnly = true)
     public List<Supercuota> vigentes() {
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        List<Supercuota> candidatas = supercuotas.findByHastaAfterOrderByHastaAsc(ahora).stream()
-                .filter(s -> s.isVigente(ahora)).toList();
-        Map<Long, Cuotas> normales = cuotasNormales(eventosUnicos(candidatas.stream()
-                .map(Supercuota::getEvento).toList()));
-        return candidatas.stream().filter(s -> mejora(s, normales.get(s.getEvento().getId()))).toList();
+        List<Supercuota> resultado = new java.util.ArrayList<>(SUPERCUOTAS_PORTADA);
+        int numeroPagina = 0;
+        while (resultado.size() < SUPERCUOTAS_PORTADA) {
+            Slice<Supercuota> lote = supercuotas.findByHastaAfterOrderByHastaAscIdAsc(ahora,
+                    PageRequest.of(numeroPagina++, LOTE_SUPERCUOTAS_PORTADA));
+            List<Supercuota> activas = lote.getContent().stream().filter(s -> s.isVigente(ahora)).toList();
+            Map<Long, Cuotas> normales = cuotasNormales(eventosUnicos(activas.stream()
+                    .map(Supercuota::getEvento).toList()));
+            for (Supercuota supercuota : activas) {
+                if (mejora(supercuota, normales.get(supercuota.getEvento().getId()))) {
+                    resultado.add(supercuota);
+                    if (resultado.size() == SUPERCUOTAS_PORTADA) {
+                        break;
+                    }
+                }
+            }
+            if (!lote.hasNext()) {
+                break;
+            }
+        }
+        return List.copyOf(resultado);
     }
 
     /** Las cuotas del evento tal como se enseñan: con la supercuota en su resultado, si la hay. */

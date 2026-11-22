@@ -51,7 +51,8 @@ public class InicioController {
     @GetMapping("/")
     public String inicio(Model model) {
         List<Evento> proximos = catalogo.proximos(6);
-        Evento destacado = catalogo.destacado();
+        Evento destacado = proximos.stream().filter(e -> e.getDeporte() == Deporte.FUTBOL).findFirst()
+                .orElseGet(catalogo::destacado);
         model.addAttribute("proximos", proximos);
         model.addAttribute("destacado", destacado);
         model.addAttribute("recuento", catalogo.recuentoPorDeporte());
