@@ -64,7 +64,7 @@ Los objetivos principales de este Sprint es terminar con las HU de las ampliacio
 
 > *Texto redactado por la IA (Claude) a partir de lo que pasó; el equipo puede personalizarlo.*
 
-**Mejorar: PR fusionados en desorden (21/11).** Quedaban cinco PR de código listos: el arreglo del cash-out (#138), la liga fantasy (#133, migración V27), la vuelta del casino (#125), el baccarat (#132, migración V26) y los anuncios y movimientos (#131). El orden previsto era casino → baccarat → fantasy, pero se fusionaron en media hora y en otro orden:
+**Mejorar: PR fusionados en desorden (21/11).** Quedaban cinco PR de código listos: el arreglo del cash-out (#138), la liga fantasy (#133, migración V27), la vuelta del casino (#125), el baccarat (#132, migración V26) y los anuncios y movimientos (#131). El orden previsto era casino → baccarat → fantasy, pero se fusionaron en otro orden debido a un despiste por pate de uno de los miembros :
 
 1. **Migraciones fuera de orden.** La fantasy (V27) entró antes que el baccarat (V26). Flyway no aplica una migración con número menor que la última que ya tiene la base de datos, así que al fusionar el baccarat la base de datos de Render no habría arrancado.
 2. **PR apilado fusionado en la rama equivocada.** El baccarat se hizo encima de la rama del casino porque lo necesita, así que su PR apuntaba a `codigo/vuelve-casino` y no a `main`. Se fusionó 21 segundos después que el casino, antes de que GitHub cambiara su base a `main`. El baccarat acabó en la rama del casino, que ya estaba fusionada, y `main` se quedó sin él, aunque GitHub mostraba el PR como fusionado.
