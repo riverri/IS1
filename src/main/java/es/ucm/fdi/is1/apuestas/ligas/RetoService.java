@@ -69,7 +69,7 @@ public class RetoService {
         if (retado == null || retado.getId().equals(retador.getId()) || retado.isEliminado()) {
             throw new IllegalArgumentException("Elige a un compañero de liga");
         }
-        if (ligas.deMiembro(retador).stream().noneMatch(l -> l.esMiembro(retado))) {
+        if (!ligas.compartenLiga(retador, retado)) {
             throw new IllegalArgumentException("Solo puedes retar a alguien de tus ligas");
         }
         Evento evento = eventoId == null ? null : eventos.paraApostar(eventoId).orElse(null);
@@ -265,7 +265,7 @@ public class RetoService {
             }
             for (Reto reto : retos.deUsuario(usuario)) {
                 if (reto.getEstado() != EstadoReto.PENDIENTE
-                        || ligas.deMiembro(reto.getRetador()).stream().anyMatch(l -> l.esMiembro(reto.getRetado()))) {
+                        || ligas.compartenLiga(reto.getRetador(), reto.getRetado())) {
                     continue;
                 }
                 reto.getRetador().abonar(reto.getImporte(), TipoMovimiento.RETO_DEVOLUCION,
