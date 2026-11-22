@@ -229,7 +229,8 @@ class FantasyWebTest {
 
         // Luis (portero del Getafe que gana 3-1): 3; Ana (delantero del Sevilla que pierde, 1 gol): 2
         List<PuestoFantasy> clasificacion = fantasy.clasificacion(ANA);
-        assertThat(clasificacion).extracting(p -> p.equipo().getNombre()).containsExactly("Luis FC", "Los del Aula 3");
+        assertThat(clasificacion).extracting(FantasyService.PuestoFantasy::nombreEquipo)
+                .containsExactly("Luis FC", "Los del Aula 3");
         assertThat(clasificacion).extracting(PuestoFantasy::puntos).containsExactly(3, 2);
         assertThat(clasificacion.get(1).mio()).isTrue();
         mvc.perform(get("/fantasy").with(COMO_ANA)).andExpect(content().string(containsString("Luis FC")));
@@ -308,7 +309,8 @@ class FantasyWebTest {
         fantasy.crear(ANA, "Los del Aula 3");
         fantasy.crear(LUIS, "Luis FC");
         bajas.eliminarCuenta(LUIS, "secreta123");
-        assertThat(fantasy.clasificacion(ANA)).extracting(p -> p.equipo().getNombre()).containsExactly("Los del Aula 3");
+        assertThat(fantasy.clasificacion(ANA)).extracting(FantasyService.PuestoFantasy::nombreEquipo)
+                .containsExactly("Los del Aula 3");
     }
 
     @Test

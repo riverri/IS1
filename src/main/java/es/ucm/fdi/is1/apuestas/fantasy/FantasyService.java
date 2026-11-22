@@ -5,7 +5,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,7 @@ public class FantasyService {
     }
 
     /** Una fila de la clasificación. */
-    public record PuestoFantasy(int puesto, EquipoFantasy equipo, int puntos, boolean mio) {
+    public record PuestoFantasy(int puesto, String nombreEquipo, String nombreUsuario, int puntos, boolean mio) {
     }
 
     @Transactional(readOnly = true)
@@ -211,22 +210,11 @@ public class FantasyService {
      */
     @Transactional(readOnly = true)
     public List<PuestoFantasy> clasificacion(String emailActual) {
-        Map<Long, List<Evento>> partidosPorClub = new HashMap<>();
-        record Fila(EquipoFantasy equipo, int puntos) {
-        }
-        List<Fila> filas = new ArrayList<>();
-        // Las cuentas eliminadas no salen, como en el resto de clasificaciones (HU-18)
-        for (EquipoFantasy equipo : equipos.findAll().stream().filter(e -> !e.getUsuario().isEliminado()).toList()) {
-            int total = puntos(equipo, partidosPorClub).stream().mapToInt(PuntosFichaje::getTotal).sum();
-            filas.add(new Fila(equipo, total));
-        }
-        filas.sort(Comparator.comparingInt(Fila::puntos).reversed()
-                .thenComparing(f -> f.equipo().getCreado()).thenComparing(f -> f.equipo().getId()));
+        List<EquipoFantasyRepository.FilaClasificacion> filas = equipos.clasificacionAgregada(emailActual);
         List<PuestoFantasy> puestos = new ArrayList<>();
-        for (int i = 0; i < filas.size(); i++) {
-            EquipoFantasy equipo = filas.get(i).equipo();
-            puestos.add(new PuestoFantasy(i + 1, equipo, filas.get(i).puntos(),
-                    equipo.getUsuario().getEmail().equals(emailActual)));
+        for (EquipoFantasyRepository.FilaClasificacion fila : filas) {
+            puestos.add(new PuestoFantasy(fila.getPuesto(), fila.getNombreEquipo(), fila.getNombreUsuario(),
+                    fila.getPuntos(), fila.getEmail().equals(emailActual)));
         }
         return puestos;
     }
