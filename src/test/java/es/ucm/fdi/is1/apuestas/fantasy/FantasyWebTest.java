@@ -114,6 +114,22 @@ class FantasyWebTest {
         return jugadores.save(jugador);
     }
 
+    @Test
+    void elMercadoFantasySePaginaAntesDeCargarLosJugadores() {
+        for (int i = 0; i < 51; i++) {
+            jugador(getafe, "Mercado paginado " + i, Posicion.CENTROCAMPISTA, 6);
+        }
+
+        FantasyService.PaginaMercado primera = fantasy.paginaMercado(null, getafe.getId(), 0);
+        FantasyService.PaginaMercado segunda = fantasy.paginaMercado(null, getafe.getId(), 1);
+
+        assertThat(primera.jugadores()).hasSize(50);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.jugadores()).isNotEmpty();
+        assertThat(EquipoFantasy.precio(primera.jugadores().getLast()))
+                .isGreaterThanOrEqualTo(EquipoFantasy.precio(segunda.jugadores().getFirst()));
+    }
+
     private Evento partido(Equipo local, Equipo visitante, long horas) {
         return partidoEl(local, visitante, Hora.ahora().plusHours(horas));
     }

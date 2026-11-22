@@ -74,15 +74,17 @@ public class FantasyController {
     /** GET /fantasy/mercado: los futbolistas que se pueden fichar, con filtros por posición y club. */
     @GetMapping("/fantasy/mercado")
     public String mercado(@RequestParam(required = false) Posicion posicion, @RequestParam(required = false) Long club,
-                          Principal principal, Model model) {
+                          @RequestParam(defaultValue = "0") int pagina, Principal principal, Model model) {
         Optional<EquipoFantasy> equipo = fantasy.equipoDe(principal.getName());
         if (equipo.isEmpty()) {
             return "redirect:/fantasy";
         }
         model.addAttribute("equipo", equipo.get());
         model.addAttribute("jornada", fantasy.jornada());
-        model.addAttribute("ofertas", fantasy.mercado(posicion, club).stream()
+        var resultado = fantasy.paginaMercado(posicion, club, pagina);
+        model.addAttribute("ofertas", resultado.jugadores().stream()
                 .map(j -> new Oferta(j, EquipoFantasy.precio(j), equipo.get().motivoParaNoFichar(j))).toList());
+        model.addAttribute("pagina", resultado);
         model.addAttribute("posiciones", Posicion.values());
         model.addAttribute("clubes", fantasy.clubes());
         model.addAttribute("posicion", posicion);
@@ -108,7 +110,8 @@ public class FantasyController {
     /** POST /fantasy/fichar: vuelve al mercado con los mismos filtros, o a mi equipo si ya está completo. */
     @PostMapping("/fantasy/fichar")
     public String fichar(@RequestParam Long jugador, @RequestParam(required = false) Posicion posicion,
-                         @RequestParam(required = false) Long club, Principal principal,
+                         @RequestParam(required = false) Long club,
+                         @RequestParam(defaultValue = "0") int pagina, Principal principal,
                          RedirectAttributes redireccion) {
         try {
             FichajeFantasy fichaje = fantasy.fichar(principal.getName(), jugador);
@@ -127,6 +130,9 @@ public class FantasyController {
         }
         if (club != null) {
             redireccion.addAttribute("club", club);
+        }
+        if (pagina > 0) {
+            redireccion.addAttribute("pagina", pagina);
         }
         return "redirect:/fantasy/mercado";
     }
