@@ -11,11 +11,16 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 import es.ucm.fdi.is1.apuestas.Hora;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
@@ -44,6 +49,12 @@ class FichaEquipoWebTest {
 
     @Autowired
     private EquipoRepository equipos;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     private Competicion laLiga;
     private Equipo getafe;
@@ -94,6 +105,23 @@ class FichaEquipoWebTest {
                 .filter(p -> p.competicion().getNombre().equals("LaLiga")).findFirst().orElseThrow();
         assertThat(puesto.posicion()).isEqualTo(2);
         assertThat(puesto.participantes()).isEqualTo(3);
+    }
+
+    @Test
+    void laClasificacionAgregaElHistorialSinCargarTodosLosPartidos() {
+        for (int i = 0; i < 120; i++) {
+            jugado(getafe, sevilla, Hora.ahora().minusDays(120 - i), Resultado.LOCAL);
+        }
+        entityManager.flush();
+        entityManager.clear();
+        Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.clear();
+
+        FichaEquipo ficha = fichas.ficha(getafe.getId());
+
+        long eventosCargados = statistics.getEntityStatistics(Evento.class.getName()).getLoadCount();
+        assertThat(ficha.balance().victorias()).isEqualTo(121);
+        assertThat(eventosCargados).isLessThanOrEqualTo(FichaEquipoService.GRAFICO);
     }
 
     @Test

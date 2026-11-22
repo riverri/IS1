@@ -2,12 +2,9 @@ package es.ucm.fdi.is1.apuestas.eventos;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -80,11 +77,12 @@ public class FichaEquipoService {
         // Un puesto por competición; se omiten aquellas en las que aún no ha jugado
         List<Competicion> competiciones = equipo.getCompeticiones().stream()
                 .sorted(Comparator.comparing(Competicion::getNombre)).toList();
-        Map<Long, List<Evento>> partidosPorCompeticion = competiciones.isEmpty() ? Map.of()
-                : eventos.findByCompeticionInAndEstadoOrderByFechaHoraAsc(competiciones, EstadoEvento.FINALIZADO)
-                        .stream().collect(Collectors.groupingBy(e -> e.getCompeticion().getId()));
+        Map<Long, List<EventoRepository.FilaClasificacion>> clasificacionPorCompeticion = competiciones.isEmpty()
+                ? Map.of()
+                : eventos.clasificacionesAgregadas(competiciones.stream().map(Competicion::getId).toList()).stream()
+                        .collect(Collectors.groupingBy(EventoRepository.FilaClasificacion::getCompeticionId));
         List<FichaEquipo.Puesto> clasificaciones = competiciones.stream()
-                .map(c -> puesto(c, equipo, partidosPorCompeticion.getOrDefault(c.getId(), List.of())))
+                .map(c -> puesto(c, equipo, clasificacionPorCompeticion.getOrDefault(c.getId(), List.of())))
                 .filter(p -> p != null)
                 .toList();
         // El gráfico necesita los partidos en orden cronológico: se invierte la lista
@@ -125,36 +123,30 @@ public class FichaEquipoService {
      * Clasificación de la competición con los partidos finalizados: 3 puntos por victoria y 1 por empate;
      * a igualdad de puntos, más victorias. Null si el equipo aún no ha jugado en ella.
      */
-    private FichaEquipo.Puesto puesto(Competicion competicion, Equipo equipo, List<Evento> partidos) {
-        // Resultados de cada participante, por id de equipo
-        Map<Long, List<ResultadoEquipo>> porEquipo = new HashMap<>();
-        Map<Long, String> nombres = new HashMap<>();
-        for (Evento evento : partidos) {
-            for (Equipo participante : List.of(evento.getLocal(), evento.getVisitante())) {
-                porEquipo.computeIfAbsent(participante.getId(), id -> new ArrayList<>())
-                        .add(ResultadoEquipo.de(evento, participante));
-                nombres.put(participante.getId(), participante.getNombre());
+    private FichaEquipo.Puesto puesto(Competicion competicion, Equipo equipo,
+                                     List<EventoRepository.FilaClasificacion> filas) {
+        List<Map.Entry<EventoRepository.FilaClasificacion, Balance>> tabla = filas.stream()
+                .map(fila -> Map.entry(fila, new Balance(Math.toIntExact(fila.getVictorias()),
+                        Math.toIntExact(fila.getEmpates()), Math.toIntExact(fila.getDerrotas()))))
+                .sorted(Comparator.<Map.Entry<EventoRepository.FilaClasificacion, Balance>>
+                                comparingInt(fila -> fila.getValue().puntos()).reversed()
+                        .thenComparing(Comparator.<Map.Entry<EventoRepository.FilaClasificacion, Balance>>
+                                comparingInt(fila -> fila.getValue().victorias()).reversed())
+                        .thenComparing(fila -> fila.getKey().getNombre()))
+                .toList();
+        int puesto = -1;
+        Balance balanceEquipo = null;
+        for (int i = 0; i < tabla.size(); i++) {
+            Map.Entry<EventoRepository.FilaClasificacion, Balance> fila = tabla.get(i);
+            if (fila.getKey().getEquipoId().equals(equipo.getId())) {
+                puesto = i + 1;
+                balanceEquipo = fila.getValue();
+                break;
             }
         }
-        if (!porEquipo.containsKey(equipo.getId())) {
+        if (puesto < 0) {
             return null;
         }
-        // Orden de la tabla: más puntos, después más victorias y, por último, nombre (orden estable).
-        // Entry es una pareja clave-valor del mapa (id del equipo, su balance). Comparator.<Entry<Long, Balance>>
-        // indica a Java el tipo de los elementos, que no sabe deducir solo en una cadena tan larga
-        List<Entry<Long, Balance>> tabla = porEquipo.entrySet().stream()
-                .map(e -> Map.entry(e.getKey(), Balance.de(e.getValue())))
-                .sorted(Comparator.<Entry<Long, Balance>>comparingInt(e -> e.getValue().puntos()).reversed()
-                        .thenComparing(Comparator.<Entry<Long, Balance>>comparingInt(e -> e.getValue().victorias())
-                                .reversed())
-                        .thenComparing(e -> nombres.get(e.getKey())))
-                .toList();
-        // La posición es el índice en la tabla más uno
-        for (int i = 0; i < tabla.size(); i++) {
-            if (tabla.get(i).getKey().equals(equipo.getId())) {
-                return new FichaEquipo.Puesto(competicion, i + 1, tabla.size(), tabla.get(i).getValue());
-            }
-        }
-        return null;
+        return new FichaEquipo.Puesto(competicion, puesto, tabla.size(), balanceEquipo);
     }
 }

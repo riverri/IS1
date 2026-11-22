@@ -137,10 +137,46 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
             """)
     List<Evento> proximosDe(Equipo equipo, EstadoEvento estado, LocalDateTime fecha, Pageable pageable);
 
-    /** Un solo lote de partidos para calcular las tablas de todas las competiciones de la ficha. */
-    @EntityGraph(attributePaths = {"competicion", "local", "visitante"})
-    List<Evento> findByCompeticionInAndEstadoOrderByFechaHoraAsc(List<Competicion> competiciones,
-                                                                 EstadoEvento estado);
+    /** Aggregate standings for all requested competitions without loading each finished event. */
+    interface FilaClasificacion {
+        Long getCompeticionId();
+
+        Long getEquipoId();
+
+        String getNombre();
+
+        Long getVictorias();
+
+        Long getEmpates();
+
+        Long getDerrotas();
+    }
+
+    @Query(value = """
+            select partidos.competicion_id as competicionId, partidos.equipo_id as equipoId,
+                   equipo.nombre as nombre,
+                   cast(sum(partidos.victoria) as bigint) as victorias,
+                   cast(sum(partidos.empate) as bigint) as empates,
+                   cast(sum(partidos.derrota) as bigint) as derrotas
+            from (
+                select competicion_id, local_id as equipo_id,
+                       case when resultado = 'LOCAL' then 1 else 0 end as victoria,
+                       case when resultado = 'EMPATE' then 1 else 0 end as empate,
+                       case when resultado = 'VISITANTE' then 1 else 0 end as derrota
+                from evento
+                where estado = 'FINALIZADO' and competicion_id in (:competicionIds)
+                union all
+                select competicion_id, visitante_id as equipo_id,
+                       case when resultado = 'VISITANTE' then 1 else 0 end as victoria,
+                       case when resultado = 'EMPATE' then 1 else 0 end as empate,
+                       case when resultado = 'LOCAL' then 1 else 0 end as derrota
+                from evento
+                where estado = 'FINALIZADO' and competicion_id in (:competicionIds)
+            ) partidos
+            join equipo on equipo.id = partidos.equipo_id
+            group by partidos.competicion_id, partidos.equipo_id, equipo.nombre
+            """, nativeQuery = true)
+    List<FilaClasificacion> clasificacionesAgregadas(@Param("competicionIds") List<Long> competicionIds);
 
     /** Balance histórico agregado para una ficha, sin hidratar todos los eventos finalizados. */
     @Query("""
