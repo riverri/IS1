@@ -30,6 +30,7 @@ import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
 import es.ucm.fdi.is1.apuestas.equipos.EquiposService;
+import es.ucm.fdi.is1.apuestas.quiniela.QuinielaService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
@@ -64,6 +65,7 @@ class ConsultasWebTest {
     @Autowired private CompeticionRepository competiciones;
     @Autowired private EquipoRepository equipos;
     @Autowired private EquiposService listadoEquipos;
+    @Autowired private QuinielaService quinielas;
 
     private final List<Evento> creados = new ArrayList<>();
 
@@ -119,6 +121,15 @@ class ConsultasWebTest {
     }
 
     @Test
+    void laPortadaMantieneLasConsultasAlAumentarLosEventos() throws Exception {
+        crearPartidos(2);
+        long conPocos = consultas(get("/"));
+        crearPartidos(20);
+        long conMuchos = consultas(get("/"));
+        sinConsultaPorFila(conPocos, conMuchos, "portada");
+    }
+
+    @Test
     void elCatalogoPaginaYFiltraEnBaseDeDatosYConservaBusquedaSinTildes() {
         crearPartidos(55);
         var primera = catalogo.buscar(null, "Local consultas", 0);
@@ -153,6 +164,37 @@ class ConsultasWebTest {
         assertThat(primera.siguiente()).isTrue();
         assertThat(segunda.equipos().values().stream().mapToInt(List::size).sum()).isEqualTo(5);
         assertThat(segunda.siguiente()).isFalse();
+    }
+
+    @Test
+    void elListadoDeEquiposMantieneLasConsultasAlCrecer() throws Exception {
+        long conPocos = consultas(get("/equipos"));
+        for (int i = 0; i < 60; i++) {
+            equipos.save(new Equipo("Equipos medidos " + i,
+                    es.ucm.fdi.is1.apuestas.equipos.Deporte.FUTBOL, 5.0));
+        }
+        long conMuchos = consultas(get("/equipos"));
+        sinConsultaPorFila(conPocos, conMuchos, "listado de equipos");
+    }
+
+    private void crearQuinielas(int desde, int cuantas) {
+        int inicio = creados.size();
+        crearPartidos(cuantas * 3);
+        for (int i = 0; i < cuantas; i++) {
+            int primerEvento = inicio + i * 3;
+            quinielas.crear("Quiniela medida " + desde + "-" + i, BigDecimal.ONE,
+                    List.of(creados.get(primerEvento).getId(), creados.get(primerEvento + 1).getId(),
+                            creados.get(primerEvento + 2).getId()));
+        }
+    }
+
+    @Test
+    void laListaDeQuinielasNoConsultaLosBoletosUnaVezPorFila() throws Exception {
+        crearQuinielas(0, 2);
+        long conPocas = consultas(get("/quinielas"));
+        crearQuinielas(2, 10);
+        long conMuchas = consultas(get("/quinielas"));
+        sinConsultaPorFila(conPocas, conMuchas, "quinielas");
     }
 
     @Test
