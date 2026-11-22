@@ -176,21 +176,22 @@ Con `DEMO_DATOS=true`, al arrancar se cargan una sola vez seis jugadores de ejem
 | `/notificaciones` | Avisos cuando se gana, se pierde o se anula una apuesta (campana en la cabecera) | HU-37 |
 | `/ranking` | Ranking de jugadores por saldo, ganancias o % de aciertos, con tu posición destacada; también por tipo de juego (deportes, predicciones, cripto, memecoins y quiniela) | HU-36, HU-84 |
 | `/jugadores/{id}` | Perfil público de un jugador: puesto, saldo, aciertos y balance, sin sus apuestas; y sus logros | HU-48, HU-88 |
-| `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros; retos 1 contra 1 entre sus miembros | HU-51, HU-89 |
+| `/ligas` | Ligas privadas: crear una, unirse con su código y ver su ranking solo entre sus miembros; retos 1 contra 1 y bloqueos entre sus miembros; ranking de ligas, las mías y las públicas (`/ligas/clasificacion`) | HU-51, HU-89, HU-105 a HU-107, HU-111 a HU-113 |
 | `/registro`, `/login` | Registro e inicio de sesión (contraseñas cifradas con BCrypt) | HU-11, HU-12 |
 | `/recuperar` | Recuperar la contraseña con un enlace por correo que caduca a los 30 minutos y solo sirve una vez | HU-17 |
 | `/cuenta` | Saldo de moneditas, próxima recarga gratuita, cambio de nombre y contraseña, juego responsable (límites y pausa) y eliminar la cuenta; correo al ganar y resumen semanal (activar o desactivar) y descargar los movimientos en CSV | HU-10, HU-13, HU-14, HU-18, HU-47, HU-77, HU-92, HU-114 |
-| `/cuenta/movimientos` | *(Pendiente de subir)* Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
+| `/cuenta/movimientos` | Movimientos del saldo: cada entrada y salida de moneditas con su motivo y el saldo que dejó | HU-55 |
 | `/gestion` | Panel del creador: alta de competiciones, equipos y eventos; calificación, forma, escudo y jugadores de cada equipo (con su nota); límites de apuesta; activar o desactivar el juego responsable | HU-01, HU-02, HU-07, HU-10 |
 | `/gestion/casa` | Cuentas de la casa: apostado, pagado, beneficio y margen real frente al teórico, por tipo de apuesta y por deporte; beneficio de cada uno de los últimos 30 días | HU-53, HU-95 |
-| `/gestion/anuncios` | *(Pendiente de subir)* Anuncios internos: alta, edición, activar o desactivar, con sus impresiones, clics y porcentaje de clics | HU-61, HU-62 |
-| `/anuncios/{id}/ir` | *(Pendiente de subir)* Clic en un anuncio: lo apunta y lleva a su sección (lo pintan las páginas debajo de la cabecera) | HU-60, HU-62 |
-| `/casino` | *(Pendiente de subir)* Casino con moneditas: ruleta europea (`/casino/ruleta`), blackjack (`/casino/blackjack`) y mis partidas (`/casino/historial`) | HU-56, HU-57, HU-58 |
-| `/gestion/casino` | *(Pendiente de subir)* Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
+| `/gestion/anuncios` | Anuncios internos: alta, edición, activar o desactivar, con sus impresiones, clics y porcentaje de clics | HU-61, HU-62 |
+| `/anuncios/{id}/ir` | Clic en un anuncio: lo apunta y lleva a su sección (lo pintan las páginas debajo de la cabecera) | HU-60, HU-62 |
+| `/casino` | Casino con moneditas: ruleta europea (`/casino/ruleta`), blackjack (`/casino/blackjack`), baccarat (`/casino/baccarat`) y mis partidas (`/casino/historial`) | HU-56, HU-57, HU-58, HU-74 |
+| `/gestion/casino` | Configuración del casino: abrirlo o cerrarlo, límites por apuesta y reglas del blackjack, con la ventaja de la casa | HU-59 |
 | `/predicciones` | Mercados de predicción de sí o no: precio de 0 a 1, comprar y vender participaciones, estadísticas, gráfico y posiciones de los compañeros de liga (`/predicciones/{id}`) | HU-64 a HU-68 |
 | `/gestion/predicciones` | Crear, cerrar, anular y resolver los mercados de predicción | HU-63, HU-66 |
 | `/cripto` | Criptomonedas a su precio real en euros (CoinGecko), memecoins primero; comprar y vender con moneditas y gráfico de la semana (`/cripto/{símbolo}`), y mi cartera (`/cripto/cartera`) | HU-69 a HU-72 |
 | `/gestion/cripto` | Abrir o cerrar las criptomonedas, comisión, validez de los precios, qué criptos se ofrecen y descargar los precios en el momento | HU-73 |
+| `/fantasy` | Liga fantasy: mi equipo de siete futbolistas, sus puntos, el mercado de fichajes (`/fantasy/mercado`) y la clasificación | HU-81 a HU-83 |
 | `/quinielas` | Quinielas de 3 a 15 partidos: echar un boleto con 1, X o 2 en cada uno y, al terminar, el reparto del bote | HU-79, HU-80 |
 | `/gestion/quinielas` | Montar quinielas, repartir el bote entre los que más aciertan y anularlas | HU-78, HU-80 |
 | `/tema` | Cambia entre los colores claros y el modo oscuro (la luna o el sol de la cabecera) | HU-94 |

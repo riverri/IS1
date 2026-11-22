@@ -6,22 +6,24 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 - **Automática:** hay al menos una prueba que lo comprueba.
 - **Manual:** se comprueba a mano porque depende del navegador (JavaScript o diseño en el móvil).
 - **Sin prueba:** está hecho, pero falta una prueba automática.
+- **No hecho:** el criterio no se cumple en `main` (la nota de su historia dice qué falta).
 
 ## Resumen
 
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
 | 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 35 integradas (HU-63 a HU-73, HU-75 a HU-80, HU-84 a HU-92, HU-94 a HU-101 y HU-114) | 92 | 92 (100 %) | 0 | 0 |
+| 56 integradas (HU-55 a HU-92, HU-94 a HU-107 y HU-111 a HU-114) | 161 | 153 (95 %) | 0 | 6 (y 2 sin hacer, de HU-107) |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
+- HU-93 (publicidad de Better en webs externas) aún no está hecha, y HU-108 a HU-110 (clasificación de una liga) son propuestas: casi todo lo que piden ya lo da el ranking de cada liga (HU-51).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4, y HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial; antes HU-93), del Sprint 5, con sus 92 criterios cubiertos por pruebas automáticas. Pasarán a hechas cuando el Product Owner las acepte en la review de su sprint.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4. Del Sprint 5: HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial); HU-102 a HU-107 (cash-out de combinadas y bloqueos de liga) y HU-111 a HU-113 (ranking de ligas públicas) el 20/11, y HU-55 (movimientos del saldo), HU-56 a HU-59 y HU-74 (casino), HU-60 a HU-62 (anuncios internos) y HU-81 a HU-83 (liga fantasy) el 21/11. HU-107 está hecha en parte. Les falta que el Product Owner las acepte en la review de su sprint.
 
-**Pendientes de subir:** HU-55 (movimientos del saldo) y HU-60 a HU-62 (anuncios internos). Su código se quitó de `main` el 06/11 para subirlo más adelante, junto con las pruebas que se citan abajo (de HU-55 siguen en `main` las del libro de movimientos interno).
+**Sin prueba automática:** CA-105.2, CA-105.5, CA-106.3, CA-111.4, CA-112.2 y CA-113.5. Están en el código; falta su prueba.
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -490,6 +492,15 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-73.2 | Una cripto retirada no se compra, pero se puede vender | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.unaCriptoRetiradaNoSeCompraPeroQuienLaTieneLaPuedeVender` |
 | CA-73.3 | Los precios se descargan en el momento y se avisa si CoinGecko falla | Automática | [`CriptoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/cripto/CriptoWebTest.java)`.elCreadorConfiguraRetiraYActualizaDesdeGestion` |
 
+## HU-74 · Baccarat
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-74.1 | Se cobra el importe, se reparte solo y se paga Jugador 1 a 1, Banca 1 a 1 menos el 5 % y Empate 8 a 1; la mano queda en el historial | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.unaManoDeBaccaratSeCobraSePagaYQuedaGuardada`, `.unDobleClicAlRepartirOEnElBaccaratTampocoCobraDosVeces`; [`ManoBaccaratTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBaccaratTest.java)`.conEmpateSeDevuelveLaApuestaAJugadorYABanca`, `.laCasaGanaALaLarga` |
+| CA-74.2 | Sin elegir a qué se apuesta no se reparte ni se cobra | Automática | [`CasinoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/CasinoWebTest.java)`.elBaccaratPideElegirApuestaYNoCobraSinElla` |
+| CA-74.3 | Con empate se devuelve lo apostado a Jugador o a Banca | Automática | [`ManoBaccaratTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBaccaratTest.java)`.conEmpateSeDevuelveLaApuestaAJugadorYABanca` |
+| CA-74.4 | Reglas del Punto Banco: figuras y dieces valen 0, con 8 o 9 nadie pide, el jugador pide con 5 o menos y la banca sigue la tabla de la tercera carta | Automática | [`ManoBaccaratTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/casino/ManoBaccaratTest.java)`.lasFigurasValenCeroYSoloCuentanLasUnidades`, `.conUnNaturalNadiePideMas`, `.elJugadorPideConCincoOMenosYSePlantaConSeisOSiete`, `.tablaDeLaTerceraCartaDeLaBanca` |
+
 ## HU-75 · Cobrar antes de tiempo (cash-out)
 
 | ID | Criterio de aceptación | Estado | Pruebas |
@@ -537,6 +548,32 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-80.1 | El bote menos el 10 % se reparte entre los que más aciertan y todos reciben aviso | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.elBoteSeRepartePorIgualEntreLosQueMasAciertanYTodosRecibenAviso` |
 | CA-80.2 | Un partido anulado cuenta como acierto para todos | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.unPartidoAnuladoCuentaComoAciertoParaTodos` |
 | CA-80.3 | Si nadie acierta ninguno o se anula, se devuelve el precio | Automática | [`QuinielaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/quiniela/QuinielaWebTest.java)`.siNadieAciertaNingunoSeDevuelveTodo`, `.alAnularlaAntesDeRepartirSeDevuelveElPrecio` |
+
+## HU-81 · Crear un equipo fantasy y fichar
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-81.1 | Sin equipo se pide crearlo; después se ficha con 90 millones ficticios | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.creaSuEquipoYFichaConElPresupuesto`, `.sinEquipoElMercadoLlevaACrearloYElCreadorNoJuega` |
+| CA-81.2 | Solo se ficha con hueco en la posición, como mucho 2 del mismo club y sin pasar del presupuesto; el mercado filtra por posición y dice por qué no se puede | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.respetaLaFormacionElMaximoPorClubYElPresupuesto`, `.elMercadoFiltraPorPosicionYDiceQuienNoSePuedeFichar`; [`FantasyConcurrenteTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyConcurrenteTest.java)`.elMismoJugadorALaVezSeFichaUnaSolaVez` |
+| CA-81.3 | El creador de apuestas no puede crear un equipo | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.sinEquipoElMercadoLlevaACrearloYElCreadorNoJuega` |
+
+## HU-82 · Puntos de los jugadores fantasy
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-82.1 | Solo cuentan los partidos que empiezan después de ficharlo; lo que sumó se queda al venderlo | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.soloCuentanLosPartidosDespuesDeFicharYLoVendidoSeQueda`, `.unTraspasoNoCambiaLoQueYaSumoNiDesdeQueClubPuntua`, `.borrarUnJugadorNoBorraSusPuntosYSePuedeVenderSuFichaje` |
+| CA-82.2 | Puntos por victoria, empate, portería a cero, goles y goles encajados | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.soloCuentanLosPartidosDespuesDeFicharYLoVendidoSeQueda`, `.laClasificacionVaDeMasAMenosPuntos`, `.conLaJornadaEmpezadaLoQueSeFichaSumaDesdeElLunes`, `.unHuecoNoSumaDosPartidosDeLaMismaJornada` |
+| CA-82.3 | Con la jornada empezada, el cambio cuenta desde la jornada siguiente | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.conLaJornadaEmpezadaLoQueSeFichaSumaDesdeElLunes`, `.unHuecoNoSumaDosPartidosDeLaMismaJornada`, `.laPaginaAvisaDeQueLaJornadaHaEmpezado` |
+
+CA-82.2: las pruebas comprueban los puntos del portero y del delantero; los del defensa y el centrocampista y el caso sin marcador no tienen prueba propia.
+
+## HU-83 · Clasificación fantasy
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-83.1 | Los equipos salen de más a menos puntos; con los mismos puntos, antes el que se creó antes | Automática | [`FantasyWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/fantasy/FantasyWebTest.java)`.laClasificacionVaDeMasAMenosPuntos`, `.lasCuentasEliminadasNoSalenEnLaClasificacion` |
+
+CA-83.1: el desempate por fecha de creación y la corrección de la clasificación al corregir un resultado no tienen prueba propia.
 
 ## HU-84 · Ranking por tipo de juego
 
@@ -666,6 +703,103 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 |---|---|---|---|
 | CA-101.1 | Con «reducir movimiento», sin animaciones | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.conReducirMovimientoNoHayAnimaciones` |
 | CA-101.2 | Nada parpadea ni se mueve solo | Automática | [`AccesibilidadCssTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/AccesibilidadCssTest.java)`.ningunaAnimacionSeRepiteSinFin` |
+
+## HU-102 · Ver la oferta de cash-out de una combinada
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-102.1 | Una combinada activa con todos sus partidos por empezar tiene una sola oferta, de la apuesta entera | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.muestraOfertaDeCashOutParaLaCombinadaCompleta` |
+| CA-102.2 | La oferta es importe × producto(cuota aceptada / cuota actual), redondeada y sin pasar de la ganancia potencial | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.siOtrosJugadoresBajanLaCuotaLaOfertaSubeDeLoApostado`, `.inflarLaCuotaAntesDeApostarYCancelarNoDaDinero` |
+| CA-102.3 | Recién hecha y sin cambios de cuota, la oferta es lo apostado | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.muestraOfertaDeCashOutParaLaCombinadaCompleta`, `.bajarLaCuotaConOtraApuestaPropiaYCancelarlaNoDaDinero` |
+| CA-102.4 | Si un partido ha empezado, se ha suspendido o se ha anulado, no se ofrece cobrar | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.siUnPartidoSeSuspendeOSeAnulaNoSeOfreceCobrar` |
+
+CA-102.2: el tope de la ganancia potencial no tiene prueba propia. CA-102.4: se prueban la suspensión y la anulación, no un partido ya empezado.
+
+## HU-103 · Confirmar el cash-out de toda la combinada
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-103.1 | Al pulsar «Cobrar ya» se cierra la combinada y se abona lo ofrecido | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian` |
+| CA-103.2 | Si la cuota cambió, no se cierra ni se abona y se enseña la oferta nueva | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.siLaOfertaCambioNoCierraLaCombinadaNiAbonaNada` |
+| CA-103.3 | Si un partido empieza, se suspende o se anula al confirmar, se rechaza sin abono parcial | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.siUnPartidoSeSuspendeOSeAnulaNoSeOfreceCobrar` |
+| CA-103.4 | Con dos envíos, se cierra y se abona una sola vez | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian` |
+
+## HU-104 · Consultar el cobro anticipado en el historial
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-104.1 | Sale como «Cobro anticipado» con lo apostado, lo abonado y la fecha | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian` |
+| CA-104.2 | Los resultados posteriores no cambian lo recibido | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian` |
+| CA-104.3 | Cuenta en el balance, pero no como acierto ni como apuesta ganada | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.confirmaElCashOutUnaVezYLosResultadosPosterioresNoLoCambian` |
+
+CA-104.1: la prueba comprueba el estado y lo abonado; lo apostado y la fecha no.
+
+## HU-105 · Bloquear a un amigo en un partido o selección
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-105.1 | Se bloquea solo a ese amigo y se descuentan 50 monedas una vez | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoCuestaCincuentaYElServidorImpideApostarEnElAlcance` |
+| CA-105.2 | Se rechaza, sin cobrar, si no comparte la liga, es uno mismo o el partido ya empezó, está suspendido o anulado | Sin prueba | — |
+| CA-105.3 | Su apuesta de antes se queda como estaba (y no se puede subir) | Automática | [`QuintaDepuracionApuestasTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/QuintaDepuracionApuestasTest.java)`.conUnBloqueoDeLigaNoSePuedeSubirLaApuestaQueYaHabia` |
+| CA-105.4 | Pedir otra vez el mismo bloqueo no crea otro ni vuelve a cobrar | Automática | [`BloqueoConcurrenteTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/BloqueoConcurrenteTest.java)`.elMismoBloqueoALaVezSeCobraUnaSolaVez` |
+| CA-105.5 | Con menos de 50 monedas no se aplica y el saldo no cambia | Sin prueba | — |
+
+CA-105.2 y CA-105.5 están en el código (`BloqueoLigaService.crear`), pero sin prueba. La más cercana, `CashOutYBloqueoLigaWebTest.conLaCuentaEnPausaNoSePuedeBloquear`, solo comprueba la cuenta en pausa.
+
+## HU-106 · Bloquear a toda la liga en un partido o selección
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-106.1 | Se impide apostar en ese alcance a los demás miembros y se descuentan 100 monedas una vez | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
+| CA-106.2 | Quien lo pide no queda bloqueado | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
+| CA-106.3 | Se rechaza, sin cobrar, si no es de la liga o el partido ya empezó, está suspendido o anulado | Sin prueba | — |
+| CA-106.4 | No se duplica ni se cobra si ya existe o no hay 100 monedas | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
+
+CA-106.3 está en el código, pero sin prueba. CA-106.4: se prueba el duplicado, no el saldo insuficiente.
+
+## HU-107 · Aplicar y caducar los bloqueos de la liga
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-107.1 | El servidor rechaza la apuesta bloqueada, también con una petición directa | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoCuestaCincuentaYElServidorImpideApostarEnElAlcance`, `.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
+| CA-107.2 | El bloqueado ve en el partido o en su boleto qué está bloqueado y hasta cuándo | No hecho | — |
+| CA-107.3 | Las apuestas de antes se mantienen; solo se impiden las nuevas | Automática | [`QuintaDepuracionApuestasTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/QuintaDepuracionApuestasTest.java)`.conUnBloqueoDeLigaNoSePuedeSubirLaApuestaQueYaHabia` |
+| CA-107.4 | Al empezar, suspenderse o anularse el partido, el bloqueo caduca y se devuelve su coste | No hecho | — |
+| CA-107.5 | El bloqueo y su cobro se hacen juntos o no se hace ninguno | Automática | [`BloqueoConcurrenteTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/BloqueoConcurrenteTest.java)`.elMismoBloqueoALaVezSeCobraUnaSolaVez`; [`InvariantesDineroTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/InvariantesDineroTest.java)`.elDineroSiempreCuadra` |
+
+CA-107.2: los bloqueos solo se ven en la página de la liga (con su «Hasta»), no en el partido ni en el boleto. CA-107.4: al empezar el partido el bloqueo caduca, pero no se devuelve (`conUnResultadoNormalElBloqueoNoSeDevuelve`), y si se suspende sigue valiendo para cuando se juegue; solo se devuelve al anular o borrar el partido o al borrar la liga (`siSeAnulaElPartidoSeDevuelvenLosBloqueos`, `siSeBorraElPartidoSeDevuelveElBloqueoYSePuedeBorrar`, `borrarUnaLigaConBloqueosLosDevuelveYLaBorra`).
+
+## HU-111 · Alternar entre mis ligas y la clasificación global
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-111.1 | En «Ranking de ligas» se elige entre «Mis ligas» y «Global» en la misma página | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laBarraIncluyeElRankingDeLigasJuntoAlRankingGeneral`, `.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
+| CA-111.2 | «Mis ligas» solo enseña las mías, públicas y privadas | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
+| CA-111.3 | «Global» solo enseña las públicas | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
+| CA-111.4 | La vista activa se distingue y no se mezclan filas | Sin prueba | — |
+
+## HU-112 · Consultar la clasificación global de ligas públicas
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-112.1 | Las públicas van de más a menos saldo total de sus miembros | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
+| CA-112.2 | Con el mismo saldo, el desempate es estable | Sin prueba | — |
+| CA-112.3 | Sin ligas públicas sale un estado vacío y ninguna privada | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
+| CA-112.4 | De una liga ajena solo se ve el nombre, los miembros y el saldo total | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
+
+CA-112.2: el desempate (nombre e id) está en el código, sin prueba. CA-112.3: se comprueba que la lista queda vacía, no el texto del estado vacío.
+
+## HU-113 · Cambiar la visibilidad de una liga
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-113.1 | Una liga nueva es privada y no sale en la global | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
+| CA-113.2 | Quien la creó la hace pública y sale en la global | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
+| CA-113.3 | Quien la creó la hace privada y deja de salir en la global | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
+| CA-113.4 | Si no es quien la creó, el servidor lo rechaza | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
+| CA-113.5 | Cambiar la visibilidad no cambia miembros, retos ni bloqueos | Sin prueba | — |
+
+CA-113.4: se prueba un miembro que no la creó, no alguien de fuera de la liga.
 
 ## HU-114 · Exportar mi historial
 

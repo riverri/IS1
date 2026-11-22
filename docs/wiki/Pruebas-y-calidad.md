@@ -34,9 +34,10 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.
 
-| Historias hechas | Criterios | Automática | Manual | Sin prueba |
-|---:|---:|---:|---:|---:|
-| 45 | 97 | 93 (96 %) | 4 | 0 |
+| Historias | Criterios | Automática | Manual | Sin prueba |
+|---|---:|---:|---:|---:|
+| Hechas (45) | 97 | 93 (96 %) | 4 | 0 |
+| Integradas (56) | 161 | 153 (95 %) | 0 | 6 (y 2 sin hacer, de HU-107) |
 
 Manuales (dependen del navegador): la web en el móvil, la ganancia potencial al escribir el importe y la confirmación al eliminar la cuenta.
 
