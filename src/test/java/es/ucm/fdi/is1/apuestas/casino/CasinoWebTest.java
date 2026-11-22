@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.SplittableRandom;
+import java.util.stream.LongStream;
 import java.util.random.RandomGenerator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -209,6 +211,25 @@ class CasinoWebTest {
         assertThat(partida.isEnCurso()).isFalse();
         assertThat(partida.getPremio()).isEqualByComparingTo(esperado);
         assertThat(saldo()).isEqualByComparingTo(antes.add(esperado));
+    }
+
+    @Test
+    void unBlackjackNaturalPagaTresADos() {
+        long semilla = LongStream.range(0, 100)
+                .filter(s -> {
+                    ManoBlackjack mano = ManoBlackjack.repartir(6, new SplittableRandom(s));
+                    return mano.isTerminada() && mano.resultado() == ResultadoMano.BLACKJACK;
+                })
+                .findFirst().orElseThrow();
+        SplittableRandom baraja = new SplittableRandom(semilla);
+        doAnswer(i -> baraja.nextInt((int) i.getArgument(0))).when(azar).nextInt(anyInt());
+        BigDecimal antes = saldo();
+
+        Partida partida = casino.empezarBlackjack(ANA, new BigDecimal("10"));
+
+        assertThat(partida.mano().resultado()).isEqualTo(ResultadoMano.BLACKJACK);
+        assertThat(partida.getPremio()).isEqualByComparingTo("25.00");
+        assertThat(saldo()).isEqualByComparingTo(antes.add(new BigDecimal("15.00")));
     }
 
     @Test
