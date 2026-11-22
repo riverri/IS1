@@ -1,11 +1,13 @@
 package es.ucm.fdi.is1.apuestas.equipos;
 
-import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,8 @@ public class EquiposService {
 
     private final EquipoRepository equipos;
     private final CompeticionRepository competiciones;
+
+    private static final int TAMANO_PAGINA = 50;
 
     public EquiposService(EquipoRepository equipos, CompeticionRepository competiciones) {
         this.equipos = equipos;
@@ -48,6 +52,22 @@ public class EquiposService {
                 // EnumMap: los deportes salen en el orden del enum
                 .collect(Collectors.groupingBy(Equipo::getDeporte, () -> new EnumMap<>(Deporte.class),
                         Collectors.toList()));
+    }
+
+    /** Página acotada del listado público, con filtros y orden ejecutados en la base de datos. */
+    @Transactional(readOnly = true)
+    public PaginaEquipos buscar(Deporte deporte, Long competicionId, String texto, int numero) {
+        int pagina = Math.min(Math.max(0, numero), 10000);
+        Slice<Equipo> resultado = equipos.paginaListado(deporte, competicionId, Nombres.normalizar(texto),
+                PageRequest.of(pagina, TAMANO_PAGINA));
+        Map<Deporte, List<Equipo>> agrupados = resultado.getContent().stream()
+                .collect(Collectors.groupingBy(Equipo::getDeporte, () -> new EnumMap<>(Deporte.class),
+                        Collectors.toList()));
+        return new PaginaEquipos(agrupados, pagina, pagina > 0, resultado.hasNext());
+    }
+
+    public record PaginaEquipos(Map<Deporte, List<Equipo>> equipos, int numero,
+                                boolean anterior, boolean siguiente) {
     }
 
     /** Número de equipos de cada deporte, para las pestañas. */

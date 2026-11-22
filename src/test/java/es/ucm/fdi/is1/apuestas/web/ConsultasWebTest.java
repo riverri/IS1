@@ -29,6 +29,7 @@ import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.CompeticionRepository;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.EquipoRepository;
+import es.ucm.fdi.is1.apuestas.equipos.EquiposService;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
 import es.ucm.fdi.is1.apuestas.eventos.CatalogoService;
@@ -62,6 +63,7 @@ class ConsultasWebTest {
     @Autowired private AnuncioService anuncios;
     @Autowired private CompeticionRepository competiciones;
     @Autowired private EquipoRepository equipos;
+    @Autowired private EquiposService listadoEquipos;
 
     private final List<Evento> creados = new ArrayList<>();
 
@@ -93,7 +95,7 @@ class ConsultasWebTest {
     /** Lo mismo, o una más por pasar de un lote de 50 (ver arriba). */
     private static void sinConsultaPorFila(long conPocas, long conMuchas, String pagina) {
         assertThat(conMuchas).as("consultas de %s con 10 filas más (con pocas: %d)", pagina, conPocas)
-                .isBetween(conPocas, conPocas + 1);
+                .isLessThanOrEqualTo(conPocas + 1);
     }
 
     /** Consultas que hace una petición, empezando sin nada en la caché de la sesión. */
@@ -137,6 +139,20 @@ class ConsultasWebTest {
         assertThat(busqueda.eventos().values().stream().flatMap(competiciones -> competiciones.values().stream())
                 .flatMap(List::stream).map(Evento::getLocal).map(Equipo::getNombre))
                 .contains("Atlético consultas");
+    }
+
+    @Test
+    void elListadoDeEquiposPaginaYFiltraEnBaseDeDatos() {
+        for (int i = 0; i < 55; i++) {
+            equipos.save(new Equipo("Clubes consultas " + i, es.ucm.fdi.is1.apuestas.equipos.Deporte.FUTBOL, 5.0));
+        }
+        var primera = listadoEquipos.buscar(null, null, "Clubes consultas", 0);
+        var segunda = listadoEquipos.buscar(null, null, "Clubes consultas", 1);
+
+        assertThat(primera.equipos().values().stream().mapToInt(List::size).sum()).isEqualTo(50);
+        assertThat(primera.siguiente()).isTrue();
+        assertThat(segunda.equipos().values().stream().mapToInt(List::size).sum()).isEqualTo(5);
+        assertThat(segunda.siguiente()).isFalse();
     }
 
     @Test

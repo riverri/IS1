@@ -3,12 +3,28 @@ package es.ucm.fdi.is1.apuestas.equipos;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /** Repositorio Spring Data de {@link Equipo}; las consultas salen del nombre de cada método. */
 public interface EquipoRepository extends JpaRepository<Equipo, Long> {
+
+    /** Página de equipos; los tres filtros y el orden normalizado se resuelven antes de cargar entidades. */
+    @Query("""
+            select e from Equipo e
+            where (:deporte is null or e.deporte = :deporte)
+              and (:competicionId is null or exists
+                   (select c.id from e.competiciones c where c.id = :competicionId))
+              and (:texto = '' or cast(function('translate', lower(e.nombre), 'áéíóúüñ', 'aeiouun') as string)
+                   like concat('%', :texto, '%'))
+            order by cast(function('translate', lower(e.nombre), 'áéíóúüñ', 'aeiouun') as string), e.id
+            """)
+    Slice<Equipo> paginaListado(@Param("deporte") Deporte deporte,
+                                @Param("competicionId") Long competicionId,
+                                @Param("texto") String texto, Pageable pageable);
 
     /** Todos, agrupados por deporte (en el orden del enum) y por nombre dentro de cada deporte. */
     List<Equipo> findAllByOrderByDeporteAscNombreAsc();

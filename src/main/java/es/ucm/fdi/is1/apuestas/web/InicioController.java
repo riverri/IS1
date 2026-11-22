@@ -72,8 +72,11 @@ public class InicioController {
     @GetMapping("/equipos")
     public String equipos(@RequestParam(required = false) Deporte deporte,
                           @RequestParam(required = false) Long competicion,
-                          @RequestParam(required = false) String q, Model model) {
-        model.addAttribute("equiposPorDeporte", equipos.buscar(deporte, competicion, q));
+                          @RequestParam(required = false) String q,
+                          @RequestParam(defaultValue = "0") int pagina, Model model) {
+        var paginaEquipos = equipos.buscar(deporte, competicion, q, pagina);
+        model.addAttribute("equiposPorDeporte", paginaEquipos.equipos());
+        model.addAttribute("pagina", paginaEquipos);
         model.addAttribute("recuento", equipos.recuentoPorDeporte());
         model.addAttribute("deporteElegido", deporte);
         model.addAttribute("competicionElegida", competicion);
