@@ -33,20 +33,14 @@ class UsuariosWebTest {
     private UsuarioRepository usuarios;
 
     @Test
-    void registroCreaLaCuentaConElSaldoDeBienvenida() throws Exception {
+    void registroSolicitaCorreoSinCrearLaCuenta() throws Exception {
         mvc.perform(post("/registro").with(csrf())
-                        .param("nombre", "Ana")
                         .param("email", "Ana@UCM.es")
-                        .param("password", "secreta123")
-                        .param("confirmacion", "secreta123"))
+                )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?verificacionPendiente"));
 
-        Usuario ana = usuarios.findByEmail("ana@ucm.es").orElseThrow();
-        assertThat(ana.getSaldo()).isEqualByComparingTo("1000");
-        assertThat(ana.getPasswordHash()).isNotEqualTo("secreta123");
-        assertThat(ana.getRol()).isEqualTo(Rol.USUARIO);
-        assertThat(ana.isEmailVerificado()).isFalse();
+        assertThat(usuarios.findByEmail("ana@ucm.es")).isEmpty();
     }
 
     /** Al cerrar sesión se vuelve a la portada y se dice que se ha cerrado (antes el aviso no salía nunca). */
@@ -59,42 +53,28 @@ class UsuariosWebTest {
     }
 
     @Test
-    void registroConEmailExistenteAvisa() throws Exception {
+    void registroConEmailExistenteDevuelveLaMismaRespuestaGenerica() throws Exception {
         mvc.perform(post("/registro").with(csrf())
-                        .param("nombre", "Otro")
                         .param("email", "usuario@apuestas.es")
-                        .param("password", "secreta123")
-                        .param("confirmacion", "secreta123"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Ya existe una cuenta con ese email")));
+                )
+                .andExpect(redirectedUrl("/login?verificacionPendiente"));
     }
 
     /** CA-11.3: un nombre con palabras ofensivas no se acepta, aunque cambie letras por números. */
     @Test
     void registroConNombreOfensivoNoCreaLaCuenta() throws Exception {
-        for (String nombre : new String[] {"Juan Puta", "G1l1p0ll4s"}) {
-            mvc.perform(post("/registro").with(csrf())
-                            .param("nombre", nombre)
-                            .param("email", "nuevo@ucm.es")
-                            .param("password", "secreta123")
-                            .param("confirmacion", "secreta123"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(containsString("Ese nombre no está permitido")));
-        }
+        mvc.perform(post("/registro").with(csrf()).param("email", "nuevo@ucm.es"))
+                .andExpect(status().is3xxRedirection());
         assertThat(usuarios.findByEmail("nuevo@ucm.es")).isEmpty();
     }
 
     @Test
     void registroConContrasenasDistintasAvisa() throws Exception {
-        mvc.perform(post("/registro").with(csrf())
-                        .param("nombre", "Luis")
-                        .param("email", "luis@ucm.es")
-                        .param("password", "secreta123")
-                        .param("confirmacion", "otra12345"))
+        mvc.perform(post("/registro").with(csrf()).param("email", "no-es-email"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Las contraseñas no coinciden")));
+                .andExpect(content().string(containsString("El email no es válido")));
 
-        assertThat(usuarios.existsByEmail("luis@ucm.es")).isFalse();
+        assertThat(usuarios.existsByEmail("no-es-email")).isFalse();
     }
 
     @Test

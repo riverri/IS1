@@ -52,10 +52,10 @@ public class UsuarioService {
         this.reloj = reloj;
     }
 
-    /** Crea la cuenta con el saldo de bienvenida (HU-11, HU-14). */
+    /** Creates a verified account after the browser has confirmed ownership of the email address. */
     @Transactional
-    public Usuario registrar(RegistroForm form) {
-        return crear(form.getEmail(), form.getNombre(), form.getPassword(), Rol.USUARIO, false);
+    public Usuario registrarVerificado(String email, String nombre, String password) {
+        return crear(email, nombre, password, Rol.USUARIO, true);
     }
 
     /**

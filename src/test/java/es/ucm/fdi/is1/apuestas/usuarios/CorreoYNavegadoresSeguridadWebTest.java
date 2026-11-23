@@ -28,6 +28,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+
 /** Sexta depuración: cambio de correo, recuperación y navegadores recordados (#166). */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,6 +53,9 @@ class CorreoYNavegadoresSeguridadWebTest {
 
     @Autowired
     private EnviosVerificacion envios;
+
+    @Autowired
+    private EntityManager em;
 
     @MockitoBean
     private EnvioCorreo correo;
@@ -136,8 +141,12 @@ class CorreoYNavegadoresSeguridadWebTest {
 
     @Test
     void recuperarLaContrasenaActivaUnaCuentaSinVerificar() throws Exception {
-        mvc.perform(post("/registro").with(csrf()).param("nombre", "Ana").param("email", ANA)
-                .param("password", "secreta123").param("confirmacion", "secreta123"));
+        // Ahora la cuenta se crea al confirmar el correo, pero puede haber cuentas sin verificar de antes
+        usuarios.crear(ANA, "Ana", "secreta123", Rol.USUARIO);
+        em.flush();
+        em.createNativeQuery("update usuario set email_verificado = false where email = :email")
+                .setParameter("email", ANA).executeUpdate();
+        em.clear();
         mvc.perform(post("/recuperar").with(csrf()).param("email", ANA));
         ArgumentCaptor<String> recuperacion = ArgumentCaptor.forClass(String.class);
         verify(correo).enviarRecuperacion(eq(ANA), anyString(), recuperacion.capture());

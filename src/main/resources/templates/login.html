@@ -9,7 +9,8 @@
         <h1>Iniciar sesión</h1>
         <p class="subtitulo">Bienvenido de nuevo</p>
 
-        <p role="status" class="alerta alerta-exito" th:if="${param.verificacionPendiente}">Cuenta creada. Revisa tu correo para activar la cuenta antes de iniciar sesión.</p>
+        <p role="status" class="alerta alerta-exito" th:if="${param.verificacionPendiente}">Verificando correo: revisa tu bandeja y confirma la dirección. La cuenta todavía no se ha creado.</p>
+        <p role="status" class="alerta alerta-exito" th:if="${param.registrado}">Cuenta creada. Ya puedes iniciar sesión.</p>
         <p role="status" class="alerta alerta-exito" th:if="${param.verificado}">Correo confirmado. Ya puedes iniciar sesión.</p>
         <p role="status" class="alerta alerta-exito" th:if="${param.correoCambiado}">Correo cambiado. Inicia sesión con la nueva dirección.</p>
         <p role="alert" class="alerta alerta-error" th:if="${param.error}">Email o contraseña incorrectos, o la cuenta aún no está activada (<a th:href="@{/verificar-correo}">pide otro enlace de activación</a>). Tras 5 intentos fallidos hay que esperar 15 minutos.</p>
