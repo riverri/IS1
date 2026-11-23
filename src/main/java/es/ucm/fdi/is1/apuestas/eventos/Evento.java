@@ -2,12 +2,14 @@ package es.ucm.fdi.is1.apuestas.eventos;
 
 import java.time.LocalDateTime;
 
+import es.ucm.fdi.is1.apuestas.cache.CambiosEnEntidades;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.equipos.Competicion;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,7 @@ import jakarta.validation.constraints.NotNull;
  * con nombre ({@link #finalizar}, {@link #suspender}, {@link #anular}...), que comprueban antes si se puede.
  */
 @Entity
+@EntityListeners(CambiosEnEntidades.class)
 public class Evento {
 
     @Id

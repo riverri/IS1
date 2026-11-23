@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.mercados;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,30 @@ public interface MercadoRepository extends JpaRepository<Mercado, Long> {
     @EntityGraph(attributePaths = {"candidatos", "candidatos.equipo", "ganador"})
     @Query("select m from Mercado m where m.id = :id")
     Optional<Mercado> paraCambiar(@Param("id") Long id);
+
+    /**
+     * Los que admiten apuestas ({@link Mercado#admiteApuestas}), del que cierra antes al último, con sus candidatos y
+     * el equipo de cada uno (la página pinta su escudo).
+     */
+    @EntityGraph(attributePaths = {"candidatos", "candidatos.equipo"})
+    @Query("""
+            select m from Mercado m
+            where m.estado = es.ucm.fdi.is1.apuestas.mercados.EstadoMercado.ABIERTO and m.cierre > :ahora
+            order by m.cierre""")
+    List<Mercado> abiertos(@Param("ahora") LocalDateTime ahora);
+
+    /**
+     * Los que ya no admiten apuestas sin estar anulados: abiertos con la fecha de cierre pasada, cerrados y resueltos.
+     * La lista pública solo enseña su ganador, así que no se cargan los candidatos.
+     */
+    @EntityGraph(attributePaths = "ganador")
+    @Query("""
+            select m from Mercado m
+            where (m.estado = es.ucm.fdi.is1.apuestas.mercados.EstadoMercado.ABIERTO and m.cierre <= :ahora)
+               or m.estado in (es.ucm.fdi.is1.apuestas.mercados.EstadoMercado.CERRADO,
+                               es.ucm.fdi.is1.apuestas.mercados.EstadoMercado.RESUELTO)
+            order by m.cierre""")
+    List<Mercado> terminados(@Param("ahora") LocalDateTime ahora);
 
     /** Todos los mercados, del que cierra antes al que cierra después. */
     @EntityGraph(attributePaths = {"candidatos", "candidatos.equipo", "ganador"})

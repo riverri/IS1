@@ -1,7 +1,7 @@
 # Revisión de fallos
 
 Se partió de un informe del proyecto con 14 fallos (**F-01 a F-14**) y una revisión completa del código encontró 20 más (**N-01 a N-20**). Los 34 están corregidos en `main`, con 34 pruebas nuevas, y sus issues (#34–#67) están cerrados.
-En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo. La [quinta](#quinta-depuración-21112026) decidió ese punto y corrigió 14 fallos más. La [sexta](#sexta-depuración-y-optimización-23112026) corrigió 12 más y aceleró las páginas más pesadas en PostgreSQL.
+En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo. La [quinta](#quinta-depuración-21112026) decidió ese punto y corrigió 14 fallos más. La [sexta](#sexta-depuración-y-optimización-23112026) corrigió 12 más y aceleró las páginas más pesadas en PostgreSQL. La [séptima, octava y novena](#séptima-octava-y-novena-depuración-y-segunda-optimización-23112026) corrigieron 12 más y la segunda optimización dejó la fantasy en 159 ms.
 
 Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a quien no debe · **media** = comportamiento incorrecto · **baja** = molestia o caso raro.
 
@@ -157,6 +157,45 @@ Revisión de lo que entró en `main` después de la quinta depuración: la verif
 - Las impresiones de anuncios se guardan en memoria hasta 5 segundos: si la aplicación se reinicia, se pierden las de esos segundos.
 - La clasificación de la fantasy sigue creciendo con fichajes × partidos; con muchos datos convendría guardarla y recalcularla al terminar un partido.
 - `/ranking` suma todas las apuestas en cada visita (unos 200 ms con 300.000) y `/mercados` carga todos los mercados: con los datos de ahora no se nota.
+
+## Séptima, octava y novena depuración y segunda optimización (23/11/2026)
+
+Tres revisiones a la vez, cada una de una parte: el registro y las ligas (séptima), la web en un navegador de verdad (octava) y el dinero y la concurrencia en PostgreSQL (novena). Las pruebas nuevas fallan con el código anterior.
+
+| Fallo | Gravedad | Qué pasaba | Cómo se arregló | Prueba |
+|---|---|---|---|---|
+| D7-01 · Interbloqueo al apostar | Alta | Una combinada bloqueaba sus partidos en el orden del boleto, y el cobro anticipado (u otra combinada) en otro orden. A la vez, cada una esperaba a la otra y PostgreSQL cortaba una con un error 500 | Se bloquean siempre de menor a mayor id. Los bloqueos rotos por la base de datos avisan como los de versión | `InterbloqueoCombinadaTest` |
+| D7-02 · Doble clic al bloquear | Media | Dos bloqueos de liga iguales a la vez chocaban con la clave única: error 500 en PostgreSQL (se cobraba una sola vez) | El partido se bloquea en exclusiva al crear el bloqueo | `BloqueoConcurrenteTest` (en PostgreSQL) |
+| D8-01 · La fantasy no tenía enlace | Media | No se podía llegar a la liga fantasy desde ningún sitio de la web | Enlace en el menú | — |
+| D8-02 · Botones invisibles | Media | Los botones con aspecto de enlace (Vender, Anular, Resolver, Aceptar…) tenían un contraste de 1,5:1 sobre las tarjetas. Además, anular o resolver un mercado de predicción no pedía confirmación | Color legible y confirmación | — |
+| D8-03 · El catálogo volvía arriba | Media | Al añadir una selección al boleto desde el catálogo, la página volvía arriba del todo | Se vuelve al partido (ancla) | `CombinadaWebTest.soloVuelveAPaginasDeEstaWeb` |
+| D8-04 · Nombres largos | Media | Un apodo de 28 letras sin espacios hacía que el ranking se saliera de la pantalla en el móvil, para todos | Los nombres largos se parten | — |
+| D8-05 · Detalles de la web | Baja | En modo oscuro no se leía el 2.º puesto del podio. Las tablas que se desplazan no se alcanzaban con el teclado. El alcance de los bloqueos salía en código («VISITANTE»), el login vaciaba el email tras un error, las ventas decían «41,6 monedas» y había fallos de singular y plural | Arreglados | — |
+| D9-01 · Anular una predicción creaba dinero | Alta | Al anular se devolvía cada lado por separado: quien perdía vendiendo el «No» y ganaba vendiendo el «Sí» recuperaba la pérdida y se quedaba la ganancia (1.000 → 1.088,85) | Se devuelve lo neto de los dos lados, y queda apuntado en la posición | `AnularPrediccionDineroTest` |
+| D9-02 · Doble clic en la primera compra | Media | En predicciones y cripto, las dos peticiones creaban la posición y la segunda chocaba con la clave única (error 500) | La cuenta se bloquea al comprar | `CompraPrediccionConcurrenteTest` |
+| D9-03 · Panel de la casa tras una baja | Baja | Lo devuelto al anular dejaba de contar si después se eliminaba la cuenta (consecuencia de D6-10) | Lo devuelto se apunta al anular | `AnularPrediccionDineroTest` |
+| D9-04 · Aviso de cuota doble | Baja | Con dos apuestas a la vez al mismo partido, PostgreSQL mandaba dos veces el mismo aviso de cuota | La alerta se marca como avisada solo si aún no lo estaba | — (solo en PostgreSQL) |
+
+**Segunda optimización** (PostgreSQL 16 con 300.000 apuestas, 3.000 equipos de fantasy y 50.000 retos):
+
+| Página | Antes | Después |
+|---|---:|---:|
+| `/ranking` | 311 ms | 97 ms |
+| Perfil de un jugador | 295 ms | 70 ms |
+| `/fantasy` | 3.835 ms | 159 ms |
+| `/mercados` | 477 ms | 278 ms |
+
+- **Caché de consultas** (paquete `cache`): el ranking y los puntos de la fantasy se guardan en memoria hasta que cambia un usuario, una apuesta, un partido o un fichaje. El perfil lee la misma lista que `/ranking`.
+- `/mercados` filtra en la base de datos.
+- **Migración V39:** índices en las ligas de cada usuario, los retos, las supercuotas y los partidos de cada quiniela.
+- Las impresiones de anuncios se guardan al apagar la aplicación.
+- El icono de la pestaña ya no hace una petición en cada página.
+
+**Sin arreglar, para el equipo:**
+- **PR #167:** `/verificar-correo` acepta textos que no son correos y correos de más de 255 caracteres (error 500), y un doble envío del registro da error 500. Además, el registro ya no avisa si el correo ya tiene cuenta (CA-11.2) y la matriz de trazabilidad cita pruebas que ya no existen.
+- **Interbloqueo al resolver:** dos resultados a la vez con los mismos jugadores pueden interbloquearse en PostgreSQL. Ahora sale un aviso en lugar del error 500, pero hay que repetir la operación.
+- **Retos y bloqueos:** los retos 1 contra 1 no respetan los bloqueos de liga, y quien está bloqueado puede salirse de la liga sin que se devuelva el bloqueo.
+- **Caché con varias instancias:** con varias instancias de la aplicación, otra puede enseñar el ranking con hasta 60 s de retraso y la fantasy con hasta 5 min.
 
 ## En producción
 
