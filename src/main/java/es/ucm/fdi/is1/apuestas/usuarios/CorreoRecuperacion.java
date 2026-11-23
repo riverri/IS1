@@ -59,6 +59,7 @@ public class CorreoRecuperacion implements EnvioCorreo {
                 + "Si no lo has pedido tú, ignora este correo: tu contraseña no cambia.\n");
         try {
             servidor.send(mensaje);
+            LOG.info("Correo de recuperación aceptado por el servidor SMTP para {}", email);
         } catch (MailException e) {
             // No se dice al usuario si el email existe: el error solo queda en el registro
             LOG.warn("No se ha podido enviar el correo de recuperación a {}: {}", email, e.getMessage());
@@ -134,6 +135,7 @@ public class CorreoRecuperacion implements EnvioCorreo {
     private void enviar(JavaMailSender servidor, SimpleMailMessage mensaje, String email, String tipo) {
         try {
             servidor.send(mensaje);
+            LOG.info("Correo de {} aceptado por el servidor SMTP para {}", tipo, email);
         } catch (MailException e) {
             LOG.warn("Could not send {} email to {}: {}", tipo, email, e.getMessage());
         }
