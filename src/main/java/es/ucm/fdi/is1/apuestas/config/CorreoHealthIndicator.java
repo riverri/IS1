@@ -44,11 +44,21 @@ public class CorreoHealthIndicator implements HealthIndicator {
     @Override
     public Health health() {
         List<String> faltan = new ArrayList<>();
-        if (enBlanco(host)) faltan.add("MAIL_HOST");
-        if (enBlanco(puerto)) faltan.add("MAIL_PORT");
-        if (enBlanco(usuario)) faltan.add("MAIL_USERNAME");
-        if (enBlanco(password)) faltan.add("MAIL_PASSWORD");
-        if (enBlanco(remitente)) faltan.add("APUESTAS_CORREO_REMITENTE");
+        if (enBlanco(host)) {
+            faltan.add("MAIL_HOST");
+        }
+        if (enBlanco(puerto)) {
+            faltan.add("MAIL_PORT");
+        }
+        if (enBlanco(usuario)) {
+            faltan.add("MAIL_USERNAME");
+        }
+        if (enBlanco(password)) {
+            faltan.add("MAIL_PASSWORD");
+        }
+        if (enBlanco(remitente)) {
+            faltan.add("APUESTAS_CORREO_REMITENTE");
+        }
         if (!faltan.isEmpty()) {
             return Health.down().withDetail("faltanVariables", String.join(", ", faltan)).build();
         }
