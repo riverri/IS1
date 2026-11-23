@@ -53,11 +53,13 @@ public class UsuariosController {
     private final RegistroCorreoService registroCorreo;
     private final CambioCorreoService cambioCorreo;
     private final String basePublica;
+    private final boolean registroAuxiliarHabilitado;
 
     public UsuariosController(UsuarioService usuarios, SaldoProperties saldo, Clock reloj, Sesiones sesiones,
                               RegistroCorreoService registroCorreo,
                               CambioCorreoService cambioCorreo,
-                              @Value("${apuestas.url-publica}") String basePublica) {
+                              @Value("${apuestas.url-publica}") String basePublica,
+                              @Value("${apuestas.registro.auxiliar-habilitado:false}") boolean registroAuxiliarHabilitado) {
         this.usuarios = usuarios;
         this.saldo = saldo;
         this.reloj = reloj;
@@ -65,6 +67,7 @@ public class UsuariosController {
         this.registroCorreo = registroCorreo;
         this.cambioCorreo = cambioCorreo;
         this.basePublica = sinBarraFinal(basePublica);
+        this.registroAuxiliarHabilitado = registroAuxiliarHabilitado;
     }
 
     /**
@@ -98,6 +101,44 @@ public class UsuariosController {
         }
         registroCorreo.solicitar(form.getEmail(), basePublica);
         return "redirect:/login?verificacionPendiente";
+    }
+
+    /** Página auxiliar para entornos de demostración donde todavía no se dispone de SMTP. */
+    @GetMapping("/registro-auxiliar")
+    public String registroAuxiliar(Model model) {
+        if (!registroAuxiliarHabilitado) {
+            return "redirect:/registro";
+        }
+        model.addAttribute("registroAuxiliar", new RegistroAuxiliarForm());
+        model.addAttribute("bienvenida", saldo.bienvenida());
+        return "registro-auxiliar";
+    }
+
+    /** Crea directamente una cuenta verificada; la ruta solo existe cuando se habilita explícitamente. */
+    @PostMapping("/registro-auxiliar")
+    public String registrarAuxiliar(@Valid @ModelAttribute("registroAuxiliar") RegistroAuxiliarForm form,
+                                    BindingResult errores, Model model) {
+        if (!registroAuxiliarHabilitado) {
+            return "redirect:/registro";
+        }
+        if (form.getPassword() != null && !form.getPassword().equals(form.getConfirmacion())) {
+            errores.rejectValue("confirmacion", "noCoincide", "Las contraseñas no coinciden");
+        }
+        if (!Contrasenas.cabe(form.getPassword())) {
+            errores.rejectValue("password", "larga", Contrasenas.DEMASIADO_LARGA);
+        }
+        if (errores.hasErrors()) {
+            model.addAttribute("bienvenida", saldo.bienvenida());
+            return "registro-auxiliar";
+        }
+        try {
+            usuarios.registrarVerificado(form.getEmail(), form.getNombre(), form.getPassword());
+            return "redirect:/login?registrado";
+        } catch (EmailYaRegistradoException e) {
+            errores.rejectValue("email", "duplicado", "Ese correo ya está asociado a una cuenta");
+            model.addAttribute("bienvenida", saldo.bienvenida());
+            return "registro-auxiliar";
+        }
     }
 
     @GetMapping("/registro/completar")
