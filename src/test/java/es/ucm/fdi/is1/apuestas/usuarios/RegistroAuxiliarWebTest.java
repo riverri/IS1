@@ -50,5 +50,9 @@ class RegistroAuxiliarWebTest {
         mvc.perform(get("/registro-auxiliar"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Registro auxiliar")));
+
+        mvc.perform(get("/registro"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Registro auxiliar")));
     }
 }

@@ -86,6 +86,9 @@ public class UsuariosController {
     /** GET /registro: requests an email confirmation before collecting credentials. */
     @GetMapping("/registro")
     public String registro(Model model) {
+        if (registroAuxiliarHabilitado) {
+            return registroAuxiliar(model);
+        }
         model.addAttribute("solicitud", new SolicitudRegistroForm());
         model.addAttribute("bienvenida", saldo.bienvenida());
         return "registro";
