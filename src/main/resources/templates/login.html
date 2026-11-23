@@ -12,7 +12,7 @@
         <p role="status" class="alerta alerta-exito" th:if="${param.verificacionPendiente}">Cuenta creada. Revisa tu correo para activar la cuenta antes de iniciar sesión.</p>
         <p role="status" class="alerta alerta-exito" th:if="${param.verificado}">Correo confirmado. Ya puedes iniciar sesión.</p>
         <p role="status" class="alerta alerta-exito" th:if="${param.correoCambiado}">Correo cambiado. Inicia sesión con la nueva dirección.</p>
-        <p role="alert" class="alerta alerta-error" th:if="${param.error}">Email o contraseña incorrectos. Tras 5 intentos fallidos hay que esperar 15 minutos.</p>
+        <p role="alert" class="alerta alerta-error" th:if="${param.error}">Email o contraseña incorrectos, o la cuenta aún no está activada (<a th:href="@{/verificar-correo}">pide otro enlace de activación</a>). Tras 5 intentos fallidos hay que esperar 15 minutos.</p>
         <p role="alert" class="alerta alerta-error" th:if="${param.expirada}">Tu sesión se ha cerrado porque la cuenta ha cambiado (contraseña nueva o cuenta eliminada). Vuelve a entrar.</p>
         <p role="status" class="alerta alerta-exito" th:if="${param.logout}">Has cerrado sesión.</p>
         <p role="status" class="alerta alerta-exito" th:if="${param.recuperada}">Contraseña cambiada. Ya puedes entrar con la nueva.</p>

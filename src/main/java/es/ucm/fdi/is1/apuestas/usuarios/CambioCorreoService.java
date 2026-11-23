@@ -21,14 +21,19 @@ public class CambioCorreoService {
 
     private final UsuarioRepository usuarios;
     private final CambioCorreoPendienteRepository cambios;
+    private final TokenRecuperacionRepository recuperaciones;
+    private final EnviosVerificacion envios;
     private final UsuarioService usuarioService;
     private final EnvioCorreo correo;
     private final Clock reloj;
 
     public CambioCorreoService(UsuarioRepository usuarios, CambioCorreoPendienteRepository cambios,
+                              TokenRecuperacionRepository recuperaciones, EnviosVerificacion envios,
                               UsuarioService usuarioService, EnvioCorreo correo, Clock reloj) {
         this.usuarios = usuarios;
         this.cambios = cambios;
+        this.recuperaciones = recuperaciones;
+        this.envios = envios;
         this.usuarioService = usuarioService;
         this.correo = correo;
         this.reloj = reloj;
@@ -42,8 +47,16 @@ public class CambioCorreoService {
         }
         Usuario usuario = usuarios.findByEmail(actualNormalizado).orElseThrow();
         String nuevoNormalizado = normalizar(emailNuevo);
-        if (nuevoNormalizado.equals(actualNormalizado) || usuarios.existsByEmail(nuevoNormalizado)) {
+        // El dominio de las cuentas eliminadas está reservado (como al registrarse): si no, la baja de otra cuenta
+        // chocaría con esta dirección
+        if (nuevoNormalizado.equals(actualNormalizado) || usuarios.existsByEmail(nuevoNormalizado)
+                || nuevoNormalizado.endsWith(Usuario.DOMINIO_ELIMINADOS)) {
             throw new EmailYaRegistradoException(nuevoNormalizado);
+        }
+        // Como mucho unos pocos correos por cuenta y por dirección nueva cada media hora: si no, se podía llenar de
+        // correos el buzón de otra persona
+        if (!envios.permitir("cambio:" + actualNormalizado) || !envios.permitir(nuevoNormalizado)) {
+            throw new DemasiadosCambiosCorreoException();
         }
 
         cambios.borrarDe(usuario);
@@ -79,6 +92,8 @@ public class CambioCorreoService {
         usuario.cambiarEmailVerificado(cambio.getNuevoEmail());
         cambio.usar();
         cambios.borrarDe(usuario);
+        // Los enlaces de recuperar la contraseña se mandaron al correo antiguo: ya no deben servir
+        recuperaciones.borrarDe(usuario);
         try {
             usuarios.flush();
         } catch (DataIntegrityViolationException e) {

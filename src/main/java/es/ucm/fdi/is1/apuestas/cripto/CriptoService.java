@@ -340,7 +340,9 @@ public class CriptoService {
             }
             comisiones = comisiones.add((BigDecimal) fila[2]);
         }
-        BigDecimal carteras = posiciones.findAll().stream().map(PosicionCripto::getValor)
+        // Las de cuentas eliminadas no se pueden vender: la casa no las debe
+        BigDecimal carteras = posiciones.findAll().stream().filter(p -> !p.getUsuario().isEliminado())
+                .map(PosicionCripto::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new CuentasCripto(compras, ventas, comisiones, carteras);
     }

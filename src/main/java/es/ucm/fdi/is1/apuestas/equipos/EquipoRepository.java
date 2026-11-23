@@ -19,13 +19,19 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
             where (:deporte is null or e.deporte = :deporte)
               and (:competicionId is null or exists
                    (select c.id from e.competiciones c where c.id = :competicionId))
-              and (:texto = '' or cast(function('translate', lower(e.nombre), 'áéíóúüñ', 'aeiouun') as string)
+              and (:texto = '' or cast(function('translate', lower(e.nombre), :conMarcas, :sinMarcas) as string)
                    like concat('%', :texto, '%'))
-            order by cast(function('translate', lower(e.nombre), 'áéíóúüñ', 'aeiouun') as string), e.id
+            order by cast(function('translate', lower(e.nombre), :conMarcas, :sinMarcas) as string), e.id
             """)
     Slice<Equipo> paginaListado(@Param("deporte") Deporte deporte,
                                 @Param("competicionId") Long competicionId,
-                                @Param("texto") String texto, Pageable pageable);
+                                @Param("texto") String texto, @Param("conMarcas") String conMarcas,
+                                @Param("sinMarcas") String sinMarcas, Pageable pageable);
+
+    /** Igual que {@link Nombres#normalizar}, pero en SQL: quita todas las tildes, no solo las españolas. */
+    default Slice<Equipo> paginaListado(Deporte deporte, Long competicionId, String texto, Pageable pageable) {
+        return paginaListado(deporte, competicionId, texto, Nombres.CON_MARCAS, Nombres.SIN_MARCAS, pageable);
+    }
 
     /** Todos, agrupados por deporte (en el orden del enum) y por nombre dentro de cada deporte. */
     List<Equipo> findAllByOrderByDeporteAscNombreAsc();

@@ -1,7 +1,7 @@
 # Revisión de fallos
 
 Se partió de un informe del proyecto con 14 fallos (**F-01 a F-14**) y una revisión completa del código encontró 20 más (**N-01 a N-20**). Los 34 están corregidos en `main`, con 34 pruebas nuevas, y sus issues (#34–#67) están cerrados.
-En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo. La [quinta](#quinta-depuración-21112026) decidió ese punto y corrigió 14 fallos más.
+En noviembre, la [revisión final](#revisión-final-noviembre-de-2026) encontró 16 más: 15 corregidos o documentados y uno descartado. La [cuarta depuración](#cuarta-depuración-21112026) encontró 15 más, todos corregidos, y dejó un punto para decidir en equipo. La [quinta](#quinta-depuración-21112026) decidió ese punto y corrigió 14 fallos más. La [sexta](#sexta-depuración-y-optimización-23112026) corrigió 12 más y aceleró las páginas más pesadas en PostgreSQL.
 
 Gravedad: **alta** = puede tumbar la aplicación, perder dinero o dejar entrar a quien no debe · **media** = comportamiento incorrecto · **baja** = molestia o caso raro.
 
@@ -125,6 +125,38 @@ Revisión de las apuestas (cobro anticipado, supercuotas, retos y quinielas), la
 - **Cobro anticipado de una apuesta recién hecha:** si el usuario ya tenía otra apuesta al mismo resultado, la nueva vale un poco menos de lo apostado nada más hacerla (CA-75.1). La forma sencilla de arreglarlo (cobrar siempre lo apostado cuando hay otra apuesta propia) dejaría salir sin perder de una apuesta que va mal. Se deja así: va en contra del usuario, no de la casa.
 - **IP detrás del proxy:** en los perfiles `nube` y `compartir`, el límite de envíos usa la IP que llega en `X-Forwarded-For`. Si Render añade la IP real al final de la que manda el navegador (en vez de sustituirla), un atacante podría cambiar la suya en cada envío. Hay que comprobarlo en Render antes de cambiar nada: la misma cabecera decide si la conexión es HTTPS.
 - **Códigos del casino:** se guardan los 20 últimos de cada sesión. Si se cargan más de 20 páginas del casino en una pestaña sin jugar en otra, la otra recibe el aviso de «has pulsado dos veces». No se cobra nada de más.
+
+## Sexta depuración y optimización (23/11/2026)
+
+Revisión de lo que entró en `main` después de la quinta depuración: la verificación del correo, el cambio de correo y los navegadores recordados (#166), la optimización de fluidez (#165) y los arreglos de concurrencia (#164). También de las predicciones, la cripto y el panel del creador, que las rondas anteriores habían mirado menos. Las pruebas nuevas fallan con el código anterior.
+
+| Fallo | Gravedad | Qué pasaba | Cómo se arregló | Prueba |
+|---|---|---|---|---|
+| D6-01 · Robo de cuenta con el cambio de correo | Alta | Quien sabía la contraseña pedía pasar la cuenta a su correo. Aunque la dueña cambiara la contraseña al recibir el aviso, el enlace seguía sirviendo | Cambiar o recuperar la contraseña, o darse de baja, anula los cambios de correo pendientes | `CorreoYNavegadoresSeguridadWebTest.cambiarLaContrasenaAnulaElCambioDeCorreoPendiente` |
+| D6-02 · Despliegue sin `REMEMBER_ME_KEY` | Alta | En el perfil `nube`, sin esa variable la aplicación no arrancaba, y el despliegue en Render fallaba | Sin ella se usa una clave aleatoria: la cookie es aleatoria y se guarda en la base de datos, la clave no la firma. Aviso al arrancar si falta el servidor de correo | — |
+| D6-03 · Recuperación tras cambiar el correo | Media | Un enlace de recuperar la contraseña enviado al correo antiguo seguía sirviendo después de cambiarlo | Al confirmar el cambio se anulan los enlaces de recuperación | `CorreoYNavegadoresSeguridadWebTest.elEnlaceDeRecuperacionDelCorreoAntiguoDejaDeServirAlCambiarlo` |
+| D6-04 · Navegadores que no se podían revocar | Media | Unos 3 de cada 10 navegadores recordados tienen una «/» en su serie, y revocarlos daba error 404 | La serie va como parámetro, no en la ruta | `CorreoYNavegadoresSeguridadWebTest.seRevocaUnNavegadorAunqueSuSerieLleveBarras` |
+| D6-05 · Correos de cambio sin límite | Media | Se podían mandar correos sin fin a cualquier dirección pidiendo cambiar el correo | Como mucho 3 por cuenta y por dirección cada media hora; el dominio reservado de las bajas no vale | `CorreoYNavegadoresSeguridadWebTest.elCambioDeCorreoTieneLimiteDeEnvios`, `.elCorreoNuevoNoPuedeSerDelDominioReservado` |
+| D6-06 · Error 500 en la página de un mercado | Media | La vista previa de compra de un mercado de predicción (página pública) daba error 500 con un importe enorme o en un mercado muy decantado, y participaciones negativas con menos de un céntimo | Una compra que no da participaciones se rechaza con un aviso | `PrediccionSextaDepuracionWebTest` |
+| D6-07 · Búsqueda con tildes | Media | Desde #165, la búsqueda de partidos y equipos solo quitaba las tildes españolas: «koln» no encontraba «1. FC Köln» | La consulta quita las mismas marcas que `Nombres.normalizar` | `RevisionOptimizacionTest.laBusquedaSigueIgnorandoTodasLasTildes` |
+| D6-08 · Puesto del perfil en PostgreSQL | Baja | Desde #165, el ranking desempata por nombre en la base de datos y el perfil en Java: según la configuración de PostgreSQL, no coincidían (como D4-06) | El perfil saca su puesto de la misma consulta que el ranking | `PerfilYMovimientosWebTest.elPuestoDelPerfilEsElDelRankingAunqueSeLlamenIgual` |
+| D6-09 · Cuenta sin verificar | Baja | Con la cuenta sin verificar, el inicio de sesión solo decía «contraseña incorrecta», y recuperar la contraseña no dejaba entrar | Recuperar la contraseña activa la cuenta (el enlace llegó a su correo); el aviso dice cómo pedir otro enlace | `CorreoYNavegadoresSeguridadWebTest.recuperarLaContrasenaActivaUnaCuentaSinVerificar` |
+| D6-10 · Cuentas eliminadas en predicciones y cripto | Baja | Lo «pagado» o devuelto a una cuenta eliminada (que no cobra) y sus carteras de cripto contaban en las cuentas de la casa, y se le mandaban avisos | No se apunta ni se avisa, y no cuenta | `PrediccionSextaDepuracionWebTest`, `CriptoCuentasEliminadasTest` |
+| D6-11 · Equipos de un partido con bloqueos | Baja | El creador podía cambiar los equipos de un partido con bloqueos de liga pagados (se pagan por local o visitante) | No se puede, como con apuestas, retos o quinielas | `EditarEventoConBloqueosTest` |
+| D6-12 · Reglas de la mano de blackjack | Baja | Se leen por su posición: si faltaba la del 17 blando, el pago se perdía (hoy no pasa, siempre se guardan las dos) | Se guardan siempre los dos campos | `ManoBlackjackTest.elPagoSeConservaAunqueNoSeApuntaraLaReglaDel17` |
+
+**Optimización.** Medido con la aplicación en PostgreSQL 16 y datos de prueba grandes (5.000 usuarios, 300.000 apuestas, 20.000 partidos):
+- **Índices** en las claves ajenas que más se consultan (migración V37: `seleccion.apuesta_id` y los partidos de cada equipo). H2 las indexa solo; PostgreSQL no, y las pruebas no lo veían. La portada pasa de 1.051 ms a 42 ms, el catálogo de 3.327 a 165, *Mis apuestas* de 3.789 a 145 y la ficha de un equipo de 220 a 38.
+- **Mis apuestas:** el resumen por grupo solo mira las apuestas del usuario, no las de todos (145 → 46 ms).
+- **Ranking de una liga:** solo carga a sus miembros y sus apuestas (168 → 42 ms).
+- **Clasificación de la fantasy:** la consulta separa los partidos en casa y fuera para usar los índices (8,2 s → 2,9 s con 21.000 fichajes).
+- El número de consultas de cada página no crece con los datos (`ConsultasExtraWebTest`).
+
+**Sin arreglar, para el equipo:**
+- Los tokens de los navegadores recordados se guardan tal cual en la base de datos: quien la leyera podría crear cookies válidas. Guardar su resumen obliga a cambiar cómo los comprueba Spring.
+- Las impresiones de anuncios se guardan en memoria hasta 5 segundos: si la aplicación se reinicia, se pierden las de esos segundos.
+- La clasificación de la fantasy sigue creciendo con fichajes × partidos; con muchos datos convendría guardarla y recalcularla al terminar un partido.
+- `/ranking` suma todas las apuestas en cada visita (unos 200 ms con 300.000) y `/mercados` carga todos los mercados: con los datos de ahora no se nota.
 
 ## En producción
 

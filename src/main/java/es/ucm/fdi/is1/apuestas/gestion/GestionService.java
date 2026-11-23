@@ -19,6 +19,7 @@ import es.ucm.fdi.is1.apuestas.eventos.EventoBorrado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoCreado;
 import es.ucm.fdi.is1.apuestas.eventos.EventoNoDisponibleException;
 import es.ucm.fdi.is1.apuestas.eventos.EventoRepository;
+import es.ucm.fdi.is1.apuestas.ligas.BloqueoLigaRepository;
 import es.ucm.fdi.is1.apuestas.ligas.RetoRepository;
 import es.ucm.fdi.is1.apuestas.quiniela.PartidoQuinielaRepository;
 
@@ -37,18 +38,21 @@ public class GestionService {
     private final SeleccionRepository selecciones;
     private final PartidoQuinielaRepository partidosQuiniela;
     private final RetoRepository retos;
+    private final BloqueoLigaRepository bloqueos;
     private final ApplicationEventPublisher publicador;
     private final Clock reloj;
 
     public GestionService(CompeticionRepository competiciones, EquipoRepository equipos, EventoRepository eventos,
                           SeleccionRepository selecciones, PartidoQuinielaRepository partidosQuiniela,
-                          RetoRepository retos, ApplicationEventPublisher publicador, Clock reloj) {
+                          RetoRepository retos, BloqueoLigaRepository bloqueos, ApplicationEventPublisher publicador,
+                          Clock reloj) {
         this.competiciones = competiciones;
         this.equipos = equipos;
         this.eventos = eventos;
         this.selecciones = selecciones;
         this.partidosQuiniela = partidosQuiniela;
         this.retos = retos;
+        this.bloqueos = bloqueos;
         this.publicador = publicador;
         this.reloj = reloj;
     }
@@ -175,6 +179,11 @@ public class GestionService {
         if (cambianEquipos && retos.existsByEvento(evento)) {
             throw new DatosInvalidosException("localId",
                     "El evento tiene retos 1 contra 1: no se pueden cambiar los equipos. Si está mal, anúlalo.");
+        }
+        // Los bloqueos de liga (HU-105, HU-106) se pagaron por local o visitante: con otros equipos bloquearían otra cosa
+        if (cambianEquipos && !bloqueos.findByEvento(evento).isEmpty()) {
+            throw new DatosInvalidosException("localId",
+                    "El evento tiene bloqueos de liga: no se pueden cambiar los equipos. Si está mal, anúlalo.");
         }
         // La sincronización con la API de partidos aplica el resultado por el id externo, sin mirar los equipos:
         // con otros equipos, el resultado de un partido se apuntaría a otro

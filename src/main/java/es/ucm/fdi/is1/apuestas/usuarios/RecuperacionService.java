@@ -104,6 +104,8 @@ public class RecuperacionService {
         TokenRecuperacion token = buscar(codigo).orElseThrow(EnlaceNoValidoException::new);
         Usuario usuario = token.getUsuario();
         usuario.cambiarPasswordHash(passwordEncoder.encode(nueva));
+        // El enlace llegó a su correo: queda verificado (si no, después de recuperarla seguía sin poder entrar)
+        usuario.verificarEmail();
         token.usar();
         // Si estaba bloqueado por fallos de inicio de sesión, ya puede entrar con la nueva
         intentos.olvidar(usuario.getEmail());

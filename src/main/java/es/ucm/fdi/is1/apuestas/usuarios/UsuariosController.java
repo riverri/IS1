@@ -243,6 +243,9 @@ public class UsuariosController {
         } catch (EmailYaRegistradoException e) {
             errores.rejectValue("nuevoEmail", "duplicado", "Ese correo ya está asociado a una cuenta");
             return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
+        } catch (DemasiadosCambiosCorreoException e) {
+            errores.rejectValue("nuevoEmail", "demasiados", e.getMessage());
+            return cuenta(usuarios.consultarConRecarga(principal.getName()), model);
         }
         return "redirect:/cuenta";
     }

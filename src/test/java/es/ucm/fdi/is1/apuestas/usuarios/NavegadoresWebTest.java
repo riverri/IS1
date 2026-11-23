@@ -80,7 +80,7 @@ class NavegadoresWebTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Firefox")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Chrome")));
 
-        mvc.perform(post("/cuenta/navegadores/{serie}/revocar", "serie-uno")
+        mvc.perform(post("/cuenta/navegadores/revocar").param("serie", "serie-uno")
                         .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
                                 .user(EMAIL))
                         .with(csrf()))

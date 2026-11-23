@@ -65,13 +65,17 @@ public class RankingService {
         // Los emails se guardan en minúsculas: se normaliza para compararlo
         String yo = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
         // Diccionario id del usuario → sus estadísticas, para encontrarlas al instante después
-        Map<Long, Estadisticas> porUsuario = porJuego.de(juego);
+        // En una liga (soloUsuarios) basta con sus miembros: ni todas las cuentas ni las apuestas de todos
+        Map<Long, Estadisticas> porUsuario = soloUsuarios != null && juego == null
+                ? porJuego.deportesDe(soloUsuarios) : porJuego.de(juego);
 
         // Record local: un tipo auxiliar que solo existe dentro de este método, para juntar usuario y estadísticas
         record Fila(Usuario usuario, Estadisticas estadisticas) {
         }
         // Los jugadores sin apuestas resueltas también salen, con estadísticas vacías (getOrDefault)
-        List<Fila> filas = new ArrayList<>(usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO).stream()
+        List<Usuario> candidatos = soloUsuarios == null ? usuarios.findByRolOrderBySaldoDescNombreAsc(Rol.USUARIO)
+                : usuarios.findAllById(soloUsuarios).stream().filter(u -> u.getRol() == Rol.USUARIO).toList();
+        List<Fila> filas = new ArrayList<>(candidatos.stream()
                 .filter(u -> !u.isEliminado())
                 .filter(u -> soloUsuarios == null || soloUsuarios.contains(u.getId()))
                 // En un tipo de juego, solo los que han jugado a él (CA-84.1)
@@ -145,22 +149,20 @@ public class RankingService {
         if (usuario.isEliminado() || usuario.getRol() != Rol.USUARIO) {
             throw new JugadorNoEncontradoException(usuarioId);
         }
-        // Los de más saldo se cuentan en la base de datos; los empatados se ordenan aquí como en ranking() (nombre e
-        // id): comparar nombres en SQL depende de la ordenación de la base de datos (en PostgreSQL, «bea» va antes que
-        // «Carla»; en Java, después) y dos jugadores con el mismo nombre saldrían los dos con el mismo puesto
-        long anteriores = usuarios.contarJugadoresConMasSaldo(Rol.USUARIO, usuario.getSaldo())
-                + usuarios.jugadoresConSaldo(Rol.USUARIO, usuario.getSaldo()).stream()
-                .filter(fila -> {
-                    int nombre = ((String) fila[1]).compareTo(usuario.getNombre());
-                    return nombre < 0 || (nombre == 0 && (Long) fila[0] < usuario.getId());
-                }).count();
+        // El puesto sale de la misma consulta que el ranking por saldo de /ranking: los empates se desempatan por nombre
+        // en la base de datos, y en PostgreSQL ese orden depende de su configuración (en algunas, «bea» va antes que
+        // «Carla»). Con la misma consulta, el perfil y el ranking coinciden siempre
+        long posicion = apuestas.puestosGenerales(CriterioRanking.SALDO.name(), MINIMO_PARA_ACIERTOS, usuario.getId())
+                .stream().filter(fila -> fila.getUsuarioId().equals(usuario.getId()))
+                .mapToLong(ApuestaRepository.PuestoGeneral::getPosicion).findFirst()
+                .orElseThrow(() -> new JugadorNoEncontradoException(usuarioId));
         int totalJugadores = Math.toIntExact(usuarios.countByRolAndEliminadoFalse(Rol.USUARIO));
         Object[] resumen = apuestas.resumenResueltasDe(usuarioId).getFirst();
         Estadisticas estadisticas = Estadisticas.de(((Number) resumen[0]).longValue(),
                 ((Number) resumen[1]).longValue(), (java.math.BigDecimal) resumen[2],
                 (java.math.BigDecimal) resumen[3]);
         boolean soyYo = emailActual != null && usuario.getEmail().equals(emailActual.trim().toLowerCase(Locale.ROOT));
-        PuestoRanking puesto = new PuestoRanking(Math.toIntExact(anteriores + 1), usuario.getId(),
+        PuestoRanking puesto = new PuestoRanking(Math.toIntExact(posicion), usuario.getId(),
                 usuario.getNombre(), usuario.getSaldo(), estadisticas, soyYo);
         long enJuego = apuestas.countByUsuarioAndEstado(usuario, EstadoApuesta.ACTIVA);
         return new PerfilJugador(puesto, totalJugadores, enJuego);

@@ -19,7 +19,8 @@
                 <td th:text="${#temporals.format(navegador.creado, 'dd/MM/yyyy HH:mm')}">22/11/2026 18:00</td>
                 <td th:text="${#temporals.format(navegador.ultimoUso, 'dd/MM/yyyy HH:mm')}">22/11/2026 18:00</td>
                 <td>
-                    <form th:action="@{/cuenta/navegadores/{serie}/revocar(serie=${navegador.serie})}" method="post">
+                    <form th:action="@{/cuenta/navegadores/revocar}" method="post">
+                        <input type="hidden" name="serie" th:value="${navegador.serie}">
                         <button class="enlace peligro" type="submit">Revocar</button>
                     </form>
                 </td>

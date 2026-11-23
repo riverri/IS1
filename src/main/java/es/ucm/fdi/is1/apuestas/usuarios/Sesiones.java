@@ -17,15 +17,22 @@ public class Sesiones {
 
     private final SessionRegistry registro;
     private final JdbcNavegadorTokenRepository navegadores;
+    private final CambioCorreoPendienteRepository cambiosCorreo;
 
-    public Sesiones(SessionRegistry registro, JdbcNavegadorTokenRepository navegadores) {
+    public Sesiones(SessionRegistry registro, JdbcNavegadorTokenRepository navegadores,
+                    CambioCorreoPendienteRepository cambiosCorreo) {
         this.registro = registro;
         this.navegadores = navegadores;
+        this.cambiosCorreo = cambiosCorreo;
     }
 
-    /** Todas las del usuario menos {@code actual} (null = todas). */
+    /**
+     * Todas las del usuario menos {@code actual} (null = todas), los navegadores recordados y los cambios de correo
+     * pendientes: si alguien que sabía la contraseña pidió cambiar el correo, cambiar la contraseña tiene que anularlo.
+     */
     public void cerrarOtras(String email, HttpSession actual) {
         navegadores.removeUserTokens(email);
+        cambiosCorreo.borrarDeEmail(email);
         String id = actual == null ? null : actual.getId();
         // Cada principal es un usuario con sesión; false = sin contar las que ya han caducado
         registro.getAllPrincipals().stream()
