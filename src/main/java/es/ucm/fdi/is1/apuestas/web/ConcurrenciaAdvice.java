@@ -1,5 +1,6 @@
 package es.ucm.fdi.is1.apuestas.web;
 
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,7 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
  * Dos operaciones a la vez sobre el mismo saldo (doble clic, dos pestañas…): la segunda se rechaza
  * y se pide repetirla, en lugar de mostrar un error 500.
  * {@code @ControllerAdvice}: se aplica a todos los controladores. La excepción la lanza JPA cuando falla
- * el control de versión ({@code @Version}) de {@code Usuario}: otra operación cambió el saldo antes.
+ * el control de versión ({@code @Version}) de {@code Usuario}: otra operación cambió el saldo antes. También se
+ * recogen los bloqueos de fila que la base de datos rompe (por ejemplo, dos operaciones que se esperan la una a la
+ * otra en PostgreSQL): antes daban un error 500.
  *
  * <p>También le puede pasar al creador: al guardar un resultado se cambian los saldos de todos los que
  * apostaron, y si uno de ellos estaba apostando o cancelando justo entonces, se deshace todo el resultado
@@ -32,7 +35,7 @@ public class ConcurrenciaAdvice {
      * {@code @ExceptionHandler}: si cualquier controlador deja escapar esa excepción, Spring llama a este método
      * en lugar de mostrar la página de error.
      */
-    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    @ExceptionHandler({ObjectOptimisticLockingFailureException.class, PessimisticLockingFailureException.class})
     public String aLaVez(@RequestHeader(value = "Referer", required = false) String referer,
                          HttpServletRequest peticion, RedirectAttributes redireccion) {
         boolean desdeGestion = peticion.getRequestURI().startsWith(peticion.getContextPath() + "/gestion");

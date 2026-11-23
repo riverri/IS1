@@ -88,8 +88,10 @@ class BloqueoConcurrenteTest {
                 try {
                     bloqueos.crear(liga.getId(), ANA, luis, evento.getId(), "LOCAL");
                     return true;
-                } catch (RuntimeException e) {
-                    return false; // ya existe o conflicto de concurrencia: correcto, no se cobra
+                } catch (IllegalArgumentException e) {
+                    // «Ese bloqueo ya está activo»: con el evento bloqueado en exclusiva, los demás esperan y lo ven.
+                    // Antes chocaban con la clave única (DataIntegrityViolationException) y la página daba error 500
+                    return false;
                 }
             }));
         }
