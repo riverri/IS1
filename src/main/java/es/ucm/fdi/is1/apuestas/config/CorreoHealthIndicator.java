@@ -12,10 +12,12 @@ import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /** Reports SMTP readiness without exposing credentials or taking the web offline. */
 @Component("correo")
+@Profile("nube")
 public class CorreoHealthIndicator implements HealthIndicator {
 
     private final ObjectProvider<JavaMailSender> servidor;
