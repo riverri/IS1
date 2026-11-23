@@ -3,11 +3,15 @@ package es.ucm.fdi.is1.apuestas.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.mail.MessagingException;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 /** Reports SMTP readiness without exposing credentials or taking the web offline. */
@@ -46,8 +50,18 @@ public class CorreoHealthIndicator implements HealthIndicator {
         if (!faltan.isEmpty()) {
             return Health.down().withDetail("faltanVariables", String.join(", ", faltan)).build();
         }
-        if (servidor.getIfAvailable() == null) {
+        JavaMailSender cliente = servidor.getIfAvailable();
+        if (cliente == null) {
             return Health.down().withDetail("motivo", "Spring no ha creado el cliente SMTP").build();
+        }
+        if (cliente instanceof JavaMailSenderImpl smtp) {
+            try {
+                // Solo abre la sesión SMTP; no envía ningún mensaje.
+                smtp.testConnection();
+            } catch (MailException | MessagingException e) {
+                return Health.down().withDetail("motivo", "No se pudo autenticar o conectar con el servidor SMTP")
+                        .build();
+            }
         }
         return Health.up().withDetail("servidor", host).withDetail("puerto", puerto).build();
     }
