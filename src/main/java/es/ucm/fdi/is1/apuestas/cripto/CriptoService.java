@@ -233,7 +233,9 @@ public class CriptoService {
         if (!cripto.isActiva()) {
             throw new IllegalStateException(cripto.getNombre() + " ya no se puede comprar");
         }
-        Usuario usuario = jugador(email);
+        // Con la cuenta bloqueada: con un doble clic en la primera compra, las dos peticiones creaban la posición y la
+        // segunda chocaba con la clave única (error 500); así la segunda espera y usa la que creó la primera
+        Usuario usuario = jugadorBloqueado(email);
         if (importe == null || importe.signum() <= 0 || importe.stripTrailingZeros().scale() > 2) {
             throw new IllegalArgumentException("Introduce un importe válido, con 2 decimales como mucho");
         }
@@ -371,6 +373,12 @@ public class CriptoService {
 
     private Usuario usuario(String email) {
         return usuarios.findByEmail(email).orElseThrow();
+    }
+
+    /** Como {@link #jugador}, con la fila de la cuenta bloqueada hasta el final de la transacción. */
+    private Usuario jugadorBloqueado(String email) {
+        usuarios.paraActualizarRelaciones(email).orElseThrow();
+        return jugador(email);
     }
 
     private Usuario jugador(String email) {

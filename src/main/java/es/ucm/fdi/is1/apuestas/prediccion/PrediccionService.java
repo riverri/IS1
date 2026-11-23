@@ -6,7 +6,9 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
@@ -164,7 +166,9 @@ public class PrediccionService {
     public PosicionPrediccion comprar(String email, Long id, Lado lado, BigDecimal importe, BigDecimal precioVisto) {
         LocalDateTime ahora = LocalDateTime.now(reloj);
         MercadoPrediccion mercado = abierto(id, ahora);
-        Usuario usuario = jugador(email);
+        // Con la cuenta bloqueada: con un doble clic en la primera compra, las dos peticiones creaban la posición y la
+        // segunda chocaba con la clave única (error 500); así la segunda espera y usa la que creó la primera
+        Usuario usuario = jugadorBloqueado(email);
         comprobarImporte(lado, importe);
         limites.actuales().comprobarImporte(importe);
         comprobarPrecio(mercado, precioVisto);
@@ -279,24 +283,34 @@ public class PrediccionService {
     }
 
     /**
-     * Anula el mercado y devuelve a cada uno lo que puso menos lo que recuperó vendiendo (CA-63.3). Si ya había
-     * recuperado más de lo que puso, no se le quita nada.
+     * Anula el mercado y devuelve a cada uno lo que puso menos lo que recuperó vendiendo (CA-63.3), contando sus dos
+     * lados juntos. Si ya había recuperado más de lo que puso, no se le quita nada. Antes se devolvía cada lado por
+     * separado: quien perdía vendiendo el «No» y ganaba vendiendo el «Sí» recuperaba la pérdida y se quedaba la
+     * ganancia (se creaba dinero). Lo devuelto queda apuntado en la posición, como lo pagado al resolver.
      */
     @Transactional
     public int anular(Long id) {
         MercadoPrediccion mercado = mercado(id);
         mercado.anular();
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        int devueltas = 0;
+        Map<Long, List<PosicionPrediccion>> porUsuario = new LinkedHashMap<>();
         for (PosicionPrediccion posicion : posiciones.findByMercado(mercado)) {
-            if (posicion.getInvertido().signum() > 0 && !posicion.getUsuario().isEliminado()) {
-                posicion.getUsuario().abonar(posicion.getInvertido(), TipoMovimiento.DEVOLUCION,
-                        "Mercado anulado: " + mercado.getPregunta(), ahora);
-                notificaciones.avisar(posicion.getUsuario(), "anulada", "Se ha anulado el mercado «"
-                        + mercado.getPregunta() + "». Te hemos devuelto " + Monedas.truncado(posicion.getInvertido())
-                        + " monedas.");
-                devueltas++;
+            porUsuario.computeIfAbsent(posicion.getUsuario().getId(), u -> new ArrayList<>()).add(posicion);
+        }
+        int devueltas = 0;
+        for (List<PosicionPrediccion> suyas : porUsuario.values()) {
+            Usuario usuario = suyas.getFirst().getUsuario();
+            BigDecimal neto = suyas.stream().map(PosicionPrediccion::getInvertido)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            // A una cuenta eliminada no se le devuelve nada (abonar no hace nada) ni se le avisa
+            if (neto.signum() <= 0 || usuario.isEliminado()) {
+                continue;
             }
+            usuario.abonar(neto, TipoMovimiento.DEVOLUCION, "Mercado anulado: " + mercado.getPregunta(), ahora);
+            suyas.getFirst().marcarPagado(neto);
+            notificaciones.avisar(usuario, "anulada", "Se ha anulado el mercado «" + mercado.getPregunta()
+                    + "». Te hemos devuelto " + Monedas.truncado(neto) + " monedas.");
+            devueltas++;
         }
         return devueltas;
     }
@@ -313,10 +327,18 @@ public class PrediccionService {
                 ventas = (BigDecimal) fila[1];
             }
         }
-        BigDecimal pagos = posiciones.findAll().stream().map(PosicionPrediccion::getPagado)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new CuentasPrediccion(mercados.count(), compras, ventas, pagos,
-                posiciones.devuelto(EstadoPrediccion.ANULADO));
+        // Lo pagado al resolver y lo devuelto al anular se apuntan en cada posición cuando se hace: así no cambia si
+        // después se elimina una cuenta
+        BigDecimal pagos = BigDecimal.ZERO;
+        BigDecimal devoluciones = BigDecimal.ZERO;
+        for (PosicionPrediccion posicion : posiciones.findAll()) {
+            if (posicion.getMercado().getEstado() == EstadoPrediccion.ANULADO) {
+                devoluciones = devoluciones.add(posicion.getPagado());
+            } else {
+                pagos = pagos.add(posicion.getPagado());
+            }
+        }
+        return new CuentasPrediccion(mercados.count(), compras, ventas, pagos, devoluciones);
     }
 
     /**
@@ -343,6 +365,12 @@ public class PrediccionService {
 
     private Usuario usuario(String email) {
         return usuarios.findByEmail(email).orElseThrow();
+    }
+
+    /** Como {@link #jugador}, con la fila de la cuenta bloqueada hasta el final de la transacción. */
+    private Usuario jugadorBloqueado(String email) {
+        usuarios.paraActualizarRelaciones(email).orElseThrow();
+        return jugador(email);
     }
 
     private Usuario jugador(String email) {
