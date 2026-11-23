@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.random.RandomGenerator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
 import es.ucm.fdi.is1.apuestas.web.RutaSegura;
+import jakarta.annotation.PreDestroy;
 
 /**
  * Anuncios internos (HU-60, HU-61, HU-62): cuál se muestra en cada página, el registro de impresiones y clics,
@@ -36,6 +39,8 @@ import es.ucm.fdi.is1.apuestas.web.RutaSegura;
  */
 @Service
 public class AnuncioService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AnuncioService.class);
 
     private final AnuncioRepository anuncios;
     private final ClicAnuncioRepository clics;
@@ -160,11 +165,29 @@ public class AnuncioService {
                 lote.put(id, cantidad);
             }
         });
+        // Sin impresiones no se abre una transacción: cada 5 segundos, con la web sin visitas, sería trabajo en balde
+        if (lote.isEmpty()) {
+            return;
+        }
         try {
             transaccion.executeWithoutResult(estado -> lote.forEach(anuncios::sumarImpresiones));
         } catch (RuntimeException e) {
             lote.forEach((id, cantidad) -> impresionesPendientes.get(id).addAndGet(cantidad));
             throw e;
+        }
+    }
+
+    /**
+     * Al apagar la aplicación (un despliegue nuevo, un reinicio) guarda las impresiones que aún estaban en memoria;
+     * si no, se perdían las de los últimos segundos. La base de datos sigue disponible: Spring destruye este servicio
+     * antes que el gestor de transacciones del que depende.
+     */
+    @PreDestroy
+    public void guardarAlApagar() {
+        try {
+            vaciarImpresiones();
+        } catch (RuntimeException e) {
+            LOG.warn("No se han podido guardar las impresiones pendientes de los anuncios al apagar", e);
         }
     }
 

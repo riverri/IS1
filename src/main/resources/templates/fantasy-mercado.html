@@ -35,7 +35,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(ofertas)}">
         <p>No hay futbolistas con estos filtros. Las plantillas se cargan desde Equipos (o con la API de plantillas).</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(ofertas)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(ofertas)}">
         <table>
             <thead><tr><th>Jugador</th><th>Posición</th><th>Club</th><th>Nota</th><th>Precio</th><th></th></tr></thead>
             <tbody>

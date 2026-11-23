@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import java.math.BigDecimal;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -17,14 +15,6 @@ public interface PosicionPrediccionRepository extends JpaRepository<PosicionPred
     Optional<PosicionPrediccion> findByUsuarioAndMercadoAndLado(Usuario usuario, MercadoPrediccion mercado, Lado lado);
 
     List<PosicionPrediccion> findByMercado(MercadoPrediccion mercado);
-
-    /**
-     * Para el panel de la casa: lo devuelto al anular los mercados en ese estado. Se devuelve lo invertido, y solo si es
-     * positivo y no a cuentas eliminadas (ver {@code PrediccionService.anular}).
-     */
-    @Query("select coalesce(sum(p.invertido), 0) from PosicionPrediccion p"
-            + " where p.mercado.estado = :estado and p.invertido > 0 and p.usuario.eliminado = false")
-    BigDecimal devuelto(EstadoPrediccion estado);
 
     List<PosicionPrediccion> findByUsuarioAndMercado(Usuario usuario, MercadoPrediccion mercado);
 

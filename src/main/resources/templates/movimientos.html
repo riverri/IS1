@@ -12,7 +12,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(movimientos)}">
         <p>Todavía no tienes movimientos.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(movimientos)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(movimientos)}">
         <table>
             <thead><tr><th>Fecha</th><th>Concepto</th><th>Importe</th><th>Saldo</th></tr></thead>
             <tbody>

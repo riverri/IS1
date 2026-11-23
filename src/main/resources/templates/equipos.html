@@ -38,7 +38,7 @@
     <section th:each="grupo : ${equiposPorDeporte}">
         <h2><span th:text="${grupo.key.icono}">⚽</span> <span th:text="${grupo.key.nombre}">Fútbol</span>
             <small class="aviso" th:text="'· ' + ${#lists.size(grupo.value)}">· 40</small></h2>
-        <div class="tarjeta tabla">
+        <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
             <table>
                 <thead>
                 <tr><th>Nombre</th><th>Competiciones</th><th>Calidad</th><th>Forma</th></tr>

@@ -38,7 +38,7 @@
     </div>
 
     <h2>Dinero apostado</h2>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Apuesta</th><th>Cuota actual</th><th>Apuestas</th><th>Importe</th></tr></thead>
             <tbody>
@@ -80,7 +80,7 @@
     <p role="alert" class="alerta alerta-error" th:if="${riesgo.alerta}"
        th:text="'Riesgo alto: con el peor resultado la casa perdería ' + ${#numbers.formatDecimal(riesgo.peorSaldo.negate(), 1, 'POINT', 2, 'COMMA')} + ' monedas, más que el límite de alerta (' + ${#numbers.formatDecimal(riesgo.limite, 1, 'POINT', 2, 'COMMA')} + ').'">Riesgo alto</p>
     <p class="aviso" th:if="${riesgo.sinApuestas}">Nadie ha apostado todavía a este evento.</p>
-    <div class="tarjeta tabla" th:unless="${riesgo.sinApuestas}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${riesgo.sinApuestas}">
         <table>
             <thead><tr><th>Si sale</th><th>La casa paga</th><th>Le queda a la casa</th></tr></thead>
             <tbody>

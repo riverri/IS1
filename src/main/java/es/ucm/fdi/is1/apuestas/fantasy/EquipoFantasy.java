@@ -10,6 +10,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import es.ucm.fdi.is1.apuestas.cache.CambiosEnEntidades;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Jugador;
 import es.ucm.fdi.is1.apuestas.equipos.Posicion;
@@ -17,6 +18,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -33,6 +35,7 @@ import jakarta.persistence.Version;
  * {@link PuntosFantasy}). Es gratis: no se juegan moneditas.
  */
 @Entity
+@EntityListeners(CambiosEnEntidades.class)
 public class EquipoFantasy {
 
     public static final BigDecimal PRESUPUESTO = new BigDecimal("90.0");

@@ -21,7 +21,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(cartera.posiciones)}">
         <p>Todavía no tienes criptomonedas. <a th:href="@{/cripto}">Échale un vistazo a las memecoins</a>.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(cartera.posiciones)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(cartera.posiciones)}">
         <table>
             <thead><tr><th>Cripto</th><th>Cantidad</th><th>Precio</th><th>Valor</th><th>Coste</th><th>Ganancia</th></tr></thead>
             <tbody>
@@ -40,7 +40,7 @@
 
     <th:block th:unless="${#lists.isEmpty(operaciones)}">
         <h2>Últimas operaciones</h2>
-        <div class="tarjeta tabla">
+        <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
             <table>
                 <thead><tr><th>Fecha</th><th>Operación</th><th>Cantidad</th><th>Precio</th><th>Importe</th><th>Comisión</th></tr></thead>
                 <tbody>

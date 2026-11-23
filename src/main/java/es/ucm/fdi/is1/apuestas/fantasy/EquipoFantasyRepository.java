@@ -15,7 +15,7 @@ import jakarta.persistence.LockModeType;
 
 public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Long> {
 
-    /** Fila ligera de la clasificación, calculada sin cargar los fichajes ni el historial de eventos. */
+    /** Equipo de la clasificación, sin sus puntos (los da {@link #puntosPorEquipo}) ni sus fichajes. */
     interface FilaClasificacion {
         Long getId();
 
@@ -26,20 +26,29 @@ public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Lo
         String getEmail();
 
         LocalDateTime getCreado();
-
-        Integer getPuntos();
-
-        Integer getPuesto();
     }
 
+    /** Puntos de un equipo, de {@link #puntosPorEquipo}. */
+    interface PuntosEquipo {
+        Long getId();
+
+        Integer getPuntos();
+    }
+
+    /** Equipos de las cuentas que siguen activas, para la clasificación (HU-83): una fila ligera por equipo. */
+    @Query("""
+            select e.id as id, e.nombre as nombreEquipo, u.nombre as nombreUsuario, u.email as email,
+                   e.creado as creado
+            from EquipoFantasy e join e.usuario u where u.eliminado = false""")
+    List<FilaClasificacion> filasClasificacion();
+
     /**
-     * Suma los puntos directamente en la base de datos. La condición temporal mantiene la semántica de fichajes y
-     * ventas; las columnas club/posición son las instantáneas guardadas al fichar (CA-82.1).
+     * Puntos de cada equipo, sumados en la base de datos. La condición temporal mantiene la semántica de fichajes y
+     * ventas; las columnas club/posición son las instantáneas guardadas al fichar (CA-82.1). Es la consulta cara de la
+     * clasificación: {@link FantasyService} la guarda hasta que cambia un partido, un fichaje o un equipo.
      */
     @Query(value = """
-            with puntuados as (
-            select ef.id as id, ef.nombre as nombreEquipo, u.nombre as nombreUsuario, u.email as email,
-                   ef.creado as creado,
+            select ef.id as id,
                    cast(coalesce(sum(case when ev.id is null then 0 else
                        case when ev.resultado = 'EMPATE' then 1
                             when ev.resultado = ev.gana then 3
@@ -54,7 +63,6 @@ public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Lo
                          end
                    end), 0) as integer) as puntos
             from equipo_fantasy ef
-            join usuario u on u.id = ef.usuario_id
             left join fichaje_fantasy f on f.equipo_id = ef.id
             left join (
                 select id, local_id as club_id, fecha_hora, resultado, 'LOCAL' as gana, goles_local as a_favor, goles_visitante as en_contra
@@ -63,16 +71,9 @@ public interface EquipoFantasyRepository extends JpaRepository<EquipoFantasy, Lo
                 select id, visitante_id, fecha_hora, resultado, 'VISITANTE', goles_visitante, goles_local
                 from evento where estado = 'FINALIZADO'
             ) ev on ev.club_id = f.club_id and ev.fecha_hora >= f.desde and (f.hasta is null or ev.fecha_hora < f.hasta)
-            where u.eliminado = false
-            group by ef.id, ef.nombre, u.nombre, u.email, ef.creado
-            ), posiciones as (
-                select p.*, cast(row_number() over (order by p.puntos desc, p.creado asc, p.id asc) as integer) as puesto
-                from puntuados p
-            )
-            select p.id, p.nombreEquipo, p.nombreUsuario, p.email, p.creado, p.puntos, p.puesto
-            from posiciones p where p.puesto <= 20 or p.email = :emailActual order by p.puesto
+            group by ef.id
             """, nativeQuery = true)
-    List<FilaClasificacion> clasificacionAgregada(@Param("emailActual") String emailActual);
+    List<PuntosEquipo> puntosPorEquipo();
 
     /** Equipo Fantasy para su página, que muestra plantilla, fichajes y puntos; el ranking usa una agregación aparte. */
     @EntityGraph(attributePaths = {"fichajes", "fichajes.jugador", "fichajes.club"})

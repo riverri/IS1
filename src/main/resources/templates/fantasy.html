@@ -39,7 +39,7 @@
             <h2 th:text="${equipo.nombre}">Mi equipo</h2>
             <a class="boton" th:href="@{/fantasy/mercado}">Ir al mercado de fichajes</a>
         </div>
-        <div class="tarjeta tabla">
+        <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
             <table>
                 <thead><tr><th>Posición</th><th>Jugador</th><th>Club</th><th>Precio</th><th>Puntos</th><th></th></tr></thead>
                 <tbody>
@@ -51,7 +51,7 @@
                             <small class="aviso" th:if="${!f.desde.isBefore(jornada.fin)}"
                                    th:text="'Suma desde el lunes ' + ${#temporals.format(f.desde, 'd/M')}">Suma desde el lunes</small>
                             <details th:unless="${#lists.isEmpty(h.ocupante.partidos)}">
-                                <summary th:text="${#lists.size(h.ocupante.partidos)} + ' partidos'">2 partidos</summary>
+                                <summary th:text="${#lists.size(h.ocupante.partidos)} + (${#lists.size(h.ocupante.partidos) == 1} ? ' partido' : ' partidos')">2 partidos</summary>
                                 <small class="aviso" th:each="pp : ${h.ocupante.partidos}"
                                        th:text="${pp.partido.local.nombre} + ' ' + (${pp.partido.conMarcador} ? ${pp.partido.golesLocal} + '-' + ${pp.partido.golesVisitante} : ${pp.partido.resultado.simbolo}) + ' ' + ${pp.partido.visitante.nombre} + ': ' + ${pp.puntos} + ' pts'">Getafe 2-0 Sevilla: 7 pts<br></small>
                             </details>
@@ -80,7 +80,7 @@
 
     <h2>Clasificación</h2>
     <div class="vacio" th:if="${#lists.isEmpty(clasificacion)}"><p>Todavía no hay ningún equipo. ¡Sé el primero!</p></div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(clasificacion)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(clasificacion)}">
         <table>
             <thead><tr><th>#</th><th>Equipo</th><th>Mánager</th><th>Puntos</th></tr></thead>
             <tbody>

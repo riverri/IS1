@@ -26,7 +26,7 @@
     <h2>Candidatos</h2>
     <p class="aviso" th:if="${mercado.estado.name() == 'ABIERTO' or mercado.estado.name() == 'CERRADO'}">
         Si cambias una cuota, las apuestas ya hechas mantienen la suya.</p>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Candidato</th><th>Cuota</th><th>Apuestas</th><th>Importe</th></tr></thead>
             <tbody>

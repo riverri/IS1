@@ -1,7 +1,10 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -10,6 +13,8 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.cache.CacheDeConsulta;
+import es.ucm.fdi.is1.apuestas.cache.CachesDeConsultas;
 import es.ucm.fdi.is1.apuestas.usuarios.Rol;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import es.ucm.fdi.is1.apuestas.usuarios.UsuarioRepository;
@@ -29,14 +34,37 @@ public class RankingService {
     /** Apuestas resueltas necesarias para competir por el porcentaje de aciertos. */
     public static final int MINIMO_PARA_ACIERTOS = 5;
 
+    /**
+     * Cuánto puede durar el ranking guardado si nadie lo invalida. Dentro de esta instancia se invalida en cuanto
+     * cambia un usuario o una apuesta; la duración solo limita lo viejo que puede ser si cambian desde otra.
+     */
+    static final Duration DURACION_CACHE = Duration.ofSeconds(60);
+
+    /** Una fila del ranking general, tal como sale de la base de datos (sin «soy yo», que depende de quién mira). */
+    private record FilaGeneral(int posicion, Long usuarioId, String nombre, BigDecimal saldo,
+                               Estadisticas estadisticas) {
+
+        PuestoRanking puesto(Long usuarioActual) {
+            return new PuestoRanking(posicion, usuarioId, nombre, saldo, estadisticas, usuarioId.equals(usuarioActual));
+        }
+    }
+
+    /** El ranking general completo con un criterio, y dónde está cada jugador. Inmutable: lo comparten las peticiones. */
+    private record RankingGeneral(List<FilaGeneral> filas, Map<Long, FilaGeneral> porUsuario) {
+    }
+
     private final UsuarioRepository usuarios;
     private final ApuestaRepository apuestas;
     private final EstadisticasPorJuego porJuego;
+    private final CacheDeConsulta<CriterioRanking, RankingGeneral> rankingGeneral;
 
-    public RankingService(UsuarioRepository usuarios, ApuestaRepository apuestas, EstadisticasPorJuego porJuego) {
+    public RankingService(UsuarioRepository usuarios, ApuestaRepository apuestas, EstadisticasPorJuego porJuego,
+                          CachesDeConsultas caches) {
         this.usuarios = usuarios;
         this.apuestas = apuestas;
         this.porJuego = porJuego;
+        // El saldo, el nombre y la baja están en Usuario; las estadísticas salen de las apuestas
+        this.rankingGeneral = caches.crear(DURACION_CACHE, Usuario.class, Apuesta.class);
     }
 
     /** Ranking de todos los jugadores; {@code emailActual} (null sin sesión) marca la fila propia. */
@@ -108,7 +136,7 @@ public class RankingService {
         return puestos;
     }
 
-    /** El ranking general se calcula en SQL y solo transporta los veinte primeros y la fila propia. */
+    /** El ranking general se calcula en SQL (o se toma de la caché) y solo se pintan los veinte primeros y la fila propia. */
     @Transactional(readOnly = true)
     public ListaRanking lista(String emailActual, CriterioRanking criterio, TipoJuego juego) {
         if (juego != null) {
@@ -119,22 +147,26 @@ public class RankingService {
         }
         String email = emailActual == null ? null : emailActual.trim().toLowerCase(Locale.ROOT);
         Long usuarioId = email == null ? null : usuarios.findByEmail(email).map(Usuario::getId).orElse(null);
-        List<ApuestaRepository.PuestoGeneral> filas = apuestas.puestosGenerales(criterio.name(),
-                MINIMO_PARA_ACIERTOS, usuarioId);
-        List<PuestoRanking> primeros = new ArrayList<>();
-        PuestoRanking mio = null;
-        for (ApuestaRepository.PuestoGeneral fila : filas) {
-            PuestoRanking puesto = new PuestoRanking(Math.toIntExact(fila.getPosicion()), fila.getUsuarioId(),
-                    fila.getNombre(), fila.getSaldo(), Estadisticas.de(fila.getResueltas(), fila.getGanadas(),
-                            fila.getApostado(), fila.getPagado()), fila.getUsuarioId().equals(usuarioId));
-            if (puesto.posicion() <= 20) {
-                primeros.add(puesto);
-            } else if (puesto.soyYo()) {
-                mio = puesto;
-            }
-        }
-        long total = usuarios.countByRolAndEliminadoFalse(Rol.USUARIO);
-        return new ListaRanking(primeros, mio, total);
+        RankingGeneral general = rankingGeneral(criterio);
+        List<PuestoRanking> primeros = general.filas().stream().limit(20).map(f -> f.puesto(usuarioId)).toList();
+        FilaGeneral mia = usuarioId == null ? null : general.porUsuario().get(usuarioId);
+        PuestoRanking mio = mia != null && mia.posicion() > 20 ? mia.puesto(usuarioId) : null;
+        // Las filas son los jugadores sin cuenta eliminada: el total sale de ahí, sin otra consulta
+        return new ListaRanking(primeros, mio, general.filas().size());
+    }
+
+    /** Todo el ranking general con ese criterio; se calcula una vez y vale hasta que cambia un usuario o una apuesta. */
+    private RankingGeneral rankingGeneral(CriterioRanking criterio) {
+        return rankingGeneral.obtener(criterio, () -> {
+            List<FilaGeneral> filas = apuestas.puestosGenerales(criterio.name(), MINIMO_PARA_ACIERTOS).stream()
+                    .map(fila -> new FilaGeneral(Math.toIntExact(fila.getPosicion()), fila.getUsuarioId(),
+                            fila.getNombre(), fila.getSaldo(), Estadisticas.de(fila.getResueltas(), fila.getGanadas(),
+                            fila.getApostado(), fila.getPagado())))
+                    .toList();
+            Map<Long, FilaGeneral> porUsuario = new HashMap<>();
+            filas.forEach(fila -> porUsuario.put(fila.usuarioId(), fila));
+            return new RankingGeneral(filas, Map.copyOf(porUsuario));
+        });
     }
 
     /**
@@ -149,21 +181,18 @@ public class RankingService {
         if (usuario.isEliminado() || usuario.getRol() != Rol.USUARIO) {
             throw new JugadorNoEncontradoException(usuarioId);
         }
-        // El puesto sale de la misma consulta que el ranking por saldo de /ranking: los empates se desempatan por nombre
-        // en la base de datos, y en PostgreSQL ese orden depende de su configuración (en algunas, «bea» va antes que
-        // «Carla»). Con la misma consulta, el perfil y el ranking coinciden siempre
-        long posicion = apuestas.puestosGenerales(CriterioRanking.SALDO.name(), MINIMO_PARA_ACIERTOS, usuario.getId())
-                .stream().filter(fila -> fila.getUsuarioId().equals(usuario.getId()))
-                .mapToLong(ApuestaRepository.PuestoGeneral::getPosicion).findFirst()
-                .orElseThrow(() -> new JugadorNoEncontradoException(usuarioId));
-        int totalJugadores = Math.toIntExact(usuarios.countByRolAndEliminadoFalse(Rol.USUARIO));
-        Object[] resumen = apuestas.resumenResueltasDe(usuarioId).getFirst();
-        Estadisticas estadisticas = Estadisticas.de(((Number) resumen[0]).longValue(),
-                ((Number) resumen[1]).longValue(), (java.math.BigDecimal) resumen[2],
-                (java.math.BigDecimal) resumen[3]);
+        // El puesto y las estadísticas salen del mismo ranking por saldo que enseña /ranking: los empates se
+        // desempatan por nombre en la base de datos, y en PostgreSQL ese orden depende de su configuración (en
+        // algunas, «bea» va antes que «Carla»). Con los mismos datos, el perfil y el ranking coinciden siempre
+        RankingGeneral general = rankingGeneral(CriterioRanking.SALDO);
+        FilaGeneral fila = general.porUsuario().get(usuario.getId());
+        if (fila == null) {
+            throw new JugadorNoEncontradoException(usuarioId);
+        }
         boolean soyYo = emailActual != null && usuario.getEmail().equals(emailActual.trim().toLowerCase(Locale.ROOT));
-        PuestoRanking puesto = new PuestoRanking(Math.toIntExact(posicion), usuario.getId(),
-                usuario.getNombre(), usuario.getSaldo(), estadisticas, soyYo);
+        PuestoRanking puesto = new PuestoRanking(fila.posicion(), usuario.getId(), usuario.getNombre(),
+                usuario.getSaldo(), fila.estadisticas(), soyYo);
+        int totalJugadores = general.filas().size();
         long enJuego = apuestas.countByUsuarioAndEstado(usuario, EstadoApuesta.ACTIVA);
         return new PerfilJugador(puesto, totalJugadores, enJuego);
     }

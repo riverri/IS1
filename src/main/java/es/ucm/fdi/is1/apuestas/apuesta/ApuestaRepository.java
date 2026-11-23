@@ -110,7 +110,10 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
         BigDecimal getPagado();
     }
 
-    /** Ranking general calculado y ordenado en SQL; solo devuelve el top 20 y la fila solicitada. */
+    /**
+     * Ranking general calculado y ordenado en SQL: todos los jugadores, por puesto. {@link RankingService} lo guarda
+     * en memoria hasta que cambia un usuario o una apuesta, y de ahí salen /ranking y el puesto del perfil.
+     */
     @Query(value = """
             with estadisticas as (
                 select u.id as usuario_id, u.nombre as nombre, u.saldo as saldo,
@@ -140,12 +143,10 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
             select usuario_id as "usuarioId", posicion as "posicion", nombre as "nombre", saldo as "saldo",
                    resueltas as "resueltas", ganadas as "ganadas", apostado as "apostado", pagado as "pagado"
             from posiciones
-            where posicion <= 20 or usuario_id = :usuarioId
             order by posicion
             """, nativeQuery = true)
     List<PuestoGeneral> puestosGenerales(@org.springframework.data.repository.query.Param("criterio") String criterio,
-                                         @org.springframework.data.repository.query.Param("minimo") int minimo,
-                                         @org.springframework.data.repository.query.Param("usuarioId") Long usuarioId);
+                                         @org.springframework.data.repository.query.Param("minimo") int minimo);
 
     /** Estadísticas de un único jugador para su perfil público. */
     @Query("select coalesce(sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,"

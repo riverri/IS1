@@ -2,9 +2,11 @@ package es.ucm.fdi.is1.apuestas.fantasy;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ucm.fdi.is1.apuestas.cache.CacheDeConsulta;
+import es.ucm.fdi.is1.apuestas.cache.CachesDeConsultas;
 import es.ucm.fdi.is1.apuestas.equipos.Deporte;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.Jugador;
@@ -39,14 +43,24 @@ public class FantasyService {
     private final EventoRepository eventos;
     private final UsuarioRepository usuarios;
     private final Clock reloj;
+    /** Puntos de cada equipo (id → puntos): la parte cara de la clasificación. */
+    private final CacheDeConsulta<String, Map<Long, Integer>> puntosPorEquipo;
+
+    /**
+     * Cuánto puede durar la caché de puntos si nadie la invalida. En esta instancia deja de valer en cuanto cambia un
+     * partido (resultado, marcador, anulación…), un fichaje o un equipo; la duración solo limita lo vieja que puede
+     * ser si cambian desde otra instancia.
+     */
+    static final Duration DURACION_CACHE = Duration.ofMinutes(5);
 
     public FantasyService(EquipoFantasyRepository equipos, JugadorRepository jugadores, EventoRepository eventos,
-                          UsuarioRepository usuarios, Clock reloj) {
+                          UsuarioRepository usuarios, Clock reloj, CachesDeConsultas caches) {
         this.equipos = equipos;
         this.jugadores = jugadores;
         this.eventos = eventos;
         this.usuarios = usuarios;
         this.reloj = reloj;
+        this.puntosPorEquipo = caches.crear(DURACION_CACHE, Evento.class, FichajeFantasy.class, EquipoFantasy.class);
     }
 
     /** Un partido de un fichaje con los puntos que le dio. */
@@ -211,11 +225,29 @@ public class FantasyService {
      */
     @Transactional(readOnly = true)
     public List<PuestoFantasy> clasificacion(String emailActual) {
-        List<EquipoFantasyRepository.FilaClasificacion> filas = equipos.clasificacionAgregada(emailActual);
+        Map<Long, Integer> puntos = puntosPorEquipo.obtener("puntos", () -> {
+            Map<Long, Integer> calculados = new HashMap<>();
+            equipos.puntosPorEquipo().forEach(fila -> calculados.put(fila.getId(), fila.getPuntos()));
+            return Map.copyOf(calculados);
+        });
+        // Los nombres no se guardan con los puntos: cambiar de nombre o darse de baja se ve al momento.
+        // Mismo orden que antes en SQL: puntos, el equipo creado antes y, por último, el id
+        record Fila(EquipoFantasyRepository.FilaClasificacion equipo, int puntos) {
+        }
+        List<Fila> filas = equipos.filasClasificacion().stream()
+                .map(equipo -> new Fila(equipo, puntos.getOrDefault(equipo.getId(), 0)))
+                .sorted(Comparator.comparingInt(Fila::puntos).reversed()
+                        .thenComparing(fila -> fila.equipo().getCreado())
+                        .thenComparing(fila -> fila.equipo().getId()))
+                .toList();
         List<PuestoFantasy> puestos = new ArrayList<>();
-        for (EquipoFantasyRepository.FilaClasificacion fila : filas) {
-            puestos.add(new PuestoFantasy(fila.getPuesto(), fila.getNombreEquipo(), fila.getNombreUsuario(),
-                    fila.getPuntos(), fila.getEmail().equals(emailActual)));
+        for (int i = 0; i < filas.size(); i++) {
+            EquipoFantasyRepository.FilaClasificacion equipo = filas.get(i).equipo();
+            boolean mio = equipo.getEmail().equals(emailActual);
+            if (i < 20 || mio) {
+                puestos.add(new PuestoFantasy(i + 1, equipo.getNombreEquipo(), equipo.getNombreUsuario(),
+                        filas.get(i).puntos(), mio));
+            }
         }
         return puestos;
     }

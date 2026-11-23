@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import es.ucm.fdi.is1.apuestas.cache.CambiosEnEntidades;
 import es.ucm.fdi.is1.apuestas.cuotas.Especial;
 import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
@@ -17,6 +18,7 @@ import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -42,6 +44,7 @@ import jakarta.persistence.Version;
  * Si se anula uno de los partidos, esa selección cuenta como 1,00 y cobraría 10 × 2,00 = 20.
  */
 @Entity
+@EntityListeners(CambiosEnEntidades.class)
 public class Apuesta {
 
     /**

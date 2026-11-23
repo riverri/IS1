@@ -27,14 +27,14 @@
         <button class="boton" type="submit">Crear mercado</button>
     </form>
 
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(mercados)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(mercados)}">
         <table>
             <thead><tr><th>Pregunta</th><th>Cierre</th><th>Estado</th><th>Precio del sí</th><th>Pérdida máxima</th><th>Acciones</th></tr></thead>
             <tbody>
             <tr th:each="m : ${mercados}">
                 <td><a th:href="@{/predicciones/{id}(id=${m.id})}" th:text="${m.pregunta}">Pregunta</a></td>
                 <td th:text="${#temporals.format(m.cierre, 'dd/MM/yyyy HH:mm')}">30/04/2027 23:59</td>
-                <td th:text="${m.estado} + (${m.resultado != null} ? ' · ' + ${m.resultado.nombre} : '')">ABIERTO</td>
+                <td th:text="${#strings.capitalize(#strings.toLowerCase(m.estado.name()))} + (${m.resultado != null} ? ' · ' + ${m.resultado.nombre} : '')">Abierto</td>
                 <td th:text="${#numbers.formatDecimal(m.precioSi, 1, 'POINT', 2, 'COMMA')}">0,50</td>
                 <td th:text="${#numbers.formatDecimal(m.perdidaMaxima, 1, 'POINT', 2, 'COMMA')}">69,31</td>
                 <td class="acciones">
@@ -43,10 +43,12 @@
                     </form>
                     <form th:unless="${m.estado.name() == 'ANULADO'}" th:each="l : ${lados}" th:action="@{/gestion/predicciones/{id}/resolver(id=${m.id})}" method="post" class="en-linea">
                         <input type="hidden" name="respuesta" th:value="${l}">
-                        <button class="enlace" type="submit" th:text="'Resolver: ' + ${l.nombre}">Resolver: Sí</button>
+                        <button class="enlace" type="submit" th:text="'Resolver: ' + ${l.nombre}"
+                                th:attr="data-confirmar=${'¿Resolver «' + m.pregunta + '» con «' + l.nombre + '»? Se paga a quien acertó.'}">Resolver: Sí</button>
                     </form>
                     <form th:if="${m.estado.name() == 'ABIERTO' or m.estado.name() == 'CERRADO'}" th:action="@{/gestion/predicciones/{id}/anular(id=${m.id})}" method="post" class="en-linea">
-                        <button class="enlace" type="submit">Anular</button>
+                        <button class="enlace peligro" type="submit"
+                                th:attr="data-confirmar=${'¿Anular «' + m.pregunta + '»? Se devuelve lo invertido a todos.'}">Anular</button>
                     </form>
                 </td>
             </tr>

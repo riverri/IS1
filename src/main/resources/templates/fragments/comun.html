@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${titulo} + ' · Better'">Better</title>
+    <!-- Icono en la propia página: sin él, el navegador pide /favicon.ico en cada visita, que no existe y acaba en
+         la página de error o en una redirección a /login (otra petición entera por cada página vista) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%2310a36b'/%3E%3C/svg%3E">
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
     <meta name="color-scheme" th:content="${temaOscuro} ? 'dark' : 'light'">
     <link th:if="${temaOscuro}" rel="stylesheet" th:href="@{/css/oscuro.css}">
@@ -35,6 +38,7 @@
                th:classappend="${ruta != null and ruta == '/ligas/clasificacion'} ? 'activo'"><span>Ranking</span><small>Ligas</small></a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}"
                th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'activo'">Ligas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/fantasy}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/fantasy')} ? 'activo'">Fantasy</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'">Casino</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
@@ -149,7 +153,7 @@
     </svg>
 </span>
 
-<article class="partido" th:fragment="partido(ev, cuotasPorEvento)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
+<article class="partido" th:id="'evento-' + ${ev.id}" th:fragment="partido(ev, cuotasPorEvento)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
          th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
     <div class="partido-cabecera">
         <span class="partido-competicion">
