@@ -15,7 +15,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(estadisticas)}">
         <p>Todavía no hay anuncios.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(estadisticas)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(estadisticas)}">
         <table>
             <thead><tr><th>Anuncio</th><th>Lleva a</th><th>Se muestra en</th><th>Prioridad</th><th>Impresiones</th><th>Clics</th><th>% clics</th><th></th></tr></thead>
             <tbody>

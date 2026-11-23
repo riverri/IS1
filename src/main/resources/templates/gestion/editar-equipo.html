@@ -44,7 +44,7 @@
     <div class="vacio" th:if="${#maps.isEmpty(plantilla)}">
         <p>Este equipo todavía no tiene jugadores.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#maps.isEmpty(plantilla)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#maps.isEmpty(plantilla)}">
         <table>
             <thead><tr><th>Dorsal</th><th>Jugador</th><th>Posición</th><th>Nota</th><th></th></tr></thead>
             <tbody>

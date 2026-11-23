@@ -35,6 +35,7 @@
                th:classappend="${ruta != null and ruta == '/ligas/clasificacion'} ? 'activo'"><span>Ranking</span><small>Ligas</small></a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}"
                th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'activo'">Ligas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/fantasy}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/fantasy')} ? 'activo'">Fantasy</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'">Casino</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
@@ -149,7 +150,7 @@
     </svg>
 </span>
 
-<article class="partido" th:fragment="partido(ev, cuotasPorEvento)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
+<article class="partido" th:id="'evento-' + ${ev.id}" th:fragment="partido(ev, cuotasPorEvento)" th:classappend="'deporte-' + ${#strings.toLowerCase(ev.deporte)}"
          th:attr="aria-label=${ev.local.nombre} + ' – ' + ${ev.visitante.nombre}">
     <div class="partido-cabecera">
         <span class="partido-competicion">

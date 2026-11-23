@@ -108,13 +108,13 @@
             <p class="aviso" th:if="${!#lists.isEmpty(rivales) and #lists.isEmpty(partidosBloqueables)}">No hay partidos disponibles para bloquear ahora.</p>
         </section>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(bloqueosActivos)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(bloqueosActivos)}">
         <table>
             <thead><tr><th>Amigo</th><th>Partido</th><th>Alcance</th><th>Hasta</th></tr></thead>
             <tbody><tr th:each="b : ${bloqueosActivos}">
                 <td th:text="${b.paraTodaLaLiga} ? 'Toda la liga' : ${b.objetivo.nombre}">Luis</td>
                 <td th:text="${b.evento.local.nombre} + ' – ' + ${b.evento.visitante.nombre}">Getafe CF – Sevilla FC</td>
-                <td th:text="${b.alcance == 'PARTIDO'} ? 'Partido completo' : ${b.alcance}">LOCAL</td>
+                <td th:text="${b.descripcionAlcance}">Local</td>
                 <td th:text="${#temporals.format(b.evento.fechaHora, 'dd/MM HH:mm')}">22/11 18:00</td>
             </tr></tbody>
         </table>
@@ -140,7 +140,7 @@
         <button class="boton" type="submit">Retar</button>
     </form>
     <p class="aviso" th:if="${#lists.isEmpty(rivales)}">Cuando haya alguien más en la liga, podrás retarle.</p>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(misRetos)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(misRetos)}">
         <table>
             <thead><tr><th>Partido</th><th>Reto</th><th>Importe</th><th>Estado</th><th></th></tr></thead>
             <tbody>

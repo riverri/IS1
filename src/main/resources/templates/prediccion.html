@@ -78,7 +78,7 @@
     <th:block th:if="${deMisLigas != null}">
         <h2>Tus compañeros de liga</h2>
         <p class="aviso" th:if="${#lists.isEmpty(deMisLigas)}">Nadie de tus ligas privadas tiene participaciones aquí.</p>
-        <div class="tarjeta tabla" th:unless="${#lists.isEmpty(deMisLigas)}">
+        <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(deMisLigas)}">
             <table>
                 <thead><tr><th>Jugador</th><th>Respuesta</th><th>Participaciones</th><th>Valor ahora</th></tr></thead>
                 <tbody>

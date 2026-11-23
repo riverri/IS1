@@ -131,7 +131,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(ficha.ultimos)}">
         <p>Todavía no hay resultados registrados de este equipo.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(ficha.ultimos)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(ficha.ultimos)}">
         <table>
             <thead><tr><th>Fecha</th><th>Competición</th><th>Rival</th><th></th><th>Resultado</th></tr></thead>
             <tbody>
