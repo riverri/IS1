@@ -63,7 +63,7 @@
 
     <th:block th:unless="${#lists.isEmpty(terminados)}">
         <h2>Cerrados y resueltos</h2>
-        <div class="tarjeta tabla">
+        <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
             <table>
                 <thead><tr><th>Mercado</th><th>Cierre</th><th>Ganador</th></tr></thead>
                 <tbody>

@@ -127,6 +127,10 @@ public class ApuestaService {
         comprobarQueJuega(usuario);
         Apuesta apuesta = new Apuesta(usuario, importe, ahora);
         List<Long> cambiadas = new ArrayList<>();
+        // Se bloquean primero todos los eventos, de menor a mayor id, como al cobrar antes: si cada operación los
+        // bloqueara en su propio orden (el del boleto), dos a la vez podían esperarse la una a la otra para siempre
+        pedidas.stream().map(SeleccionPedida::eventoId).filter(Objects::nonNull).distinct().sorted()
+                .forEach(eventos::paraApostar);
         for (SeleccionPedida pedida : pedidas) {
             // Si el evento no existe o no admite apuestas (filter deja el Optional vacío), se lanza la excepción
             // Con la fila del evento bloqueada: si a la vez se anula o se resuelve, uno espera al otro

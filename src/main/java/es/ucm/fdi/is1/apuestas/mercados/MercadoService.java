@@ -36,8 +36,7 @@ public class MercadoService {
     /** Mercados que admiten apuestas ahora mismo, del que cierra antes al que cierra después. */
     @Transactional(readOnly = true)
     public List<Mercado> abiertos() {
-        LocalDateTime ahora = LocalDateTime.now(reloj);
-        return mercados.findAllByOrderByCierreAsc().stream().filter(m -> m.admiteApuestas(ahora)).toList();
+        return mercados.abiertos(LocalDateTime.now(reloj));
     }
 
     /**
@@ -46,10 +45,7 @@ public class MercadoService {
      */
     @Transactional(readOnly = true)
     public List<Mercado> terminados() {
-        LocalDateTime ahora = LocalDateTime.now(reloj);
-        return mercados.findAllByOrderByCierreAsc().stream()
-                .filter(m -> !m.admiteApuestas(ahora) && m.getEstado() != EstadoMercado.ANULADO)
-                .toList();
+        return mercados.terminados(LocalDateTime.now(reloj));
     }
 
     /** Todos los mercados, en cualquier estado, para el panel del creador. */

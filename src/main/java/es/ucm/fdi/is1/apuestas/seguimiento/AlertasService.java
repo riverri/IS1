@@ -161,7 +161,8 @@ public class AlertasService {
                 continue; // por si acaso: al eliminar la cuenta ya se borran sus alertas
             }
             BigDecimal actual = cuotas.de(alerta.getResultado());
-            if (actual != null && actual.compareTo(alerta.getCuota()) >= 0) {
+            if (actual != null && actual.compareTo(alerta.getCuota()) >= 0
+                    && alertas.marcarAvisada(alerta.getId(), ahora) == 1) {
                 alerta.avisar(ahora);
                 Evento e = alerta.getEvento();
                 notificaciones.avisar(alerta.getUsuario(), "alerta", "La cuota de «" + alerta.getResultado().getDescripcion()

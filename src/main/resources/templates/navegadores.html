@@ -10,7 +10,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(navegadores)}">
         <p>No hay navegadores recordados.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(navegadores)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(navegadores)}">
         <table>
             <thead><tr><th>Navegador</th><th>Recordado</th><th>Último uso</th><th></th></tr></thead>
             <tbody>

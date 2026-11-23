@@ -3,12 +3,14 @@ package es.ucm.fdi.is1.apuestas.fantasy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import es.ucm.fdi.is1.apuestas.cache.CambiosEnEntidades;
 import es.ucm.fdi.is1.apuestas.equipos.Equipo;
 import es.ucm.fdi.is1.apuestas.equipos.Jugador;
 import es.ucm.fdi.is1.apuestas.equipos.Posicion;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ import jakarta.persistence.ManyToOne;
  * después de venderlo: los puntos que hizo mientras estaba en el equipo siguen contando.
  */
 @Entity
+@EntityListeners(CambiosEnEntidades.class)
 public class FichajeFantasy {
 
     @Id

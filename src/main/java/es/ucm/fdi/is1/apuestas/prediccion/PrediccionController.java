@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Páginas de los mercados de predicción (HU-64 a HU-68). Ver la lista y cada mercado es público (HU-67); comprar y
@@ -79,7 +80,7 @@ public class PrediccionController {
                           RedirectAttributes redireccion) {
         try {
             PosicionPrediccion posicion = predicciones.comprar(principal.getName(), id, lado, importe, precioVisto);
-            redireccion.addFlashAttribute("mensaje", "Compra hecha. Tienes " + texto(posicion.getParticipaciones())
+            redireccion.addFlashAttribute("mensaje", "Compra hecha. Tienes " + Monedas.texto(posicion.getParticipaciones())
                     + " participaciones de «" + lado.getNombre() + "».");
             return "redirect:/predicciones/" + id;
         } catch (PrecioCambiadoException e) {
@@ -102,16 +103,12 @@ public class PrediccionController {
                          RedirectAttributes redireccion) {
         try {
             BigDecimal recibido = predicciones.vender(principal.getName(), id, lado, participaciones, precioVisto);
-            redireccion.addFlashAttribute("mensaje", "Venta hecha. Recibes " + texto(recibido) + " monedas.");
+            redireccion.addFlashAttribute("mensaje", "Venta hecha. Recibes " + Monedas.texto(recibido) + " monedas.");
         } catch (PrecioCambiadoException e) {
             redireccion.addFlashAttribute("aviso", e.getMessage());
         } catch (IllegalArgumentException | IllegalStateException e) {
             redireccion.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/predicciones/" + id;
-    }
-
-    private static String texto(BigDecimal cantidad) {
-        return cantidad.stripTrailingZeros().toPlainString().replace('.', ',');
     }
 }

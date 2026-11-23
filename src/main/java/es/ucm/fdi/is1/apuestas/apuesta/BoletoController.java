@@ -86,8 +86,11 @@ public class BoletoController {
         } catch (EventoNoDisponibleException e) {
             redireccion.addFlashAttribute("errorBoleto", "Ese partido ya no admite apuestas");
         }
-        // Solo se vuelve al Referer si es una ruta de esta web (evita redirecciones a otros sitios)
-        return "redirect:" + RutaSegura.de(referer, "/boleto");
+        // Solo se vuelve al Referer si es una ruta de esta web (evita redirecciones a otros sitios). En el catálogo, con
+        // el ancla del partido: vuelve a donde estaba (antes volvía arriba del todo tras cada selección)
+        String destino = RutaSegura.de(referer, "/boleto");
+        boolean catalogo = destino.equals("/eventos") || destino.startsWith("/eventos?");
+        return "redirect:" + destino + (catalogo ? "#evento-" + eventoId : "");
     }
 
     /** GET /boleto/anadir: un enlace antiguo (o volver tras iniciar sesión) no añade nada: lleva a la página del partido. */

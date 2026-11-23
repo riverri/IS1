@@ -40,3 +40,6 @@ input, select, textarea { background: var(--superficie); color: var(--texto); }
 /* Accesibilidad (HU-99): el azul del visitante, más claro sobre fondo oscuro */
 .leyenda-cuotas .linea-visitante { color: #93c5fd; }
 .evolucion-cuotas .linea-visitante { stroke: #60a5fa; }
+
+/* Puestos del podio: el fondo es claro también en modo oscuro, así que el número va oscuro (el 2.º no se veía) */
+.podio-1, .podio-2, .podio-3 { color: #0b1220; }

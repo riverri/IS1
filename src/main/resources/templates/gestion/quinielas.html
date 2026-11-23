@@ -31,7 +31,7 @@
         <button class="boton" type="submit">Crear quiniela</button>
     </form>
 
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(quinielas)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(quinielas)}">
         <table>
             <thead><tr><th>Quiniela</th><th>Partidos</th><th>Boletos</th><th>Bote</th><th>Estado</th><th>Acciones</th></tr></thead>
             <tbody>

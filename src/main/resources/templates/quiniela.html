@@ -10,7 +10,7 @@
 
     <div class="estadisticas">
         <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(quiniela.precio, 1, 'POINT', 2, 'COMMA')}">2,00</span>monedas el boleto</div>
-        <div class="tarjeta estadistica"><span th:text="${resumen.boletos}">0</span>boletos</div>
+        <div class="tarjeta estadistica"><span th:text="${resumen.boletos}">0</span><th:block th:text="${resumen.boletos == 1} ? 'boleto' : 'boletos'">boletos</th:block></div>
         <div class="tarjeta estadistica"><span th:text="${#numbers.formatDecimal(resumen.bote, 1, 'POINT', 2, 'COMMA')}">0,00</span>monedas de bote</div>
     </div>
     <p class="aviso" th:if="${quiniela.estado.name() == 'ANULADA'}">Esta quiniela se anuló: se devolvió el precio de todos los boletos.</p>
@@ -37,7 +37,7 @@
 
     <!-- Partidos, con mi pronóstico y el resultado -->
     <h2 th:unless="${resumen.admiteBoletos and miBoleto == null}">Partidos</h2>
-    <div class="tarjeta tabla" th:unless="${resumen.admiteBoletos and miBoleto == null}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${resumen.admiteBoletos and miBoleto == null}">
         <table>
             <thead><tr><th>#</th><th>Partido</th><th>Resultado</th><th th:if="${miBoleto != null}">Mi pronóstico</th></tr></thead>
             <tbody>
@@ -60,7 +60,7 @@
     <!-- Reparto (HU-80) -->
     <th:block th:if="${boletos != null and !#lists.isEmpty(boletos)}">
         <h2>Reparto</h2>
-        <div class="tarjeta tabla">
+        <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
             <table>
                 <thead><tr><th>Jugador</th><th>Aciertos</th><th>Cobra</th></tr></thead>
                 <tbody>

@@ -2,6 +2,8 @@ package es.ucm.fdi.is1.apuestas.ligas;
 
 import java.time.LocalDateTime;
 
+import es.ucm.fdi.is1.apuestas.cuotas.Especial;
+import es.ucm.fdi.is1.apuestas.cuotas.Resultado;
 import es.ucm.fdi.is1.apuestas.eventos.EstadoEvento;
 import es.ucm.fdi.is1.apuestas.eventos.Evento;
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
@@ -52,6 +54,25 @@ public class BloqueoLiga {
     public Usuario getObjetivo() { return objetivo; }
     public Evento getEvento() { return evento; }
     public String getAlcance() { return alcance; }
+
+    /** El alcance para leerlo: «Partido completo», «Gana Getafe CF», «Empate», «Ambos marcan»… */
+    public String getDescripcionAlcance() {
+        if ("PARTIDO".equals(alcance)) {
+            return "Partido completo";
+        }
+        for (Resultado r : Resultado.values()) {
+            if (r.name().equals(alcance)) {
+                return r == Resultado.EMPATE ? "Empate"
+                        : "Gana " + (r == Resultado.LOCAL ? evento.getLocal() : evento.getVisitante()).getNombre();
+            }
+        }
+        for (Especial e : Especial.values()) {
+            if (e.name().equals(alcance)) {
+                return e.getDescripcion();
+            }
+        }
+        return alcance;
+    }
     public boolean isParaTodaLaLiga() { return objetivo == null; }
     public LocalDateTime getCreada() { return creada; }
 

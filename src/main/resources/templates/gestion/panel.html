@@ -111,7 +111,7 @@
     </div>
 
     <h2>Eventos</h2>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Fecha</th><th>Competición</th><th>Partido</th><th>Estado</th><th></th></tr></thead>
             <tbody>
@@ -134,7 +134,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(mercados)}">
         <p>Todavía no hay mercados a largo plazo.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(mercados)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(mercados)}">
         <table>
             <thead><tr><th>Cierre</th><th>Mercado</th><th>Candidatos</th><th>Estado</th><th></th></tr></thead>
             <tbody>
@@ -153,7 +153,7 @@
     </div>
 
     <h2>Equipos</h2>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Nombre</th><th>Deporte</th><th>Competiciones</th><th>Calidad</th><th>Forma</th><th></th></tr></thead>
             <tbody>
@@ -176,7 +176,7 @@
     </div>
 
     <h2>Competiciones</h2>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Nombre</th><th>Deporte</th></tr></thead>
             <tbody>

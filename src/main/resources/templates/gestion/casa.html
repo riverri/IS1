@@ -50,7 +50,7 @@
         <small class="aviso" th:text="'De ' + ${#numbers.formatDecimal(g.minimo, 1, 'POINT', 2, 'COMMA')} + ' (abajo) a ' + ${#numbers.formatDecimal(g.maximo, 1, 'POINT', 2, 'COMMA')} + ' (arriba).'">De -50 a 120.</small>
     </div>
     <p class="aviso" th:if="${diario.grafico == null}">En los últimos 30 días no se ha jugado.</p>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(diario.conMovimientos)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(diario.conMovimientos)}">
         <table>
             <thead><tr><th>Día</th><th>Beneficio</th></tr></thead>
             <tbody>
@@ -65,7 +65,7 @@
 
     <th:block th:each="tabla : ${ { {'Por tipo de apuesta', cuentas.porTipo}, {'Simples por deporte', cuentas.porDeporte} } }">
     <h2 th:text="${tabla[0]}">Por tipo de apuesta</h2>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Tipo</th><th>Apuestas</th><th>En juego</th><th>Apostado</th><th>Pagado</th><th>Beneficio</th><th>Margen</th></tr></thead>
             <tbody>
@@ -88,7 +88,7 @@
     <h2>Casino</h2>
     <p class="aviso" th:text="'Margen teórico: ruleta ' + ${#numbers.formatDecimal(configuracionCasino.ventajaRuleta, 1, 'POINT', 2, 'COMMA')} + ' %, blackjack ≈ ' + ${#numbers.formatDecimal(configuracionCasino.ventajaBlackjack, 1, 'POINT', 2, 'COMMA')} + ' %, baccarat entre 1,06 % (Banca) y 14,36 % (Empate). Solo cuentan las partidas terminadas.'">
         Margen teórico: ruleta 2,70 %, blackjack ≈ 1,05 %.</p>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Juego</th><th>Partidas</th><th>Apostado</th><th>Pagado</th><th>Beneficio</th><th>Margen</th></tr></thead>
             <tbody>
@@ -108,7 +108,7 @@
 
     <h2>Mercados de predicción</h2>
     <p class="aviso">Lo que se queda la casa: compras − ventas − pagos a los ganadores − lo devuelto al anular. Con mercados aún sin resolver la cifra es provisional.</p>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Mercados</th><th>Compras</th><th>Ventas</th><th>Pagos</th><th>Devoluciones</th><th>Beneficio</th></tr></thead>
             <tbody>
@@ -128,7 +128,7 @@
     <h2>Criptomonedas</h2>
     <p class="aviso">La casa hace de contrapartida: compras − ventas − lo que valen ahora las carteras (lo que pagaría si
         todos vendieran). Sube y baja con los precios, así que es provisional. Las comisiones ya van dentro.</p>
-    <div class="tarjeta tabla">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)">
         <table>
             <thead><tr><th>Compras</th><th>Ventas</th><th>Comisiones</th><th>Valor de las carteras</th><th>Beneficio</th></tr></thead>
             <tbody>

@@ -101,7 +101,7 @@
         </div>
     </div>
     <!-- HU-96: dónde acierto más -->
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(porCompeticion)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(porCompeticion)}">
         <table>
             <thead><tr><th>Competición</th><th>Resueltas</th><th>Aciertos</th><th>Balance</th></tr></thead>
             <tbody>
@@ -118,7 +118,7 @@
     <div class="vacio" th:if="${#lists.isEmpty(historial)}">
         <p>Aquí aparecerán tus apuestas cuando se resuelvan.</p>
     </div>
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(historial)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(historial)}">
         <table>
             <thead><tr><th>Apuesta</th><th>Pronóstico</th><th>Cuota</th><th>Importe</th><th>Estado</th><th>Balance</th></tr></thead>
             <tbody>

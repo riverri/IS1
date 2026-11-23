@@ -64,7 +64,10 @@ public class BloqueoLigaService {
                 .filter(u -> liga.esMiembro(u) && !u.getId().equals(creador.getId()) && !u.isEliminado())
                 .orElseThrow(() -> new IllegalArgumentException("Elige a un compañero de esta liga"));
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        Evento evento = eventos.paraApostar(eventoId).filter(e -> e.admiteApuestas(ahora))
+        // Fila del evento bloqueada en exclusiva: dos bloqueos iguales a la vez (doble clic, o dos compañeros) se hacen
+        // uno detrás de otro y el segundo ve el primero; con el bloqueo compartido de apostar, el segundo chocaba con
+        // la clave única al guardar y daba un error 500
+        Evento evento = eventos.paraCambiar(eventoId).filter(e -> e.admiteApuestas(ahora))
                 .orElseThrow(() -> new IllegalArgumentException("Solo puedes bloquear un partido futuro y programado"));
         if (evento.getEstado() != EstadoEvento.PROGRAMADO || !evento.getFechaHora().isAfter(ahora)) {
             throw new IllegalArgumentException("Solo puedes bloquear un partido futuro y programado");
@@ -87,7 +90,8 @@ public class BloqueoLigaService {
         Liga liga = ligas.findById(ligaId).filter(l -> l.esMiembro(creador))
                 .orElseThrow(() -> new LigaNoEncontradaException(ligaId));
         LocalDateTime ahora = LocalDateTime.now(reloj);
-        Evento evento = eventos.paraApostar(eventoId).filter(e -> e.admiteApuestas(ahora))
+        // Como en crear: en exclusiva, para que dos bloqueos iguales a la vez no choquen con la clave única
+        Evento evento = eventos.paraCambiar(eventoId).filter(e -> e.admiteApuestas(ahora))
                 .orElseThrow(() -> new IllegalArgumentException("Solo puedes bloquear un partido futuro y programado"));
         String seleccionado = normalizarAlcance(alcance, evento);
         if (bloqueos.existsByLigaAndEventoAndAlcanceAndObjetivoIsNull(liga, evento, seleccionado)) {

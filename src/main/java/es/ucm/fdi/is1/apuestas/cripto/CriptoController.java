@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.ucm.fdi.is1.apuestas.usuarios.SaldoInsuficienteException;
+import es.ucm.fdi.is1.apuestas.web.Monedas;
 
 /**
  * Páginas de las criptomonedas (HU-69 a HU-72). La lista y cada cripto son públicas (HU-69); comprar, vender y la
@@ -108,7 +109,7 @@ public class CriptoController {
                          RedirectAttributes redireccion) {
         try {
             BigDecimal recibido = cripto.vender(principal.getName(), simbolo, todo ? null : cantidad, precioVisto);
-            redireccion.addFlashAttribute("mensaje", "Venta hecha. Recibes " + texto(recibido) + " monedas.");
+            redireccion.addFlashAttribute("mensaje", "Venta hecha. Recibes " + Monedas.texto(recibido) + " monedas.");
         } catch (PrecioCambiadoException e) {
             redireccion.addFlashAttribute("aviso", e.getMessage());
         } catch (IllegalArgumentException | IllegalStateException e) {

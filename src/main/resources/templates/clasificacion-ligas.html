@@ -23,7 +23,7 @@
         <a class="boton" th:if="${vista == 'mias'}" th:href="@{/ligas}">Ver ligas</a>
     </div>
 
-    <div class="tarjeta tabla" th:unless="${#lists.isEmpty(clasificacion)}">
+    <div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:unless="${#lists.isEmpty(clasificacion)}">
         <table>
             <thead>
             <tr>

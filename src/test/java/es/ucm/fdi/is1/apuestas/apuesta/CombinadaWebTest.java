@@ -254,6 +254,7 @@ class CombinadaWebTest {
         mvc.perform(post("/boleto/anadir").session(sesion).with(COMO_ANA).with(csrf())
                         .header("Referer", "http://localhost/eventos?deporte=FUTBOL")
                         .param("evento", basket.getId().toString()).param("resultado", "LOCAL"))
-                .andExpect(redirectedUrl("/eventos?deporte=FUTBOL"));
+                // Al catálogo, con el ancla del partido: vuelve a donde estaba y no arriba del todo
+                .andExpect(redirectedUrl("/eventos?deporte=FUTBOL#evento-" + basket.getId()));
     }
 }

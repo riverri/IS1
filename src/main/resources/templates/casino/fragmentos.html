@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
 <!-- Tabla de partidas del casino (CA-58.1). La usan el historial y la portada del casino: th:replace="~{casino/fragmentos :: partidas(${lista})}" -->
-<div class="tarjeta tabla" th:fragment="partidas(lista)">
+<div class="tarjeta tabla" tabindex="0" role="region" aria-label="Tabla (se puede desplazar a lo ancho)" th:fragment="partidas(lista)">
     <table>
         <thead><tr><th>Fecha</th><th>Juego</th><th>Apuesta</th><th>Resultado</th><th>Importe</th><th>Balance</th></tr></thead>
         <tbody>
