@@ -7,7 +7,7 @@
 - Las historias no decían si había cierre de jornada o un límite de cambios. Sin ninguno, se podía vender a un jugador cuyo partido ya se había jugado y fichar a otro que jugaba más tarde. Así un mismo hueco sumaba los puntos de varios partidos de la misma jornada (lo encontró la cuarta depuración).
 
 ## Decisión
-- La **jornada** es una semana, de lunes a lunes (hora de Madrid). Empieza con su primer partido de fútbol, sin contar los suspendidos: es el **plazo** para hacer cambios.
+- La **jornada** es una semana, de lunes a lunes (hora de Madrid). Empieza con su primer partido de fútbol, sin contar los suspendidos ni los anulados: es el **plazo** para hacer cambios.
 - **Hasta el plazo**, fichar y vender cuenta enseguida, como antes.
 - **Después del plazo**, cuenta desde la jornada siguiente:
   - el que se ficha ocupa su hueco y gasta el presupuesto enseguida, pero suma desde el lunes;

@@ -117,9 +117,18 @@ public class MercadoPrediccion {
 
     /** Participaciones que se recibirían por {@code dinero} moneditas ya sin comisión, sin comprar todavía. */
     BigDecimal cotizarCompra(Lado lado, BigDecimal dinero) {
-        double delta = Lmsr.participacionesPorDinero(lado == Lado.SI, dinero.doubleValue(), qSi.doubleValue(),
-                qNo.doubleValue(), liquidez.doubleValue());
-        return BigDecimal.valueOf(delta).setScale(DECIMALES_PARTICIPACIONES, RoundingMode.DOWN);
+        double delta = dinero.signum() <= 0 ? 0 : Lmsr.participacionesPorDinero(lado == Lado.SI, dinero.doubleValue(),
+                qSi.doubleValue(), qNo.doubleValue(), liquidez.doubleValue());
+        // Con un importe enorme el cálculo se desborda; con uno que no llega ni para la comisión, o en un mercado muy
+        // decantado, no da ninguna participación: en todos esos casos no se compra (antes, error 500 o 0 participaciones)
+        if (!Double.isFinite(delta) || delta <= 0) {
+            throw new IllegalArgumentException("Con ese importe no se compra ninguna participación");
+        }
+        BigDecimal participaciones = BigDecimal.valueOf(delta).setScale(DECIMALES_PARTICIPACIONES, RoundingMode.DOWN);
+        if (participaciones.signum() <= 0) {
+            throw new IllegalArgumentException("Con ese importe no se compra ninguna participación");
+        }
+        return participaciones;
     }
 
     /** Dinero que devolvería vender esas participaciones, antes de la comisión, sin vender todavía. */

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import es.ucm.fdi.is1.apuestas.usuarios.Usuario;
 
@@ -75,6 +76,21 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
                                es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)
             group by a.usuario.id""")
     List<Object[]> resumenResueltasPorUsuario();
+
+    /** Igual que {@link #resumenResueltasPorUsuario}, solo para unos jugadores (ranking de una liga). */
+    @Query("""
+            select a.usuario.id,
+                   sum(case when a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
+                                              es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA) then 1 else 0 end),
+                   sum(case when a.estado = es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA then 1 else 0 end),
+                   sum(a.importe), sum(a.pagado)
+            from Apuesta a
+            where a.usuario.id in :ids
+              and a.estado in (es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.GANADA,
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.PERDIDA,
+                               es.ucm.fdi.is1.apuestas.apuesta.EstadoApuesta.COBRADA)
+            group by a.usuario.id""")
+    List<Object[]> resumenResueltasDeUsuarios(@Param("ids") Collection<Long> ids);
 
     interface PuestoGeneral {
         Long getUsuarioId();
@@ -167,7 +183,10 @@ public interface ApuestaRepository extends JpaRepository<Apuesta, Long> {
                    sum(a.pagado) as pagado
             from apuesta a
             join (select apuesta_id, min(id) as seleccion_id, count(*) as numero_selecciones
-                  from seleccion group by apuesta_id) resumen_selecciones on resumen_selecciones.apuesta_id = a.id
+                  from seleccion
+                  where apuesta_id in (select id from apuesta where usuario_id = :usuarioId
+                                       and estado in ('GANADA', 'PERDIDA', 'COBRADA'))
+                  group by apuesta_id) resumen_selecciones on resumen_selecciones.apuesta_id = a.id
             join seleccion s on s.id = resumen_selecciones.seleccion_id
             left join evento e on e.id = s.evento_id
             left join competicion c on c.id = e.competicion_id

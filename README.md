@@ -126,7 +126,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 | Variable | Valor |
 |---|---|
 | `CREADOR_PASSWORD` | **Obligatoria.** La contraseña de `creador@apuestas.es` (la del README es pública). |
-| `REMEMBER_ME_KEY` | **Obligatoria.** Secreto aleatorio de al menos 32 bytes para firmar los accesos persistentes por navegador. |
+| `REMEMBER_ME_KEY` | Recomendada. Secreto aleatorio de al menos 32 bytes para la autenticación interna de los navegadores recordados (la cookie es aleatoria y se guarda en la base de datos; la clave no la firma). Sin ella se usa una aleatoria en cada arranque y la aplicación arranca igual. |
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://HOST/neondb?sslmode=require` (el `HOST` de Neon) |
 | `SPRING_DATASOURCE_USERNAME` | el `USUARIO` de Neon |
 | `SPRING_DATASOURCE_PASSWORD` | la `CONTRASEÑA` de Neon |
@@ -140,7 +140,7 @@ Para entrar desde cualquier sitio (también desde el móvil) sin tener el ordena
 
 Cada vez que se fusiona algo en `main`, Render la vuelve a publicar sola. Los datos siguen en Neon.
 
-`REMEMBER_ME_KEY` debe ser un secreto aleatorio, distinto de las contraseñas. Si cambia, se invalidan las cookies persistentes de los navegadores.
+`REMEMBER_ME_KEY` debe ser un secreto aleatorio, distinto de las contraseñas.
 
 La imagen guarda una caché de las clases de Java (CDS) preparada al construirla. Con 1 CPU y 512 MB, la aplicación arranca en unos 15 segundos en vez de 22, y usa unos 30 MB menos de memoria. También separa las dependencias de nuestro código en capas distintas, así un cambio pequeño solo reconstruye la capa pequeña.
 

@@ -20,10 +20,10 @@ public interface PosicionPrediccionRepository extends JpaRepository<PosicionPred
 
     /**
      * Para el panel de la casa: lo devuelto al anular los mercados en ese estado. Se devuelve lo invertido, y solo si es
-     * positivo (ver {@code PrediccionService.anular}).
+     * positivo y no a cuentas eliminadas (ver {@code PrediccionService.anular}).
      */
     @Query("select coalesce(sum(p.invertido), 0) from PosicionPrediccion p"
-            + " where p.mercado.estado = :estado and p.invertido > 0")
+            + " where p.mercado.estado = :estado and p.invertido > 0 and p.usuario.eliminado = false")
     BigDecimal devuelto(EstadoPrediccion estado);
 
     List<PosicionPrediccion> findByUsuarioAndMercado(Usuario usuario, MercadoPrediccion mercado);

@@ -35,6 +35,9 @@ public class CorreoRecuperacion implements EnvioCorreo {
         this.servidorCorreo = servidorCorreo;
         this.remitente = remitente;
         this.mostrarEnlacesLocales = mostrarEnlacesLocales;
+        if ((servidorCorreo == null || servidorCorreo.isBlank()) && !mostrarEnlacesLocales) {
+            LOG.warn("No hay servidor de correo (MAIL_HOST): las cuentas nuevas no recibirán el enlace para activarse");
+        }
     }
 
     /** Manda el correo con el enlace o, si no hay servidor, lo escribe en el registro de la aplicación. */

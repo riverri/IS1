@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ucm.fdi.is1.apuestas.apuesta.CriterioRanking;
-import es.ucm.fdi.is1.apuestas.apuesta.PuestoRanking;
 import es.ucm.fdi.is1.apuestas.apuesta.RankingService;
 import jakarta.persistence.EntityManager;
 
@@ -40,10 +40,13 @@ class PerfilYMovimientosWebTest {
             usuarios.crear(u[0], u[1], "secreta123", Rol.USUARIO);
         }
         em.flush();
-        List<PuestoRanking> puestos = ranking.ranking(null, CriterioRanking.SALDO, null, null);
+        // Se compara con lo que enseña /ranking (ordenado en la base de datos): en PostgreSQL, según su configuración,
+        // «bea» va antes o después que «Carla», y el perfil tiene que decir lo mismo que esa página
         for (String email : List.of("ana1-perfil@ucm.es", "ana2-perfil@ucm.es", "bea-perfil@ucm.es", "carla-perfil@ucm.es")) {
             Long id = repositorio.findByEmail(email).orElseThrow().getId();
-            int enRanking = puestos.stream().filter(p -> p.usuarioId().equals(id)).findFirst().orElseThrow().posicion();
+            RankingService.ListaRanking lista = ranking.lista(email, CriterioRanking.SALDO, null);
+            int enRanking = Stream.concat(lista.primeros().stream(), Stream.ofNullable(lista.mio()))
+                    .filter(p -> p.usuarioId().equals(id)).findFirst().orElseThrow().posicion();
             assertThat(ranking.perfil(id, null).puesto().posicion()).as(email).isEqualTo(enRanking);
         }
     }

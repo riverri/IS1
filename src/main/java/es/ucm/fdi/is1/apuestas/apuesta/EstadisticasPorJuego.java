@@ -1,7 +1,9 @@
 package es.ucm.fdi.is1.apuestas.apuesta;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -55,10 +57,19 @@ class EstadisticasPorJuego {
         };
     }
 
+    /** Solo las apuestas deportivas de esos jugadores (ranking de una liga), sin agregar las de todos. */
+    Map<Long, Estadisticas> deportesDe(Collection<Long> ids) {
+        return ids.isEmpty() ? Map.of() : deportes(apuestas.resumenResueltasDeUsuarios(ids));
+    }
+
     private Map<Long, Estadisticas> deportes() {
+        return deportes(apuestas.resumenResueltasPorUsuario());
+    }
+
+    private Map<Long, Estadisticas> deportes(List<Object[]> filas) {
         Map<Long, Estadisticas> porUsuario = new HashMap<>();
         // Una sola consulta agregada para todos: fila = [id, resueltas, ganadas, apostado, pagado]
-        for (Object[] fila : apuestas.resumenResueltasPorUsuario()) {
+        for (Object[] fila : filas) {
             // El tipo exacto de count y sum (Long, Integer…) depende de la consulta: se leen como Number
             porUsuario.put((Long) fila[0], Estadisticas.de(((Number) fila[1]).longValue(),
                     ((Number) fila[2]).longValue(), (BigDecimal) fila[3], (BigDecimal) fila[4]));

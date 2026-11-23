@@ -135,4 +135,14 @@ class ManoBlackjackTest {
         assertThat(recuperada.regla17Blando(true)).isFalse();
         assertThat(recuperada.pagoBlackjack(PagoBlackjack.SEIS_A_CINCO)).isEqualTo(PagoBlackjack.TRES_A_DOS);
     }
+
+    @Test
+    void elPagoSeConservaAunqueNoSeApuntaraLaReglaDel17() {
+        ManoBlackjack mano = ManoBlackjack.repartir(6, new SplittableRandom(7));
+        mano.fijarPagoBlackjack(PagoBlackjack.SEIS_A_CINCO);
+        String g = mano.guardar();
+        ManoBlackjack leida = ManoBlackjack.leer(g);
+        assertThat(leida.regla17Blando(true)).isTrue();
+        assertThat(leida.pagoBlackjack(PagoBlackjack.TRES_A_DOS)).isEqualTo(PagoBlackjack.SEIS_A_CINCO);
+    }
 }

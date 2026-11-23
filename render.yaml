@@ -12,10 +12,10 @@ services:
       # Contraseña del creador de apuestas (obligatoria): Render la pide al crear el servicio
       - key: CREADOR_PASSWORD
         sync: false
-      # Independent secret used to sign persistent browser login cookies
+      # Secreto para la autenticación interna de los navegadores recordados (recomendado; sin él se usa uno aleatorio)
       - key: REMEMBER_ME_KEY
         sync: false
-      # Mail delivery is required for new account verification in the public deployment
+      # Correo (Brevo, puerto 2525): sin él las cuentas nuevas no reciben el enlace para activarse
       - key: MAIL_HOST
         sync: false
       - key: MAIL_PORT

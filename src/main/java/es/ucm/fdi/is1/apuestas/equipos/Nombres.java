@@ -17,6 +17,29 @@ public final class Nombres {
     private static final Set<String> GENERICAS = Set.of("fc", "cf", "cd", "ca", "rc", "rcd", "ud", "sd", "afc",
             "club", "de", "del", "la", "el", "futbol", "calcio", "ac", "as", "ssc", "fk", "sk", "sc", "1");
 
+    /**
+     * Letras (ya en minúscula) que {@link #normalizar} cambia, y su versión sin marcas, en el mismo orden. Sirven para
+     * que una consulta haga en SQL lo mismo que {@code normalizar}: {@code translate(lower(nombre), CON_MARCAS,
+     * SIN_MARCAS)}. Cubre Latin-1 y Latin Extended-A/B (ç, ö, ã, ł no, porque NFD no la descompone, igual que Java).
+     */
+    public static final String CON_MARCAS;
+    public static final String SIN_MARCAS;
+
+    static {
+        StringBuilder con = new StringBuilder();
+        StringBuilder sin = new StringBuilder();
+        for (char c = '\u00C0'; c <= '\u024F'; c++) {
+            char minuscula = Character.toLowerCase(c);
+            String limpia = normalizar(String.valueOf(minuscula));
+            if (minuscula == c && limpia.length() == 1 && limpia.charAt(0) != c) {
+                con.append(c);
+                sin.append(limpia.charAt(0));
+            }
+        }
+        CON_MARCAS = con.toString();
+        SIN_MARCAS = sin.toString();
+    }
+
     private Nombres() {
     }
 

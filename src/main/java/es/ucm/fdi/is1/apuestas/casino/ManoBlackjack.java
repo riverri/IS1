@@ -167,9 +167,10 @@ public class ManoBlackjack {
 
     /** Texto para guardar la mano en la partida, incluidas las reglas vigentes al repartirla. */
     String guardar() {
+        // Los dos últimos campos van siempre (vacíos si no se apuntaron): se leen por su posición
         return codigos(mazo) + "|" + codigos(jugador) + "|" + codigos(banca) + "|" + doblada + "|" + terminada
-                + (bancaPideCon17Blando == null ? "" : "|" + bancaPideCon17Blando)
-                + (pagoBlackjack == null ? "" : "|" + pagoBlackjack.name());
+                + "|" + (bancaPideCon17Blando == null ? "" : bancaPideCon17Blando)
+                + "|" + (pagoBlackjack == null ? "" : pagoBlackjack.name());
     }
 
     static ManoBlackjack leer(String guardada) {
@@ -177,8 +178,8 @@ public class ManoBlackjack {
         String[] partes = guardada.split("\\|", -1);
         ManoBlackjack mano = new ManoBlackjack(cartas(partes[0]), cartas(partes[1]), cartas(partes[2]),
                 Boolean.parseBoolean(partes[3]), Boolean.parseBoolean(partes[4]));
-        mano.bancaPideCon17Blando = partes.length > 5 ? Boolean.valueOf(partes[5]) : null;
-        mano.pagoBlackjack = partes.length > 6 ? PagoBlackjack.valueOf(partes[6]) : null;
+        mano.bancaPideCon17Blando = partes.length > 5 && !partes[5].isEmpty() ? Boolean.valueOf(partes[5]) : null;
+        mano.pagoBlackjack = partes.length > 6 && !partes[6].isEmpty() ? PagoBlackjack.valueOf(partes[6]) : null;
         return mano;
     }
 
