@@ -29,7 +29,7 @@ La mayoría llevan `@Transactional`: lo que hacen se deshace al terminar. La hor
 | `usuarios` | CuentaWebTest (9), IntentosLoginWebTest (3), MovimientoSaldoTest (5), NombresProhibidosTest (5), PerfilYMovimientosWebTest (2), RankingWebTest (3), RecargaAlEntrarHandlerTest (1), RecuperacionWebTest (9), RegistroConcurrenteTest (1), SesionesWebTest (1), UsuarioTest (14), UsuariosWebTest (9) |
 | `web` | AccesibilidadCssTest (5), AccesibilidadWebTest (8), CompresionTest (2), ConcurrenciaAdviceTest (2), ConsultasWebTest (6), CsvTest (4), FormatoTest (13), KeepAliveTest (3), MonedasTest (3), PingSinBaseDeDatosTest (1), PlantillasSinScriptsTest (1), RendimientoWebTest (2), TemaWebTest (7) |
 
-**Total, a 22/11: 700 pruebas en 105 clases**, todas en verde con H2 y con PostgreSQL, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra. Esta es la cifra de referencia: el resto de la documentación enlaza aquí.
+**Total, a 27/11: 780 pruebas en 125 clases**, todas en verde con H2 y con PostgreSQL, contando `ApuestasApplicationTests` (2), que comprueba que la aplicación arranca, e `InvariantesDineroTest` (2), que hace cientos de operaciones al azar (apostar, corregir, anular, retos, quinielas, bajas…) y comprueba después de cada una que el dinero cuadra. Esta es la cifra de referencia: el resto de la documentación enlaza aquí.
 
 ## Matriz de trazabilidad
 [`docs/requisitos/trazabilidad.md`](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md) enlaza cada criterio de aceptación (**CA-xx.y**) con la prueba que lo comprueba.

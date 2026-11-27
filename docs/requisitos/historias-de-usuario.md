@@ -19,7 +19,7 @@ Cada historia tiene un **tamaño** (puntos y líneas de código), las **horas** 
 ### 1. Tamaño
 
 - **Puntos de historia** (Fibonacci): tamaño relativo, decidido al planificar cada iteración. En las historias hechas son los de las actas de las iteraciones; si se hizo en dos iteraciones, se suman y se redondean al siguiente valor de la escala (HU-03: 8 + 3 = 11, que se queda en 13). En las descartadas, una estimación por comparación con historias parecidas.
-- **Líneas de código**: se han contado las líneas reales del repositorio, sin comentarios ni líneas en blanco: 15.103 en total (Java de la aplicación, pruebas, vistas HTML, CSS y JavaScript y migraciones SQL). Repartidas entre los 185 puntos hechos, salen **82 líneas por punto**. Las líneas de cada historia son sus puntos × 82.
+- **Líneas de código**: se han contado las líneas reales del repositorio, sin comentarios ni líneas en blanco: 15.103 en total (Java de la aplicación, pruebas, vistas HTML, CSS y JavaScript y migraciones SQL), contadas al calibrar la estimación con las historias del Sprint 1. Después el código creció con la ampliación y las depuraciones: el 27/11, el Java de la aplicación ya tiene 26.938 líneas (18.117 sin comentarios ni líneas en blanco). La relación de 82 líneas por punto se mantiene para estimar las historias nuevas, pero las líneas de cada historia son estimadas, no medidas. Repartidas entre los 185 puntos hechos, salen **82 líneas por punto**. Las líneas de cada historia son sus puntos × 82.
 
 ### 2. Horas sin IA
 
@@ -67,10 +67,12 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 ### Totales
 
+Las mismas cifras, calculadas con un script, están en [totales.md](totales.md) (`python3 scripts/totales.py`; la CI comprueba que están al día).
+
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (46)** | 189 | 15.323 | 1.102 | 180 | 1,4 millones | 180 $ |
-| Historias integradas (55; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 167 | 13.694 | 987 | 161 | 1,3 millones | 161 $ |
+| Historias integradas (57; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 173 | 14.186 | 1.023 | 166 | 1,3 millones | 167 $ |
 | Historias descartadas (10) | 29 | — | — | — | — | — |
 
 **Descartadas:** las 8 Won't conservan los puntos con los que se estimaron antes de descartarlas (29), pero no se les imputan líneas, horas ni coste porque no se programaron. HU-85 y HU-93 no tienen estimación: no eran historias de usuario.
@@ -108,7 +110,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-09 | Web adaptada a móvil | Hecha | 2 | 5 (Muy baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 5 | 492 | 35 | 5,6 | 5,8 $ |
-| HU-11 | Registro | Hecha | 3 | 1 (Muy alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-11 | Registro | Hecha | 4 | 1 (Muy alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 | HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
@@ -212,8 +214,10 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-112 | Consultar la clasificación global de ligas públicas | Integrada (Sprint 5) | 4 | 3 (Media) | — | — | — | — | — |
 | HU-113 | Cambiar la visibilidad de una liga | Integrada (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| HU-115 | Recordar este navegador | Integrada (Sprint 5) | 4 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+| HU-116 | Cambiar el correo de mi cuenta | Integrada (Sprint 5) | 5 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 
-**114 historias**: 46 hechas; 55 integradas en `main` (HU-63 a HU-73 el 06/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 10 descartadas, y 3 propuestas (HU-108 a HU-110). Dos de las descartadas, HU-85 y HU-93, se quitaron el 27/11 porque no eran historias de usuario; se deja su hueco para no cambiar la numeración, y lo que pedía HU-85 (ya hecho) es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga). HU-55 a HU-62 se quitaron de `main` el 06/11, al deshacer una subida que se llevó más de lo previsto, y volvieron el 21/11 ([#125](https://github.com/riverri/IS1/pull/125) y [#131](https://github.com/riverri/IS1/pull/131)); desde entonces están integradas. HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **279 criterios de aceptación** en total: 98 de historias hechas, 158 de las integradas, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**114 historias** (116 números): 46 hechas; 57 integradas en `main` (HU-63 a HU-73 el 06/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114, y HU-115 y HU-116 el 22/11); 10 descartadas, y 3 propuestas (HU-108 a HU-110). Dos de las descartadas, HU-85 y HU-93, se quitaron el 27/11 porque no eran historias de usuario; se deja su hueco para no cambiar la numeración, y lo que pedía HU-85 (ya hecho) es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga). HU-55 a HU-62 se quitaron de `main` el 06/11, al deshacer una subida que se llevó más de lo previsto, y volvieron el 21/11 ([#125](https://github.com/riverri/IS1/pull/125) y [#131](https://github.com/riverri/IS1/pull/131)); desde entonces están integradas. HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **289 criterios de aceptación** en total: 99 de historias hechas, 167 de las integradas, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -499,9 +503,12 @@ Es un enlace y no un formulario para no crear una sesión a cada visitante.
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
-| CA-11.1 | Relleno el formulario de registro con un email y una contraseña válidos | Lo envío | Se crea mi cuenta y mi perfil. |
-| CA-11.2 | Intento registrarme con un email ya existente | Lo envío | El sistema me avisa de que ya hay una cuenta con ese email. |
+| CA-11.1 | Escribo mi correo en el registro | Abro el enlace que me llega, lo confirmo y completo mi nombre y una contraseña válidos | Se crea mi cuenta, ya verificada y con su saldo de bienvenida. Hasta confirmar el enlace la cuenta no existe. |
+| CA-11.2 | Intento registrarme con un correo que ya tiene cuenta | Lo envío | Veo la misma respuesta que con un correo nuevo, para no revelar qué correos tienen cuenta, y no se envía ningún enlace. Si la cuenta es mía, puedo recuperar la contraseña (HU-17). |
 | CA-11.3 | Escribo un nombre con palabras ofensivas, aunque cambie letras por números | Envío el registro | El sistema no crea la cuenta y me pide otro nombre. |
+| CA-11.4 | No he confirmado el enlace | Vuelvo a pedir el registro con el mismo correo | Se reenvía el enlace como mucho 3 veces cada media hora, y no se crea ninguna cuenta. |
+
+*Renegociada el 23/11* ([#167](https://github.com/riverri/IS1/pull/167)): desde entonces la cuenta no se crea hasta confirmar el correo, y un correo ya registrado no se avisa (antes CA-11.2 lo decía), para no revelar quién tiene cuenta.
 
 ### HU-12 · Inicio de sesión
 
@@ -554,7 +561,7 @@ Es un enlace y no un formulario para no crear una sesión a cada visitante.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 59 | 4 (Baja) | 2 | Hecha | 2 | 153 | 12 | 1,7 | 1,8 $ |
+| 59 | 4 (Baja) | 3 | Hecha | 2 | 153 | 12 | 1,7 | 1,8 $ |
 
 **Criterios de aceptación**
 
@@ -658,6 +665,45 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 | CA-47.3 | Escribo un nombre nuevo con palabras ofensivas | Lo guardo | El sistema no lo cambia y me pide otro nombre. |
 
 ---
+
+### HU-115 · Recordar este navegador
+
+**Como** usuario, **quiero** que mi navegador me recuerde y poder cerrar esa sesión recordada desde otro sitio, **para** no tener que iniciar sesión cada vez y no dejar la cuenta abierta en un ordenador que ya no uso.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 60 | 3 (Media) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-115.1 | Inicio sesión | Marco «Recordarme» | El navegador me recuerda la próxima vez. Si no lo marco, no se recuerda. |
+| CA-115.2 | Tengo varios navegadores recordados | Abro *Navegadores* en Mi cuenta | Veo cada uno con su navegador y puedo cerrar solo el que elija; los demás siguen recordados. |
+| CA-115.3 | Estoy en un navegador recordado | Cierro sesión | Deja de recordarse ese navegador, y solo ese. |
+| CA-115.4 | Cambio la contraseña | Se guarda el cambio | Se cierran mis otras sesiones y se olvidan todos mis navegadores recordados. |
+
+*Escrita el 27/11* a partir de lo que ya hacía la web desde el 22/11 ([#166](https://github.com/riverri/IS1/pull/166)): se integró sin historia. Estimada el 27/11 por tamaño relativo (3 puntos, como HU-17).
+
+### HU-116 · Cambiar el correo de mi cuenta
+
+**Como** usuario, **quiero** cambiar el correo de mi cuenta, **para** seguir usándola si dejo de usar el que tenía.
+
+| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| 60 | 3 (Media) | 5 | Integrada (Sprint 5) | 3 | 246 | 18 | 2,9 | 2,9 $ |
+
+**Criterios de aceptación**
+
+| ID | Dado | Cuando | Entonces |
+|---|---|---|---|
+| CA-116.1 | Escribo el correo nuevo y mi contraseña | Lo pido | Llega un enlace al correo nuevo y un aviso al antiguo. El correo no cambia hasta que confirmo el enlace; al confirmarlo, el nuevo queda verificado. |
+| CA-116.2 | Escribo mal la contraseña | Lo pido | No se pide el cambio ni se envía ningún correo. |
+| CA-116.3 | Tengo un cambio de correo pendiente | Cambio o recupero la contraseña | El cambio pendiente se anula: el enlace deja de servir (por si quien lo pidió no era yo). |
+| CA-116.4 | He cambiado el correo | Uso un enlace de recuperar la contraseña enviado al correo antiguo | Ya no sirve. |
+| CA-116.5 | Pido el cambio muchas veces, o a un correo del dominio reservado para las cuentas dadas de baja | Lo pido | Como mucho se envían 3 correos por cuenta y dirección cada media hora, y el dominio reservado no se acepta. |
+
+*Escrita el 27/11* a partir de lo que ya hacía la web desde el 22/11 ([#166](https://github.com/riverri/IS1/pull/166)) y de los arreglos de la sexta depuración: se integró sin historia. Estimada el 27/11 por tamaño relativo (3 puntos, como HU-17).
 
 ## Catálogo de eventos deportivos
 

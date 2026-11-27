@@ -207,6 +207,15 @@ public class AnuncioService {
     }
 
     /**
+     * A dónde lleva el anuncio, sin apuntar el clic: para las precargas del navegador y los rastreadores, que piden el
+     * enlace sin que nadie lo haya pulsado. Igual que {@link #registrarClic}, uno que no está vigente lleva a la portada.
+     */
+    @Transactional(readOnly = true)
+    public String destino(Long id) {
+        return anuncios.findById(id).filter(a -> a.vigente(LocalDateTime.now(reloj))).map(Anuncio::getDestino).orElse("/");
+    }
+
+    /**
      * Apunta el clic (HU-62) y devuelve a dónde hay que ir. Un anuncio que ya no existe o está desactivado no cuenta
      * y lleva a la portada.
      *

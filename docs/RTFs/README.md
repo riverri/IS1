@@ -9,6 +9,7 @@ Cada revisión va en su propio archivo, con la fecha y lo que se revisa en el no
 | Fecha | Qué se revisó | Quién revisó | Dictamen | Documentos |
 |---|---|---|---|---|
 | 27/11/2026 | Documentación de requisitos, gestión de riesgos y proceso de trabajo (`main`, commit `c21b72d`) | Otro grupo de la asignatura | Aceptado con cambios (21/27) | [Acta](2026-11-27-acta-rtf.pdf) · [Seguimiento de los compromisos](2026-11-27-seguimiento.md) |
+| 28/11/2026 | Revisión técnica interna: requisitos, proceso, historial de Git, configuración y código (`main`, commit `7ef7f34`) | Jing Li (del equipo) | Aceptado con modificaciones (15 defectos: 3 altos) | [Seguimiento de los defectos](2026-11-28-seguimiento-revision-interna.md) |
 
 ## Plantilla del acta
 

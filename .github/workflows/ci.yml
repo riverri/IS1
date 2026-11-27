@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # Las cifras de docs/requisitos/totales.md salen de las historias y de las pruebas, y cada prueba citada en la
+      # matriz de trazabilidad tiene que existir (defecto B-07 de la revisión técnica interna)
+      - name: Totales y trazabilidad al día
+        run: python3 scripts/totales.py --comprobar
       - uses: actions/setup-java@v6
         with:
           distribution: temurin

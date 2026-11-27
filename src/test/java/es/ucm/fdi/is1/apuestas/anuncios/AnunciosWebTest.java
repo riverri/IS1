@@ -116,6 +116,20 @@ class AnunciosWebTest {
     }
 
     @Test
+    void lasPrecargasDelNavegadorYLosRastreadoresNoCuentanComoClic() throws Exception {
+        // CA-62.1: solo cuenta quien lo pulsa. Chrome precarga con Sec-Purpose, Firefox con X-Moz
+        mvc.perform(get(enlace(mercados)).header("Sec-Purpose", "prefetch;prerender")).andExpect(redirectedUrl("/mercados"));
+        mvc.perform(get(enlace(mercados)).header("X-Moz", "prefetch")).andExpect(redirectedUrl("/mercados"));
+        mvc.perform(get(enlace(mercados)).header("User-Agent", "Mozilla/5.0 (compatible; Googlebot/2.1)"))
+                .andExpect(redirectedUrl("/mercados"));
+        assertThat(clics.countByAnuncio(mercados)).isZero();
+
+        mvc.perform(get(enlace(mercados)).header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) Firefox/140.0"))
+                .andExpect(redirectedUrl("/mercados"));
+        assertThat(clics.countByAnuncio(mercados)).isEqualTo(1);
+    }
+
+    @Test
     void unVisitanteTambienPuedePulsarlo() throws Exception {
         mvc.perform(get(enlace(mercados)).param("desde", "https://otra-web.com"))
                 .andExpect(redirectedUrl("/mercados"));
