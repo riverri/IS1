@@ -79,7 +79,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 55 | Beneficio de la casa en cada uno de los últimos 30 días (HU-95). *Depende de la fila 35* | ¼ sprint | 3 (HU-95) | 4 | C | | Integrada (Sprint 5) |
 | 56 | Mis estadísticas por competición en Mis apuestas (HU-96) | ¼ sprint | 2 (HU-96) | 3 | C | | Integrada (Sprint 5) |
 | 57 | Accesibilidad (nivel AA de WCAG 2.1): toda la web con el teclado y con lector de pantalla, buen contraste y ampliable, nada solo por el color y menos movimiento (HU-97 a HU-101) | ½ sprint | 15 (HU-97 a HU-101) | 4 | S | | Integrada (Sprint 5) |
-| 58 | Banner de Better para webs externas que lleva a una presentación de la aplicación (HU-93). Los banners dentro de la web son la fila 38 | — | 2 (HU-93) | — | C | | Por hacer (Sprint 5-6) |
+| 58 | Publicidad de Better en otras webs: el creador da de alta campañas, cada una con su enlace, y ve cuántas visitas y cuentas nuevas trae cada una (HU-93). Los banners dentro de la web son la fila 38 | — | 2 (HU-93) | — | C | | Por hacer (Sprint 5-6) |
 
 ## Puntos a revisar en equipo
 

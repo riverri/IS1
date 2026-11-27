@@ -10,6 +10,8 @@
 - **Ficha:** fila del Product Backlog, prioridad del 1 (muy alta) al 5 (muy baja), coherente con el MoSCoW de su fila (M → 1–2, S → 2–3, C → 3–4, W → 5), sprint en que se hizo (en el Sprint 1, también la iteración: «1 (it. 3)»), estado y estimación: puntos de historia, líneas de código, horas sin IA y con IA y coste de la IA (ver [Estimación](#estimación)).
 - **Criterios de aceptación:** las condiciones propias de esta historia que se tienen que cumplir para aceptarla. Además, toda historia cumple la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si) común a todas. Cada criterio se lee como *Dado* (situación de partida), *Cuando* (lo que hace el usuario o el sistema) y *Entonces* (el resultado que se espera). 
 
+Cómo cumple cada historia los criterios INVEST (independiente, negociable, valiosa, estimable, pequeña y comprobable): [invest.md](invest.md).
+
 ## Estimación
 
 Cada historia tiene un **tamaño** (puntos y líneas de código), las **horas** que llevaría sin IA y con IA, y el **coste de la IA** (tokens y dinero). Lo que se puede medir en el repositorio se ha medido; lo que no, sale de valores de referencia publicados y se da con un intervalo.
@@ -187,7 +189,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-90 | Alerta de cuota | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-91 | Evolución de la cuota | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-92 | Resumen semanal por correo | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-93 | Publicidad de Better | Por integrar (sprint 5 o 6) | 2 | 2 (Alta) | - | - | - | - | - |
+| HU-93 | Publicidad de Better en otras webs | Por integrar (sprint 5 o 6) | 3 | 2 (Alta) | - | - | - | - | - |
 | HU-94 | Modo oscuro | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-96 | Estadísticas por competición | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
@@ -210,7 +212,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-113 | Cambiar la visibilidad de una liga | Integrada (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**114 historias**: 46 hechas; 56 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 1 por hacer (HU-93); 8 descartadas, y 3 propuestas (HU-108 a HU-110). HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **283 criterios de aceptación** en total: 97 de historias hechas, 161 de las integradas, 2 de la que está por hacer, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**114 historias**: 46 hechas; 56 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 1 por hacer (HU-93); 8 descartadas, y 3 propuestas (HU-108 a HU-110). HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **285 criterios de aceptación** en total: 98 de historias hechas, 161 de las integradas, 3 de la que está por hacer, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -457,7 +459,7 @@ Si después se cambia el importe de una apuesta hecha con supercuota, se recalcu
 
 ### HU-85 · Tiempo de carga mínimo
 
-**Como** cliente, **quiero** que las páginas de la web carguen en el menor tiempo posible, **para** que los usuarios no esperen ni abandonen la web.
+**Como** visitante o usuario, **quiero** que las páginas se abran enseguida, también la primera vez después de un rato sin que nadie entre en la web, **para** no tener que esperar ni abandonarla.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
@@ -467,11 +469,15 @@ Si después se cambia el importe de una apuesta hecha con supercuota, se recalcu
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
-| CA-85.1 | Nadie ha visitado la web en más de 15 minutos | Un usuario la abre | Carga sin esperar a que el servidor arranque: la propia aplicación hace un GET a `/ping` cada 10 minutos (keep-alive) para que Render no la apague. |
-| CA-85.2 | Mi navegador acepta compresión | Pido una página | La respuesta llega comprimida con gzip. |
-| CA-85.3 | Ya he visitado la web | Abro otra página | La hoja de estilos sale de la caché del navegador; si la hoja cambia, se descarga la nueva. |
+| CA-85.1 | Nadie ha entrado en la web en más de 15 minutos | Un visitante la abre | La página se abre como siempre, sin esperar a que el servidor vuelva a arrancar: la web no se ha apagado por falta de visitas. |
+| CA-85.2 | Mi navegador acepta páginas comprimidas | Pido una página | Me llega comprimida, así que descargo menos, y se ve igual. Si mi navegador no las acepta, me llega sin comprimir. |
+| CA-85.3 | Ya he visitado la web | Abro otra página | Mi navegador no vuelve a descargar la hoja de estilos; solo la descarga otra vez si ha cambiado. |
+
+**Requisito no funcional (rendimiento).** Se escribe como historia porque quien nota la diferencia es quien entra en la web. **Cómo se cumple:** la aplicación se visita a sí misma (`/ping`) cada 10 minutos para que Render no la apague, las páginas viajan comprimidas con gzip y la hoja de estilos lleva la huella de su contenido en el nombre y se guarda un año en la caché del navegador.
 
 Medido en local antes y después del cambio: la portada pasa de 4,5 KB a 1,5 KB, la lista de equipos de 122 KB a 6,5 KB y la hoja de estilos de 50 KB a 10 KB, que además se descarga una sola vez. Antes, la primera visita tras 15 minutos sin uso esperaba de 30 a 60 segundos a que Render volviera a arrancar la web.
+
+*Redactada de nuevo el 27/11:* antes el rol era «cliente», que no es ninguno de los [actores](#actores), pedía «el menor tiempo posible», que no se puede comprobar, y los criterios describían cómo está hecho en lugar de lo que nota quien visita la web. Las pruebas no cambian.
 
 ### HU-94 · Modo oscuro
 
@@ -2005,9 +2011,9 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 **Pruebas:** `EvolucionCuotaWebTest`.
 
-### HU-93 · Publicidad y ofertas de Better
+### HU-93 · Publicidad de Better en otras webs
 
-**Como** Product Owner, **quiero** que se dé a conocer la aplicación de Better **para** expandir el número de usuarios y que la aplicación crezca.
+**Como** creador de apuestas, **quiero** saber cuántas visitas y cuántas cuentas nuevas trae cada enlace o banner de Better publicado fuera de la web, **para** saber qué publicidad funciona y atraer a más jugadores.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
@@ -2017,9 +2023,13 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 | ID | Dado | Cuando | Entonces |
 |---|---|---|---|
-| CA-93.1 | Tengo un banner en una página web externa | Hago click en el banner | Me lleva a la página web de Better y me muestra un overview de la app para que vea como es |
+| CA-93.1 | Soy el creador | Doy de alta en Gestión una campaña con su nombre (por ejemplo, «Instagram») | Obtengo el enlace a Better de esa campaña, para ponerlo en el banner o en la publicación de la otra web. |
+| CA-93.2 | Hay una campaña dada de alta | Un visitante entra por su enlace | Ve la portada de siempre, con el botón para crear una cuenta, y la campaña suma una visita. Si crea su cuenta en esa misma visita, la campaña suma también una cuenta nueva. Un enlace con una campaña que no existe cuenta como una visita normal. |
+| CA-93.3 | Soy el creador | Abro las campañas en Gestión | Veo de cada campaña sus visitas, sus cuentas nuevas y qué parte de las visitas acaba creando una cuenta. |
 
-Crear desde Gestión ofertas en forma de banner, con su destino, ya lo cubre **HU-61** (gestionar los anuncios, con los anuncios de HU-60 y los clics de HU-62). Por eso el antiguo CA-93.2 se ha quitado de aquí (#137): esta historia se queda solo con el banner en webs externas.
+El banner o la publicación en sí están en la otra web, fuera de la aplicación: Better solo decide adónde lleva el enlace y mide lo que pasa al llegar. Los anuncios dentro de la web son HU-60 a HU-62 (fila 38 del backlog), y la portada ya presenta Better a quien llega (HU-08).
+
+*Redactada de nuevo el 27/11* a partir de la versión del 20/11: el rol era el Product Owner, que no usa la web; el único criterio («me muestra un overview de la app») no se podía comprobar, y el banner externo queda fuera del sistema. Se mantiene la idea: dar a conocer Better y que crezca el número de jugadores. Falta estimarla.
 
 **Pruebas:** por hacer cuando se implemente.
 
