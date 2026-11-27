@@ -8,7 +8,7 @@ import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerResponse;
 
 /**
- * GET /ping: responde "ok" sin consultar la base de datos ni pintar ninguna plantilla (HU-85). Lo visita
+ * GET /ping: responde "ok" sin consultar la base de datos ni pintar ninguna plantilla (RNF-01). Lo visita
  * {@link KeepAlive} cada pocos minutos para que Render no apague la web por inactividad, y sirve igual para
  * un monitor externo como UptimeRobot. Es público: está en las rutas permitidas de {@code SeguridadConfig}.
  *

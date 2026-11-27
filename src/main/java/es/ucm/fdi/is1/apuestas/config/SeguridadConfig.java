@@ -109,7 +109,7 @@ public class SeguridadConfig {
                                 "/registro", "/registro/**", "/registro-auxiliar", "/login", "/recuperar", "/recuperar/nueva",
                                 "/verificar-correo", "/verificar-correo/**", "/cuenta/correo/confirmar",
                                 "/css/**", "/js/**", "/error").permitAll()
-                        // Ping para que Render no apague la web por inactividad (HU-85): responde sin sesión
+                        // Ping para que Render no apague la web por inactividad (RNF-01): responde sin sesión
                         .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         // Estado de la aplicación y de su base de datos: solo UP o DOWN, sin detalles
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()

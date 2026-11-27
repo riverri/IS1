@@ -48,7 +48,7 @@ Solo funciona con tu ordenador encendido y las dos ventanas abiertas, y el enlac
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Opcional: correo para el enlace de recuperar la contraseña |
 | `URL_PUBLICA` | Opcional: dirección de la web en el enlace de recuperar la contraseña (en Render se usa la suya) |
 
-3. **Keep-alive (HU-85):** Render apaga la web gratuita tras 15 minutos sin peticiones, y la siguiente visita espera de 30 a 60 segundos a que arranque. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (`web.KeepAlive`, solo con el perfil `nube`). No hay que configurar nada: Render da la dirección en `RENDER_EXTERNAL_URL`. En los registros se ve `Keep-alive: … no responde` si falla.
+3. **Keep-alive (RNF-01):** Render apaga la web gratuita tras 15 minutos sin peticiones, y la siguiente visita espera de 30 a 60 segundos a que arranque. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (`web.KeepAlive`, solo con el perfil `nube`). No hay que configurar nada: Render da la dirección en `RENDER_EXTERNAL_URL`. En los registros se ve `Keep-alive: … no responde` si falla.
 4. **UptimeRobot (opcional):** monitor HTTP(s) a `https://TU-WEB.onrender.com/ping` cada 5 minutos. Despierta la web si se llegara a apagar (por ejemplo, si se acaban las 750 horas gratuitas del mes) y avisa por correo si se cae.
 
 ## Si un deploy falla en Render

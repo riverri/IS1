@@ -11,7 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
-/** HU-85 (CA-85.1): el keep-alive hace un GET a /ping por la dirección pública, y sin dirección no hace nada. */
+/** RNF-01.1: el keep-alive hace un GET a /ping por la dirección pública, y sin dirección no hace nada. */
 class KeepAliveTest {
 
     private final RestClient.Builder builder = RestClient.builder();

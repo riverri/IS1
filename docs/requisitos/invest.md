@@ -7,7 +7,7 @@ Las historias de [historias-de-usuario.md](historias-de-usuario.md) siguen el cr
 | Letra | Qué pide | Cómo se cumple en Better | Cómo se ha comprobado |
 |---|---|---|---|
 | **I** · Independiente | Se puede hacer, probar y aceptar sin esperar a otra historia pendiente | Cada historia es una funcionalidad completa que se ve en la web. Las que amplían otra (p. ej. cambiar el importe, HU-27, sobre la apuesta simple, HU-23) se planificaron cuando la base ya estaba hecha | Leyendo las historias que citan a otras. Se marcan con ⚠ las que van detrás de otra del mismo grupo o se solapan con una existente |
-| **N** · Negociable | Dice *qué* se quiere, no *cómo* hacerlo; el detalle se acuerda con el Product Owner | Los criterios describen lo que ve o recibe cada actor; la solución técnica va aparte, en el código y en la [diseño](../diseno/). Las historias se han renegociado cuando hizo falta: por ejemplo, HU-93 perdió un criterio que ya cubría HU-61 (#137) y se volvió a redactar el 27/11, igual que HU-85 | Revisión del texto de cada historia |
+| **N** · Negociable | Dice *qué* se quiere, no *cómo* hacerlo; el detalle se acuerda con el Product Owner | Los criterios describen lo que ve o recibe cada actor; la solución técnica va aparte, en el código y en la [diseño](../diseno/). Las historias se han renegociado cuando hizo falta: por ejemplo, HU-93 perdió un criterio que ya cubría HU-61 (#137), y el 27/11 HU-85 y HU-93 se descartaron porque no eran historias de usuario | Revisión del texto de cada historia |
 | **V** · Valiosa | Aporta algo a un actor concreto | Formato *Como [actor], quiero [acción], para [objetivo]*; el actor es uno de los [actores](historias-de-usuario.md#actores) (visitante, usuario o creador) y el *para* dice el beneficio | Automática: rol reconocido como actor y cláusula *para* presente |
 | **E** · Estimable | Se puede estimar su tamaño | Cada historia tiene puntos, líneas, horas y coste de IA ([Estimación](historias-de-usuario.md#estimación)) | Automática: tiene puntos en la tabla de resumen |
 | **S** · Pequeña | Cabe en un sprint | Hasta 8 puntos | Automática: puntos ≤ 8. Con ⚠ las de más puntos |
@@ -15,10 +15,10 @@ Las historias de [historias-de-usuario.md](historias-de-usuario.md) siguen el cr
 
 ## Resultado
 
-**100 de 114 historias** cumplen las seis letras sin reservas. El resto:
+Hay 112 historias: los números HU-85 y HU-93 son huecos de dos historias descartadas el 27/11 porque no lo eran (lo que pedía HU-85, ya hecho, es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md)). **99 de las 112** cumplen las seis letras sin reservas. El resto:
 
 - **I (independiente), con reservas:** HU-103 y HU-104, HU-107 a HU-111. Son historias de un mismo grupo que se hacen juntas (cash-out de combinadas, bloqueos y clasificación de ligas) o que se solapan con el ranking de cada liga (HU-51).
-- **E (estimable), sin estimar todavía:** HU-93, HU-102 a HU-113. Están bien definidas y se pueden estimar; falta poner sus puntos. Por eso tampoco se puede comprobar la S.
+- **E (estimable), sin estimar todavía:** HU-102 a HU-113. Están bien definidas y se pueden estimar; falta poner sus puntos. Por eso tampoco se puede comprobar la S.
 - **S (pequeña), con reservas:** HU-03.
 - **V (valiosa) y T (comprobable):** todas las historias cumplen.
 
@@ -114,7 +114,7 @@ Las descartadas (Won't) también se escribieron con este criterio; se incluyen p
 | HU-82 | Puntos de los jugadores fantasy | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (3) |  |
 | HU-83 | Clasificación fantasy | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (1) |  |
 | HU-84 | Ranking por tipo de juego | Integrada (16/11) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) | I: filtra por los juegos de otras historias (casino, predicciones, cripto y quiniela), ya hechas al planificarla. |
-| HU-85 | Tiempo de carga mínimo | Integrada (15/11) | Visitante o usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (3) | Redactada de nuevo el 27/11 (rol «cliente» y criterios que describían la solución). |
+| HU-85 | Hueco: no era una historia de usuario | Descartada (27/11) | — | — | — | — | — | — | — | Se mantiene el número para no cambiar el orden. Lo que pedía es ahora [RNF-01](requisitos-no-funcionales.md). |
 | HU-86 | Equipos favoritos | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (3) |  |
 | HU-87 | Supercuota | Integrada (Sprint 5) | Creador | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (3) |  |
 | HU-88 | Logros | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
@@ -122,7 +122,7 @@ Las descartadas (Won't) también se escribieron con este criterio; se incluyen p
 | HU-90 | Alerta de cuota | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (3) |  |
 | HU-91 | Evolución de la cuota | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-92 | Resumen semanal por correo | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
-| HU-93 | Publicidad de Better en otras webs | Por integrar (sprint 5 o 6) | Creador | ✓ | ✓ | ✓ | ✗ | — | ✓ (3) | Redactada de nuevo el 27/11 (rol Product Owner y criterio que no se podía comprobar). E: falta estimarla. |
+| HU-93 | Hueco: no era una historia de usuario | Descartada (27/11) | — | — | — | — | — | — | — | Se mantiene el número para no cambiar el orden. |
 | HU-94 | Modo oscuro | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | Creador | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-96 | Estadísticas por competición | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |

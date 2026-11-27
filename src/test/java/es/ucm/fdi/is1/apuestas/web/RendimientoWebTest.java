@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
-/** HU-85: el ping para el keep-alive (CA-85.1) y la caché de la hoja de estilos (CA-85.3). */
+/** RNF-01: el ping para el keep-alive (RNF-01.1) y la caché de la hoja de estilos (RNF-01.3). */
 @SpringBootTest
 @AutoConfigureMockMvc
 class RendimientoWebTest {
