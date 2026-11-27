@@ -12,19 +12,19 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 | Historias | Criterios | Automática | Manual | Sin prueba |
 |---:|---:|---:|---:|---:|
-| 45 hechas | 97 | 93 (96 %) | 4 | 0 |
-| 56 integradas (HU-55 a HU-92, HU-94 a HU-107 y HU-111 a HU-114) | 161 | 153 (95 %) | 0 | 6 (y 2 sin hacer, de HU-107) |
+| 46 hechas | 99 | 95 (96 %) | 4 | 0 |
+| 57 integradas (HU-55 a HU-84, HU-86 a HU-92, HU-94 a HU-107 y HU-111 a HU-116) | 167 | 165 (99 %) | 0 | 0 (y 2 sin hacer, de HU-107) |
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
 - HU-85 y HU-93 se descartaron el 27/11 porque no eran historias de usuario (se deja su hueco). Lo que pedía HU-85 sigue más abajo como [RNF-01](requisitos-no-funcionales.md), con sus pruebas.
 - HU-108 a HU-110 (clasificación de una liga) son propuestas: casi todo lo que piden ya lo da el ranking de cada liga (HU-51).
 
-Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
+Todos los criterios de las historias hechas tienen prueba automática, salvo los cuatro que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4. Del Sprint 5: HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial); HU-102 a HU-107 (cash-out de combinadas y bloqueos de liga) y HU-111 a HU-113 (ranking de ligas públicas) el 20/11, y HU-55 (movimientos del saldo), HU-56 a HU-59 y HU-74 (casino), HU-60 a HU-62 (anuncios internos) y HU-81 a HU-83 (liga fantasy) el 21/11. HU-107 está hecha en parte. Les falta que el Product Owner las acepte en la review de su sprint.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4. Del Sprint 5: HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial); HU-102 a HU-107 (cash-out de combinadas y bloqueos de liga) y HU-111 a HU-113 (ranking de ligas públicas) el 20/11, y HU-55 (movimientos del saldo), HU-56 a HU-59 y HU-74 (casino), HU-60 a HU-62 (anuncios internos) y HU-81 a HU-83 (liga fantasy) el 21/11, y HU-115 y HU-116 (navegadores recordados y cambio de correo, escritas como historias el 27/11) el 22/11. HU-107 está hecha en parte. Les falta que el Product Owner las acepte en la review de su sprint.
 
-**Sin prueba automática:** CA-105.2, CA-105.5, CA-106.3, CA-111.4, CA-112.2 y CA-113.5. Están en el código; falta su prueba.
+**Sin prueba automática:** ninguno de las historias integradas desde el 27/11, cuando se añadieron las de CA-105.2, CA-105.5, CA-106.3, CA-111.4, CA-112.2 y CA-113.5 (defecto B-08 de la revisión técnica interna).
 
 Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma parte de la Definition of Done (ver [proceso](../scrum/proceso.md)).
 
@@ -100,9 +100,10 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-11.1 | Con datos válidos se crea la cuenta | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroCreaLaCuentaConElSaldoDeBienvenida` |
-| CA-11.2 | Con un email ya registrado se avisa | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConEmailExistenteAvisa`<br>[`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConContrasenasDistintasAvisa` |
+| CA-11.1 | La cuenta se crea, verificada y con su saldo, solo tras confirmar el enlace y completar el registro | Automática | [`VerificacionCorreoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/VerificacionCorreoWebTest.java)`.laCuentaNoExisteHastaConfirmarCorreoYCompletarCredenciales` |
+| CA-11.2 | Un correo ya registrado recibe la misma respuesta y no se envía enlace | Automática | [`VerificacionCorreoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/VerificacionCorreoWebTest.java)`.correoExistenteTieneLaMismaRespuestaYNoSeEnvianEnlaces` |
 | CA-11.3 | Un nombre con palabras ofensivas no se acepta en el registro | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConNombreOfensivoNoCreaLaCuenta`<br>[`NombresProhibidosTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NombresProhibidosTest.java) |
+| CA-11.4 | El enlace se reenvía como mucho 3 veces cada media hora y no se crea la cuenta | Automática | [`VerificacionCorreoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/VerificacionCorreoWebTest.java)`.registroPendienteReenviaEnlaceConLimiteSinCrearCuenta` |
 
 ## HU-12 · Inicio de sesión
 
@@ -122,7 +123,7 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-14.1 | Al registrarse se recibe el saldo de bienvenida | Automática | [`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroCreaLaCuentaConElSaldoDeBienvenida`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.empiezaConElSaldoDeBienvenida` |
+| CA-14.1 | Al registrarse se recibe el saldo de bienvenida | Automática | [`VerificacionCorreoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/VerificacionCorreoWebTest.java)`.laCuentaNoExisteHastaConfirmarCorreoYCompletarCredenciales`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.empiezaConElSaldoDeBienvenida` |
 | CA-14.2 | Pasado el periodo se recibe una recarga, una sola vez | Automática | [`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.noRecargaAntesDeQuePaseElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.recargaCuandoHaPasadoElPeriodo`<br>[`UsuarioTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuarioTest.java)`.soloRecargaUnaVezPorPeriodo` |
 
 ## HU-55 · Movimientos del saldo
@@ -589,6 +590,25 @@ CA-83.1: el desempate por fecha de creación y la corrección de la clasificaci�
 | CA-84.1 | Solo salen los que han jugado a ese tipo, con sus estadísticas de ese tipo | Automática | [`RankingPorJuegoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RankingPorJuegoWebTest.java)`.enPrediccionesSoloSalenLosQueHanJugadoConSusCifras`, `.cadaCategoriaDeCriptoVaPorSeparadoYSinAciertos`, `.enLaQuinielaCuentanLosBoletosRepartidos` |
 | CA-84.2 | No se ordena por saldo y en cripto no hay porcentaje de aciertos | Automática | [`RankingPorJuegoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RankingPorJuegoWebTest.java)`.conUnTipoDeJuegoNoSeOrdenaPorSaldo`, `.cadaCategoriaDeCriptoVaPorSeparadoYSinAciertos` |
 
+## HU-115 · Recordar este navegador
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-115.1 | Solo se recuerda el navegador si se marca «Recordarme» | Automática | [`NavegadoresWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NavegadoresWebTest.java)`.loginCreaCookiePersistenteSoloCuandoSeSolicita` |
+| CA-115.2 | Se ven los navegadores recordados y se cierra solo el elegido | Automática | [`NavegadoresWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NavegadoresWebTest.java)`.puedeListarYRevocarUnSoloNavegador`<br>[`CorreoYNavegadoresSeguridadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CorreoYNavegadoresSeguridadWebTest.java)`.seRevocaUnNavegadorAunqueSuSerieLleveBarras` |
+| CA-115.3 | Cerrar sesión olvida solo ese navegador | Automática | [`NavegadoresWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NavegadoresWebTest.java)`.logoutRevocaSoloLaCookieDelNavegadorActual` |
+| CA-115.4 | Cambiar la contraseña cierra las demás sesiones y olvida los navegadores recordados | Automática | [`SesionesWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/SesionesWebTest.java)`.cambiarLaContrasenaCierraLasOtrasSesiones`<br>[`NavegadoresWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NavegadoresWebTest.java)`.cambiarLaContrasenaOlvidaTodosLosNavegadores` |
+
+## HU-116 · Cambiar el correo de mi cuenta
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-116.1 | El correo solo cambia tras confirmar el enlace enviado al nuevo, y se avisa al antiguo | Automática | [`CambioCorreoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CambioCorreoWebTest.java)`.correoSoloCambiaTrasConfirmarElEnlaceEnviadoALaNuevaDireccion` |
+| CA-116.2 | Con la contraseña mal no se pide el cambio | Automática | [`CambioCorreoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CambioCorreoWebTest.java)`.unaContrasenaIncorrectaNoSolicitaElCambio` |
+| CA-116.3 | Cambiar la contraseña anula el cambio de correo pendiente | Automática | [`CorreoYNavegadoresSeguridadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CorreoYNavegadoresSeguridadWebTest.java)`.cambiarLaContrasenaAnulaElCambioDeCorreoPendiente` |
+| CA-116.4 | El enlace de recuperación del correo antiguo deja de servir | Automática | [`CorreoYNavegadoresSeguridadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CorreoYNavegadoresSeguridadWebTest.java)`.elEnlaceDeRecuperacionDelCorreoAntiguoDejaDeServirAlCambiarlo` |
+| CA-116.5 | Límite de envíos y dominio reservado | Automática | [`CorreoYNavegadoresSeguridadWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CorreoYNavegadoresSeguridadWebTest.java)`.elCambioDeCorreoTieneLimiteDeEnvios`, `.elCorreoNuevoNoPuedeSerDelDominioReservado` |
+
 ## RNF-01 · Tiempo de carga (requisito no funcional; antes HU-85)
 
 | ID | Criterio de aceptación | Estado | Pruebas |
@@ -746,12 +766,11 @@ CA-104.1: la prueba comprueba el estado y lo abonado; lo apostado y la fecha no.
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
 | CA-105.1 | Se bloquea solo a ese amigo y se descuentan 50 monedas una vez | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoCuestaCincuentaYElServidorImpideApostarEnElAlcance` |
-| CA-105.2 | Se rechaza, sin cobrar, si no comparte la liga, es uno mismo o el partido ya empezó, está suspendido o anulado | Sin prueba | — |
+| CA-105.2 | Se rechaza, sin cobrar, si no comparte la liga, es uno mismo o el partido ya empezó, está suspendido o anulado | Automática | [`BloqueoLigaRechazadoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/BloqueoLigaRechazadoTest.java)`.noSePuedeBloquearAQuienNoEstaEnLaLigaNiSeCobra`, `.noSePuedeBloquearAUnoMismoNiSeCobra`, `.noSePuedeBloquearAUnCompaneroEnUnPartidoQueYaHaEmpezado`, `.noSePuedeBloquearAUnCompaneroEnUnPartidoSuspendido`, `.noSePuedeBloquearAUnCompaneroEnUnPartidoAnulado` |
 | CA-105.3 | Su apuesta de antes se queda como estaba (y no se puede subir) | Automática | [`QuintaDepuracionApuestasTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/QuintaDepuracionApuestasTest.java)`.conUnBloqueoDeLigaNoSePuedeSubirLaApuestaQueYaHabia` |
 | CA-105.4 | Pedir otra vez el mismo bloqueo no crea otro ni vuelve a cobrar | Automática | [`BloqueoConcurrenteTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/BloqueoConcurrenteTest.java)`.elMismoBloqueoALaVezSeCobraUnaSolaVez` |
-| CA-105.5 | Con menos de 50 monedas no se aplica y el saldo no cambia | Sin prueba | — |
+| CA-105.5 | Con menos de 50 monedas no se aplica y el saldo no cambia | Automática | [`BloqueoLigaRechazadoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/BloqueoLigaRechazadoTest.java)`.conMenosDeCincuentaMonedasNoSeAplicaElBloqueoNiCambiaElSaldo`, `.conCincuentaMonedasJustasSiSeAplicaElBloqueo` |
 
-CA-105.2 y CA-105.5 están en el código (`BloqueoLigaService.crear`), pero sin prueba. La más cercana, `CashOutYBloqueoLigaWebTest.conLaCuentaEnPausaNoSePuedeBloquear`, solo comprueba la cuenta en pausa.
 
 ## HU-106 · Bloquear a toda la liga en un partido o selección
 
@@ -759,10 +778,10 @@ CA-105.2 y CA-105.5 están en el código (`BloqueoLigaService.crear`), pero sin 
 |---|---|---|---|
 | CA-106.1 | Se impide apostar en ese alcance a los demás miembros y se descuentan 100 monedas una vez | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
 | CA-106.2 | Quien lo pide no queda bloqueado | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
-| CA-106.3 | Se rechaza, sin cobrar, si no es de la liga o el partido ya empezó, está suspendido o anulado | Sin prueba | — |
+| CA-106.3 | Se rechaza, sin cobrar, si no es de la liga o el partido ya empezó, está suspendido o anulado | Automática | [`BloqueoLigaRechazadoTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/BloqueoLigaRechazadoTest.java)`.quienNoEsDeLaLigaNoPuedeBloquearlaEnteraNiSeLeCobra`, `.noSePuedeBloquearALaLigaEnUnPartidoQueYaHaEmpezado`, `.noSePuedeBloquearALaLigaEnUnPartidoSuspendido`, `.noSePuedeBloquearALaLigaEnUnPartidoAnulado` |
 | CA-106.4 | No se duplica ni se cobra si ya existe o no hay 100 monedas | Automática | [`CashOutYBloqueoLigaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/CashOutYBloqueoLigaWebTest.java)`.bloqueoDeLigaCuestaCienYExcluyeAlCreadorDelBloqueo` |
 
-CA-106.3 está en el código, pero sin prueba. CA-106.4: se prueba el duplicado, no el saldo insuficiente.
+CA-106.4: se prueba el duplicado, no el saldo insuficiente.
 
 ## HU-107 · Aplicar y caducar los bloqueos de la liga
 
@@ -783,18 +802,18 @@ CA-107.2: los bloqueos solo se ven en la página de la liga (con su «Hasta»), 
 | CA-111.1 | En «Ranking de ligas» se elige entre «Mis ligas» y «Global» en la misma página | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laBarraIncluyeElRankingDeLigasJuntoAlRankingGeneral`, `.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
 | CA-111.2 | «Mis ligas» solo enseña las mías, públicas y privadas | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
 | CA-111.3 | «Global» solo enseña las públicas | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
-| CA-111.4 | La vista activa se distingue y no se mezclan filas | Sin prueba | — |
+| CA-111.4 | La vista activa se distingue y no se mezclan filas | Automática | [`ClasificacionLigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/ClasificacionLigasWebTest.java)`.alCambiarDeVistaQuedaMarcadaLaActivaYNoSeMezclanLasFilas`, `.sinIndicarVistaOConUnaDesconocidaSeMarcaMisLigasYSinSesionSoloLaGlobal` |
 
 ## HU-112 · Consultar la clasificación global de ligas públicas
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
 | CA-112.1 | Las públicas van de más a menos saldo total de sus miembros | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
-| CA-112.2 | Con el mismo saldo, el desempate es estable | Sin prueba | — |
+| CA-112.2 | Con el mismo saldo, el desempate es estable | Automática | [`ClasificacionLigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/ClasificacionLigasWebTest.java)`.conElMismoSaldoTotalElDesempateEsEstableYLaPosicionCoincideConElOrden` |
 | CA-112.3 | Sin ligas públicas sale un estado vacío y ninguna privada | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
 | CA-112.4 | De una liga ajena solo se ve el nombre, los miembros y el saldo total | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.laVistaGlobalEsPublicaYSoloMuestraResumenDeLigasPublicas` |
 
-CA-112.2: el desempate (nombre e id) está en el código, sin prueba. CA-112.3: se comprueba que la lista queda vacía, no el texto del estado vacío.
+CA-112.2: el desempate es por nombre, sin distinguir mayúsculas, y después por id. CA-112.3: se comprueba que la lista queda vacía, no el texto del estado vacío.
 
 ## HU-113 · Cambiar la visibilidad de una liga
 
@@ -804,7 +823,7 @@ CA-112.2: el desempate (nombre e id) está en el código, sin prueba. CA-112.3: 
 | CA-113.2 | Quien la creó la hace pública y sale en la global | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
 | CA-113.3 | Quien la creó la hace privada y deja de salir en la global | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
 | CA-113.4 | Si no es quien la creó, el servidor lo rechaza | Automática | [`LigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/LigasWebTest.java)`.soloElCreadorPuedeCambiarLaVisibilidadYElCambioActualizaLaClasificacion` |
-| CA-113.5 | Cambiar la visibilidad no cambia miembros, retos ni bloqueos | Sin prueba | — |
+| CA-113.5 | Cambiar la visibilidad no cambia miembros, retos ni bloqueos | Automática | [`ClasificacionLigasWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/ligas/ClasificacionLigasWebTest.java)`.cambiarLaVisibilidadNoCambiaMiembrosRetosNiBloqueos` |
 
 CA-113.4: se prueba un miembro que no la creó, no alguien de fuera de la liga.
 

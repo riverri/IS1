@@ -92,6 +92,22 @@ class NavegadoresWebTest {
     }
 
     @Test
+    void cambiarLaContrasenaOlvidaTodosLosNavegadores() throws Exception {
+        // CA-115.4: quien tuviera la contraseña antigua no sigue dentro desde un navegador recordado
+        crearToken("serie-uno", "Firefox");
+        crearToken("serie-dos", "Chrome");
+
+        mvc.perform(post("/cuenta/password")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+                                .user(EMAIL))
+                        .with(csrf())
+                        .param("actual", "secreta123").param("nueva", "otraClave456").param("confirmacion", "otraClave456"))
+                .andExpect(redirectedUrl("/cuenta"));
+
+        assertThat(tokens.findByUsername(EMAIL)).isEmpty();
+    }
+
+    @Test
     void logoutRevocaSoloLaCookieDelNavegadorActual() {
         crearToken("serie-uno", "Firefox");
         crearToken("serie-dos", "Chrome");

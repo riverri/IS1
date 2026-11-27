@@ -1,7 +1,8 @@
-"""Genera las gráficas de velocidad y progreso de las iteraciones del Sprint 1.
+"""Genera las gráficas de velocidad y progreso de las iteraciones del Sprint 1 y el burndown del Sprint 5.
 
 Uso: python3 docs/scrum/graficas/generar.py  (sin dependencias externas).
-Los datos salen de las actas de docs/scrum/sprints/iteraciones/.
+Los datos salen de las actas de docs/scrum/sprints/iteraciones/ y, los del Sprint 5, de la fecha en que se fusionó
+el pull request de cada historia (sus puntos están en docs/requisitos/historias-de-usuario.md).
 """
 from pathlib import Path
 
@@ -20,6 +21,16 @@ ITERACIONES = [
     (11, 17, 17),
     (12, 10, 10),
 ]
+
+# Sprint 5 (18/11 – 01/12): (día, puntos de las historias del sprint, puntos ya integrados en main al acabar el día).
+# El 17/11, antes de empezar, ya se habían integrado 34 puntos (#113). El 22/11 entraron HU-115 y HU-116 (6 puntos),
+# que no estaban planificadas: el alcance sube de 105 a 111. HU-102 a HU-107 y HU-111 a HU-113 no cuentan: sin estimar.
+SPRINT_5 = [
+    ("18/11", 105, 34), ("19/11", 105, 49), ("20/11", 105, 49), ("21/11", 105, 105), ("22/11", 111, 111),
+    ("23/11", 111, 111), ("24/11", 111, 111), ("25/11", 111, 111), ("26/11", 111, 111), ("27/11", 111, 111),
+]
+DIAS_SPRINT_5 = ["18/11", "19/11", "20/11", "21/11", "22/11", "23/11", "24/11", "25/11", "26/11", "27/11",
+                 "28/11", "29/11", "30/11", "01/12"]
 
 SUPERFICIE = "#fcfcfb"
 TEXTO = "#0b0b0b"
@@ -121,7 +132,40 @@ def progreso():
     (CARPETA / "progreso.svg").write_text("\n".join(svg), encoding="utf-8")
 
 
+def burndown():
+    svg = lienzo("Burndown del Sprint 5", "Puntos de historia que faltan por integrar en main al acabar cada día, frente al ritmo ideal")
+    leyenda(svg, [(COMPROMETIDO, "Ideal"), (COMPLETADO, "Pendiente")])
+    inicial = SPRINT_5[0][1] - SPRINT_5[0][2]
+    maximo = ((inicial + 19) // 20) * 20
+    alto_util = eje_y(svg, maximo, 20)
+    hueco = (ANCHO - IZQ - DER) / len(DIAS_SPRINT_5)
+
+    def x(i):
+        return IZQ + hueco * (i + 0.5)
+
+    def y(valor):
+        return ALTO - ABAJO - valor / maximo * alto_util
+
+    ultimo = len(DIAS_SPRINT_5) - 1
+    svg.append(f'<path d="M{x(0):.1f},{y(inicial):.1f} L{x(ultimo):.1f},{y(0):.1f}" fill="none" stroke="{COMPROMETIDO}" '
+               f'stroke-width="2" stroke-dasharray="6 4"/>')
+    puntos = [(i, dia, alcance - hecho) for i, (dia, alcance, hecho) in enumerate(SPRINT_5)]
+    camino = " ".join(f"{'M' if k == 0 else 'L'}{x(i):.1f},{y(v):.1f}" for k, (i, _, v) in enumerate(puntos))
+    svg.append(f'<path d="{camino}" fill="none" stroke="{COMPLETADO}" stroke-width="2" stroke-linejoin="round"/>')
+    for i, dia, valor in puntos:
+        svg.append(f'<g><title>{dia}: faltan {valor} puntos</title>'
+                   f'<circle cx="{x(i):.1f}" cy="{y(valor):.1f}" r="4.5" fill="{COMPLETADO}" stroke="{SUPERFICIE}" stroke-width="2"/></g>')
+        if i < 4:
+            svg.append(f'<text x="{x(i):.1f}" y="{y(valor) - 10:.1f}" font-size="11" text-anchor="middle" fill="{TEXTO}">{valor}</text>')
+    for i, dia in enumerate(DIAS_SPRINT_5):
+        if i % 2 == 0 or i == ultimo:
+            svg.append(f'<text x="{x(i):.1f}" y="{ALTO - ABAJO + 18}" font-size="11" text-anchor="middle" fill="{TEXTO_SUAVE}">{dia}</text>')
+    svg.append('</svg>')
+    (CARPETA / "burndown-sprint-5.svg").write_text("\n".join(svg), encoding="utf-8")
+
+
 if __name__ == "__main__":
     velocidad()
     progreso()
+    burndown()
     print("Gráficas generadas en", CARPETA)

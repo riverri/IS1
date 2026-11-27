@@ -15,7 +15,7 @@ Las historias de [historias-de-usuario.md](historias-de-usuario.md) siguen el cr
 
 ## Resultado
 
-Hay 112 historias: los números HU-85 y HU-93 son huecos de dos historias descartadas el 27/11 porque no lo eran (lo que pedía HU-85, ya hecho, es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md)). **99 de las 112** cumplen las seis letras sin reservas. El resto:
+Hay 114 historias: los números HU-85 y HU-93 son huecos de dos historias descartadas el 27/11 porque no lo eran (lo que pedía HU-85, ya hecho, es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md)). **101 de las 114** cumplen las seis letras sin reservas. El resto:
 
 - **I (independiente), con reservas:** HU-103 y HU-104, HU-107 a HU-111. Son historias de un mismo grupo que se hacen juntas (cash-out de combinadas, bloqueos y clasificación de ligas) o que se solapan con el ranking de cada liga (HU-51).
 - **E (estimable), sin estimar todavía:** HU-102 a HU-113. Están bien definidas y se pueden estimar; falta poner sus puntos. Por eso tampoco se puede comprobar la S.
@@ -40,7 +40,7 @@ Las descartadas (Won't) también se escribieron con este criterio; se incluyen p
 | HU-08 | Catálogo sin registrarse | Hecha | Visitante | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-09 | Web adaptada a móvil | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-10 | Juego responsable | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
-| HU-11 | Registro | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (3) |  |
+| HU-11 | Registro | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (4) |  |
 | HU-12 | Inicio de sesión | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-13 | Consultar el saldo | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
 | HU-14 | Saldo de bienvenida y recargas | Hecha | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
@@ -144,5 +144,7 @@ Las descartadas (Won't) también se escribieron con este criterio; se incluyen p
 | HU-112 | Consultar la clasificación global de ligas públicas | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✗ | — | ✓ (4) | E: falta estimarla. |
 | HU-113 | Cambiar la visibilidad de una liga | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✗ | — | ✓ (5) | E: falta estimarla. |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (2) |  |
+| HU-115 | Recordar este navegador | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (4) |  |
+| HU-116 | Cambiar el correo de mi cuenta | Integrada (Sprint 5) | Usuario | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (5) |  |
 
 *Tabla generada a partir de [historias-de-usuario.md](historias-de-usuario.md) el 27/11/2026: si cambia una historia, hay que revisar su fila.*

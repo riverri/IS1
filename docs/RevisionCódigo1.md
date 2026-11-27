@@ -2,13 +2,11 @@
 
 
 
-En este documento podrás buscar información sobre como funciona el código del paquete equipos. Quedan pendientes cuotas, eventos, ligas y mercados (ver el final).
+En este documento podrás buscar información sobre como funciona el código del paquete equipos. Los paquetes cuotas, eventos, ligas y mercados no se llegaron a revisar en este documento (ver el final).
 
 
 
-## Cuotas
 
-_Pendiente._
 
 
 
@@ -47,43 +45,9 @@ En este otro caso la estructura del código se parece mas a lo que estamos viend
 
 \----------------------------------------------------------------------------
 
-## Pendiente
+## Paquetes que no se revisaron aquí
 
-- Cuotas, Eventos, Ligas y Mercados. Responsable: Carlos Martín-Salas.
+Cuotas, eventos, ligas y mercados estaban asignados a Carlos Martín-Salas y quedaron sin revisar en este documento: en el Sprint 4 el trabajo pasó a la ampliación del producto. Se retiran como pendientes el 27/11 (defecto B-12 de la revisión técnica interna). Lo que hay de ellos está en otros sitios:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- **Cómo funcionan:** el modelo de clases y las secuencias principales están en [docs/diseno/uml.md](diseno/uml.md).
+- **Fallos encontrados y corregidos:** en la wiki, [Revisión de fallos](https://github.com/riverri/IS1/wiki/Revisión-de-fallos) (revisión de código y nueve depuraciones).

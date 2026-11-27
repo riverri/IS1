@@ -15,10 +15,10 @@
 
 Columna **MoSCoW** (técnica de priorización del tema de estimación), deducida del MVP y del valor de cada fila.
 **M** = Must · **S** = Should · **C** = Could · **W** = Won't (esta vez).
-Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 385 en total: 186 de las filas hechas, 170 de las integradas (36 a 57) y 29 de las descartadas (filas 25 y 26); la 58 se descartó sin estimar. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5), las filas hechas suman los 189 puntos de las historias hechas. De los 170 de las integradas, 3 son del requisito no funcional [RNF-01](../requisitos/requisitos-no-funcionales.md) (fila 41) y 167 de historias; las ampliaciones de las filas 33 y 42 (HU-102 a HU-113) están sin estimar. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
+Columna **Puntos**: suma de los puntos de historia de las historias de cada fila ([historias](../requisitos/historias-de-usuario.md)); 391 en total: 186 de las filas hechas, 176 de las integradas (36 a 57 y 60) y 29 de las descartadas (filas 25 y 26); la 58 se descartó sin estimar. Con los 3 de HU-09 (requisito no funcional, sin fila propia; ver el punto 5), las filas hechas suman los 189 puntos de las historias hechas. De los 176 de las integradas, 3 son del requisito no funcional [RNF-01](../requisitos/requisitos-no-funcionales.md) (fila 41) y 173 de historias; las ampliaciones de las filas 33 y 42 (HU-102 a HU-113) están sin estimar. La columna **Estimación** es la estimación inicial, en fracciones de sprint.
 Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hizo (it. 1 = iteración 1). El detalle está en las actas de [sprints/iteraciones/](sprints/iteraciones/).
 
-**Resumen:** 34 de 59 filas hechas (la 59, HU-54, se añadió el 27/11: estaba hecha desde el Sprint 2 sin fila propia); la 39 a la 41, la 43 a la 45 y la 47, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36 a la 38, la 42, la 46 y la 48 a la 57, del [Sprint 5](sprints/sprint-5.md), también integradas (la 36 a la 38 y la 46, el 21/11); la 58 se descartó el 27/11, y las 25 y 26 están descartadas (Won't).
+**Resumen:** 34 de 60 filas hechas (la 59, HU-54, se añadió el 27/11: estaba hecha desde el Sprint 3 sin fila propia); la 39 a la 41, la 43 a la 45 y la 47, integradas en `main` (falta que el Product Owner las acepte en la review del [Sprint 4](sprints/sprint-4.md)); la 36 a la 38, la 42, la 46 y la 48 a la 57, del [Sprint 5](sprints/sprint-5.md), también integradas (la 36 a la 38 y la 46, el 21/11); la 60 (HU-115 y HU-116), integrada el 22/11 y añadida al backlog el 27/11; la 58 se descartó el 27/11, y las 25 y 26 están descartadas (Won't).
 
 | Orden | Elemento | Estimación | Puntos | Valor | MoSCoW | MVP | Estado |
 |---:|---|---|---|---|:-:|:-:|---|
@@ -80,7 +80,8 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 56 | Mis estadísticas por competición en Mis apuestas (HU-96) | ¼ sprint | 2 (HU-96) | 3 | C | | Integrada (Sprint 5) |
 | 57 | Accesibilidad (nivel AA de WCAG 2.1): toda la web con el teclado y con lector de pantalla, buen contraste y ampliable, nada solo por el color y menos movimiento (HU-97 a HU-101) | ½ sprint | 15 (HU-97 a HU-101) | 4 | S | | Integrada (Sprint 5) |
 | 58 | ~~Publicidad de Better en otras webs (HU-93)~~. Descartada el 27/11: no era una historia de usuario, y los anuncios dentro de la web ya son la fila 38 | — | — | — | W | | Descartada (27/11) |
-| 59 | Filtro de nombres ofensivos: no se puede crear una cuenta ni cambiar el nombre a uno ofensivo, aunque se escriba con números, símbolos o tildes (HU-54) | ¼ sprint | 2 (HU-54) | 3 | C | | Hecho (Sprint 2) |
+| 59 | Filtro de nombres ofensivos: no se puede crear una cuenta ni cambiar el nombre a uno ofensivo, aunque se escriba con números, símbolos o tildes (HU-54) | ¼ sprint | 2 (HU-54) | 3 | C | | Hecho (Sprint 3) |
+| 60 | Seguridad de la cuenta: recordar el navegador y cerrar esa sesión desde Mi cuenta, y cambiar el correo con confirmación en la dirección nueva (HU-115, HU-116). Añadida el 27/11: se integró el 22/11 sin fila | ¼ sprint | 6 (HU-115, HU-116) | 4 | S | | Integrada (Sprint 5) |
 
 ## Puntos a revisar en equipo
 
