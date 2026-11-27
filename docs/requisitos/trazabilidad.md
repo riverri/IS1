@@ -17,7 +17,7 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
-- HU-93 (publicidad de Better en webs externas) aún no está hecha, y HU-108 a HU-110 (clasificación de una liga) son propuestas: casi todo lo que piden ya lo da el ranking de cada liga (HU-51).
+- HU-93 (medir las visitas y las cuentas que trae la publicidad de Better en otras webs) aún no está hecha, y HU-108 a HU-110 (clasificación de una liga) son propuestas: casi todo lo que piden ya lo da el ranking de cada liga (HU-51).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
@@ -586,9 +586,9 @@ CA-83.1: el desempate por fecha de creación y la corrección de la clasificaci�
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-85.1 | La aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
-| CA-85.2 | Las páginas llegan comprimidas con gzip si el navegador lo acepta | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
-| CA-85.3 | La hoja de estilos lleva la huella de su contenido en el nombre y se guarda un año en la caché | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |
+| CA-85.1 | Tras 15 minutos sin visitas, la web se abre sin esperar a que el servidor arranque (la aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión) | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
+| CA-85.2 | Las páginas llegan comprimidas si el navegador lo acepta, y sin comprimir si no | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
+| CA-85.3 | El navegador no vuelve a descargar la hoja de estilos salvo que cambie (lleva la huella de su contenido en el nombre y se guarda un año en la caché) | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |
 
 ## HU-86 · Equipos favoritos
 
