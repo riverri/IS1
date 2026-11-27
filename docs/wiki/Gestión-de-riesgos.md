@@ -2,7 +2,7 @@
 
 Plan de Reducción, Supervisión y Gestión del Riesgo (**RSGR**) del proyecto. Versión del 1 de noviembre de 2026; sustituye a la del 16 de octubre y se revisa en cada retrospectiva.
 
-Versión en PDF: [`docs/scrum/gestion-riesgos.pdf`](https://github.com/riverri/IS1/blob/main/docs/scrum/gestion-riesgos.pdf)
+Versión en PDF: [`docs/scrum/gestion-riesgos.pdf`](https://github.com/riverri/IS1/blob/main/docs/scrum/gestion-riesgos.pdf) (la del 1/11; los planes de contingencia de los riesgos altos, sección 3.5, y el seguimiento, sección 6, se añadieron el 27/11 y solo están en esta página). Esta página es el único registro de riesgos del proyecto: la tabla antigua `docs/scrum/TablaRiesgos.md`, que contradecía a esta, se ha borrado.
 
 ## 1. Introducción
 
@@ -145,7 +145,7 @@ La tabla SQAS-SEI original habla de meses de retraso y porcentaje de coste. Para
 | 21 | R22 | Pérdida de la rutina por exámenes | 🟩 L | 6 | Asumir |
 | 22 | R14 | Rendimiento insuficiente | ⬜ T | 4 | Asumir |
 
-**Decisión:** los riesgos de nivel **intolerable** son los que no pueden dejar de gestionarse, así que son los que reciben un plan RSGR detallado en la sección 3. Son 4 de 22: R21 (pérdida de noción de lo que la IA desarrolla), R01 (participación desigual), R03 (planificación poco realista), R07 (miembros que no conocen el proyecto). El resto se revisa en cada retrospectiva (sección 4).
+**Decisión:** los riesgos de nivel **intolerable** son los que no pueden dejar de gestionarse, así que son los que reciben un plan RSGR detallado en la sección 3. Los 8 de nivel **alto** tienen un disparador y un plan de contingencia (sección 3.5), como pide su nivel en la matriz. Son 4 de 22: R21 (pérdida de noción de lo que la IA desarrolla), R01 (participación desigual), R03 (planificación poco realista), R07 (miembros que no conocen el proyecto). El resto se revisa en cada retrospectiva (sección 4).
 
 **Estrategias:** *evitar* (elegir una alternativa con menos riesgo), *controlar* (reducir la probabilidad o el impacto) y *asumir* (aceptar que ocurra y tener solo un plan de contingencia). No hay riesgos que *transferir*, porque no hay terceros a quienes trasladarlos.
 
@@ -236,6 +236,21 @@ Preparar los tres pasos para los 22 riesgos identificados sería inviable y dilu
 #### 3.4.3 Gestión
 - Sesiones de repaso por parejas en el Sprint 7, centradas en lo que pregunta la defensa (proceso, requisitos, planificación y modelado), con preguntas de práctica.
 
+### 3.5 Riesgos de nivel alto: disparador y plan de contingencia 🟧 H
+
+La matriz pide para el nivel alto «controlar, supervisar y tener plan de contingencia». Estos 8 riesgos no tienen el plan RSGR completo de los intolerables (regla de Pareto), pero sí una señal que los activa y lo que se hace entonces. Se revisan en cada retrospectiva (sección 4) y su historial está en la sección 6.
+
+| ID | Riesgo | Estrategia | Disparador | Plan de contingencia | Responsable |
+|---|---|---|---|---|---|
+| R02 | Ausencias de miembros | Controlar | Un miembro avisa de que no podrá trabajar en una semana o más, o no responde en el chat del grupo durante tres días de trabajo | Sus tareas se reasignan en la daily a otra persona, que las hace con él en cuanto vuelve. Se quitan del sprint las historias de menor prioridad hasta que la capacidad cuadre. Al volver, recibe un resumen de lo que ha cambiado | Scrum Master |
+| R04 | Alcance excesivo y chapado | Evitar | A mitad de sprint queda más de la mitad del Sprint Backlog, o se empieza una funcionalidad que no está en el Product Backlog | Se congela el alcance: solo se termina y se arregla lo empezado. Lo que no esté en el backlog vuelve a él como propuesta para que lo ordene el Product Owner, y las filas de menor prioridad bajan a Could o Won't | Product Owner y Scrum Master |
+| R05 | Requisitos poco claros o cambiantes | Controlar | Una historia no tiene criterios de aceptación comprobables, o una revisión (del Product Owner o una RTF) dice que no es una historia de usuario | No se programa hasta reescribirla con criterios *Dado / Cuando / Entonces* y validarla con el Product Owner. Si no es una historia, se descarta y se documenta donde corresponda (por ejemplo, como requisito no funcional), sin cambiar la numeración | Autor de la historia |
+| R06 | Documentación que no refleja la realidad | Controlar | Una revisión (review, RTF o compañero) encuentra cifras que no cuadran entre documentos, huecos en un acta o identificadores repetidos | Antes de la siguiente entrega, una persona repasa todas las cifras (historias, backlog, trazabilidad, wiki y README) contra el documento de historias, que es la fuente. Los huecos de las actas se rellenan con lo que se pueda comprobar (Git, PR) y lo que no, se indica como no registrado | Scrum Master |
+| R10 | Directo y cash-out difíciles | Controlar | Una historia de directo o de cash-out pasa del doble de sus horas estimadas o rompe pruebas que ya pasaban | Se reduce el alcance: el cash-out sin apuestas en directo, como se decidió con HU-75 en el Sprint 4. Si aun así no cabe, la parte difícil pasa a Won't | Responsable de la historia |
+| R16 | Algo que el Product Owner no valora | Controlar | En la review, el Product Owner no acepta una historia o pide quitarla | Se quita o se cambia según lo que diga, sin invertir más tiempo en ella, y se reordena el backlog con él. Las ampliaciones nuevas se le enseñan antes de programarlas | Product Owner |
+| R19 | Uso abusivo de la IA | Controlar | Un pull request generado con IA que su autor no sabe explicar, o un sprint con mucho más código nuevo que revisión | Se aplica la gestión de R21 (3.1.3): no se fusiona hasta que otro miembro lo revise y lo sepa explicar, se divide si es demasiado grande y se paran las funcionalidades nuevas hasta ponerse al día | Autor del PR y revisor |
+| R20 | Subestimación de la capacidad de la IA | Controlar | El sprint termina su backlog mucho antes de lo planificado, o las horas reales son menos de la mitad de las estimadas | El tiempo que sobra no se usa para añadir funcionalidades, sino para revisar, probar y documentar lo hecho. En la siguiente planning se recalcula la estimación con las horas reales | Scrum Master |
+
 ## 4. Planificación temporal
 
 Las fechas de los sprints 4 a 7 son orientativas (sprints de dos semanas desde el cierre del Sprint 3) y se confirman en cada Sprint Planning. Las acciones continuas (revisión de cada pull request, un pull request por persona y sprint, actas) se hacen en todos los sprints.
@@ -251,13 +266,32 @@ Las fechas de los sprints 4 a 7 son orientativas (sprints de dos semanas desde e
 **Monitorización continua:**
 - **En cada daily:** el Scrum Master repasa los 4 intolerables: ¿alguno se está haciendo real?
 - **En cada retrospectiva:** se vuelven a valorar todos los riesgos, se comprueba que los pasos de reducción se están haciendo y se añaden los riesgos nuevos.
-- **Registro:** cada revisión deja una línea en el acta del sprint con los riesgos que suben, bajan o se han hecho reales y la acción tomada.
+- **Registro:** cada revisión deja una línea en el acta del sprint con los riesgos que suben, bajan o se han hecho reales y la acción tomada, y se copia en la sección 6 de esta página, que reúne todo el seguimiento.
 
 ## 5. Resumen
 
 - **22 riesgos identificados:** 4 intolerables, 8 altos, 6 medios, 3 bajos y 1 tolerable.
-- **Los 4 intolerables** reciben el plan RSGR completo, siguiendo la regla de Pareto: R21, pérdida de noción de lo que la IA desarrolla (exposición 25); R01, participación desigual (exposición 20); R03, planificación poco realista (exposición 16); R07, miembros que no conocen el proyecto (exposición 16).
+- **Los 4 intolerables** reciben el plan RSGR completo, y **los 8 altos**, disparador y plan de contingencia (3.5), siguiendo la regla de Pareto: R21, pérdida de noción de lo que la IA desarrolla (exposición 25); R01, participación desigual (exposición 20); R03, planificación poco realista (exposición 16); R07, miembros que no conocen el proyecto (exposición 16).
 - **El riesgo más grave es nuevo: R21, la pérdida de noción de lo que la IA desarrolla.** Es frecuente y catastrófico porque ya está pasando, y si el equipo no entiende el código no puede mantenerlo, encontrar sus fallos ni defenderlo.
 - **Tres de los cuatro riesgos nuevos tienen que ver con la IA** (R19, R20 y R21). El reto del proyecto ya no es producir código, sino entenderlo, revisarlo y planificar a un ritmo que el equipo pueda seguir. La pérdida de la rutina por exámenes (R22) queda en nivel bajo y se asume.
 - **Los riesgos técnicos siguen en nivel medio o bajo**, porque el proyecto tiene pruebas automáticas e integración continua.
 - **La estrategia es proactiva:** las primeras acciones se toman al cerrar el Sprint 3 y los riesgos se revisan en cada daily y en cada retrospectiva.
+
+## 6. Seguimiento de los riesgos
+
+Lo que se ha apuntado en las retrospectivas y en las actas de cada sprint, reunido aquí. Las actas siguen teniendo su apartado «Seguimiento de riesgos»; esta tabla es el registro completo.
+
+| Sprint | Riesgo | Cambio | Por qué | Acción |
+|---|---|---|---|---|
+| 3 | R19 · Uso abusivo de la IA | Se hizo real | El ritmo de los dos primeros sprints solo era posible programando casi todo con IA, y en la review se vio que no seguía la metodología Scrum ([acta](https://github.com/riverri/IS1/blob/main/docs/scrum/sprints/sprint-3.md)) | Se reduce el número de historias por sprint, se comenta el código para saber qué ha hecho la IA y el objetivo del sprint es que cada miembro sepa explicar un paquete |
+| 3 | R21 · Pérdida de noción de lo que la IA desarrolla | Se hizo real | Igual que el anterior: el código iba por delante de lo que el equipo entendía | Plan RSGR de la sección 3.1, aprobado al cerrar el sprint |
+| 4 | R21 · Pérdida de noción de lo que la IA desarrolla | Sube | Se programaron con IA 11 historias nuevas, unas 4.500 líneas | No se suben sin la revisión de otro miembro que sepa explicarlas |
+| 4 | R01 · Participación desigual | Sube | El trabajo del sprint lo hicieron 2 o 3 personas | Repartir entre los cinco la revisión de los pull requests de código |
+| 4 | R16 · Algo que el Product Owner no valora | Sube | Se escribieron historias de ampliación sin consultarlo antes con el Product Owner | Enseñárselas en la review del 17/11; si alguna no la acepta, se quita o se cambia |
+| 4 | R10 · Directo y cash-out difíciles | Baja | El cash-out (HU-75) se programa sin apuestas en directo | — |
+| 4 | R06 · Documentación que no refleja la realidad | Baja | Se corrigieron las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
+| 4 | R03 · Planificación poco realista | Baja | La planificación en horas se cumplió | Seguir planificando en horas |
+| 5 | R08 · Conflictos al integrar cambios | Se hizo real | El 21/11 se fusionaron cinco PR en otro orden: el baccarat no llegó a `main` y su migración quedó detrás de otra ya aplicada ([I-01](https://github.com/riverri/IS1/wiki/Revisión-de-fallos#al-integrar)) | Un PR cada vez, sin PR apilados, y revisar el número de la migración justo antes de fusionar |
+| 5 | R12 · Caída del despliegue | Se hizo real | El 25/11 Render reinició la web por pasar de los 512 MB de memoria: Java tenía permitido usar más de lo que da el plan gratuito | Ajustar los límites de memoria de Java en el `Dockerfile` (medido: de unos 640 MB a unos 430 MB con carga). Pendiente de aplicar |
+| 5 | R05 · Requisitos poco claros o cambiantes | Se hizo real | El 27/11 se vio que HU-85 y HU-93 no eran historias de usuario | Se descartaron sin cambiar la numeración; lo que pedía HU-85 pasó a requisito no funcional ([RNF-01](https://github.com/riverri/IS1/blob/main/docs/requisitos/requisitos-no-funcionales.md)) |
+| 5 | R06 · Documentación que no refleja la realidad | Se hizo real | La RTF del 27/11 encontró totales que no cuadraban, puntos fuera de la escala, historias sin fila en el backlog, una tabla de riesgos contradictoria y huecos en las actas ([acta y seguimiento](https://github.com/riverri/IS1/tree/main/docs/RTFs)) | Corregido en el repositorio el 27/11 (ver el seguimiento de la RTF); lo que depende de reuniones lo completa el equipo |

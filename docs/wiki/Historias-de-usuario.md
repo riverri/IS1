@@ -32,9 +32,9 @@ Cada historia tiene su **tamaño** (puntos de historia y líneas de código), la
 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---:|---:|---:|---:|---:|
-| Historias hechas (46) | 185 | 15.170 | 1.091 | 178 | 179 $ |
+| Historias hechas (46) | 189 | 15.323 | 1.102 | 180 | 180 $ |
 | Historias integradas (55; sin estimar HU-102 a HU-107 y HU-111 a HU-113) | 167 | 13.694 | 987 | 161 | 161 $ |
-| Historias descartadas (10; sin estimación HU-85 y HU-93) | 29 | 2.378 | 171 | 28 | 28 $ |
+| Historias descartadas (10; las 8 Won't sin líneas, horas ni coste, y HU-85 y HU-93 sin estimar) | 29 | — | — | — | — |
 
 - **Tamaño:** las líneas de la tabla son puntos × 82 (185 × 82 = 15.170). Medidas en el repositorio son 15.103 líneas de código real para 185 puntos, unas 82 líneas por punto.
 - **Sin IA:** unas 14 líneas terminadas por hora. Sale de valores de referencia en tres puntos (25, 15 y 8 líneas/h).

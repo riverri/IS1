@@ -358,6 +358,12 @@ Al terminar una historia, se añaden aquí sus criterios con sus pruebas. Forma 
 | CA-53.1 | Se ven el apostado, el pagado, el beneficio y el margen real frente al teórico | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio`<br>[`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.elCreadorVeElPanelYUnUsuarioNo` |
 | CA-53.2 | Se ve el desglose por tipo de apuesta y por deporte | Automática | [`CasaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/gestion/CasaWebTest.java)`.cuentaLoApostadoLoPagadoYElBeneficio` |
 
+## HU-54 · Nombres ofensivos
+
+| ID | Criterio de aceptación | Estado | Pruebas |
+|---|---|---|---|
+| CA-54.1 | Un nombre ofensivo no deja crear la cuenta (ni cambiar el nombre en Mi cuenta) y se avisa de que hay que cambiarlo | Automática | [`NombresProhibidosTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/NombresProhibidosTest.java)`.rechazaPalabrasDeLaListaSinImportarMayusculasNiTildes`, `.rechazaLetrasCambiadasPorNumerosOSimbolos`, `.lasPalabrasLargasSeBuscanDentroDeOtrasYConElNombreTodoJunto`, `.noRechazaNombresNormalesQueContienenUnaPalabraCorta`<br>[`UsuariosWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/UsuariosWebTest.java)`.registroConNombreOfensivoNoCreaLaCuenta`<br>[`CuentaWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/usuarios/CuentaWebTest.java)`.elNombreNoPuedeSerOfensivo` |
+
 ## HU-60 · Anuncios de otras secciones
 
 | ID | Criterio de aceptación | Estado | Pruebas |

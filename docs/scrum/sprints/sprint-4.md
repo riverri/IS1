@@ -19,10 +19,12 @@ Se recopila en la siguiente tabla nuestras previsiones para este Sprint:
 | Diseño de HU para las nuevas ampliaciones (Hu-74 a HU-84) | 3 | 4h |
 | Grafo del equipo para seguir el Sprint Backlog ([decisión 0003](https://github.com/riverri/IS1/blob/main/docs/decisiones/0003-seguimiento-en-el-grafo.md)) | 5,5h | 1h | 
 | Revisión de la documentación frente a la teoría de la asignatura | 3h | 3h | 
-| HU-85 (desde el 27/11, requisito no funcional RNF-01): tiempo de carga mínimo y keep-alive para que Render no apague la web ([#102](https://github.com/riverri/IS1/pull/102)) | _por rellenar_ | 3h |
-| Arreglo del despliegue en Render: desde el 04/11 fallaban todos los deploys porque no detectaba el puerto ([#103](https://github.com/riverri/IS1/pull/103), [#104](https://github.com/riverri/IS1/pull/104)) | _por rellenar_ | 1h |
-| **Total** | **34,5h** + las dos últimas | **32h** | 
+| HU-85 (desde el 27/11, requisito no funcional RNF-01): tiempo de carga mínimo y keep-alive para que Render no apague la web ([#102](https://github.com/riverri/IS1/pull/102)) | 0,2h | 3h |
+| Arreglo del despliegue en Render: desde el 04/11 fallaban todos los deploys porque no detectaba el puerto ([#103](https://github.com/riverri/IS1/pull/103), [#104](https://github.com/riverri/IS1/pull/104)) | 0,6h | 1h |
+| **Total** | **35,3h** | **32h** | 
  
+Las horas reales de las dos últimas filas salen de las horas de Git: del encargo a la fusión del PR (#102, 15/11, de 14:38 a 14:47) y de #103 y #104 (de 14:47 a 15:23).
+
 Las historias HU-74 a HU-84 están en [historias-ampliacion-propuestas.md](https://github.com/riverri/IS1/blob/main/docs/requisitos/historias-ampliacion-propuestas.md#sprint-4-hu-74-a-hu-84). Son una propuesta: no se empieza su desarrollo hasta que el Product Owner las apruebe y otro miembro del equipo lo revise. Queda pendiente de hacer la fusión del archivo original con el de las nuevas propuestas en el siguiente Spint (Sprint 5) ya que se ha decido exponer las nuevas propuestas al Product Owner en la presentación final del Sprint.
 
 
@@ -55,7 +57,11 @@ Según el [plan RSGR](https://github.com/riverri/IS1/wiki/Gesti%C3%B3n-de-riesgo
 | R06 - Documentación que no refleja la realidad | Baja | Se han corregido las actas y las cifras que no cuadraban | Mantener el acta al día en cada daily |
 | R03 - Planificación poco realista| Baja | Se ha realizado una planificación más centrada en las horas de trabajo que se ha cumplido | Continuar con la 
 ### Qué fue bien y qué mejorar
-_Por completar por el equipo en la retrospectiva._
+
+> *Redactado el 27/11 a partir de lo que recoge esta acta; el equipo puede completarlo.*
+
+- **Fue bien:** se cumplió el objetivo del sprint (`main` sin los fallos de la revisión de código y la ampliación escrita), la planificación en horas se acercó a lo real (35,3 h frente a 32 h estimadas) y por primera vez el acta lleva el seguimiento de los riesgos.
+- **A mejorar:** el trabajo lo hicieron 2 o 3 personas (R01), las historias de la ampliación se escribieron sin consultar antes al Product Owner (R16) y los cambios no siempre se comunicaron al resto del equipo. De ahí salen las tres acciones de abajo.
 
 ### Acciones de mejora para el Sprint 5
 | Acción | Responsable | Cómo se comprueba |

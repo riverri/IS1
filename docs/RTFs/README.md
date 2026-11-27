@@ -4,6 +4,12 @@ En esta carpeta van las actas de las **revisiones técnicas formales** del proye
 
 Cada revisión va en su propio archivo, con la fecha y lo que se revisa en el nombre. Por ejemplo, `2026-11-27-historias-de-usuario.md`. Se puede copiar la plantilla de abajo.
 
+## Actas
+
+| Fecha | Qué se revisó | Quién revisó | Dictamen | Documentos |
+|---|---|---|---|---|
+| 27/11/2026 | Documentación de requisitos, gestión de riesgos y proceso de trabajo (`main`, commit `c21b72d`) | Otro grupo de la asignatura | Aceptado con cambios (21/27) | [Acta](2026-11-27-acta-rtf.pdf) · [Seguimiento de los compromisos](2026-11-27-seguimiento.md) |
+
 ## Plantilla del acta
 
 ```markdown
