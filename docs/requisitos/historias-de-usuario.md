@@ -67,7 +67,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
-| **Historias hechas (45)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
+| **Historias hechas (46)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
 | Historias integradas (56; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 170 | 13.940 | 1.005 | 164 | 1,3 millones | 164 $ |
 | Historias por hacer (1: HU-93, sin estimar) | — | — | — | — | — | — |
 | Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
@@ -97,14 +97,14 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | HU-01 | Alta de competiciones y equipos con su calificación | Hecha | 2 | 1 (Muy alta) | 8 | 656 | 47 | 7,3 | 7,8 $ |
 | HU-02 | Forma reciente de un equipo | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 2 (Alta) | 11 | 902 | 65 | 10 | 10,7 $ |
+| HU-03 | Cuotas automáticas con margen para la casa | Hecha | 3 | 2 (Alta) | 13 | 902 | 65 | 10 | 10,7 $ |
 | HU-04 | Introducir el resultado | Hecha | 2 | 1 (Muy alta) | 5 | 410 | 29 | 4,7 | 4,8 $ |
-| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) | 4 | 328 | 24 | 3,8 | 3,9 $ |
+| HU-05 | Suspender o anular un evento | Hecha | 2 | 2 (Alta) | 5 | 328 | 24 | 3,8 | 3,9 $ |
 | HU-06 | Dinero apostado a cada resultado | Hecha | 1 | 2 (Alta) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-07 | Límites de apuesta del creador | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-08 | Catálogo sin registrarse | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-09 | Web adaptada a móvil | Hecha | 2 | 5 (Muy baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 6 | 492 | 35 | 5,6 | 5,8 $ |
+| HU-10 | Juego responsable | Hecha | 2 | 4 (Baja) | 5 | 492 | 35 | 5,6 | 5,8 $ |
 | HU-11 | Registro | Hecha | 3 | 1 (Muy alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
 | HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
