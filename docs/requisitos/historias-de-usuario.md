@@ -18,7 +18,7 @@ Cada historia tiene un **tamaño** (puntos y líneas de código), las **horas** 
 
 ### 1. Tamaño
 
-- **Puntos de historia** (Fibonacci): tamaño relativo, decidido al planificar cada iteración. En las historias hechas son los de las actas de las iteraciones; si se hizo en dos iteraciones, se suman (HU-03: 8 + 3). En las descartadas, una estimación por comparación con historias parecidas.
+- **Puntos de historia** (Fibonacci): tamaño relativo, decidido al planificar cada iteración. En las historias hechas son los de las actas de las iteraciones; si se hizo en dos iteraciones, se suman y se redondean al siguiente valor de la escala (HU-03: 8 + 3 = 11, que se queda en 13). En las descartadas, una estimación por comparación con historias parecidas.
 - **Líneas de código**: se han contado las líneas reales del repositorio, sin comentarios ni líneas en blanco: 15.103 en total (Java de la aplicación, pruebas, vistas HTML, CSS y JavaScript y migraciones SQL). Repartidas entre los 185 puntos hechos, salen **82 líneas por punto**. Las líneas de cada historia son sus puntos × 82.
 
 ### 2. Horas sin IA
@@ -69,15 +69,17 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
-| **Historias hechas (46)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
+| **Historias hechas (46)** | 189 | 15.323 | 1.102 | 180 | 1,4 millones | 180 $ |
 | Historias integradas (55; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 167 | 13.694 | 987 | 161 | 1,3 millones | 161 $ |
-| Historias descartadas (10; sin estimación HU-85 y HU-93, que no eran historias) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
+| Historias descartadas (10) | 29 | — | — | — | — | — |
 
-**Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
+**Descartadas:** las 8 Won't conservan los puntos con los que se estimaron antes de descartarlas (29), pero no se les imputan líneas, horas ni coste porque no se programaron. HU-85 y HU-93 no tienen estimación: no eran historias de usuario.
+
+**Cómo se reparten las 180 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 111 h revisando el código, 16 h comprobando criterios y 39 h corrigiendo fallos.
 
 **Lectura:**
-- **Sin IA,** las historias hechas suman unas 1.091 horas, unas 218 por persona. Con lo que cinco estudiantes dedican a una asignatura en un cuatrimestre no cabe.
-- **Con IA,** bajan a unas 178 horas, unas 36 por persona, y el coste es de unos 179 $.
+- **Sin IA,** las historias hechas suman unas 1.102 horas, unas 220 por persona. Con lo que cinco estudiantes dedican a una asignatura en un cuatrimestre no cabe.
+- **Con IA,** bajan a unas 180 horas, unas 36 por persona, y el coste es de unos 180 $.
 - **El ahorro solo es real si la revisión se hace.** Si se salta, el tiempo baja todavía más, pero nadie del equipo conoce el código, y eso es lo que se evalúa en la defensa.
 
 **Límites de la estimación:**
@@ -110,8 +112,8 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-12 | Inicio de sesión | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-13 | Consultar el saldo | Hecha | 2 | 1 (Muy alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
 | HU-14 | Saldo de bienvenida y recargas | Hecha | 2 | 2 (Alta) | 2 | 164 | 12 | 2,1 | 1,9 $ |
-| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
-| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy baja) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-15 | Cuenta bancaria | Descartada (Won't) | 2 | 5 (Muy baja) | 5 | — | — | — | — |
+| HU-16 | Retirar el saldo | Descartada (Won't) | 3 | 5 (Muy baja) | 3 | — | — | — | — |
 | HU-17 | Recuperar la contraseña | Hecha | 2 | 3 (Media) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-18 | Eliminar la cuenta | Hecha | 2 | 2 (Alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
 | HU-19 | Catálogo por deporte y fecha | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
@@ -133,12 +135,12 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-35 | Estadísticas personales | Hecha | 1 | 2 (Alta) | 3 | 246 | 18 | 2,8 | 2,9 $ |
 | HU-36 | Ranking | Hecha | 4 | 2 (Alta) | 5 | 410 | 29 | 5,0 | 4,8 $ |
 | HU-37 | Avisos | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
-| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 5 (Muy baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 | 5 (Muy baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
-| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy baja) | 3 | 246 | 18 | 2,8 | 2,9 $ |
-| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy baja) | 5 | 410 | 29 | 4,5 | 4,8 $ |
-| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 5 (Muy baja) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 5 (Muy baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| HU-38 | Seguir a otro usuario | Descartada (Won't) | 1 | 5 (Muy baja) | 3 | — | — | — | — |
+| HU-39 | Seguidos y seguidores | Descartada (Won't) | 1 | 5 (Muy baja) | 2 | — | — | — | — |
+| HU-40 | Actividad de los usuarios que sigo | Descartada (Won't) | 1 | 5 (Muy baja) | 3 | — | — | — | — |
+| HU-41 | Feed de actividad | Descartada (Won't) | 1 | 5 (Muy baja) | 5 | — | — | — | — |
+| HU-42 | Privacidad del perfil | Descartada (Won't) | 2 | 5 (Muy baja) | 3 | — | — | — | — |
+| HU-43 | Copiar una apuesta | Descartada (Won't) | 2 | 5 (Muy baja) | 5 | — | — | — | — |
 | HU-44 | Apuestas a largo plazo | Hecha | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-45 | Gestión de mercados | Hecha | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-46 | Editar o borrar un evento | Hecha | 2 | 1 (Muy alta) | 3 | 246 | 18 | 3,0 | 2,9 $ |
@@ -149,7 +151,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-51 | Ligas privadas | Hecha | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-52 | Doble oportunidad, goles y ambos marcan | Hecha | 3 | 3 (Media) | 8 | 656 | 47 | 7,5 | 7,8 $ |
 | HU-53 | Cuentas de la casa | Hecha | 2 | 3 (Media) | 3 | 246 | 18 | 3,0 | 2,9 $ |
-| HU-54 | Nombres inapropiados | Hecha| 1 | 4 (Baja) | 2 | 153 | 12 | 1,8 | 1,7 $ |
+| HU-54 | Nombres ofensivos | Hecha | 1 | 4 (Baja) | 2 | 153 | 12 | 1,7 | 1,8 $ |
 | HU-55 | Movimientos del saldo | Integrada (Sprint 5) | 3 | 3 (Media) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-56 | Ruleta europea | Integrada (Sprint 5) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,9 | 4,8 $ |
 | HU-57 | Blackjack | Integrada (Sprint 5) | 5 | 4 (Baja) | 8 | 656 | 47 | 7,6 | 7,8 $ |
@@ -211,7 +213,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-113 | Cambiar la visibilidad de una liga | Integrada (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**114 historias**: 46 hechas; 55 integradas en `main` (HU-63 a HU-73 el 06/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 10 descartadas, y 3 propuestas (HU-108 a HU-110). Dos de las descartadas, HU-85 y HU-93, se quitaron el 27/11 porque no eran historias de usuario; se deja su hueco para no cambiar la numeración, y lo que pedía HU-85 (ya hecho) es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga). HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **279 criterios de aceptación** en total: 98 de historias hechas, 158 de las integradas, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**114 historias**: 46 hechas; 55 integradas en `main` (HU-63 a HU-73 el 06/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 10 descartadas, y 3 propuestas (HU-108 a HU-110). Dos de las descartadas, HU-85 y HU-93, se quitaron el 27/11 porque no eran historias de usuario; se deja su hueco para no cambiar la numeración, y lo que pedía HU-85 (ya hecho) es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga). HU-55 a HU-62 se quitaron de `main` el 06/11, al deshacer una subida que se llevó más de lo previsto, y volvieron el 21/11 ([#125](https://github.com/riverri/IS1/pull/125) y [#131](https://github.com/riverri/IS1/pull/131)); desde entonces están integradas. HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **279 criterios de aceptación** en total: 98 de historias hechas, 158 de las integradas, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -252,7 +254,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 3 | 2 (Alta) | 1 (it. 2 y 6) | Hecha | 11 (8 + 3) | 902 | 65 | 10 | 10,7 $ |
+| 3 | 2 (Alta) | 1 (it. 2 y 6) | Hecha | 13 | 902 | 65 | 10 | 10,7 $ |
 
 **Criterios de aceptación**
 
@@ -283,7 +285,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 17 | 2 (Alta) | 1 (it. 3 y 5) | Hecha | 4 (3 + 1) | 328 | 24 | 3,8 | 3,9 $ |
+| 17 | 2 (Alta) | 1 (it. 3 y 5) | Hecha | 5 | 328 | 24 | 3,8 | 3,9 $ |
 
 **Criterios de aceptación**
 
@@ -447,7 +449,7 @@ Si después se cambia el importe de una apuesta hecha con supercuota, se recalcu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 27 | 4 (Baja) | 1 (it. 9) | Hecha | 6 (5 + 1) | 492 | 35 | 5,6 | 5,8 $ |
+| 27 | 4 (Baja) | 1 (it. 9) | Hecha | 5 | 492 | 35 | 5,6 | 5,8 $ |
 
 **Criterios de aceptación**
 
@@ -552,7 +554,7 @@ Es un enlace y no un formulario para no crear una sesión a cada visitante.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| - | 4 (Baja) | 2 | Hecha | 2 | 153 | 12 | 1,7 | 1,8 $ |
+| 59 | 4 (Baja) | 2 | Hecha | 2 | 153 | 12 | 1,7 | 1,8 $ |
 
 **Criterios de aceptación**
 
@@ -584,7 +586,7 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 25 | 5 (Muy baja) | — | Descartada (Won't) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 25 | 5 (Muy baja) | — | Descartada (Won't) | 5 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -599,7 +601,7 @@ Es la base común de la ampliación: el casino y los mercados de predicción apu
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 25 | 5 (Muy baja) | — | Descartada (Won't) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| 25 | 5 (Muy baja) | — | Descartada (Won't) | 3 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1193,7 +1195,7 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 26 | 5 (Muy baja) | — | Descartada (Won't) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 26 | 5 (Muy baja) | — | Descartada (Won't) | 3 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1207,7 +1209,7 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 26 | 5 (Muy baja) | — | Descartada (Won't) | 2 | 164 | 12 | 1,9 | 1,9 $ |
+| 26 | 5 (Muy baja) | — | Descartada (Won't) | 2 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1221,7 +1223,7 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 26 | 5 (Muy baja) | — | Descartada (Won't) | 3 | 246 | 18 | 2,8 | 2,9 $ |
+| 26 | 5 (Muy baja) | — | Descartada (Won't) | 3 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1235,7 +1237,7 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 26 | 5 (Muy baja) | — | Descartada (Won't) | 5 | 410 | 29 | 4,5 | 4,8 $ |
+| 26 | 5 (Muy baja) | — | Descartada (Won't) | 5 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1249,7 +1251,7 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 26 | 5 (Muy baja) | — | Descartada (Won't) | 3 | 246 | 18 | 3,0 | 2,9 $ |
+| 26 | 5 (Muy baja) | — | Descartada (Won't) | 3 | — | — | — | — |
 
 **Criterios de aceptación**
 
@@ -1264,7 +1266,7 @@ La casa no se queda nada. Un evento con retos no se puede borrar, solo anular.
 
 | Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
 |---|---|---|---|---:|---:|---:|---:|---:|
-| 26 | 5 (Muy baja) | — | Descartada (Won't) | 5 | 410 | 29 | 4,7 | 4,8 $ |
+| 26 | 5 (Muy baja) | — | Descartada (Won't) | 5 | — | — | — | — |
 
 **Criterios de aceptación**
 
