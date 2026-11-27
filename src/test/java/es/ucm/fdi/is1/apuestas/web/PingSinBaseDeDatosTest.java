@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import es.ucm.fdi.is1.apuestas.apuesta.LimitesService;
 
 /**
- * HU-85 (CA-85.1): el ping responde aunque la base de datos falle. Antes los atributos comunes de las páginas
+ * RNF-01.1: el ping responde aunque la base de datos falle. Antes los atributos comunes de las páginas
  * ({@link UsuarioActualAdvice}, que lee los límites) se calculaban también para el ping, y con la base de datos
  * caída daba error: Render habría dado la web por muerta.
  */

@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 /**
- * Mantiene la web despierta en Render (HU-85). El plan gratuito apaga el servidor tras 15 minutos sin peticiones,
+ * Mantiene la web despierta en Render (RNF-01). El plan gratuito apaga el servidor tras 15 minutos sin peticiones,
  * y la siguiente visita tiene que esperar a que arranque otra vez (de 30 a 60 segundos). Cada
  * apuestas.keep-alive.intervalo (PT10M = cada 10 minutos) se hace un GET a /ping por la dirección pública: la
  * petición entra por Render como la de cualquier visitante y cuenta como actividad.

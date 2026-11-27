@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 /**
- * HU-85 (CA-85.2): las páginas viajan comprimidas con gzip. La compresión la hace el servidor (Tomcat), así que esta
+ * RNF-01.2: las páginas viajan comprimidas con gzip. La compresión la hace el servidor (Tomcat), así que esta
  * prueba arranca la aplicación de verdad en un puerto libre y le hace peticiones HTTP; MockMvc no pasa por ahí.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

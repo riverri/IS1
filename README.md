@@ -155,7 +155,7 @@ La imagen guarda una caché de las clases de Java (CDS) preparada al construirla
 
 **3. Que no se apague (keep-alive)**
 
-Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (HU-85). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. El aviso cuando la web se cae lo da el trabajo *Vigilancia* de GitHub (ver *Vigilar el servidor*). El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
+Render apaga las aplicaciones gratuitas tras 15 minutos sin visitas, y la siguiente visita tarda alrededor de un minuto. Para evitarlo, la propia aplicación hace un GET a `/ping` por su dirección pública cada 10 minutos (RNF-01). No hay que configurar nada: la dirección la da Render en `RENDER_EXTERNAL_URL`. El aviso cuando la web se cae lo da el trabajo *Vigilancia* de GitHub (ver *Vigilar el servidor*). El plan gratuito de Render da 750 horas al mes, suficientes para tener un servicio encendido todo el mes.
 
 **4. Datos de demostración (opcional)**
 

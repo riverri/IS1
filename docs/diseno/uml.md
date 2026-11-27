@@ -972,5 +972,5 @@ flowchart LR
 ```
 
 - **Orden de los filtros:** `IdPeticion` va el primero para que también las líneas de Spring Security lleven el identificador. `LimitePeticiones` va después de Spring Security, así que una petición sin token CSRF se rechaza antes de contar.
-- **Keep-alive:** la propia aplicación se pide `/ping` por su dirección pública, entrando como cualquier otra petición, para que Render no la apague tras 15 minutos sin visitas (HU-85).
+- **Keep-alive:** la propia aplicación se pide `/ping` por su dirección pública, entrando como cualquier otra petición, para que Render no la apague tras 15 minutos sin visitas (RNF-01).
 - **Correo:** el plan gratuito de Render no deja salir por los puertos 25, 465 ni 587; ver la [ADR 0006](../decisiones/0006-correo-en-render.md).

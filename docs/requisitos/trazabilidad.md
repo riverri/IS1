@@ -17,11 +17,12 @@ Relaciona cada criterio de aceptación de las [historias de usuario](historias-d
 
 **Fuera de la matriz:**
 - HU-15 y HU-16 (cuenta bancaria y retiradas) y HU-38 a HU-43 (parte social) no se hacen (Won't, filas 25 y 26 del backlog).
-- HU-93 (medir las visitas y las cuentas que trae la publicidad de Better en otras webs) aún no está hecha, y HU-108 a HU-110 (clasificación de una liga) son propuestas: casi todo lo que piden ya lo da el ranking de cada liga (HU-51).
+- HU-85 y HU-93 se descartaron el 27/11 porque no eran historias de usuario (se deja su hueco). Lo que pedía HU-85 sigue más abajo como [RNF-01](requisitos-no-funcionales.md), con sus pruebas.
+- HU-108 a HU-110 (clasificación de una liga) son propuestas: casi todo lo que piden ya lo da el ranking de cada liga (HU-51).
 
 Todos los criterios de las historias hechas tienen prueba automática, salvo los tres que dependen del navegador (estado **Manual**).
 
-**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, HU-85 (tiempo de carga) el 15/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4. Del Sprint 5: HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial); HU-102 a HU-107 (cash-out de combinadas y bloqueos de liga) y HU-111 a HU-113 (ranking de ligas públicas) el 20/11, y HU-55 (movimientos del saldo), HU-56 a HU-59 y HU-74 (casino), HU-60 a HU-62 (anuncios internos) y HU-81 a HU-83 (liga fantasy) el 21/11. HU-107 está hecha en parte. Les falta que el Product Owner las acepte en la review de su sprint.
+**Integradas:** HU-63 a HU-68 (mercados de predicción) y HU-69 a HU-73 (cartera de criptomonedas) el 06/11, y HU-76 a HU-80 y HU-84 (riesgo de la casa, correo de premio, quiniela y ranking por tipo de juego) el 16/11, del Sprint 4. Del Sprint 5: HU-75 (cash-out), HU-86 a HU-92, HU-94 a HU-101 y HU-114 (exportar el historial); HU-102 a HU-107 (cash-out de combinadas y bloqueos de liga) y HU-111 a HU-113 (ranking de ligas públicas) el 20/11, y HU-55 (movimientos del saldo), HU-56 a HU-59 y HU-74 (casino), HU-60 a HU-62 (anuncios internos) y HU-81 a HU-83 (liga fantasy) el 21/11. HU-107 está hecha en parte. Les falta que el Product Owner las acepte en la review de su sprint.
 
 **Sin prueba automática:** CA-105.2, CA-105.5, CA-106.3, CA-111.4, CA-112.2 y CA-113.5. Están en el código; falta su prueba.
 
@@ -582,13 +583,13 @@ CA-83.1: el desempate por fecha de creación y la corrección de la clasificaci�
 | CA-84.1 | Solo salen los que han jugado a ese tipo, con sus estadísticas de ese tipo | Automática | [`RankingPorJuegoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RankingPorJuegoWebTest.java)`.enPrediccionesSoloSalenLosQueHanJugadoConSusCifras`, `.cadaCategoriaDeCriptoVaPorSeparadoYSinAciertos`, `.enLaQuinielaCuentanLosBoletosRepartidos` |
 | CA-84.2 | No se ordena por saldo y en cripto no hay porcentaje de aciertos | Automática | [`RankingPorJuegoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/apuesta/RankingPorJuegoWebTest.java)`.conUnTipoDeJuegoNoSeOrdenaPorSaldo`, `.cadaCategoriaDeCriptoVaPorSeparadoYSinAciertos` |
 
-## HU-85 · Tiempo de carga mínimo
+## RNF-01 · Tiempo de carga (requisito no funcional; antes HU-85)
 
 | ID | Criterio de aceptación | Estado | Pruebas |
 |---|---|---|---|
-| CA-85.1 | Tras 15 minutos sin visitas, la web se abre sin esperar a que el servidor arranque (la aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión) | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
-| CA-85.2 | Las páginas llegan comprimidas si el navegador lo acepta, y sin comprimir si no | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
-| CA-85.3 | El navegador no vuelve a descargar la hoja de estilos salvo que cambie (lleva la huella de su contenido en el nombre y se guarda un año en la caché) | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |
+| RNF-01.1 | Tras 15 minutos sin visitas, la web se abre sin esperar a que el servidor arranque (la aplicación hace un GET a `/ping` por su dirección pública para que Render no la apague; `/ping` responde sin sesión) | Automática | [`KeepAliveTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/KeepAliveTest.java)`.conDireccionHaceUnGetAPing`, `.sinDireccionNoHaceNingunaPeticion`, `.siLaWebNoRespondeNoFalla`; [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.elPingRespondeSinIniciarSesion` |
+| RNF-01.2 | Las páginas llegan comprimidas si el navegador lo acepta, y sin comprimir si no | Automática | [`CompresionTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/CompresionTest.java)`.siElNavegadorAceptaGzipLaPaginaLlegaComprimida`, `.siNoLaAceptaLlegaSinComprimir` |
+| RNF-01.3 | El navegador no vuelve a descargar la hoja de estilos salvo que cambie (lleva la huella de su contenido en el nombre y se guarda un año en la caché) | Automática | [`RendimientoWebTest`](../../src/test/java/es/ucm/fdi/is1/apuestas/web/RendimientoWebTest.java)`.laHojaDeEstilosLlevaSuHuellaYElNavegadorLaGuardaUnAnio` |
 
 ## HU-86 · Equipos favoritos
 

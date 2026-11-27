@@ -42,7 +42,7 @@ El Scrum Master es Carlos Jurado ([issue #28](https://github.com/riverri/IS1/iss
 | | |
 |---|---|
 | Historias de usuario | 114 escritas (HU-01 a HU-114). El estado de cada una (hecha, integrada, por hacer o descartada) está en el [Product Backlog](../scrum/product-backlog.md) |
-| Criterios de aceptación | 285 en 114 historias. De las hechas y las integradas son 258: 246 con prueba automática, 4 que se comprueban a mano y 8 sin prueba o sin hacer ([matriz](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md)) |
+| Criterios de aceptación | 279 en 114 historias. De las hechas y las integradas son 258: 246 con prueba automática, 4 que se comprueban a mano y 8 sin prueba o sin hacer ([matriz](https://github.com/riverri/IS1/blob/main/docs/requisitos/trazabilidad.md)) |
 | Código | 291 clases Java en 20 paquetes, 57 plantillas HTML |
 | Pruebas | 700 pruebas automáticas en 105 clases, con H2 y con PostgreSQL ([detalle](Pruebas-y-calidad)); además, de mutación (PIT), de accesibilidad y de principio a fin en un navegador |
 | Base de datos | Migraciones Flyway V1 a V31 |

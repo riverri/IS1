@@ -62,7 +62,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 38 | Anuncios internos que promocionan otras secciones (largo plazo, ranking, ligas…): componente reutilizable, configuración desde Gestión, prioridad con rotación y registro de impresiones y clics (HU-60 a HU-62) | ½ sprint | 8 (HU-60 a HU-62) | 4 | C | | Integrada (Sprint 5) |
 | 39 | Mercados de predicción de sí o no (tipo Polymarket) con precio de 0 a 1 calculado por un creador de mercado automático (LMSR): crear y cerrar, comprar y vender, resolver y pagar, estadísticas y posiciones de los compañeros de liga (HU-63 a HU-68). *Depende de las filas 33 y 36* | 1 sprint | 22 (HU-63 a HU-68) | 5 | C | | Integrada (06/11) |
 | 40 | Cartera de criptomonedas reales a su precio real en euros (CoinGecko), compradas y vendidas con moneditas (1 monedita = 1 €), con las memecoins y las de alto riesgo como protagonistas: precios y gráfico, comprar y vender con comisión, mi cartera con ganancias y pérdidas, y configuración del creador (HU-69 a HU-73). *Depende de la fila 36* | 1 sprint | 18 (HU-69 a HU-73) | 4 | C | | Integrada (06/11) |
-| 41 | Tiempo de carga mínimo: la web no se apaga por inactividad en Render (keep-alive: la aplicación se visita a sí misma cada 10 minutos), las páginas viajan comprimidas y la hoja de estilos se guarda en la caché del navegador (HU-85) | ¼ sprint | 3 (HU-85) | 7 | S | | Integrada (15/11) |
+| 41 | Tiempo de carga mínimo: la web no se apaga por inactividad en Render (keep-alive: la aplicación se visita a sí misma cada 10 minutos), las páginas viajan comprimidas y la hoja de estilos se guarda en la caché del navegador. Es un requisito no funcional: [RNF-01](../requisitos/requisitos-no-funcionales.md) (antes HU-85, descartada como historia el 27/11) | ¼ sprint | 3 (RNF-01) | 7 | S | | Integrada (15/11) |
 | 42 | Cobrar una apuesta antes de tiempo (cash-out), simple o combinada, sin apuestas en directo (HU-75) | ½ sprint | 8 (HU-75) | 5 | C | | Integrada (Sprint 5) |
 | 43 | Riesgo de la casa por evento: lo que pagaría con cada resultado, aviso por encima de un límite y eventos marcados en el panel (HU-76) | ¼ sprint | 5 (HU-76) | 6 | S | | Integrada (16/11) |
 | 44 | Correo al ganar una apuesta, con opción de desactivarlo en Mi cuenta (HU-77) | ¼ sprint | 3 (HU-77) | 4 | C | | Integrada (16/11) |
@@ -79,7 +79,7 @@ Columna **Estado**: en qué iteración del [Sprint 1](sprints/sprint-1.md) se hi
 | 55 | Beneficio de la casa en cada uno de los últimos 30 días (HU-95). *Depende de la fila 35* | ¼ sprint | 3 (HU-95) | 4 | C | | Integrada (Sprint 5) |
 | 56 | Mis estadísticas por competición en Mis apuestas (HU-96) | ¼ sprint | 2 (HU-96) | 3 | C | | Integrada (Sprint 5) |
 | 57 | Accesibilidad (nivel AA de WCAG 2.1): toda la web con el teclado y con lector de pantalla, buen contraste y ampliable, nada solo por el color y menos movimiento (HU-97 a HU-101) | ½ sprint | 15 (HU-97 a HU-101) | 4 | S | | Integrada (Sprint 5) |
-| 58 | Publicidad de Better en otras webs: el creador da de alta campañas, cada una con su enlace, y ve cuántas visitas y cuentas nuevas trae cada una (HU-93). Los banners dentro de la web son la fila 38 | — | 2 (HU-93) | — | C | | Por hacer (Sprint 5-6) |
+| 58 | ~~Publicidad de Better en otras webs (HU-93)~~. Descartada el 27/11: no era una historia de usuario, y los anuncios dentro de la web ya son la fila 38 | — | — | — | W | | Descartada (27/11) |
 
 ## Puntos a revisar en equipo
 

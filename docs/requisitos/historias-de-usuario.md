@@ -10,7 +10,7 @@
 - **Ficha:** fila del Product Backlog, prioridad del 1 (muy alta) al 5 (muy baja), coherente con el MoSCoW de su fila (M → 1–2, S → 2–3, C → 3–4, W → 5), sprint en que se hizo (en el Sprint 1, también la iteración: «1 (it. 3)»), estado y estimación: puntos de historia, líneas de código, horas sin IA y con IA y coste de la IA (ver [Estimación](#estimación)).
 - **Criterios de aceptación:** las condiciones propias de esta historia que se tienen que cumplir para aceptarla. Además, toda historia cumple la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si) común a todas. Cada criterio se lee como *Dado* (situación de partida), *Cuando* (lo que hace el usuario o el sistema) y *Entonces* (el resultado que se espera). 
 
-Cómo cumple cada historia los criterios INVEST (independiente, negociable, valiosa, estimable, pequeña y comprobable): [invest.md](invest.md).
+Los requisitos no funcionales (rendimiento) están en [requisitos-no-funcionales.md](requisitos-no-funcionales.md). Cómo cumple cada historia los criterios INVEST (independiente, negociable, valiosa, estimable, pequeña y comprobable): [invest.md](invest.md).
 
 ## Estimación
 
@@ -70,9 +70,8 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | | Puntos | Líneas | Horas sin IA | Horas con IA | Tokens generados | Coste de la IA |
 |---|---:|---:|---:|---:|---:|---:|
 | **Historias hechas (46)** | 185 | 15.170 | 1.091 | 178 | 1,4 millones | 179 $ |
-| Historias integradas (56; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 170 | 13.940 | 1.005 | 164 | 1,3 millones | 164 $ |
-| Historias por hacer (1: HU-93, sin estimar) | — | — | — | — | — | — |
-| Historias descartadas (8) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
+| Historias integradas (55; sin estimar 9 de ellas: HU-102 a HU-107 y HU-111 a HU-113) | 167 | 13.694 | 987 | 161 | 1,3 millones | 161 $ |
+| Historias descartadas (10; sin estimación HU-85 y HU-93, que no eran historias) | 29 | 2.378 | 171 | 28 | 0,2 millones | 28 $ |
 
 **Cómo se reparten las 178 horas con IA de las historias hechas:** 14 h dirigiendo a la IA, 110 h revisando el código, 16 h comprobando criterios y 38 h corrigiendo fallos.
 
@@ -181,7 +180,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-82 | Puntos de los jugadores fantasy | Integrada (Sprint 5) | 3 | 4 (Baja) | 5 | 410 | 29 | 4,7 | 4,8 $ |
 | HU-83 | Clasificación fantasy | Integrada (Sprint 5) | 1 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-84 | Ranking por tipo de juego | Integrada (16/11) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-85 | Tiempo de carga mínimo | Integrada (15/11) | 3 | 2 (Alta) | 3 | 246 | 18 | 3,1 | 2,9 $ |
+| HU-85 | Descartada: no era una historia de usuario (ahora es [RNF-01](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga)) | Descartada (27/11) | 0 | — | — | — | — | — | — |
 | HU-86 | Equipos favoritos | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-87 | Supercuota | Integrada (Sprint 5) | 3 | 3 (Media) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-88 | Logros | Integrada (Sprint 5) | 2 | 4 (Baja) | 5 | 410 | 29 | 4,8 | 4,8 $ |
@@ -189,7 +188,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-90 | Alerta de cuota | Integrada (Sprint 5) | 3 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-91 | Evolución de la cuota | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-92 | Resumen semanal por correo | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
-| HU-93 | Publicidad de Better en otras webs | Por integrar (sprint 5 o 6) | 3 | 2 (Alta) | - | - | - | - | - |
+| HU-93 | Descartada: no era una historia de usuario | Descartada (27/11) | 0 | — | — | — | — | — | — |
 | HU-94 | Modo oscuro | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 | HU-95 | Beneficio de la casa por día | Integrada (Sprint 5) | 2 | 4 (Baja) | 3 | 246 | 18 | 2,9 | 2,9 $ |
 | HU-96 | Estadísticas por competición | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
@@ -212,7 +211,7 @@ Se ha medido con el registro de la sesión de trabajo con la IA, que guarda los 
 | HU-113 | Cambiar la visibilidad de una liga | Integrada (Sprint 5) | 5 | 3 (Media) | — | — | — | — | — |
 | HU-114 | Exportar mi historial | Integrada (Sprint 5) | 2 | 4 (Baja) | 2 | 164 | 12 | 1,9 | 1,9 $ |
 
-**114 historias**: 46 hechas; 56 integradas en `main` (HU-63 a HU-73 el 06/11, HU-85 el 15/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 1 por hacer (HU-93); 8 descartadas, y 3 propuestas (HU-108 a HU-110). HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **285 criterios de aceptación** en total: 98 de historias hechas, 161 de las integradas, 3 de la que está por hacer, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
+**114 historias**: 46 hechas; 55 integradas en `main` (HU-63 a HU-73 el 06/11 y HU-76 a HU-80 y HU-84 el 16/11, del Sprint 4; y del Sprint 5, HU-102 a HU-107 y HU-111 a HU-113 el 20/11, HU-55 a HU-62, HU-74 y HU-81 a HU-83 el 21/11, y HU-75, HU-86 a HU-92, HU-94 a HU-101 y HU-114); 10 descartadas, y 3 propuestas (HU-108 a HU-110). Dos de las descartadas, HU-85 y HU-93, se quitaron el 27/11 porque no eran historias de usuario; se deja su hueco para no cambiar la numeración, y lo que pedía HU-85 (ya hecho) es ahora el requisito no funcional [RNF-01](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga). HU-107 está integrada en parte: los bloqueos no se ven en la página del partido ni en el boleto (CA-107.2), y al empezar o suspenderse el partido no se devuelven (CA-107.4). HU-108 a HU-110 están cubiertas casi del todo por el ranking de cada liga (HU-51). Las integradas están programadas y probadas, pero aún no las ha aceptado el Product Owner en una review, el último punto de la [Definition of Done](../scrum/proceso.md#definition-of-done-una-historia-está-terminada-si). **279 criterios de aceptación** en total: 98 de historias hechas, 158 de las integradas, 13 de las descartadas y 10 de las propuestas. Las propuestas aún no están estimadas ni añadidas como filas independientes al [Product Backlog](../scrum/product-backlog.md).
 
 ---
 
@@ -457,27 +456,11 @@ Si después se cambia el importe de una apuesta hecha con supercuota, se recalcu
 | CA-10.1 | He fijado un límite diario | Lo alcanzo | No puedo apostar más hasta el día siguiente. |
 | CA-10.2 | He activado una pausa | Intento apostar antes de que termine | No puedo apostar hasta que termine, aunque sí puedo consultar mi cuenta. |
 
-### HU-85 · Tiempo de carga mínimo
+### HU-85 · Descartada: no era una historia de usuario
 
-**Como** visitante o usuario, **quiero** que las páginas se abran enseguida, también la primera vez después de un rato sin que nadie entre en la web, **para** no tener que esperar ni abandonarla.
+Se descartó el 27/11. Pedía que la web cargara rápido, y eso es un **requisito no funcional** (cómo tiene que comportarse el sistema), no una historia de usuario (algo que hace un actor en la web). Lo que pedía ya está hecho y probado desde el 15/11, y ahora está en [RNF-01 · Tiempo de carga](requisitos-no-funcionales.md#rnf-01--tiempo-de-carga).
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
-|---|---|---|---|---:|---:|---:|---:|---:|
-| 41 | 2 (Alta) | 4 | Integrada (15/11) | 3 | 246 | 18 | 3,1 | 2,9 $ |
-
-**Criterios de aceptación**
-
-| ID | Dado | Cuando | Entonces |
-|---|---|---|---|
-| CA-85.1 | Nadie ha entrado en la web en más de 15 minutos | Un visitante la abre | La página se abre como siempre, sin esperar a que el servidor vuelva a arrancar: la web no se ha apagado por falta de visitas. |
-| CA-85.2 | Mi navegador acepta páginas comprimidas | Pido una página | Me llega comprimida, así que descargo menos, y se ve igual. Si mi navegador no las acepta, me llega sin comprimir. |
-| CA-85.3 | Ya he visitado la web | Abro otra página | Mi navegador no vuelve a descargar la hoja de estilos; solo la descarga otra vez si ha cambiado. |
-
-**Requisito no funcional (rendimiento).** Se escribe como historia porque quien nota la diferencia es quien entra en la web. **Cómo se cumple:** la aplicación se visita a sí misma (`/ping`) cada 10 minutos para que Render no la apague, las páginas viajan comprimidas con gzip y la hoja de estilos lleva la huella de su contenido en el nombre y se guarda un año en la caché del navegador.
-
-Medido en local antes y después del cambio: la portada pasa de 4,5 KB a 1,5 KB, la lista de equipos de 122 KB a 6,5 KB y la hoja de estilos de 50 KB a 10 KB, que además se descarga una sola vez. Antes, la primera visita tras 15 minutos sin uso esperaba de 30 a 60 segundos a que Render volviera a arrancar la web.
-
-*Redactada de nuevo el 27/11:* antes el rol era «cliente», que no es ninguno de los [actores](#actores), pedía «el menor tiempo posible», que no se puede comprobar, y los criterios describían cómo está hecho en lugar de lo que nota quien visita la web. Las pruebas no cambian.
+Se mantiene el número para no cambiar el orden de las demás historias.
 
 ### HU-94 · Modo oscuro
 
@@ -2011,27 +1994,11 @@ Se comprueban cada vez que cambian las cuotas del partido y, por si cambian por 
 
 **Pruebas:** `EvolucionCuotaWebTest`.
 
-### HU-93 · Publicidad de Better en otras webs
+### HU-93 · Descartada: no era una historia de usuario
 
-**Como** creador de apuestas, **quiero** saber cuántas visitas y cuántas cuentas nuevas trae cada enlace o banner de Better publicado fuera de la web, **para** saber qué publicidad funciona y atraer a más jugadores.
+Se descartó el 27/11, sin llegar a hacerse. Pedía dar a conocer Better con banners en otras webs: lo pedía el Product Owner, no un actor de la web, el banner queda fuera del sistema, y lo que sí está dentro (anuncios y sus clics) ya lo cubren HU-60 a HU-62. Antes de eso, el número HU-93 lo tuvo «Exportar mi historial», que ahora es HU-114.
 
-| Fila del backlog | Prioridad | Sprint | Estado | Puntos | Líneas | Horas sin IA | Horas con IA | Coste de la IA |
-|---|---|---|---|---:|---:|---:|---:|---:|
-| 58 | 2 (Alta) | - | Por hacer (Sprint 5-6) | 2 | - | - | - | - |
-
-**Criterios de aceptación**
-
-| ID | Dado | Cuando | Entonces |
-|---|---|---|---|
-| CA-93.1 | Soy el creador | Doy de alta en Gestión una campaña con su nombre (por ejemplo, «Instagram») | Obtengo el enlace a Better de esa campaña, para ponerlo en el banner o en la publicación de la otra web. |
-| CA-93.2 | Hay una campaña dada de alta | Un visitante entra por su enlace | Ve la portada de siempre, con el botón para crear una cuenta, y la campaña suma una visita. Si crea su cuenta en esa misma visita, la campaña suma también una cuenta nueva. Un enlace con una campaña que no existe cuenta como una visita normal. |
-| CA-93.3 | Soy el creador | Abro las campañas en Gestión | Veo de cada campaña sus visitas, sus cuentas nuevas y qué parte de las visitas acaba creando una cuenta. |
-
-El banner o la publicación en sí están en la otra web, fuera de la aplicación: Better solo decide adónde lleva el enlace y mide lo que pasa al llegar. Los anuncios dentro de la web son HU-60 a HU-62 (fila 38 del backlog), y la portada ya presenta Better a quien llega (HU-08).
-
-*Redactada de nuevo el 27/11* a partir de la versión del 20/11: el rol era el Product Owner, que no usa la web; el único criterio («me muestra un overview de la app») no se podía comprobar, y el banner externo queda fuera del sistema. Se mantiene la idea: dar a conocer Better y que crezca el número de jugadores. Falta estimarla.
-
-**Pruebas:** por hacer cuando se implemente.
+Se mantiene el número para no cambiar el orden de las demás historias.
 
 ### HU-96 · Estadísticas por competición
 
