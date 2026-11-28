@@ -15,9 +15,9 @@
     </div>
 
     <nav class="pestanas" aria-label="Deportes">
-        <a class="pestana" th:classappend="${deporteElegido == null} ? 'activa'"
+        <a class="pestana" th:classappend="${deporteElegido == null} ? 'activa'" th:aria-current="${deporteElegido == null} ? 'page'"
            th:href="@{/eventos(q=${q})}">Todos</a>
-        <a class="pestana" th:each="r : ${recuento}" th:classappend="${deporteElegido == r.key} ? 'activa'"
+        <a class="pestana" th:each="r : ${recuento}" th:classappend="${deporteElegido == r.key} ? 'activa'" th:aria-current="${deporteElegido == r.key} ? 'page'"
            th:href="@{/eventos(deporte=${r.key},q=${q})}">
             <span th:text="${r.key.icono}">⚽</span>
             <span th:text="${r.key.nombre}">Fútbol</span>

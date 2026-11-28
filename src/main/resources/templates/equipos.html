@@ -14,8 +14,8 @@
     </div>
 
     <nav class="pestanas" aria-label="Deportes">
-        <a class="pestana" th:classappend="${deporteElegido == null} ? 'activa'" th:href="@{/equipos(q=${q})}">Todos</a>
-        <a class="pestana" th:each="r : ${recuento}" th:classappend="${deporteElegido == r.key} ? 'activa'"
+        <a class="pestana" th:classappend="${deporteElegido == null} ? 'activa'" th:aria-current="${deporteElegido == null} ? 'page'" th:href="@{/equipos(q=${q})}">Todos</a>
+        <a class="pestana" th:each="r : ${recuento}" th:classappend="${deporteElegido == r.key} ? 'activa'" th:aria-current="${deporteElegido == r.key} ? 'page'"
            th:href="@{/equipos(deporte=${r.key},q=${q})}">
             <span th:text="${r.key.icono}">⚽</span>
             <span th:text="${r.key.nombre}">Fútbol</span>
@@ -24,9 +24,9 @@
     </nav>
 
     <nav class="filtros" th:unless="${#lists.isEmpty(competiciones)}" aria-label="Competiciones">
-        <a class="chip chip-filtro" th:classappend="${competicionElegida == null} ? 'activo'"
+        <a class="chip chip-filtro" th:classappend="${competicionElegida == null} ? 'activo'" th:aria-current="${competicionElegida == null} ? 'page'"
            th:href="@{/equipos(deporte=${deporteElegido},q=${q})}">Todas</a>
-        <a class="chip chip-filtro" th:each="c : ${competiciones}" th:classappend="${competicionElegida == c.id} ? 'activo'"
+        <a class="chip chip-filtro" th:each="c : ${competiciones}" th:classappend="${competicionElegida == c.id} ? 'activo'" th:aria-current="${competicionElegida == c.id} ? 'page'"
            th:href="@{/equipos(deporte=${deporteElegido},competicion=${c.id},q=${q})}" th:text="${c.nombre}">LaLiga</a>
     </nav>
 

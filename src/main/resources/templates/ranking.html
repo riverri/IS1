@@ -9,12 +9,12 @@
     </div>
     <p class="subtitulo" th:text="${total} + ' jugadores'">12 jugadores</p>
     <nav class="pestanas" aria-label="Tipo de juego">
-        <a class="pestana" th:classappend="${juego == null} ? 'activa'" th:href="@{/ranking(orden=${orden})}">Todos</a>
-        <a class="pestana" th:each="j : ${juegos}" th:classappend="${juego == j} ? 'activa'"
+        <a class="pestana" th:classappend="${juego == null} ? 'activa'" th:aria-current="${juego == null} ? 'page'" th:href="@{/ranking(orden=${orden})}">Todos</a>
+        <a class="pestana" th:each="j : ${juegos}" th:classappend="${juego == j} ? 'activa'" th:aria-current="${juego == j} ? 'page'"
            th:href="@{/ranking(juego=${j}, orden=${orden})}" th:text="${j.nombre}">Deportes</a>
     </nav>
     <nav class="pestanas" aria-label="Ordenar por">
-        <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
+        <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'" th:aria-current="${orden == c} ? 'page'"
            th:href="@{/ranking(orden=${c}, juego=${juego})}" th:text="${c.nombre}">Saldo</a>
     </nav>
     <p class="aviso" th:if="${juego != null}"

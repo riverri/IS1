@@ -27,31 +27,31 @@
             <span>Better</span>
         </a>
         <nav class="menu" aria-label="Principal">
-            <a th:href="@{/eventos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'activo'">Eventos</a>
-            <a th:href="@{/mercados}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/mercados')} ? 'activo'">Largo plazo</a>
-            <a th:href="@{/predicciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/predicciones')} ? 'activo'">Predicciones</a>
-            <a th:href="@{/quinielas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/quinielas')} ? 'activo'">Quiniela</a>
-            <a th:href="@{/cripto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/cripto')} ? 'activo'">Cripto</a>
-            <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'">Equipos</a>
-            <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'">Ranking</a>
+            <a th:href="@{/eventos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/eventos')} ? 'page'">Eventos</a>
+            <a th:href="@{/mercados}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/mercados')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/mercados')} ? 'page'">Largo plazo</a>
+            <a th:href="@{/predicciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/predicciones')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/predicciones')} ? 'page'">Predicciones</a>
+            <a th:href="@{/quinielas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/quinielas')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/quinielas')} ? 'page'">Quiniela</a>
+            <a th:href="@{/cripto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/cripto')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/cripto')} ? 'page'">Cripto</a>
+            <a th:href="@{/equipos}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/equipos')} ? 'page'">Equipos</a>
+            <a th:href="@{/ranking}" th:classappend="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'activo'" th:aria-current="${ruta != null and (#strings.startsWith(ruta, '/ranking') or #strings.startsWith(ruta, '/jugadores'))} ? 'page'">Ranking</a>
             <a class="ranking-ligas" th:href="@{/ligas/clasificacion}"
-               th:classappend="${ruta != null and ruta == '/ligas/clasificacion'} ? 'activo'"><span>Ranking</span><small>Ligas</small></a>
+               th:classappend="${ruta != null and ruta == '/ligas/clasificacion'} ? 'activo'" th:aria-current="${ruta != null and ruta == '/ligas/clasificacion'} ? 'page'"><span>Ranking</span><small>Ligas</small></a>
             <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/ligas}"
-               th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'activo'">Ligas</a>
-            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/fantasy}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/fantasy')} ? 'activo'">Fantasy</a>
-            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'">Casino</a>
-            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'">Mis apuestas</a>
-            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'">Boleto
+               th:classappend="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/ligas') and ruta != '/ligas/clasificacion'} ? 'page'">Ligas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/fantasy}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/fantasy')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/fantasy')} ? 'page'">Fantasy</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/casino}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/casino')} ? 'page'">Casino</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/apuestas}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/apuestas')} ? 'page'">Mis apuestas</a>
+            <a th:if="${usuarioActual != null and !usuarioActual.creador}" th:href="@{/boleto}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/boleto')} ? 'page'">Boleto
                 <span class="contador" th:if="${boleto != null and !boleto.vacio}" th:text="${boleto.tamano}">2</span></a>
-            <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/gestion')} ? 'activo'">Gestión</a>
-            <a th:if="${usuarioActual != null}" class="campana" th:href="@{/notificaciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/notificaciones')} ? 'activo'"
+            <a th:if="${usuarioActual != null and usuarioActual.creador}" th:href="@{/gestion}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/gestion')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/gestion')} ? 'page'">Gestión</a>
+            <a th:if="${usuarioActual != null}" class="campana" th:href="@{/notificaciones}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/notificaciones')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/notificaciones')} ? 'page'"
                th:title="${avisosSinLeer > 0} ? ${avisosSinLeer} + ' avisos sin leer' : 'Avisos'">
                 <span aria-hidden="true">🔔</span><span class="solo-lectores">Avisos</span>
                 <span class="contador" th:if="${avisosSinLeer > 0}" th:text="${avisosSinLeer}">2</span></a>
             <a class="boton-tema" th:href="@{/tema}" rel="nofollow" th:title="${temaOscuro} ? 'Colores claros' : 'Modo oscuro'"
                th:attr="aria-label=${temaOscuro} ? 'Colores claros' : 'Modo oscuro'" th:text="${temaOscuro} ? '☀️' : '🌙'">🌙</a>
             <th:block th:if="${usuarioActual == null}">
-                <a th:href="@{/login}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/login')} ? 'activo'">Entrar</a>
+                <a th:href="@{/login}" th:classappend="${ruta != null and #strings.startsWith(ruta, '/login')} ? 'activo'" th:aria-current="${ruta != null and #strings.startsWith(ruta, '/login')} ? 'page'">Entrar</a>
                 <a class="boton boton-pequeno" th:href="@{/registro}">Registrarse</a>
             </th:block>
             <th:block th:if="${usuarioActual != null}">

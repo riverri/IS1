@@ -54,6 +54,9 @@ class ClasificacionLigasWebTest {
     /** Pestaña marcada como activa: {@code <a class="pestana activa" ...>Texto</a>}. */
     private static final Pattern PESTANA_ACTIVA = Pattern.compile("<a class=\"pestana activa\"[^>]*>([^<]*)</a>");
     private static final Pattern PESTANA = Pattern.compile("<a class=\"pestana[^\"]*\"");
+    // La pestaña activa también se anuncia a los lectores de pantalla, no solo con el color (aria-current)
+    private static final Pattern PESTANA_ANUNCIADA =
+            Pattern.compile("<a class=\"pestana[^\"]*\"[^>]*aria-current=\"page\"[^>]*>([^<]*)</a>");
     private static final Pattern FILA = Pattern.compile("<tr>(.*?)</tr>", Pattern.DOTALL);
     private static final Pattern CELDA = Pattern.compile("<td[^>]*>(.*?)</td>", Pattern.DOTALL);
 
@@ -87,6 +90,10 @@ class ClasificacionLigasWebTest {
             activas.add(m.group(1).trim());
         }
         return activas;
+    }
+
+    private static List<String> pestanasAnunciadas(String html) {
+        return PESTANA_ANUNCIADA.matcher(html).results().map(m -> m.group(1).trim()).toList();
     }
 
     private static long pestanas(String html) {
@@ -136,12 +143,14 @@ class ClasificacionLigasWebTest {
         String mias = html(get("/ligas/clasificacion").param("vista", "mias").with(user(ANA)));
         assertThat(pestanas(mias)).isEqualTo(2);
         assertThat(pestanasActivas(mias)).containsExactly("Mis ligas");
+        assertThat(pestanasAnunciadas(mias)).containsExactly("Mis ligas");
         assertThat(mias).contains("Suma del saldo de los miembros activos de tus ligas")
                 .doesNotContain("Ligas públicas ordenadas por la suma");
         assertThat(nombres(mias)).containsExactlyInAnyOrder("Privada de Ana", "Pública de Ana");
 
         String global = html(get("/ligas/clasificacion").param("vista", "global").with(user(ANA)));
         assertThat(pestanasActivas(global)).containsExactly("Global");
+        assertThat(pestanasAnunciadas(global)).containsExactly("Global");
         assertThat(global).contains("Ligas públicas ordenadas por la suma")
                 .doesNotContain("Suma del saldo de los miembros activos de tus ligas", "Visibilidad");
         assertThat(nombres(global)).containsExactlyInAnyOrder("Pública de Ana", "Pública de Eva");
