@@ -17,9 +17,9 @@
        th:text="'Los cambios cuentan para esta jornada hasta el primer partido, el ' + ${#temporals.format(jornada.plazo, 'd/M')} + ' a las ' + ${#temporals.format(jornada.plazo, 'HH:mm')} + '.'">Plazo</p>
 
     <nav class="filtros" aria-label="Posición">
-        <a class="chip chip-filtro" th:href="@{/fantasy/mercado(club=${club})}" th:classappend="${posicion == null} ? 'activo'">Todas</a>
+        <a class="chip chip-filtro" th:href="@{/fantasy/mercado(club=${club})}" th:classappend="${posicion == null} ? 'activo'" th:aria-current="${posicion == null} ? 'page'">Todas</a>
         <a class="chip chip-filtro" th:each="p : ${posiciones}" th:href="@{/fantasy/mercado(posicion=${p}, club=${club})}"
-           th:classappend="${posicion == p} ? 'activo'"
+           th:classappend="${posicion == p} ? 'activo'" th:aria-current="${posicion == p} ? 'page'"
            th:text="${p.plural} + ' (' + ${equipo.huecos(p)} + ' libres)'">Porteros (1 libre)</a>
     </nav>
     <form class="filtros" th:action="@{/fantasy/mercado}" method="get">

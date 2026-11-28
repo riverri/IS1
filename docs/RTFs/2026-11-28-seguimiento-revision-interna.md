@@ -21,3 +21,5 @@ Esta tabla recoge qué se ha hecho con cada defecto y qué queda pendiente.
 | B-13 · Un GET apunta clics de anuncios | Baja | Las precargas del navegador (`Sec-Purpose`, `Purpose`, `X-Moz`) y los rastreadores siguen el enlace, pero ya no cuentan como clic. Tiene su prueba | — |
 | B-14 · La imagen Docker se ejecuta como root | Baja | El `Dockerfile` crea el usuario `apuestas` y ejecuta la aplicación con él. Además, se ajusta la memoria de Java al plan gratuito de Render (el 25/11 se reinició por pasar de 512 MB): medido en local, de unos 640 MB a unos 430 MB | Comprobar el primer despliegue en Render (en el entorno de trabajo no hay Docker) |
 | B-15 · Ramas sin borrar | Baja | — | **Decisión del equipo:** qué hacer con `codex/optimizacion-fluidez` (25 commits que no están en `main`) y borrar las ramas ya fusionadas |
+
+**Además (28/11):** la pestaña o el enlace del menú activos se marcaban solo con el color. Ahora llevan `aria-current="page"` para que un lector de pantalla diga cuál es (menú, deportes, ranking, equipos, ligas y fantasy). Lo vio quien escribió las pruebas de CA-111.4.

@@ -13,7 +13,7 @@
             <p role="status" class="alerta alerta-exito" th:if="${mensaje}" th:text="${mensaje}">Añadido a tus favoritos</p>
             <p role="alert" class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
             <form th:if="${usuarioActual != null and !usuarioActual.creador}" th:action="@{/equipos/{id}/favorito(id=${equipo.id})}" method="post">
-                <button class="boton boton-secundario boton-pequeno boton-favorito" type="submit" th:classappend="${favorito} ? 'activo'"
+                <button class="boton boton-secundario boton-pequeno boton-favorito" type="submit" th:classappend="${favorito} ? 'activo'" th:aria-current="${favorito} ? 'page'"
                         th:text="${favorito} ? '★ Quitar de favoritos' : '☆ Añadir a favoritos'">☆ Añadir a favoritos</button>
             </form>
             <p>

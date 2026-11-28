@@ -9,9 +9,9 @@
         <a class="boton boton-secundario" th:if="${puedeVerMisLigas}" th:href="@{/ligas}">Volver a mis ligas</a>
     </div>
     <nav class="pestanas" aria-label="Clasificación de ligas">
-        <a class="pestana" th:if="${puedeVerMisLigas}" th:classappend="${vista == 'mias'} ? 'activa'"
+        <a class="pestana" th:if="${puedeVerMisLigas}" th:classappend="${vista == 'mias'} ? 'activa'" th:aria-current="${vista == 'mias'} ? 'page'"
            th:href="@{/ligas/clasificacion(vista='mias')}">Mis ligas</a>
-        <a class="pestana" th:classappend="${vista == 'global'} ? 'activa'"
+        <a class="pestana" th:classappend="${vista == 'global'} ? 'activa'" th:aria-current="${vista == 'global'} ? 'page'"
            th:href="@{/ligas/clasificacion(vista='global')}">Global</a>
     </nav>
     <p class="subtitulo" th:if="${vista == 'mias'}">Suma del saldo de los miembros activos de tus ligas, públicas y privadas.</p>

@@ -34,7 +34,7 @@
     </section>
 
     <nav class="pestanas" aria-label="Ordenar por">
-        <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'"
+        <a class="pestana" th:each="c : ${criterios}" th:classappend="${orden == c} ? 'activa'" th:aria-current="${orden == c} ? 'page'"
            th:href="@{/ligas/{id}(id=${liga.id}, orden=${c})}" th:text="${c.nombre}">Saldo</a>
     </nav>
 
